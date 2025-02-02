@@ -1,0 +1,151 @@
+<div class="p-4 bg-black w-full  h-lvh overflow-y-auto">
+
+  <div class="relative w-full overflow-x-auto scrollbar-none pb-3">
+    <div class="flex space-x-3 px-2 py-2 bg-gray-100 rounded-xl shadow-md overflow-x-auto scrollbar-none relative">
+      <div
+        class="absolute top-1/2 left-0 -translate-y-1/2 transition-all duration-300 ease-out bg-blue-500 h-10 rounded-xl"
+        [style.width.px]="highlightWidth" [style.transform]="'translateX(' + highlightPosition + 'px)'">
+      </div>
+      <button *ngFor="let activity of activities; let i = index" (click)="selectActivity(activity.id, i)" #btn class="relative z-10 px-6 py-2 rounded-xl text-sm font-medium transition-all duration-300 whitespace-nowrap 
+               hover:text-blue-600 hover:scale-105" [ngClass]="{
+          'text-white': selectedActivityId === activity.id,
+          'text-gray-600': selectedActivityId !== activity.id
+        }">
+        {{ activity.name }}
+      </button>
+
+      <button (click)="openNewEventModal()" class="relative z-10 px-6 py-2 rounded-xl text-sm font-medium transition-all duration-300 whitespace-nowrap 
+      hover:text-blue-600 hover:scale-105 text-gray-600">
+        Agregar Nuevo Evento
+      </button>
+    </div>
+  </div>
+
+
+
+  <div class="relative justify-center ">
+    <div *ngFor="let activity of activities">
+      <div *ngIf="selectedActivityId === activity.id" class="grid grid-cols-6 gap-4">
+
+        <!-- Botón para agregar nuevo avatar -->
+        <div class="relative">
+          <div (click)="addNewAvatar()"
+            class="w-25 h-25 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-300 hover:bg-gray-300">
+            <span class="text-3xl font-bold text-gray-600">+</span>
+          </div>
+        </div>
+
+        <!-- Avatares -->
+        <div *ngFor="let avatar of activity.avatars" class="relative">
+          <div (click)="selectAvatar(avatar)" [ngClass]="{
+                'border-4 border-blue-500 shadow-lg': selectedAvatar === avatar
+              }"
+            class="w-25 h-25 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-300">
+            <img [src]="'https://i.pravatar.cc/150?img=' + avatar.id % 70" alt="Avatar"
+              class="w-full h-full object-cover" />
+          </div>
+
+          <div *ngIf="selectedAvatar === avatar" class="absolute z-30 mt-2 w-48 bg-white rounded-lg shadow-xl">
+            <ul class="py-2">
+              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="openEditModal(avatar)">
+                Editar
+              </li>
+              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="openPaymentModal()">Registrar pago</li>
+              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="toggleSubmenu('registrarPagoEn')">
+                Registrar pago en...
+                <ul *ngIf="showSubmenu['registrarPagoEn']" class="pl-4">
+                  <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="openPaymentModal()">Entrenamiento
+                    (Abril)</li>
+                  <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="openPaymentModal()">Entrenamiento
+                    (Mayo)</li>
+                </ul>
+              </li>
+              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="toggleSubmenu('inscribir')">
+                Inscribir a...
+                <ul *ngIf="showSubmenu['inscribir']" class="pl-4">
+                  <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Liga X</li>
+                  <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Torneo X</li>
+                </ul>
+              </li>
+
+              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="toggleSubmenu('Observaciones')">
+                Observaciones...
+                <ul *ngIf="showSubmenu['Observaciones']" class="pl-4">
+                  <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Control del baló</li>
+                  <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Regate</li>
+                  <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Cabeceo</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de registrar pago -->
+  <div *ngIf="showPaymentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg shadow-xl w-96">
+      <h2 class="text-xl font-semibold mb-4">Registrar Pago</h2>
+
+      <label class="block mb-2">Monto</label>
+      <input type="number" [(ngModel)]="paymentAmount" class="w-full p-2 border rounded-lg mb-3">
+
+      <div class="flex justify-end space-x-2 mt-4">
+        <button (click)="closePaymentModal()" class="bg-gray-400 px-4 py-2 rounded-lg text-white">Cancelar</button>
+        <button (click)="savePayment()" class="bg-blue-500 px-4 py-2 rounded-lg text-white">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  <!-- Modal de edición -->
+  <div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg shadow-xl w-96">
+      <h2 class="text-xl font-semibold mb-4">{{mode === 'update' ? 'Actualizar a ' + selectedAvatar.name: 'Nuevo alumno'
+        }} </h2>
+
+      <label class="block mb-2">Nombre</label>
+      <input type="text" [(ngModel)]="selectedAvatar.name" class="w-full p-2 border rounded-lg mb-3">
+
+      <label class="block mb-2">Edad</label>
+      <input type="number" [(ngModel)]="selectedAvatar.age" class="w-full p-2 border rounded-lg mb-3">
+
+      <label class="block mb-2">Posición</label>
+      <input type="text" [(ngModel)]="selectedAvatar.position" class="w-full p-2 border rounded-lg mb-3">
+
+      <label class="block mb-2">Número</label>
+      <input type="text" [(ngModel)]="selectedAvatar.number" class="w-full p-2 border rounded-lg mb-3">
+
+      <div class="flex justify-end space-x-2 mt-4">
+        <button (click)="closeModal()" class="bg-gray-400 px-4 py-2 rounded-lg text-white">Cancelar</button>
+        <button (click)="saveChanges()" class="bg-blue-500 px-4 py-2 rounded-lg text-white">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de agregar nuevo evento -->
+  <div *ngIf="newEventModalVisible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg shadow-xl w-96">
+      <h2 class="text-xl font-semibold mb-4">Nuevo Evento</h2>
+
+      <label class="block mb-2">Nombre del Evento</label>
+      <input type="text" [(ngModel)]="newEventName" class="w-full p-2 border rounded-lg mb-3">
+
+      <label class="block mb-2">Fecha de Inicio</label>
+      <input type="date" [(ngModel)]="newEventStartDate" class="w-full p-2 border rounded-lg mb-3">
+
+      <label class="block mb-2">Fecha de Fin</label>
+      <input type="date" [(ngModel)]="newEventEndDate" class="w-full p-2 border rounded-lg mb-3">
+
+      <label class="block mb-2">Costo</label>
+      <input type="number" [(ngModel)]="newEventCost" class="w-full p-2 border rounded-lg mb-3">
+
+      <div class="flex justify-end space-x-2 mt-4">
+        <button (click)="closeNewEventModal()" class="bg-gray-400 px-4 py-2 rounded-lg text-white">Cancelar</button>
+        <button (click)="saveNewEvent()" class="bg-blue-500 px-4 py-2 rounded-lg text-white">Guardar</button>
+      </div>
+    </div>
+  </div>
