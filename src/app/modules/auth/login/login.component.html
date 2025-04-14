@@ -1,0 +1,88 @@
+<div class="login-wrapper">
+    <div class="login-card">
+        <div class="logo-container">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+            </svg>
+        </div>
+
+        <h1 class="title">Iniciar Sesión</h1>
+        <p class="subtitle">Ingresa tus credenciales para continuar</p>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form">
+            <!-- Email -->
+            <div class="form-group">
+                <label for="email">Correo Electrónico</label>
+                <div class="input-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                        <polyline points="22,6 12,13 2,6"></polyline>
+                    </svg>
+                    <input id="email" type="email" formControlName="email" placeholder="tu@email.com"
+                        [class.invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+                </div>
+                @if (loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched) {
+                <span class="error">El email es requerido</span>
+                }
+                @if (loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched) {
+                <span class="error">Ingresa un email válido</span>
+                }
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+                <label for="password">Contraseña</label>
+                <div class="input-container">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                    </svg>
+                    <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
+                        placeholder="••••••••"
+                        [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                    <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
+                @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
+                <span class="error">La contraseña es requerida</span>
+                }
+                @if (loginForm.get('password')?.hasError('minlength') && loginForm.get('password')?.touched) {
+                <span class="error">Mínimo 6 caracteres</span>
+                }
+            </div>
+
+            <div class="form-footer">
+                <button type="submit" class="login-button" [disabled]="loading">
+                    @if (loading) {
+                    <span class="spinner"></span>
+                    } @else {
+                    <span>Ingresar</span>
+                    }
+                </button>
+
+                <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
+            </div>
+
+            <!-- Error Message -->
+            @if (errorMessage) {
+            <div class="error-message">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                {{ errorMessage }}
+            </div>
+            }
+        </form>
+    </div>
+</div>

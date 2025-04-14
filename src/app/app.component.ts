@@ -6,7 +6,7 @@ import { AvatarsComponent } from "./components/avatars/avatars.component";
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, MenuComponent,  AvatarsComponent],
+  imports: [RouterOutlet, MenuComponent, AvatarsComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
