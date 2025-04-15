@@ -8,7 +8,7 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../../core/auth.service';
+import { AuthService } from '../../core/auth.service';
 
 @Component({
     selector: 'app-login',

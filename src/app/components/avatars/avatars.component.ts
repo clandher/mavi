@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { BaseHttp } from '@app/core/base-http';
 
 @Component({
   selector: 'app-avatars',
@@ -56,7 +57,16 @@ export class AvatarsComponent {
   public mode: 'add' | 'update' = 'add';
 
   constructor() {
-    this.selectActivity(this.activities[0].id, 0)
+    this.selectActivity(this.activities[0].id, 0);
+
+    const x = new BaseHttp('category');
+
+    x.get().subscribe(result => {
+
+      console.log('result', result);
+
+    });
+
   }
 
   // Método para seleccionar una actividad

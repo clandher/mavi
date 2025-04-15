@@ -6,7 +6,7 @@ export const routes: Routes = [
     // Ruta de login (pública)
     {
         path: 'login',
-        loadComponent: () => import('./modules/auth/login/login.component').then(m => m.LoginComponent),
+        loadComponent: () => import('./modules/login/login.component').then(m => m.LoginComponent),
         canActivate: [guestGuard] // Solo para no autenticados
     },
 
@@ -15,18 +15,18 @@ export const routes: Routes = [
         path: 'app',
         loadComponent: () => import('./modules/dashboard/dashboard.component').then(m => m.DashboardComponent),
         canActivate: [authGuard], // Requiere autenticación
-        // children: [
-            // {
-            //     path: '',
-            //     loadComponent: () => import('./modules/dashboard/views/main.component').then(m => m.MainComponent),
-            //     title: 'Inicio'
-            // },
-            // {
-            //     path: 'profile',
-            //     loadComponent: () => import('./modules/dashboard/views/profile.component').then(m => m.ProfileComponent),
-            //     title: 'Perfil'
-            // }
-        // ]
+        children: [
+            {
+                path: 'avatars', // Añade una ruta específica
+                loadComponent: () => import('./components/avatars/avatars.component').then(m => m.AvatarsComponent),
+                title: 'Avatars'
+            },
+            {
+                path: '',
+                redirectTo: 'avatars', // Redirige a avatars por defecto
+                pathMatch: 'full'
+            }
+        ]
     },
 
     // Redirecciones
