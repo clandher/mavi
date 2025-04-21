@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
+import { BaseHttp } from './base-http';
 
 interface User {
     id: string;
@@ -43,7 +44,9 @@ export class AuthService {
 
     // Ejemplo de login tipado
     login(credentials: { email: string; password: string }): Observable<any> {
-        return this.http.post('/api/auth/login', credentials).pipe(
+
+        const authLogin = new BaseHttp('auth/login', this.http);
+        return authLogin.post(credentials).pipe(
             tap((response: any) => {
                 // Guardar token y redirigir
                 localStorage.setItem('auth_token', response.token);

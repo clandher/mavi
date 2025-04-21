@@ -11,9 +11,7 @@ export function buildUrl(path: string): string {
 
 export class BaseHttp {
 
-    protected readonly http = inject(HttpClient);
-
-    constructor(private path: string) { }
+    constructor(private path: string, private http: HttpClient) { }
 
     get<TResponse>(params?: HttpParams | { [key: string]: any }): Observable<TResponse> {
         const url = buildUrl(this.path);

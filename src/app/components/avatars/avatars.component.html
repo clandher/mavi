@@ -1,3 +1,17 @@
+<div class="w-full max-w-md">
+  <label for="categories" class="block text-sm font-bold text-gray-900 dark:text-gray-100 mb-1">
+    Selecciona una categoría:
+  </label>
+  <select id="categories" name="categories" [(ngModel)]="selectedCategoryId" (change)="onCategoryChange()"
+    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-2 border-gray-800 dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+    <option [value]="null" disabled class="text-gray-500 dark:text-gray-400">-- Selecciona una categoría --</option>
+    <option *ngFor="let category of categories" [value]="category.id" class="text-gray-900 dark:text-gray-100">
+      {{ category.type }}
+    </option>
+  </select>
+</div>
+
+
 <div class="p-4 bg-black w-full  h-lvh overflow-y-auto">
 
   <div class="relative w-full overflow-x-auto scrollbar-none pb-3">
@@ -6,12 +20,12 @@
         class="absolute top-1/2 left-0 -translate-y-1/2 transition-all duration-300 ease-out bg-blue-500 h-10 rounded-xl"
         [style.width.px]="highlightWidth" [style.transform]="'translateX(' + highlightPosition + 'px)'">
       </div>
-      <button *ngFor="let activity of activities; let i = index" (click)="selectActivity(activity.id, i)" #btn class="relative z-10 px-6 py-2 rounded-xl text-sm font-medium transition-all duration-300 whitespace-nowrap 
+      <button *ngFor="let activity of activities; let i = index" (click)="onActivityChange(activity.id, i)" #btn class="relative z-10 px-6 py-2 rounded-xl text-sm font-medium transition-all duration-300 whitespace-nowrap 
                hover:text-blue-600 hover:scale-105" [ngClass]="{
           'text-white': selectedActivityId === activity.id,
           'text-gray-600': selectedActivityId !== activity.id
         }">
-        {{ activity.name }}
+        {{ activity.description }}
       </button>
 
       <button (click)="openNewEventModal()" class="relative z-10 px-6 py-2 rounded-xl text-sm font-medium transition-all duration-300 whitespace-nowrap 
@@ -36,7 +50,7 @@
         </div>
 
         <!-- Avatares -->
-        <div *ngFor="let avatar of activity.avatars" class="relative">
+        <div *ngFor="let avatar of studentActivities" class="relative">
           <div (click)="selectAvatar(avatar)" [ngClass]="{
                 'border-4 border-blue-500 shadow-lg': selectedAvatar === avatar
               }"
