@@ -3,7 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BaseHttp } from '@app/core/base-http';
-import { Activity, ApiRes, Category, StudentActivity } from '@app/core/dto';
+import { Activity, ActivityType, ApiRes, Category, Charge, CreateActivityDto, CreatePaymentDto, PaymentEntity, Student, StudentActivity } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 
 @Component({
@@ -28,16 +28,31 @@ export class AvatarsComponent {
 
 
 
-	public selectedAvatar: any | null = null;
+	public selectedStudentActivity: StudentActivity | null = null;
 	public showSubmenu: { [key: string]: boolean } = {};
 	public showModal: boolean = false;
 	public mode: 'add' | 'update' = 'add';
 
 
+	activeTab: 'existing' | 'new' = 'existing';
+	searchTerm = '';
+	students: Student[] = []; // Lista completa de estudiantes
+	filteredStudents: Student[] = []; // Lista filtrada para búsqueda
+	selectedExistingStudent: Student | null = null;
+	newStudent: { name: string; birthdate: string } = { name: '', birthdate: '' };
+	maxBirthdate = new Date();
+
+
 	public categories: Category[] = [];
+	selectedCategory: Category | null = null;
+	newCategoryId: number | null = null;
 	selectedCategoryId: number | null = null;
 
+	public newActivities: Activity[] = [];
+
 	public activities: Activity[] = [];
+	selectedActivity: Activity | null = null;
+	newActivityId: number | null = null;
 	selectedActivityId: number | null = null;
 
 	public studentActivities: StudentActivity[] = [];
@@ -67,6 +82,36 @@ export class AvatarsComponent {
 		return queryParams.toString();
 	}
 
+	onNewCategoryChange() {
+
+		const queryString = RequestQueryBuilder.create({
+			fields: ['id', 'description', 'gracePeriod', 'categoryId', 'typeId'],
+			search: { categoryId: Number(this.newCategoryId!) },
+			// search: {
+			//   'category.id': Number(this.selectedCategoryId)  // Filtra por el ID de la relación
+			// },
+			join: [
+				{ field: 'category', select: ['id', 'name'] },  // Ajusta los campos según tu modelo
+				// { field: 'type', select: ['id', 'name'] }
+			],
+			// sort: [{ field: 'id', order: 'DESC' }],
+			page: 1,
+			limit: 5,
+		}).query();
+
+
+		const activities = new BaseHttp(`activities?${queryString}`, this.http);
+		activities.get<ApiRes<Activity>>().subscribe(result => {
+			this.newActivities = result.data;
+
+			if (this.newActivities.length) {
+				this.newActivityId = this.newActivities[0].id;
+				// this.onActivityChange(this.activities[0].id, 0);
+			}
+
+		});
+	}
+
 	onCategoryChange() {
 		const queryString = RequestQueryBuilder.create({
 			fields: ['id', 'description', 'gracePeriod', 'categoryId', 'typeId'],
@@ -83,13 +128,17 @@ export class AvatarsComponent {
 			limit: 5,
 		}).query();
 
+		this.newActivity.categoryId = this.selectedCategoryId!;
+
 		const activities = new BaseHttp(`activities?${queryString}`, this.http);
 		activities.get<ApiRes<Activity>>().subscribe(result => {
 			this.activities = result.data;
+			this.newActivities = [...this.activities];
 
 			if (this.activities.length) {
 				this.onActivityChange(this.activities[0].id, 0);
 			}
+
 		});
 
 	}
@@ -97,8 +146,10 @@ export class AvatarsComponent {
 
 	// Método para seleccionar una actividad
 	onActivityChange(activityId: number, index: number): void {
+
+		this.selectedActivity = this.activities.find(activity => activity.id === activityId) ?? null;
 		this.selectedActivityId = activityId;
-		this.selectedAvatar = null;
+		this.selectedStudentActivity = null;
 
 
 		// Encuentra el botón seleccionado
@@ -140,7 +191,9 @@ export class AvatarsComponent {
 		};
 	}
 
-	constructor(private http: HttpClient) {
+	constructor(
+		// private studentService: StudentService, // Asume que tienes un servicio para estudiantes
+		private http: HttpClient) {
 
 		const categories = new BaseHttp(`categories`, this.http);
 		categories.get<Category[]>().subscribe(result => {
@@ -149,7 +202,10 @@ export class AvatarsComponent {
 
 			if (this.categories.length > 0) {
 				this.selectedCategoryId = this.categories[0].id;
+				this.selectedCategory = this.categories[0]!;
 				this.onCategoryChange();
+
+				this.newActivity.categoryId = this.selectedCategoryId;
 			}
 		});
 
@@ -160,17 +216,18 @@ export class AvatarsComponent {
 
 	addNewAvatar() {
 		this.mode = 'add';
-		this.selectedAvatar = {
-
-		};
+		this.selectedStudentActivity = new StudentActivity();
 
 		this.showModal = true;
 		// Aquí puedes abrir un modal o formulario para agregar un nuevo avatar.
+
+		this.newActivityId = this.selectedActivityId;
+		this.newCategoryId = this.selectedCategoryId;
 	}
 
 	// Método para seleccionar un avatar
 	selectAvatar(avatar: any | null): void {
-		this.selectedAvatar = this.selectedAvatar === avatar ? null : avatar;
+		this.selectedStudentActivity = this.selectedStudentActivity === avatar ? null : avatar;
 	}
 
 	// Método para alternar la visibilidad de un submenú
@@ -179,10 +236,10 @@ export class AvatarsComponent {
 	}
 
 	// Método para abrir el modal de edición
-	openEditModal(avatar: any): void {
+	openEditModal(studentActivity: StudentActivity): void {
 		this.mode = 'update';
 
-		this.selectedAvatar = { ...avatar }; // Clonamos para no modificar directamente
+		this.selectedStudentActivity = { ...studentActivity }; // Clonamos para no modificar directamente
 		this.showModal = true;
 	}
 
@@ -193,6 +250,37 @@ export class AvatarsComponent {
 
 	// Método para guardar los cambios
 	saveChanges(): void {
+
+
+
+		if (this.activeTab === 'existing' && this.selectedExistingStudent) {
+			// Lógica para agregar estudiante existente a la actividad
+			this.addStudentToActivity(this.selectedExistingStudent);
+		} else if (this.activeTab === 'new' && this.newStudent.name) {
+			// Lógica para crear nuevo estudiante y agregarlo a la actividad
+			this.createNewStudent();
+		}
+
+		this.closeModal();
+
+
+		// console.log(this.selectedStudentActivity);
+
+		// const student = { ...this.selectedStudentActivity!.student };
+
+		// const studentsAPI = new BaseHttp(`students/${student.id}`, this.http);
+		// // delete (student as any).id;
+		// studentsAPI.patch(student).subscribe(result => {
+
+		// 	// this.studentActivities = result;
+
+		// 	// this.activities = result.data;
+
+		// 	// if (this.activities.length) {
+		// 	// 	this.onActivityChange(this.activities[0].id, 0);
+		// 	// }
+		// });
+
 		// const activity = this.activities.find(a => a.id === this.selectedActivityId);
 		// if (activity) {
 		//   const index = activity.avatars.findIndex(a => a.id === this.selectedAvatar.id);
@@ -206,40 +294,157 @@ export class AvatarsComponent {
 	highlightWidth = 0;
 	highlightPosition = 0;
 
-	public paymentAmount: number | null = null;
+	public paymentAmount: number = 0;
 	public showPaymentModal: boolean = false;
 
 	// Método para abrir el modal de pago
 	openPaymentModal(): void {
 		this.showPaymentModal = true;
+
+		this.pendingCharges = [];
+
+		const student = { ...this.selectedStudentActivity!.student };
+
+
+		const queryString = RequestQueryBuilder.create({
+			search: {
+				studentId: Number(student.id),
+				amountRemaining: { $gt: 0 }
+			},
+		}).query();
+
+
+		const chargersAPI = new BaseHttp(`chargers?${queryString}`, this.http);
+		chargersAPI.get<Charge[]>(student).subscribe(result => {
+			this.pendingCharges = result;
+		});
+
 	}
 
-	// Método para cerrar el modal de pago
-	closePaymentModal(): void {
-		this.showPaymentModal = false;
+	ngOnInit() {
+		this.loadStudents();
 	}
 
-	// Método para guardar el pago
-	savePayment(): void {
-		if (this.paymentAmount != null && this.paymentAmount > 0) {
-			// Simula el guardado del pago
-			console.log(`Pago de ${this.paymentAmount} registrado.`);
 
-			// Aquí podrías integrar la lógica de guardar el pago (por ejemplo, en una base de datos)
 
-			// Después de guardar, generamos el voucher
-			this.generateVoucher();
+	loadStudents(): void {
+		const studentsAPI = new BaseHttp('students', this.http);
+		studentsAPI.get<Student[]>().subscribe({
+			next: (students) => {
+				this.students = students;
+				this.filteredStudents = [...students];
+			},
+			error: (err) => console.error('Error loading students', err)
+		});
+	}
 
-			// Cerrar el modal
-			this.closePaymentModal();
-		} else {
-			alert('Por favor ingrese un monto válido.');
+	filterStudents(): void {
+		if (!this.searchTerm) {
+			this.filteredStudents = [...this.students];
+			return;
 		}
+
+		const term = this.searchTerm.toLowerCase();
+		this.filteredStudents = this.students.filter(student =>
+			student.name.toLowerCase().includes(term)
+		);
+	}
+
+	selectStudent(student: Student): void {
+		this.selectedExistingStudent = student;
+	}
+
+	openModal(): void {
+		this.showModal = true;
+		this.activeTab = 'existing';
+		this.searchTerm = '';
+		this.selectedExistingStudent = null;
+		this.newStudent = { name: '', birthdate: '' };
+		this.filterStudents();
+	}
+
+
+
+
+	addStudentToActivity(student: Student): void {
+		// Implementa la lógica para agregar el estudiante a la actividad
+		console.log('Estudiante seleccionado:', student);
+		// Aquí llamarías a tu servicio para agregar el estudiante a la actividad
+
+		const body = {
+			studentId: student.id,
+			activityId: this.selectedActivityId // Asume que tienes this.activityId disponible
+		};
+
+		new BaseHttp('student-activities', this.http)
+			.post<typeof body, StudentActivity>(body)
+			.subscribe({
+				next: (studentActivity) => {
+					console.log('Estudiante agregado a actividad:', studentActivity);
+					// Aquí puedes actualizar tu UI o lista de estudiantes en la actividad
+					this.closeModal();
+					this.loadStudents();
+
+					this.onActivityChange(this.selectedCategoryId!, 0);
+					// Si necesitas recargar la lista
+				},
+				error: (err) => {
+					console.error('Error al agregar estudiante a actividad', err);
+					// Puedes mostrar un mensaje de error al usuario si lo deseas
+				}
+			});
+
+	}
+
+	createNewStudent(): void {
+		const birthdate = this.newStudent.birthdate ? new Date(this.newStudent.birthdate) : new Date();
+
+		const newStudentData = {
+			name: this.newStudent.name,
+			birthdate: birthdate
+		};
+
+		// this.studentService.createStudent(newStudentData).subscribe({
+		// 	next: (createdStudent) => {
+		// 		this.addStudentToActivity(createdStudent);
+		// 	},
+		// 	error: (err) => console.error('Error creating student', err)
+		// });
+
+		const studentsAPI = new BaseHttp('students', this.http);
+		studentsAPI.post<typeof newStudentData, Student>(newStudentData).subscribe({
+			next: (createdStudent) => {
+				this.addStudentToActivity(createdStudent);
+			},
+			error: (err) => console.error('Error creating student', err)
+		})
+	}
+
+	getFormattedDate(date: Date): string {
+		if (!date) return '';
+		const d = new Date(date);
+		const year = d.getFullYear();
+		const month = ('0' + (d.getMonth() + 1)).slice(-2);
+		const day = ('0' + d.getDate()).slice(-2);
+		return `${year}-${month}-${day}`;
+	}
+
+	getAge(birthdate: Date): number {
+		const today = new Date();
+		const birthDate = new Date(birthdate);
+		let age = today.getFullYear() - birthDate.getFullYear();
+		const monthDiff = today.getMonth() - birthDate.getMonth();
+
+		if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+			age--;
+		}
+
+		return age;
 	}
 
 	// Método para simular la descarga de un voucher (generación de una imagen)
-	generateVoucher(): void {
-		const voucherImage = this.createVoucherImage();
+	generateVoucher(paymentCharges: any): void {
+		const voucherImage = this.createVoucherImage(paymentCharges);
 		const a = document.createElement('a');
 		a.href = voucherImage;
 		a.download = 'voucher.png';
@@ -247,38 +452,207 @@ export class AvatarsComponent {
 	}
 
 	// Método para crear la imagen del voucher (simulación de descarga de imagen)
-	createVoucherImage(): string {
+	createVoucherImage(paymentData: any): string {
 		const canvas = document.createElement('canvas');
 		const ctx = canvas.getContext('2d');
 
 		if (ctx) {
-			canvas.width = 400;
-			canvas.height = 200;
+			// Increase canvas size for better layout
+			canvas.width = 600;
+			canvas.height = 400 + (paymentData.charges.length * 110); // Dynamic height based on charges
 
-			// Fondo
-			ctx.fillStyle = '#f3f4f6';
+			// Background with border
+			ctx.fillStyle = '#ffffff';
 			ctx.fillRect(0, 0, canvas.width, canvas.height);
+			ctx.strokeStyle = '#4a86e8';
+			ctx.lineWidth = 5;
+			ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
 
-			// Título
-			ctx.font = '24px Arial';
-			ctx.fillStyle = '#000';
-			ctx.fillText('Voucher de Pago', 120, 40);
+			// Header
+			ctx.fillStyle = '#4a86e8';
+			ctx.fillRect(0, 0, canvas.width, 60);
+			ctx.font = 'bold 28px Arial';
+			ctx.fillStyle = '#ffffff';
+			ctx.textAlign = 'center';
+			ctx.fillText('COMPROBANTE DE PAGO', canvas.width / 2, 40);
 
-			// Monto
-			ctx.font = '20px Arial';
-			ctx.fillText(`Monto: $${this.paymentAmount}`, 120, 80);
+			// Reset text alignment
+			ctx.textAlign = 'left';
 
-			// Fecha
-			const date = new Date().toLocaleDateString();
-			ctx.fillText(`Fecha: ${date}`, 120, 120);
+			// Payment details
+			const paymentDate = new Date(paymentData.paymentDate).toLocaleString();
+			const formattedAmount = paymentData.amount.toFixed(2);
 
-			// Convertimos el canvas a una URL para la imagen
+			// Main payment info
+			ctx.font = 'bold 18px Arial';
+			ctx.fillStyle = '#000000';
+			ctx.fillText(`Estudiante ID: ${paymentData.studentId}`, 40, 100);
+			ctx.fillText(`Fecha de pago: ${paymentDate}`, 40, 130);
+			ctx.fillText(`Monto total: $${formattedAmount}`, 40, 160);
+
+			// Charges breakdown header
+			ctx.fillStyle = '#4a86e8';
+			ctx.fillRect(40, 190, canvas.width - 80, 30);
+			ctx.font = 'bold 16px Arial';
+			ctx.fillStyle = '#ffffff';
+			ctx.fillText('DETALLE DE CARGOS', 50, 212);
+
+			// Charges list
+			let yPos = 240;
+			paymentData.charges.forEach((charge: any, index: number) => {
+				ctx.font = '14px Arial';
+				ctx.fillStyle = '#000000';
+
+				// Charge header
+				ctx.fillText(`Cargo #${index + 1} (ID: ${charge.chargeId})`, 50, yPos);
+
+				// Charge details
+				ctx.fillText(`Monto pagado: $${charge.amount.toFixed(2)}`, 70, yPos + 25);
+				ctx.fillText(`Monto original: $${charge.amountToBePaid.toFixed(2)}`, 70, yPos + 50);
+				ctx.fillText(`Saldo pendiente: $${charge.amountRemaining.toFixed(2)}`, 70, yPos + 75);
+
+				yPos += 110;
+			});
+
+			// Footer
+			ctx.font = 'italic 12px Arial';
+			ctx.fillStyle = '#666666';
+			ctx.textAlign = 'center';
+			ctx.fillText('Gracias por su pago', canvas.width / 2, yPos + 30);
+
+			// Convert canvas to image URL
 			return canvas.toDataURL('image/png');
 		}
 
 		return '';
 	}
 
+
+
+
+
+
+	pendingCharges: Charge[] = [];
+	paymentDistribution: number[] = [];
+
+	// Ordena los cargos por fecha (más viejo primero)
+	// Esto puede hacerse con un pipe OrderBy o directamente aquí
+	get sortedCharges() {
+		return [...this.pendingCharges].sort((a, b) =>
+			new Date(a.chargeDate).getTime() - new Date(b.chargeDate).getTime()
+		);
+	}
+
+	updatePaymentDistribution() {
+		let remainingPayment = this.paymentAmount ?? 0;
+		this.paymentDistribution = [];
+
+		// Distribuye el pago empezando por los cargos más antiguos
+		for (let charge of this.sortedCharges) {
+			const chargeAmount = charge.amountRemaining;
+			if (remainingPayment <= 0) {
+				this.paymentDistribution.push(0);
+			} else if (remainingPayment >= chargeAmount) {
+				this.paymentDistribution.push(chargeAmount);
+				remainingPayment -= chargeAmount;
+			} else {
+				this.paymentDistribution.push(remainingPayment);
+				remainingPayment = 0;
+			}
+		}
+	}
+
+	isChargeCovered(index: number): boolean {
+		return this.paymentDistribution[index] > 0;
+	}
+
+	isChargePartiallyCovered(index: number): boolean {
+		const charge = this.sortedCharges[index];
+		return this.paymentDistribution[index] > 0 &&
+			this.paymentDistribution[index] < charge.amountRemaining;
+	}
+
+	getCoveredAmount(index: number): number {
+		return this.paymentDistribution[index] || 0;
+	}
+
+	getRemainingAfterPayment(index: number): number {
+		const charge = this.sortedCharges[index];
+		return charge.amountRemaining - (this.paymentDistribution[index] || 0);
+	}
+
+	getCoveredPercentage(index: number): number {
+		const charge = this.sortedCharges[index];
+		return (this.paymentDistribution[index] / charge.amountRemaining) * 100;
+	}
+
+	closePaymentModal() {
+		this.showPaymentModal = false;
+		this.paymentAmount = 0;
+
+		this.pendingCharges = [];
+		this.paymentDistribution = [];
+	}
+
+	getTotalDebt(): number {
+		return this.pendingCharges.reduce((total, charge) =>
+			total + charge.amountRemaining, 0);
+	}
+
+	payFullAmount() {
+		this.paymentAmount = this.getTotalDebt();
+		this.updatePaymentDistribution();
+	}
+
+	savePayment() {
+
+		if (!this.paymentAmount || this.paymentAmount <= 0 || this.paymentAmount > this.getTotalDebt()) {
+			return;
+		}
+
+		if (this.paymentAmount != null && this.paymentAmount > 0) {
+			const body: CreatePaymentDto = {
+				studentId: this.selectedStudentActivity!.studentId,
+				amount: this.paymentAmount,
+			};
+
+			const paymentsAPI = new BaseHttp(`payments`, this.http);
+			paymentsAPI.post<CreatePaymentDto, { id: number }>(body).subscribe(payment => {
+
+
+
+				const paymentChargesAPI = new BaseHttp(`payments/${payment.id}/charges`, this.http);
+				paymentChargesAPI.get().subscribe(paymentCharges => {
+					console.log('paymentCharges', paymentCharges);
+					this.generateVoucher(paymentCharges);
+
+				})
+
+				// this.closePaymentModal();
+
+				// this.studentActivities = result;
+
+				// this.activities = result.data;
+
+				// if (this.activities.length) {
+				// 	this.onActivityChange(this.activities[0].id, 0);
+				// }
+			});
+		}
+	}
+
+	activityTypes: ActivityType[] = [];
+
+
+	newActivity: CreateActivityDto = {
+		description: '',
+		startDate: new Date(),
+		endDate: new Date(),
+		gracePeriod: 0,
+		price: 0,
+		categoryId: this.selectedCategoryId!,
+		typeId: 0
+	};
 
 	public newEventModalVisible: boolean = false;
 	public newEventName: string = '';
@@ -289,7 +663,15 @@ export class AvatarsComponent {
 	// Función para abrir el modal de nuevo evento
 	openNewEventModal(): void {
 		this.newEventModalVisible = true;
+
+
+		const activityTypesAPI = new BaseHttp('activity-types', this.http);
+		activityTypesAPI.get<ActivityType[]>().subscribe(result => {
+			this.activityTypes = result;
+
+		});
 	}
+
 
 	// Función para cerrar el modal de nuevo evento
 	closeNewEventModal(): void {
@@ -297,26 +679,42 @@ export class AvatarsComponent {
 	}
 
 	// Función para guardar el nuevo evento
-	saveNewEvent(): void {
-		if (this.newEventName && this.newEventStartDate && this.newEventEndDate && this.newEventCost != null) {
-			// Aquí puedes agregar la lógica para guardar el evento
-			const newEvent = {
-				id: this.activities.length + 1, // Asignar un id único
-				name: this.newEventName,
-				startDate: this.newEventStartDate,
-				endDate: this.newEventEndDate,
-				cost: this.newEventCost,
-				avatars: [], // Los avatares pueden ir vacíos inicialmente
+	saveNewActivity(): void {
+		if (this.validateActivity()) {
+
+
+			const activityToSend = {
+				...this.newActivity,
+				categoryId: Number(this.newActivity.categoryId),
+				typeId: Number(this.newActivity.typeId)
 			};
 
-			// Agregar el nuevo evento a la lista de actividades
-			// this.activities.push(newEvent);
 
-			// Cerrar el modal
-			this.closeNewEventModal();
+			const activitiesAPI = new BaseHttp('activities', this.http);
+			activitiesAPI.post<CreateActivityDto, Activity>(activityToSend).subscribe({
+				next: (activity) => {
+					// Aquí puedes manejar la respuesta, por ejemplo:
+					// this.activities.push(activity);
+					this.closeNewEventModal();
+					// Mostrar mensaje de éxito
+				},
+				error: (err) => {
+					console.error('Error al crear la actividad:', err);
+					// Mostrar mensaje de error
+				}
+			});
 		} else {
-			alert('Por favor, complete todos los campos.');
+			alert('Por favor, complete todos los campos correctamente.');
 		}
+	}
+
+	validateActivity(): boolean {
+		return !!this.newActivity.description &&
+			!!this.newActivity.startDate &&
+			!!this.newActivity.endDate &&
+			this.newActivity.price > 0 &&
+			this.newActivity.categoryId > 0 &&
+			this.newActivity.typeId > 0;
 	}
 
 }

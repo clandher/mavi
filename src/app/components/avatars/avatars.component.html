@@ -30,7 +30,7 @@
 
       <button (click)="openNewEventModal()" class="relative z-10 px-6 py-2 rounded-xl text-sm font-medium transition-all duration-300 whitespace-nowrap 
       hover:text-blue-600 hover:scale-105 text-gray-600">
-        Agregar Nuevo Evento
+        Agregar nueva actividad
       </button>
     </div>
   </div>
@@ -50,22 +50,23 @@
         </div>
 
         <!-- Avatares -->
-        <div *ngFor="let avatar of studentActivities" class="relative">
-          <div (click)="selectAvatar(avatar)" [ngClass]="{
-                'border-4 border-blue-500 shadow-lg': selectedAvatar === avatar
+        <div *ngFor="let studentActivity of studentActivities" class="relative">
+          <div (click)="selectAvatar(studentActivity)" [ngClass]="{
+                'border-4 border-blue-500 shadow-lg': selectedStudentActivity === studentActivity
               }"
             class="w-25 h-25 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-300">
-            <img [src]="'https://i.pravatar.cc/150?img=' + avatar.id % 70" alt="Avatar"
+            <img [src]="'https://i.pravatar.cc/150?img=' + studentActivity.id % 70" alt="Avatar"
               class="w-full h-full object-cover" />
           </div>
 
-          <div *ngIf="selectedAvatar === avatar" class="absolute z-30 mt-2 w-48 bg-white rounded-lg shadow-xl">
+          <div *ngIf="selectedStudentActivity === studentActivity"
+            class="absolute z-30 mt-2 w-48 bg-white rounded-lg shadow-xl">
             <ul class="py-2">
-              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="openEditModal(avatar)">
+              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="openEditModal(studentActivity)">
                 Editar
               </li>
               <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="openPaymentModal()">Registrar pago</li>
-              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="toggleSubmenu('registrarPagoEn')">
+              <!-- <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="toggleSubmenu('registrarPagoEn')">
                 Registrar pago en...
                 <ul *ngIf="showSubmenu['registrarPagoEn']" class="pl-4">
                   <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="openPaymentModal()">Entrenamiento
@@ -73,7 +74,7 @@
                   <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="openPaymentModal()">Entrenamiento
                     (Mayo)</li>
                 </ul>
-              </li>
+              </li> -->
               <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="toggleSubmenu('inscribir')">
                 Inscribir a...
                 <ul *ngIf="showSubmenu['inscribir']" class="pl-4">
@@ -82,14 +83,14 @@
                 </ul>
               </li>
 
-              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="toggleSubmenu('Observaciones')">
+              <!-- <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="toggleSubmenu('Observaciones')">
                 Observaciones...
                 <ul *ngIf="showSubmenu['Observaciones']" class="pl-4">
                   <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Control del baló</li>
                   <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Regate</li>
                   <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Cabeceo</li>
                 </ul>
-              </li>
+              </li> -->
             </ul>
           </div>
         </div>
@@ -100,15 +101,70 @@
 
   <!-- Modal de registrar pago -->
   <div *ngIf="showPaymentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white p-6 rounded-lg shadow-xl w-96">
+    <div class="bg-white p-6 rounded-lg shadow-xl w-96 max-h-[80vh] overflow-y-auto">
       <h2 class="text-xl font-semibold mb-4">Registrar Pago</h2>
 
-      <label class="block mb-2">Monto</label>
-      <input type="number" [(ngModel)]="paymentAmount" class="w-full p-2 border rounded-lg mb-3">
+      <!-- Sección de total adeudado -->
+      <div class="bg-gray-100 p-3 rounded-lg mb-4">
+        <div class="flex justify-between items-center">
+          <span class="font-medium">Total adeudado:</span>
+          <span class="text-lg font-bold">{{getTotalDebt() | currency}}</span>
+        </div>
+      </div>
+
+      <div class="mb-4">
+        <label class="block mb-2 font-medium">Monto a pagar</label>
+        <div class="relative">
+          <input type="number" [(ngModel)]="paymentAmount" (input)="updatePaymentDistribution()"
+            [class.border-red-500]="paymentAmount > getTotalDebt()" class="w-full p-2 border rounded-lg mb-1 pr-20"
+            min="0" max="{{getTotalDebt()}}" step="0.01">
+          <button (click)="payFullAmount()"
+            class="absolute right-2 top-2 text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded hover:bg-blue-200 transition">
+            Pagar total
+          </button>
+        </div>
+        <p *ngIf="paymentAmount > getTotalDebt()" class="text-red-500 text-sm">
+          El monto excede el adeudo total
+        </p>
+        <p class="text-sm text-gray-500">
+          Monto restante: {{getTotalDebt() - paymentAmount | currency}}
+        </p>
+      </div>
+
+      <div class="mb-4">
+        <h3 class="font-medium mb-2">Cargos pendientes</h3>
+        <div class="space-y-2">
+          <!-- Ordenados del más viejo al más nuevo (por fecha) -->
+          <div *ngFor="let charge of pendingCharges; let i = index" class="border rounded p-3"
+            [class.bg-blue-50]="isChargeCovered(i)">
+            <div class="flex justify-between">
+              <div>
+                <span class="font-medium">Cargo #{{charge.id}}</span>
+                <span class="text-sm text-gray-500 block">{{charge.chargeDate | date:'dd/MM/yyyy'}}</span>
+              </div>
+              <div class="text-right">
+                <div class="font-medium">{{getCoveredAmount(i) | currency}}</div>
+                <div class="text-sm text-gray-500">{{getRemainingAfterPayment(i) | currency}} pendiente</div>
+              </div>
+            </div>
+            <div *ngIf="isChargePartiallyCovered(i)" class="mt-1">
+              <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+                <div class="h-full bg-blue-500" [style.width.%]="getCoveredPercentage(i)"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       <div class="flex justify-end space-x-2 mt-4">
-        <button (click)="closePaymentModal()" class="bg-gray-400 px-4 py-2 rounded-lg text-white">Cancelar</button>
-        <button (click)="savePayment()" class="bg-blue-500 px-4 py-2 rounded-lg text-white">Guardar</button>
+        <button (click)="closePaymentModal()"
+          class="bg-gray-400 px-4 py-2 rounded-lg text-white hover:bg-gray-500 transition">
+          Cancelar
+        </button>
+        <button (click)="savePayment()" [disabled]="paymentAmount <= 0 || paymentAmount > getTotalDebt()"
+          class="bg-blue-500 px-4 py-2 rounded-lg text-white hover:bg-blue-600 transition disabled:bg-blue-300 disabled:cursor-not-allowed">
+          Guardar
+        </button>
       </div>
     </div>
   </div>
@@ -116,50 +172,152 @@
 
 
   <!-- Modal de edición -->
-  <div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <!-- <div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white p-6 rounded-lg shadow-xl w-96">
-      <h2 class="text-xl font-semibold mb-4">{{mode === 'update' ? 'Actualizar a ' + selectedAvatar.name: 'Nuevo alumno'
+      <h2 class="text-xl font-semibold mb-4">{{mode === 'update' ? 'Actualizar a ' +
+        selectedStudentActivity!.student.name: 'Nuevo alumno'
         }} </h2>
 
       <label class="block mb-2">Nombre</label>
-      <input type="text" [(ngModel)]="selectedAvatar.name" class="w-full p-2 border rounded-lg mb-3">
+      <input type="text" [(ngModel)]="selectedStudentActivity!.student.name" class="w-full p-2 border rounded-lg mb-3">
 
-      <label class="block mb-2">Edad</label>
-      <input type="number" [(ngModel)]="selectedAvatar.age" class="w-full p-2 border rounded-lg mb-3">
-
-      <label class="block mb-2">Posición</label>
-      <input type="text" [(ngModel)]="selectedAvatar.position" class="w-full p-2 border rounded-lg mb-3">
-
-      <label class="block mb-2">Número</label>
-      <input type="text" [(ngModel)]="selectedAvatar.number" class="w-full p-2 border rounded-lg mb-3">
 
       <div class="flex justify-end space-x-2 mt-4">
         <button (click)="closeModal()" class="bg-gray-400 px-4 py-2 rounded-lg text-white">Cancelar</button>
         <button (click)="saveChanges()" class="bg-blue-500 px-4 py-2 rounded-lg text-white">Guardar</button>
       </div>
     </div>
+  </div> -->
+
+  <div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-6 rounded-lg shadow-xl w-96 max-h-[80vh] overflow-y-auto">
+      <h2 class="text-xl font-semibold mb-4">
+        {{ mode === 'update' ? 'Actualizar a ' + selectedStudentActivity!.student.name : 'Agregar alumno' }}
+      </h2>
+
+      <!-- Categoria: {{this.selectedCategory?.type}} <br>
+      Actividad: {{this.selectedActivity?.description}} -->
+
+
+      <div class="form-group">
+        <label for="name">Categoria:</label>
+        <select [(ngModel)]="newCategoryId" name="newCategory" class="category-select"  (change)="onNewCategoryChange()">
+          <option *ngFor="let cat of categories" [value]="cat.id">
+            {{ cat.type }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="name">Actividad:</label>
+        <select [(ngModel)]="newActivityId" name="newAcitivity" class="category-select">
+          <option *ngFor="let act of newActivities" [value]="act.id">
+            {{ act.description }}
+          </option>
+        </select>
+      </div>
+
+
+
+
+
+
+      <!-- Tabs -->
+      <div class="flex border-b mb-4">
+        <button (click)="activeTab = 'existing'"
+          [class]="activeTab === 'existing' ? 'border-b-2 border-blue-500 font-medium' : 'text-gray-500'"
+          class="px-4 py-2 focus:outline-none">
+          Seleccionar existente
+        </button>
+        <button (click)="activeTab = 'new'"
+          [class]="activeTab === 'new' ? 'border-b-2 border-blue-500 font-medium' : 'text-gray-500'"
+          class="px-4 py-2 focus:outline-none">
+          Crear nuevo
+        </button>
+      </div>
+
+      <!-- Contenido de los tabs -->
+      <div *ngIf="activeTab === 'existing'">
+        <!-- Tab de estudiantes existentes -->
+        <div class="mb-4">
+          <label class="block mb-2">Buscar estudiante</label>
+          <input type="text" [(ngModel)]="searchTerm" (input)="filterStudents()" placeholder="Buscar por nombre..."
+            class="w-full p-2 border rounded-lg mb-3">
+        </div>
+
+        <div class="max-h-60 overflow-y-auto mb-4">
+          <div *ngFor="let student of filteredStudents" (click)="selectStudent(student)"
+            [class.bg-blue-50]="selectedExistingStudent?.id === student.id"
+            class="p-3 border-b cursor-pointer hover:bg-gray-50 flex justify-between items-center">
+            <span>{{ student.name }}</span>
+            <span class="text-sm text-gray-500">{{ getAge(student.birthdate) }} años</span>
+          </div>
+          <div *ngIf="filteredStudents.length === 0" class="text-center py-4 text-gray-500">
+            No se encontraron estudiantes
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="activeTab === 'new'">
+        <!-- Tab para crear nuevo estudiante -->
+        <div class="mb-4">
+          <label class="block mb-2">Nombre</label>
+          <input type="text" [(ngModel)]="newStudent.name" class="w-full p-2 border rounded-lg mb-3"
+            placeholder="Nombre completo del estudiante">
+        </div>
+
+        <div class="mb-4">
+          <label class="block mb-2">Fecha de nacimiento</label>
+          <input type="date" [max]="getFormattedDate(maxBirthdate)" [(ngModel)]="newStudent.birthdate"
+            class="w-full p-2 border rounded-lg mb-3">
+        </div>
+      </div>
+
+      <div class="flex justify-end space-x-2 mt-4">
+        <button (click)="closeModal()" class="bg-gray-400 px-4 py-2 rounded-lg text-white">Cancelar</button>
+        <button (click)="saveChanges()"
+          [disabled]="(activeTab === 'existing' && !selectedExistingStudent) || (activeTab === 'new' && !newStudent.name)"
+          class="bg-blue-500 px-4 py-2 rounded-lg text-white disabled:bg-blue-300">
+          {{ activeTab === 'existing' ? 'Seleccionar' : 'Crear y agregar' }}
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- Modal de agregar nuevo evento -->
+  <!-- Modal HTML actualizado -->
   <div *ngIf="newEventModalVisible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white p-6 rounded-lg shadow-xl w-96">
-      <h2 class="text-xl font-semibold mb-4">Nuevo Evento</h2>
+      <h2 class="text-xl font-semibold mb-4">Nueva actividad</h2>
 
-      <label class="block mb-2">Nombre del Evento</label>
-      <input type="text" [(ngModel)]="newEventName" class="w-full p-2 border rounded-lg mb-3">
+      <label class="block mb-2">Descripción</label>
+      <input type="text" [(ngModel)]="newActivity.description" class="w-full p-2 border rounded-lg mb-3">
+
+      <label class="block mb-2">Categoría</label>
+      <select [(ngModel)]="newActivity.categoryId" class="w-full p-2 border rounded-lg mb-3">
+        <option *ngFor="let category of categories" [value]="category.id">{{ category.type }}</option>
+      </select>
+
+      <label class="block mb-2">Tipo de Actividad</label>
+      <select [(ngModel)]="newActivity.typeId" class="w-full p-2 border rounded-lg mb-3">
+        <option *ngFor="let type of activityTypes" [value]="type.id">{{ type.key }}</option>
+      </select>
 
       <label class="block mb-2">Fecha de Inicio</label>
-      <input type="date" [(ngModel)]="newEventStartDate" class="w-full p-2 border rounded-lg mb-3">
+      <input type="datetime-local" [(ngModel)]="newActivity.startDate" class="w-full p-2 border rounded-lg mb-3">
 
       <label class="block mb-2">Fecha de Fin</label>
-      <input type="date" [(ngModel)]="newEventEndDate" class="w-full p-2 border rounded-lg mb-3">
+      <input type="datetime-local" [(ngModel)]="newActivity.endDate" class="w-full p-2 border rounded-lg mb-3">
 
-      <label class="block mb-2">Costo</label>
-      <input type="number" [(ngModel)]="newEventCost" class="w-full p-2 border rounded-lg mb-3">
+      <label class="block mb-2">Período de gracia (días)</label>
+      <input type="number" [(ngModel)]="newActivity.gracePeriod" class="w-full p-2 border rounded-lg mb-3">
+
+      <label class="block mb-2">Precio</label>
+      <input type="number" step="0.01" [(ngModel)]="newActivity.price" class="w-full p-2 border rounded-lg mb-3">
 
       <div class="flex justify-end space-x-2 mt-4">
         <button (click)="closeNewEventModal()" class="bg-gray-400 px-4 py-2 rounded-lg text-white">Cancelar</button>
-        <button (click)="saveNewEvent()" class="bg-blue-500 px-4 py-2 rounded-lg text-white">Guardar</button>
+        <button (click)="saveNewActivity()" class="bg-blue-500 px-4 py-2 rounded-lg text-white">Guardar</button>
       </div>
     </div>
   </div>

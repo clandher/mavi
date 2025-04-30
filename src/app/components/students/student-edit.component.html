@@ -1,0 +1,64 @@
+<!-- student-edit.component.html -->
+<div class="student-edit-container">
+    <div class="edit-header">
+        <h2>Editar Estudiante</h2>
+        <button routerLink="/app/students" class="btn btn-back">← Volver</button>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-indicator">
+        Cargando información del estudiante...
+    </div>
+
+    <form *ngIf="!isLoading" (ngSubmit)="saveStudent()" class="student-form">
+        <div class="form-group">
+            <label for="name">Nombre:</label>
+            <input id="name" type="text" [(ngModel)]="student.name" name="name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="birthdate">Fecha de Nacimiento:</label>
+            <input id="birthdate" type="date" [value]="getFormattedDate(student.birthdate)"
+                (input)="setDateFromString($event)" name="birthdate" [max]="getFormattedDate(maxBirthdate)" required>
+        </div>
+
+        <!-- <div class="form-group">
+            <label for="debt">Deuda:</label>
+            <input id="debt" type="number" [(ngModel)]="student.debt" name="debt" step="0.01" min="0">
+        </div> -->
+
+
+        @if( !this.isNewStudent){
+        <div class="form-group">
+            <label>Categorías:</label>
+            <div class="categories-list">
+                <div *ngFor="let sc of student.categories" class="category-item">
+                    <span>
+                        {{sc.category?.type}}
+                    </span>
+                    <button type="button" class="btn-remove" (click)="removeCategory(sc.id)">
+                        ×
+                    </button>
+                </div>
+
+                <div *ngIf="availableCategories.length > 0" class="add-category">
+                    <select [(ngModel)]="newCategoryId" name="newCategory" class="category-select">
+                        <option *ngFor="let cat of availableCategories" [value]="cat.id">
+                            {{ cat.type }}
+                        </option>
+                    </select>
+                    <button type="button" class="btn-add" (click)="addCategory()">
+                        + Añadir Categoría
+                    </button>
+                </div>
+            </div>
+        </div>
+        }
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-save" [disabled]="isSaving">
+                <span *ngIf="!isSaving">Guardar Cambios</span>
+                <span *ngIf="isSaving">Guardando...</span>
+            </button>
+        </div>
+    </form>
+</div>

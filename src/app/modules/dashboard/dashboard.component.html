@@ -1,8 +1,15 @@
-<!-- dashboard.component.html -->
 <div class="dashboard-container">
-    <!-- Header with user menu -->
     <header class="dashboard-header">
-        <h1>Dashboard</h1>
+        <div class="header-left">
+            <h1>School Management</h1>
+            
+            <nav class="main-nav">
+                <ul>
+                    <li><a routerLink="/app/students" routerLinkActive="active">Estudiantes</a></li>
+                    <li><a routerLink="/app/avatars" routerLinkActive="active">Avatares</a></li>
+                </ul>
+            </nav>
+        </div>
 
         <div class="user-menu" *ngIf="authService.currentUser">
             <button class="user-menu-toggle" (click)="toggleMenu()">
@@ -19,22 +26,8 @@
             </div>
         </div>
     </header>
-
-    <!-- Main content -->
-    <!-- <main class="dashboard-content">
-            <h2>Bienvenido a tu panel de control</h2>
-            <p>Aquí puedes gestionar tu cuenta y acceder a todas las funcionalidades.</p>
-
-            <div class="stats-cards">
-                <div class="card">
-                    <h3>Actividad reciente</h3>
-                    <p>No hay actividad reciente</p>
-                </div>
-                <div class="card">
-                    <h3>Notificaciones</h3>
-                    <p>0 nuevas notificaciones</p>
-                </div>
-            </div>
-        </main> -->
-    <router-outlet></router-outlet>
+    
+    <main class="dashboard-content">
+        <router-outlet></router-outlet>
+    </main>
 </div>

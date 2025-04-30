@@ -1,0 +1,88 @@
+<!-- student-list.component.html -->
+<div class="student-list-container">
+    <div class="student-list-header">
+        <h2>Listado de Estudiantes</h2>
+        
+        <div class="student-actions">
+            <a routerLink="/app/students/new" class="btn btn-primary">
+                <span>➕</span> Nuevo Estudiante
+            </a>
+        </div>
+    </div>
+
+    <div class="student-filters">
+        <div class="filter-group">
+            <label for="search">Buscar:</label>
+            <input 
+                id="search" 
+                type="text" 
+                [(ngModel)]="searchTerm" 
+                (input)="filterStudents()" 
+                placeholder="Nombre del estudiante">
+        </div>
+        
+        <div class="filter-group">
+            <label for="category">Filtrar por categoría:</label>
+            <select 
+                id="category" 
+                [(ngModel)]="selectedCategory" 
+                (change)="filterStudents()">
+                <option [value]="null">Todas las categorías</option>
+                <option *ngFor="let category of allCategories" [value]="category.id">
+                    {{ category.type }}
+                </option>
+            </select>
+        </div>
+    </div>
+
+    <div *ngIf="isLoading" class="loading-indicator">
+        Cargando estudiantes...
+    </div>
+
+    <div *ngIf="!isLoading && filteredStudents.length === 0" class="no-results">
+        No se encontraron estudiantes que coincidan con los criterios de búsqueda.
+    </div>
+
+    <div class="student-grid">
+        <div *ngFor="let student of filteredStudents" class="student-card">
+            <div class="student-card-header">
+                <h3>{{ student.name }}</h3>
+                <span class="student-age">{{ calculateAge(student.birthdate) }} años</span>
+            </div>
+            
+            <div class="student-details">
+                <div class="detail-row">
+                    <span class="detail-label">Deuda:</span>
+                    <span class="detail-value" [class.high-debt]="student.debt > 0">
+                        {{ student.debt | currency }}
+                    </span>
+                </div>
+                
+                <div class="detail-row">
+                    <span class="detail-label">Categorías:</span>
+                    <div class="student-categories">
+                        <span *ngFor="let sc of student.categories" class="category-badge">
+                            {{ getCategoryName(sc.categoryId) }}
+                            <button 
+                                class="remove-category" 
+                                (click)="removeCategory(sc.id)">
+                                ×
+                            </button>
+                        </span>
+                        <span *ngIf="!student.categories?.length" class="no-categories">
+                            Sin categorías
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="student-actions">
+                <a 
+                    [routerLink]="['/app/students', student.id, 'edit']" 
+                    class="btn btn-edit">
+                    Editar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

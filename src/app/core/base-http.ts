@@ -33,7 +33,7 @@ export class BaseHttp {
         return this.http.patch<TResponse>(url, body);
     }
 
-    delete<TResponse>(path: string): Observable<TResponse> {
+    delete<TResponse>(): Observable<TResponse> {
         const url = buildUrl(this.path);
         return this.http.delete<TResponse>(url);
     }

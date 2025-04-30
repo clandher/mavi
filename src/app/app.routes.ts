@@ -3,36 +3,47 @@ import { authGuard } from '@app/core/guards/auth.guard';
 import { guestGuard } from '@app/core/guards/guest.guard';
 
 export const routes: Routes = [
-    // Ruta de login (pública)
     {
         path: 'login',
         loadComponent: () => import('./modules/login/login.component').then(m => m.LoginComponent),
-        canActivate: [guestGuard] // Solo para no autenticados
+        canActivate: [guestGuard]
     },
-
-    // Área privada (dashboard como layout padre)
     {
         path: 'app',
         loadComponent: () => import('./modules/dashboard/dashboard.component').then(m => m.DashboardComponent),
-        canActivate: [authGuard], // Requiere autenticación
+        canActivate: [authGuard],
         children: [
             {
-                path: 'avatars', // Añade una ruta específica
+                path: 'avatars',
                 loadComponent: () => import('./components/avatars/avatars.component').then(m => m.AvatarsComponent),
                 title: 'Avatars'
             },
             {
+                path: 'students',
+                loadComponent: () => import('./components/students/student-list.component').then(m => m.StudentListComponent),
+                title: 'Estudiantes'
+            },
+            {
+                path: 'students/new',
+                loadComponent: () => import('./components/students/student-edit.component').then(m => m.StudentEditComponent),
+                title: 'Nuevo Estudiante',
+                canActivate: [authGuard]
+            },
+            {
+                path: 'students/:id/edit',
+                loadComponent: () => import('./components/students/student-edit.component').then(m => m.StudentEditComponent),
+                title: 'Editar Estudiante'
+            },
+            {
                 path: '',
-                redirectTo: 'avatars', // Redirige a avatars por defecto
+                redirectTo: 'avatars',
                 pathMatch: 'full'
             }
         ]
     },
-
-    // Redirecciones
     {
         path: '',
-        redirectTo: 'app', // O 'login' si prefieres
+        redirectTo: 'app',
         pathMatch: 'full'
     },
     {
