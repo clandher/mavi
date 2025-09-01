@@ -1,33 +1,43 @@
-<div class="student-edit-container">
-    <div class="edit-header">
-        <button routerLink="/app/students" class="btn btn-back">← Volver</button>
-        <h2>Editar Estudiante</h2>
-    </div>
+<div class="bg-white shadow p-6">
 
-    <div class="flex border-b mb-4">
-        <a
-            routerLink="info"
-            routerLinkActive="border-blue-500 text-blue-600 font-semibold"
-            [routerLinkActiveOptions]="{ exact: true }"
-            class="px-4 py-2 -mb-px border-b-2 transition-colors duration-300 focus:outline-none border-transparent text-gray-500"
-        >
-            Información General
-        </a>
-        <a
-            routerLink="activities"
-            routerLinkActive="border-blue-500 text-blue-600 font-semibold"
-            class="px-4 py-2 -mb-px border-b-2 transition-colors duration-300 focus:outline-none border-transparent text-gray-500"
-        >
-            Actividades
-        </a>
-        <a
-            routerLink="payments"
-            routerLinkActive="border-blue-500 text-blue-600 font-semibold"
-            class="px-4 py-2 -mb-px border-b-2 transition-colors duration-300 focus:outline-none border-transparent text-gray-500"
-        >
-            Pagos
-        </a>
-    </div>
 
-    <router-outlet></router-outlet>
+    <form (ngSubmit)="saveStudent()" class="student-form">
+        <div class="form-group">
+            <label for="name">Nombre:</label>
+            <input id="name" type="text" [(ngModel)]="student.name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="birthdate">Fecha de Nacimiento:</label>
+            <input id="birthdate" type="date" [(ngModel)]="student.birthdate" name="birthdate" required>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-save" [disabled]="isSaving">
+                <span *ngIf="!isSaving">Guardar Cambios</span>
+                <span *ngIf="isSaving">Guardando...</span>
+            </button>
+        </div>
+    </form>
 </div>
+
+<br>
+@if (student.id !== 0){
+<div class="bg-black flex">
+    <a routerLink="info" routerLinkActive="border-blue-500 text-blue-600 font-semibold bg-blue-50 border-b-4"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="px-4 py-2 -mb-px border-b-2 focus:outline-none border-transparent text-gray-500 flex-1 text-center">
+        Información General
+    </a>
+    <a routerLink="activities" routerLinkActive="border-blue-500 text-blue-600 font-semibold bg-blue-50 border-b-4"
+        class="px-4 py-2 -mb-px border-b-2focus:outline-none border-transparent text-gray-500 flex-1 text-center">
+        Actividades
+    </a>
+    <a routerLink="payments" routerLinkActive="border-blue-500 text-blue-600 font-semibold bg-blue-50 border-b-4"
+        class="px-4 py-2 -mb-px border-b-2 focus:outline-none border-transparent text-gray-500 flex-1 text-center">
+        Pagos
+    </a>
+</div>
+
+<br>
+
+<router-outlet></router-outlet>
+}

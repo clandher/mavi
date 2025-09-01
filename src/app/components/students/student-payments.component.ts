@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BaseHttp } from '@app/core/base-http';
-import { Charge } from '@app/core/dto';
+import { Charge, Student } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { StudentPaymentHttp } from 'src/app/core/student-payment-http';
 import { PaymentComponent } from "../payment/payment.component";
@@ -40,12 +40,6 @@ export class StudentPaymentsComponent implements OnInit {
 
 }
 
-export interface Student {
-  id: number;
-  name: string;
-  birthdate: string;
-  debt: number;
-}
 
 export interface Activity {
   id: number;

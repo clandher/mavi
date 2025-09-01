@@ -1,5 +1,11 @@
+<div class="flex items-end justify-end mb-6">
+  <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+    (click)="showPaymentModal = true">
+    Registrar pago
+  </button>
+</div>
 <div *ngIf="paymentsWithChargers.length > 0" class="space-y-6">
-  <div *ngFor="let pago of paymentsWithChargers" class="bg-white shadow rounded-lg p-6">
+  <div *ngFor="let pago of paymentsWithChargers" class="bg-white shadow p-6">
     <div class="flex justify-between items-center mb-4">
       <div>
         <div class="text-lg font-semibold text-gray-800">Pago de ${{ pago.amount }}</div>
@@ -41,8 +47,6 @@
 <div *ngIf="paymentsWithChargers.length === 0" class="text-gray-500 text-center py-8">
   No hay pagos registrados.
 </div>
-
-<li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="showPaymentModal = true">Registrar pago</li>
 <div class="w-full h-lvh overflow-y-auto">
   <div *ngIf="showPaymentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <app-payment [studentId]="+studentId!" (close)="showPaymentModal = false"></app-payment>
