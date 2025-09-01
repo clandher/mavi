@@ -26,9 +26,10 @@ export class Student {
 
     name!: string;
 
-    birthdate!: Date;
+    birthdate!: string;
 
     debt!: number;
+    photo!: string;
 
     categories!: StudentCategory[];
 

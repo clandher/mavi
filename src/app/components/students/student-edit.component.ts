@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { BaseHttp } from '@app/core/base-http';
+import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { CreateStudentDto, Student, UpdateStudentDto } from '@app/core/dto';
 
 @Component({
@@ -15,17 +15,17 @@ import { CreateStudentDto, Student, UpdateStudentDto } from '@app/core/dto';
 })
 export class StudentEditComponent {
 
-
     isSaving = false;
 
     student: Student = {
         id: 0,
         name: '',
-        birthdate: new Date(),
+        birthdate: '',
         debt: 0,
         categories: [],
         activities: [],
         payments: [],
+        photo: '',
     };
 
     constructor(
@@ -34,7 +34,6 @@ export class StudentEditComponent {
         private http: HttpClient
     ) {
     }
-
 
 
     ngAfterViewInit(): void {
@@ -58,19 +57,16 @@ export class StudentEditComponent {
         }
     }
 
-
-
     private updateStudent(): void {
         const studentsAPI = new BaseHttp(`students/${this.student.id}`, this.http);
         const updateStudentDto: UpdateStudentDto = {
             name: this.student.name,
-            birthdate: this.student.birthdate,
+            birthdate: new Date(this.student.birthdate),
         };
 
         studentsAPI.patch(updateStudentDto).subscribe({
             next: () => {
                 this.isSaving = false;
-                this.router.navigate(['/app/students']);
             },
             error: (err) => {
                 console.error('Error saving student', err);
@@ -79,13 +75,11 @@ export class StudentEditComponent {
         });
     }
 
-
-
     private createStudent(): void {
         const studentsAPI = new BaseHttp('students', this.http);
         const createStudentDto: CreateStudentDto = {
             name: this.student.name,
-            birthdate: this.student.birthdate
+            birthdate: new Date(this.student.birthdate),
         };
 
         studentsAPI.post<CreateStudentDto, Student>(createStudentDto).subscribe({
@@ -101,13 +95,13 @@ export class StudentEditComponent {
         });
     }
 
-
     loadStudent(id: number): void {
 
         const studentsAPI = new BaseHttp(`students/${id}`, this.http);
         studentsAPI.get<Student>().subscribe({
             next: (student) => {
-                student.birthdate = new Date(student.birthdate);
+                student.birthdate = new Date(student.birthdate).toISOString().slice(0, 10);
+                student.photo = buildUrl(`students/${id}/photo`);
                 this.student = student;
             },
             error: (err) => {
@@ -115,5 +109,36 @@ export class StudentEditComponent {
                 this.router.navigate(['/app/students']);
             }
         });
+    }
+
+    uploadPhoto(file: File): void {
+        if (!file || !this.student.id) return;
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const studentsAPI = new BaseHttp(`students/${this.student.id}/upload`, this.http);
+        studentsAPI.post<FormData, any>(formData).subscribe({
+            next: (res) => {
+                // Opcional: actualizar photoUrl si el backend lo regresa
+                this.student.photo = res.filePath || this.student.photo;
+            },
+            error: (err) => {
+                console.error('Error uploading photo', err);
+            }
+        });
+    }
+
+    onPhotoSelected(event: Event) {
+        const file = (event.target as HTMLInputElement).files?.[0];
+        if (file) {
+            this.uploadPhoto(file);
+            // Si quieres mostrar preview local:
+            const reader = new FileReader();
+            reader.onload = () => {
+                this.student.photo = reader.result as string;
+            };
+            reader.readAsDataURL(file);
+        }
     }
 }

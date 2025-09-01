@@ -1,18 +1,22 @@
 <div class="bg-white shadow p-6">
+    <button routerLink="/app/students" class="btn btn-back">← Volver</button>
+    <br>
+    <br>
 
+    <form (ngSubmit)="saveStudent()" class="mavi-form horizontal-form">
+        <label for="photo" class="photo-label">
+            <img *ngIf="student.photo; else placeholder" [src]="student.photo" class="student-photo" alt="Foto">
+            <ng-template #placeholder>
+                <div class="photo-placeholder">+</div>
+            </ng-template>
+            <input id="photo" type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden>
+        </label>
+        <input id="name" type="text" [(ngModel)]="student.name" name="name" required placeholder="Nombre">
+        <input id="birthdate" type="date" [(ngModel)]="student.birthdate" name="birthdate" required>
 
-    <form (ngSubmit)="saveStudent()" class="student-form">
-        <div class="form-group">
-            <label for="name">Nombre:</label>
-            <input id="name" type="text" [(ngModel)]="student.name" name="name" required>
-        </div>
-        <div class="form-group">
-            <label for="birthdate">Fecha de Nacimiento:</label>
-            <input id="birthdate" type="date" [(ngModel)]="student.birthdate" name="birthdate" required>
-        </div>
         <div class="form-actions">
             <button type="submit" class="btn btn-save" [disabled]="isSaving">
-                <span *ngIf="!isSaving">Guardar Cambios</span>
+                <span *ngIf="!isSaving">Guardar</span>
                 <span *ngIf="isSaving">Guardando...</span>
             </button>
         </div>
