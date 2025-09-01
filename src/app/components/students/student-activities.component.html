@@ -1,0 +1,40 @@
+<!-- student-activities.component.html -->
+<div class="activities-container">
+  <div *ngIf="loading">Cargando actividades...</div>
+  <div *ngIf="!loading && activities.length === 0">No hay actividades inscritas.</div>
+  <div *ngIf="!loading && activities.length > 0">
+    <ul class="activity-list">
+      <li *ngFor="let act of activities" class="activity-card">
+        <h3>{{ act.activity.description }}</h3>
+        <p><strong>Fecha de inscripción:</strong> {{ act.registrationDate | date:'medium' }}</p>
+        <p><strong>Inicio:</strong> {{ act.activity.startDate | date:'mediumDate' }}</p>
+        <p><strong>Fin:</strong> {{ act.activity.endDate | date:'mediumDate' }}</p>
+        <p><strong>Precio:</strong> ${{ act.activity.price }}</p>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<style>
+  .activities-container {
+    max-width: 600px;
+    margin: auto;
+  }
+
+  .activity-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .activity-card {
+    background: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    padding: 16px;
+    box-shadow: 0 2px 8px #eee;
+  }
+
+  .activity-card h3 {
+    margin-top: 0;
+  }
+</style>

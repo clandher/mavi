@@ -33,6 +33,7 @@ export class Student {
     categories!: StudentCategory[];
 
     activities!: StudentActivity[];
+    payments!: PaymentEntity[];
 }
 
 

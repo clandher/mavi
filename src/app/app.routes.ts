@@ -27,12 +27,30 @@ export const routes: Routes = [
                 path: 'students/new',
                 loadComponent: () => import('./components/students/student-edit.component').then(m => m.StudentEditComponent),
                 title: 'Nuevo Estudiante',
-                canActivate: [authGuard]
             },
             {
                 path: 'students/:id/edit',
                 loadComponent: () => import('./components/students/student-edit.component').then(m => m.StudentEditComponent),
-                title: 'Editar Estudiante'
+                title: 'Editar Estudiante',
+                children: [
+                    {
+                        path: '',
+                        redirectTo: 'info',
+                        pathMatch: 'full'
+                    },
+                    {
+                        path: 'info',
+                        loadComponent: () => import('./components/students/student-info.component').then(m => m.StudentInfoComponent)
+                    },
+                    {
+                        path: 'activities',
+                        loadComponent: () => import('./components/students/student-activities.component').then(m => m.StudentActivitiesComponent)
+                    },
+                    {
+                        path: 'payments',
+                        loadComponent: () => import('./components/students/student-payments.component').then(m => m.StudentPaymentsComponent)
+                    }
+                ]
             },
             {
                 path: '',

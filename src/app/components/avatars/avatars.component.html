@@ -1,6 +1,6 @@
 <div class="w-full max-w-md">
   <label for="categories" class="block text-sm font-bold text-gray-900 dark:text-gray-100 mb-1">
-    Selecciona una categoría:
+    Categoría:
   </label>
   <select id="categories" name="categories" [(ngModel)]="selectedCategoryId" (change)="onCategoryChange()"
     class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-2 border-gray-800 dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
@@ -10,19 +10,17 @@
     </option>
   </select>
 </div>
+<br>
 
-
-<div class="p-4 bg-black w-full  h-lvh overflow-y-auto">
+<div class=" w-full  h-lvh overflow-y-auto">
 
   <div class="relative w-full overflow-x-auto scrollbar-none pb-3">
-    <div class="flex space-x-3 px-2 py-2 bg-gray-100 rounded-xl shadow-md overflow-x-auto scrollbar-none relative">
-      <div
-        class="absolute top-1/2 left-0 -translate-y-1/2 transition-all duration-300 ease-out bg-blue-500 h-10 rounded-xl"
-        [style.width.px]="highlightWidth" [style.transform]="'translateX(' + highlightPosition + 'px)'">
+    <div class="flex space-x-3 px-2 py-2 bg-gray-100 shadow-md overflow-x-auto scrollbar-none relative">
+      <div class="" [style.width.px]="highlightWidth">
       </div>
       <button *ngFor="let activity of activities; let i = index" (click)="onActivityChange(activity.id, i)" #btn class="relative z-10 px-6 py-2 rounded-xl text-sm font-medium transition-all duration-300 whitespace-nowrap 
                hover:text-blue-600 hover:scale-105" [ngClass]="{
-          'text-white': selectedActivityId === activity.id,
+          'text-blue-600': selectedActivityId === activity.id,
           'text-gray-600': selectedActivityId !== activity.id
         }">
         {{ activity.description }}
@@ -30,7 +28,7 @@
 
       <button (click)="openNewEventModal()" class="relative z-10 px-6 py-2 rounded-xl text-sm font-medium transition-all duration-300 whitespace-nowrap 
       hover:text-blue-600 hover:scale-105 text-gray-600">
-        Agregar nueva actividad
+        Nueva actividad
       </button>
     </div>
   </div>
@@ -100,79 +98,17 @@
   </div>
 
   <!-- Modal de registrar pago -->
+
+
   <div *ngIf="showPaymentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white p-6 rounded-lg shadow-xl w-96 max-h-[80vh] overflow-y-auto">
-      <h2 class="text-xl font-semibold mb-4">Registrar Pago</h2>
-
-      <!-- Sección de total adeudado -->
-      <div class="bg-gray-100 p-3 rounded-lg mb-4">
-        <div class="flex justify-between items-center">
-          <span class="font-medium">Total adeudado:</span>
-          <span class="text-lg font-bold">{{getTotalDebt() | currency}}</span>
-        </div>
-      </div>
-
-      <div class="mb-4">
-        <label class="block mb-2 font-medium">Monto a pagar</label>
-        <div class="relative">
-          <input type="number" [(ngModel)]="paymentAmount" (input)="updatePaymentDistribution()"
-            [class.border-red-500]="paymentAmount > getTotalDebt()" class="w-full p-2 border rounded-lg mb-1 pr-20"
-            min="0" max="{{getTotalDebt()}}" step="0.01">
-          <button (click)="payFullAmount()"
-            class="absolute right-2 top-2 text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded hover:bg-blue-200 transition">
-            Pagar total
-          </button>
-        </div>
-        <p *ngIf="paymentAmount > getTotalDebt()" class="text-red-500 text-sm">
-          El monto excede el adeudo total
-        </p>
-        <p class="text-sm text-gray-500">
-          Monto restante: {{getTotalDebt() - paymentAmount | currency}}
-        </p>
-      </div>
-
-      <div class="mb-4">
-        <h3 class="font-medium mb-2">Cargos pendientes</h3>
-        <div class="space-y-2">
-          <!-- Ordenados del más viejo al más nuevo (por fecha) -->
-          <div *ngFor="let charge of pendingCharges; let i = index" class="border rounded p-3"
-            [class.bg-blue-50]="isChargeCovered(i)">
-            <div class="flex justify-between">
-              <div>
-                <span class="font-medium">Cargo #{{charge.id}}</span>
-                <span class="text-sm text-gray-500 block">{{charge.chargeDate | date:'dd/MM/yyyy'}}</span>
-              </div>
-              <div class="text-right">
-                <div class="font-medium">{{getCoveredAmount(i) | currency}}</div>
-                <div class="text-sm text-gray-500">{{getRemainingAfterPayment(i) | currency}} pendiente</div>
-              </div>
-            </div>
-            <div *ngIf="isChargePartiallyCovered(i)" class="mt-1">
-              <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
-                <div class="h-full bg-blue-500" [style.width.%]="getCoveredPercentage(i)"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="flex justify-end space-x-2 mt-4">
-        <button (click)="closePaymentModal()"
-          class="bg-gray-400 px-4 py-2 rounded-lg text-white hover:bg-gray-500 transition">
-          Cancelar
-        </button>
-        <button (click)="savePayment()" [disabled]="paymentAmount <= 0 || paymentAmount > getTotalDebt()"
-          class="bg-blue-500 px-4 py-2 rounded-lg text-white hover:bg-blue-600 transition disabled:bg-blue-300 disabled:cursor-not-allowed">
-          Guardar
-        </button>
-      </div>
-    </div>
+    <app-payment [studentId]="selectedStudentActivity?.student?.id!" (close)="closePaymentModal()">
+    </app-payment>
   </div>
 
 
 
   <!-- Modal de edición -->
-  <!-- <div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div *ngIf="showEditModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white p-6 rounded-lg shadow-xl w-96">
       <h2 class="text-xl font-semibold mb-4">{{mode === 'update' ? 'Actualizar a ' +
         selectedStudentActivity!.student.name: 'Nuevo alumno'
@@ -183,14 +119,14 @@
 
 
       <div class="flex justify-end space-x-2 mt-4">
-        <button (click)="closeModal()" class="bg-gray-400 px-4 py-2 rounded-lg text-white">Cancelar</button>
-        <button (click)="saveChanges()" class="bg-blue-500 px-4 py-2 rounded-lg text-white">Guardar</button>
+        <button (click)="closeUpdateModal()" class="bg-gray-400 px-4 py-2 rounded-lg text-white">Cancelar</button>
+        <button (click)="saveUpdateChanges()" class="bg-blue-500 px-4 py-2 rounded-lg text-white">Guardar</button>
       </div>
     </div>
-  </div> -->
+  </div>
 
   <div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white p-6 rounded-lg shadow-xl w-96 max-h-[80vh] overflow-y-auto">
+    <div class="bg-white p-6 rounded-lg shadow-xl min-w-[40vw] max-h-[80vh] overflow-y-auto">
       <h2 class="text-xl font-semibold mb-4">
         {{ mode === 'update' ? 'Actualizar a ' + selectedStudentActivity!.student.name : 'Agregar alumno' }}
       </h2>
@@ -201,7 +137,7 @@
 
       <div class="form-group">
         <label for="name">Categoria:</label>
-        <select [(ngModel)]="newCategoryId" name="newCategory" class="category-select"  (change)="onNewCategoryChange()">
+        <select [(ngModel)]="newCategoryId" name="newCategory" class="category-select" (change)="onNewCategoryChange()">
           <option *ngFor="let cat of categories" [value]="cat.id">
             {{ cat.type }}
           </option>
@@ -245,14 +181,14 @@
             class="w-full p-2 border rounded-lg mb-3">
         </div>
 
-        <div class="max-h-60 overflow-y-auto mb-4">
+        <div class="grid grid-cols-3 gap-3 mb-4 max-h-60 overflow-y-scroll">
           <div *ngFor="let student of filteredStudents" (click)="selectStudent(student)"
-            [class.bg-blue-50]="selectedExistingStudent?.id === student.id"
-            class="p-3 border-b cursor-pointer hover:bg-gray-50 flex justify-between items-center">
+            [class.bg-blue-500]="selectedExistingStudent?.id === student.id"
+            class="p-3 border cursor-pointer hover:font-bold flex flex-col justify-between items-center">
             <span>{{ student.name }}</span>
-            <span class="text-sm text-gray-500">{{ getAge(student.birthdate) }} años</span>
+            <span class="text-sm text-gray-500">Edad {{ getAge(student.birthdate) }}</span>
           </div>
-          <div *ngIf="filteredStudents.length === 0" class="text-center py-4 text-gray-500">
+          <div *ngIf="filteredStudents.length === 0" class="col-span-3 text-center py-4 text-gray-500">
             No se encontraron estudiantes
           </div>
         </div>
