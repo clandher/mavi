@@ -6,6 +6,7 @@ import { BaseHttp } from '@app/core/base-http';
 import { Activity, ActivityType, ApiRes, Category, Charge, CreateActivityDto, CreatePaymentDto, PaymentEntity, Student, StudentActivity } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { PaymentComponent } from "../payment/payment.component";
+import { Router } from '@angular/router';
 
 @Component({
 	selector: 'app-avatars',
@@ -26,7 +27,6 @@ export class AvatarsComponent {
 	public fakeNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
 
 
-	public showEditModal: boolean = false;
 
 	public selectedStudentActivity: StudentActivity | null = null;
 	public showSubmenu: { [key: string]: boolean } = {};
@@ -192,8 +192,9 @@ export class AvatarsComponent {
 	}
 
 	constructor(
-		// private studentService: StudentService, // Asume que tienes un servicio para estudiantes
-		private http: HttpClient) {
+		private router: Router,
+		private http: HttpClient,
+	) {
 
 		const categories = new BaseHttp(`categories`, this.http);
 		categories.get<Category[]>().subscribe(result => {
@@ -239,8 +240,9 @@ export class AvatarsComponent {
 	openEditModal(studentActivity: StudentActivity): void {
 		this.mode = 'update';
 
+
+		this.router.navigate([`/app/students/${studentActivity.student.id}/edit/info`]);
 		this.selectedStudentActivity = { ...studentActivity }; // Clonamos para no modificar directamente
-		this.showEditModal = true;
 	}
 
 	// Método para cerrar el modal
@@ -248,36 +250,7 @@ export class AvatarsComponent {
 		this.showModal = false;
 	}
 
-	closeUpdateModal(): void {
-		this.showEditModal = false;
-	}
-
-	// Método para guardar los cambios
-	saveUpdateChanges(): void {
-
-		const student = {
-			name: this.selectedStudentActivity!.student.name
-		};
-
-		const studentsAPI = new BaseHttp(`students/${this.selectedStudentActivity!.student.id}`, this.http);
-		// delete (student as any).id;
-		studentsAPI.patch(student).subscribe(result => {
-
-			this.showEditModal = false;
-			// this.studentActivities = result;
-
-			// this.activities = result.data;
-
-			// if (this.activities.length) {
-			// 	this.onActivityChange(this.activities[0].id, 0);
-			// }
-		});
-
-	}
-
 	saveChanges(): void {
-
-
 
 		if (this.activeTab === 'existing' && this.selectedExistingStudent) {
 			// Lógica para agregar estudiante existente a la actividad
@@ -433,7 +406,7 @@ export class AvatarsComponent {
 		return `${year}-${month}-${day}`;
 	}
 
-	getAge(birthdate: Date): number {
+	getAge(birthdate: string): number {
 		const today = new Date();
 		const birthDate = new Date(birthdate);
 		let age = today.getFullYear() - birthDate.getFullYear();

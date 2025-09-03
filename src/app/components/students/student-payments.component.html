@@ -1,54 +1,66 @@
-<div class="flex items-end justify-end mb-6">
-  <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-    (click)="showPaymentModal = true">
-    Registrar pago
-  </button>
-</div>
-<div *ngIf="paymentsWithChargers.length > 0" class="space-y-6">
-  <div *ngFor="let pago of paymentsWithChargers" class="bg-white shadow p-6">
-    <div class="flex justify-between items-center mb-4">
+<div class="bg-white shadow p-6">
+
+
+  <div class="flex items-end justify-end mb-6">
+    <button class="btn-new" (click)="showPaymentModal = true">
+
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+        class="size-6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+
+
+      Nuevo pago
+    </button>
+  </div>
+  <div *ngIf="paymentsWithChargers.length > 0" class="space-y-6">
+    <div *ngFor="let pago of paymentsWithChargers" class="bg-white shadow p-6">
+      <div class="flex justify-between items-center mb-4">
+        <div>
+          <div class="text-lg font-semibold text-gray-800">Pago de ${{ pago.amount }}</div>
+          <div class="text-sm text-gray-500">Fecha: {{ pago.paymentDate | date:'medium' }}</div>
+          <div class="text-sm text-blue-500 cursor-pointer" (click)="generateVoucher(pago)">Comprobante</div>
+        </div>
+        <div class="text-right">
+          <!-- <div class="text-sm text-gray-600">Alumno: {{ pago.student.name }}</div>
+          <div class="text-xs text-gray-400">Deuda restante: ${{ pago.student.debt }}</div> -->
+        </div>
+      </div>
       <div>
-        <div class="text-lg font-semibold text-gray-800">Pago de ${{ pago.amount }}</div>
-        <div class="text-sm text-gray-500">Fecha: {{ pago.paymentDate | date:'medium' }}</div>
-        <div class="text-sm text-gray-500">Comprobante: {{ pago.voucher }}</div>
-      </div>
-      <div class="text-right">
-        <div class="text-sm text-gray-600">Alumno: {{ pago.student.name }}</div>
-        <div class="text-xs text-gray-400">Deuda restante: ${{ pago.student.debt }}</div>
-      </div>
-    </div>
-    <div>
-      <div class="font-medium text-gray-700 mb-2">Aplicado a actividades:</div>
-      <div *ngFor="let cargo of pago.paymentCharges" class="mb-4">
-        <div class="flex justify-between items-center mb-1">
-          <div class="text-sm font-semibold text-gray-700">
-            {{ cargo.activity.description }}
-          </div>
-          <div class="text-xs text-gray-500">
-            ${{ cargo.amount }} / ${{ cargo.collection.amountToBePaid }}
-          </div>
-        </div>
-        <div class="w-full flex space-x-1">
-          <div class="flex-1 bg-gray-200 h-3 flex">
-            <div class="bg-yellow-500 h-3"
-              [style.width.%]="((cargo.collection.amountToBePaid - cargo.amountRemained) / cargo.collection.amountToBePaid) * 100">
+        <div class="font-medium text-gray-700 mb-2">Aplicado a actividades:</div>
+        <div *ngFor="let cargo of pago.paymentCharges" class="mb-4">
+          <div class="flex justify-between items-center mb-1">
+            <div class="text-sm font-semibold text-gray-700">
+              {{ cargo.activity.description }}
             </div>
-            <div class="bg-green-400 h-3" [style.width.%]="(cargo.amount / cargo.collection.amountToBePaid) * 100">
+            <div class="text-xs text-gray-500">
+              ${{ cargo.amount }} / ${{ cargo.collection.amountToBePaid }}
             </div>
           </div>
-        </div>
-        <div *ngIf="cargo.amountRemained - cargo.amount > 0" class="text-xs text-gray-400 mt-1">
-          Restaron: {{ cargo.amountRemained - cargo.amount | currency }}
+          <div class="w-full flex space-x-1">
+            <div class="flex-1 bg-gray-200 h-3 flex">
+              <div class="bg-yellow-500 h-3"
+                [style.width.%]="((cargo.collection.amountToBePaid - cargo.amountRemained) / cargo.collection.amountToBePaid) * 100">
+              </div>
+              <div class="bg-green-400 h-3" [style.width.%]="(cargo.amount / cargo.collection.amountToBePaid) * 100">
+              </div>
+            </div>
+          </div>
+          <div *ngIf="cargo.amountRemained - cargo.amount > 0" class="text-xs text-gray-400 mt-1">
+            Restaron: {{ cargo.amountRemained - cargo.amount | currency }}
+          </div>
         </div>
       </div>
     </div>
   </div>
+  <div *ngIf="paymentsWithChargers.length === 0" class="text-gray-500 text-center py-8">
+    No hay pagos realizados.
+  </div>
+
 </div>
-<div *ngIf="paymentsWithChargers.length === 0" class="text-gray-500 text-center py-8">
-  No hay pagos registrados.
-</div>
-<div class="w-full h-lvh overflow-y-auto">
-  <div *ngIf="showPaymentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <app-payment [studentId]="+studentId!" (close)="showPaymentModal = false"></app-payment>
+
+<div *ngIf="showPaymentModal" class="w-full h-lvh overflow-y-auto">
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <app-payment [studentId]="+studentId!" (complete)="onPaymentComplete($event)"></app-payment>
   </div>
 </div>

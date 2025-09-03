@@ -7,6 +7,7 @@ import { Charge, Student } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { StudentPaymentHttp } from 'src/app/core/student-payment-http';
 import { PaymentComponent } from "../payment/payment.component";
+import { VoucherHelper } from '@app/core/voucher.helper';
 
 @Component({
   standalone: true,
@@ -15,6 +16,7 @@ import { PaymentComponent } from "../payment/payment.component";
   providers: []
 })
 export class StudentPaymentsComponent implements OnInit {
+
   paymentsWithChargers: StudentPayment[] = [];
 
   studentId: string | null = null;
@@ -30,13 +32,31 @@ export class StudentPaymentsComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this._loadPayments();
+  }
+
+  public showPaymentModal: boolean = false;
+
+  private _loadPayments() {
     const paymentHttp = new StudentPaymentHttp(this.http);
     paymentHttp.getByStudentWithChargers(+this.studentId!).subscribe(data => {
       this.paymentsWithChargers = data;
     });
   }
 
-  public showPaymentModal: boolean = false;
+  onPaymentComplete(value: boolean) {
+    this.showPaymentModal = false;
+
+    if (value) {
+      this._loadPayments();
+    }
+  }
+
+  generateVoucher(studentPayment: StudentPayment) {
+    console.log('studentPayment', studentPayment);
+
+    VoucherHelper.download(studentPayment);
+  }
 
 }
 

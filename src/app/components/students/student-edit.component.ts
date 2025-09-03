@@ -120,8 +120,8 @@ export class StudentEditComponent {
         const studentsAPI = new BaseHttp(`students/${this.student.id}/upload`, this.http);
         studentsAPI.post<FormData, any>(formData).subscribe({
             next: (res) => {
-                // Opcional: actualizar photoUrl si el backend lo regresa
-                this.student.photo = res.filePath || this.student.photo;
+                const timestamp = new Date().getTime();
+                this.student.photo = buildUrl(`students/${this.student.id}/photo`) + `?t=${timestamp}`;
             },
             error: (err) => {
                 console.error('Error uploading photo', err);

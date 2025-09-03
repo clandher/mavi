@@ -50,7 +50,7 @@ export class StudentListComponent implements OnInit {
         });
     }
 
-    calculateAge(birthdate: Date): number {
+    calculateAge(birthdate: string): number {
         if (!birthdate) return 0;
 
         const today = new Date();

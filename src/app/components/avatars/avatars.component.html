@@ -105,26 +105,6 @@
     </app-payment>
   </div>
 
-
-
-  <!-- Modal de edición -->
-  <div *ngIf="showEditModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-white p-6 rounded-lg shadow-xl w-96">
-      <h2 class="text-xl font-semibold mb-4">{{mode === 'update' ? 'Actualizar a ' +
-        selectedStudentActivity!.student.name: 'Nuevo alumno'
-        }} </h2>
-
-      <label class="block mb-2">Nombre</label>
-      <input type="text" [(ngModel)]="selectedStudentActivity!.student.name" class="w-full p-2 border rounded-lg mb-3">
-
-
-      <div class="flex justify-end space-x-2 mt-4">
-        <button (click)="closeUpdateModal()" class="bg-gray-400 px-4 py-2 rounded-lg text-white">Cancelar</button>
-        <button (click)="saveUpdateChanges()" class="bg-blue-500 px-4 py-2 rounded-lg text-white">Guardar</button>
-      </div>
-    </div>
-  </div>
-
   <div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white p-6 rounded-lg shadow-xl min-w-[40vw] max-h-[80vh] overflow-y-auto">
       <h2 class="text-xl font-semibold mb-4">
