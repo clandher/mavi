@@ -56,6 +56,9 @@
                 </div>
                 <span class="student-age">{{ calculateAge(student.birthdate) }} años</span>
             </div>
+            <div class="student-status" [class.active]="student.active" [class.inactive]="!student.active">
+                {{ student.active ? 'Activo' : 'Inactivo' }}
+            </div>
 
             <div class="student-details">
                 <div class="detail-row">

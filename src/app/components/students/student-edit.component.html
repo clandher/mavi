@@ -12,6 +12,12 @@
         <input id="birthdate" type="date" class="form-control" [(ngModel)]="student.birthdate" name="birthdate"
             required>
 
+        <!-- Nuevo input para activo/inactivo -->
+        <label class="flex items-center gap-2">
+            <input type="checkbox" [(ngModel)]="student.active" name="active">
+            <span>{{ student.active ? 'Activo' : 'Inactivo' }}</span>
+        </label>
+
         <button type="submit" class="btn btn-save" [disabled]="isSaving">
             <span *ngIf="!isSaving">Guardar</span>
             <span *ngIf="isSaving">Guardando...</span>
