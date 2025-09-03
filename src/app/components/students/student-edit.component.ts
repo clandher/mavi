@@ -41,6 +41,7 @@ export class StudentEditComponent {
 
         if (!studentId) {
             this.student.id = 0;
+            this.student.birthdate = new Date().toISOString().slice(0, 10);
         } else {
             this.loadStudent(+studentId!);
         }
