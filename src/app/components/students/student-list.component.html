@@ -2,7 +2,7 @@
 <div class="student-list-container">
     <div class="student-list-header">
         <h2>Listado de Estudiantes</h2>
-        
+
         <div class="student-actions">
             <a routerLink="/app/students/new" class="btn btn-primary">
                 <span>➕</span> Nuevo Estudiante
@@ -13,20 +13,13 @@
     <div class="student-filters">
         <div class="filter-group">
             <label for="search">Buscar:</label>
-            <input 
-                id="search" 
-                type="text" 
-                [(ngModel)]="searchTerm" 
-                (input)="filterStudents()" 
+            <input id="search" type="text" [(ngModel)]="searchTerm" (input)="filterStudents()"
                 placeholder="Nombre del estudiante">
         </div>
-        
+
         <div class="filter-group">
             <label for="category">Filtrar por categoría:</label>
-            <select 
-                id="category" 
-                [(ngModel)]="selectedCategory" 
-                (change)="filterStudents()">
+            <select id="category" [(ngModel)]="selectedCategory" (change)="filterStudents()">
                 <option [ngValue]="null">Todas las categorías</option>
                 <option *ngFor="let category of allCategories" [ngValue]="category.id">
                     {{ category.type }}
@@ -46,11 +39,16 @@
     <div class="student-grid">
         <div *ngFor="let student of filteredStudents" class="student-card">
             <div class="student-card-header">
-                <img *ngIf="student.photo" [src]="student.photo" class="student-photo" alt="Foto">
-                <h3>{{ student.name }}</h3>
+                <div class="flex items-center">
+                    <img *ngIf="student.photo" [src]="student.photo" class="student-photo-sm" alt="Foto">
+                    <ng-template #placeholder>
+                        <div class="photo-placeholder">+</div>
+                    </ng-template>
+                    <h3>{{ student.name }}</h3>
+                </div>
                 <span class="student-age">{{ calculateAge(student.birthdate) }} años</span>
             </div>
-            
+
             <div class="student-details">
                 <div class="detail-row">
                     <span class="detail-label">Deuda:</span>
@@ -58,15 +56,13 @@
                         {{ student.debt | currency }}
                     </span>
                 </div>
-                
+
                 <div class="detail-row">
                     <span class="detail-label">Categorías:</span>
                     <div class="student-categories">
                         <span *ngFor="let sc of student.categories" class="category-badge">
                             {{ getCategoryName(sc.categoryId) }}
-                            <button 
-                                class="remove-category" 
-                                (click)="removeCategory(sc.id)">
+                            <button class="remove-category" (click)="removeCategory(sc.id)">
                                 ×
                             </button>
                         </span>
@@ -76,11 +72,9 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="student-actions">
-                <a 
-                    [routerLink]="['/app/students', student.id, 'edit']" 
-                    class="btn btn-edit">
+                <a [routerLink]="['/app/students', student.id, 'edit']" class="btn btn-edit">
                     Editar
                 </a>
             </div>
