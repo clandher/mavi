@@ -27,8 +27,8 @@
                 id="category" 
                 [(ngModel)]="selectedCategory" 
                 (change)="filterStudents()">
-                <option [value]="null">Todas las categorías</option>
-                <option *ngFor="let category of allCategories" [value]="category.id">
+                <option [ngValue]="null">Todas las categorías</option>
+                <option *ngFor="let category of allCategories" [ngValue]="category.id">
                     {{ category.type }}
                 </option>
             </select>
@@ -46,6 +46,7 @@
     <div class="student-grid">
         <div *ngFor="let student of filteredStudents" class="student-card">
             <div class="student-card-header">
+                <img *ngIf="student.photo" [src]="student.photo" class="student-photo" alt="Foto">
                 <h3>{{ student.name }}</h3>
                 <span class="student-age">{{ calculateAge(student.birthdate) }} años</span>
             </div>

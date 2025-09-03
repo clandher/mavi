@@ -5,7 +5,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Student, Category } from '@app/core/dto';
 import { HttpClient } from '@angular/common/http';
-import { BaseHttp } from '@app/core/base-http';
+import { BaseHttp, buildUrl } from '@app/core/base-http';
 
 @Component({
     standalone: true,
@@ -39,7 +39,10 @@ export class StudentListComponent implements OnInit {
         this.isLoading = true;
         this.studentsAPI.get<Student[]>().subscribe({
             next: (students) => {
-                this.students = students;
+                this.students = students.map(student => {
+                    student.photo = buildUrl(`students/${student.id}/photo`);
+                    return student;
+                });
                 this.filteredStudents = [...students];
                 this.isLoading = false;
             },
@@ -82,7 +85,7 @@ export class StudentListComponent implements OnInit {
         this.filteredStudents = this.students.filter(student => {
             const matchesSearch = student.name.toLowerCase().includes(this.searchTerm.toLowerCase());
             const matchesCategory = this.selectedCategory === null ||
-                student.categories?.some(c => this.selectedCategory ?? c.categoryId === this.selectedCategory);
+                student.categories?.some(c => c.categoryId === this.selectedCategory);
 
             return matchesSearch && matchesCategory;
         });
