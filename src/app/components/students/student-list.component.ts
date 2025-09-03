@@ -6,10 +6,11 @@ import { FormsModule } from '@angular/forms';
 import { Student, Category } from '@app/core/dto';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
+import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 
 @Component({
     standalone: true,
-    imports: [CommonModule, RouterModule, FormsModule],
+    imports: [CommonModule, RouterModule, FormsModule, CurrencyMXPipe],
     templateUrl: './student-list.component.html',
     styleUrls: ['./student-list.component.scss']
 })

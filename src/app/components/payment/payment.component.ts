@@ -7,12 +7,13 @@ import { BaseHttp } from '@app/core/base-http';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { StudentPayment } from '../students/student-payments.component';
 import { VoucherHelper } from '@app/core/voucher.helper';
+import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 
 @Component({
     selector: 'app-payment',
     templateUrl: './payment.component.html',
     //   styleUrl: './payment.component.scss',
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, CurrencyMXPipe],
     standalone: true
 })
 export class PaymentComponent implements OnChanges {

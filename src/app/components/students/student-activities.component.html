@@ -33,7 +33,7 @@
           </div>
         </div>
         <div *ngIf="cargo.amountRemaining > 0" class="text-xs text-gray-400 mt-1">
-          Restante: {{ cargo.amountRemaining | currency }}
+          Restante: {{ cargo.amountRemaining | currencyMX }}
         </div>
         <div *ngIf="cargo.amountRemaining === 0" class="text-xs text-green-600 mt-1">
           Pagado

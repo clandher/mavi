@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StudentActivityHttp } from 'src/app/core/student-activity-http'; // importa tu nueva clase
 import { HttpClient } from '@angular/common/http';
+import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 
 @Component({
   standalone: true,
   templateUrl: './student-activities.component.html',
-  imports: [CommonModule],
+  imports: [CommonModule, CurrencyMXPipe],
   providers: [HttpClient]
 })
 export class StudentActivitiesComponent implements OnInit {

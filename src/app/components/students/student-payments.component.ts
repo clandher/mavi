@@ -8,10 +8,11 @@ import { RequestQueryBuilder } from '@dataui/crud-request';
 import { StudentPaymentHttp } from 'src/app/core/student-payment-http';
 import { PaymentComponent } from "../payment/payment.component";
 import { VoucherHelper } from '@app/core/voucher.helper';
+import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 
 @Component({
   standalone: true,
-  imports: [CommonModule, PaymentComponent],
+  imports: [CommonModule, PaymentComponent, CurrencyMXPipe],
   templateUrl: './student-payments.component.html',
   providers: []
 })

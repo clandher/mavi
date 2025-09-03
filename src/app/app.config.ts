@@ -6,9 +6,9 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { jwtInterceptor } from './core/jwt.interceptor';
 import { fakeBackendInterceptor } from './core/fake.interceptor';
 
-import localeMx from '@angular/common/locales/es-MX';
 import { registerLocaleData } from '@angular/common';
-registerLocaleData(localeMx);
+import localeEsMX from '@angular/common/locales/es-MX';
+registerLocaleData(localeEsMX);
 
 export const appConfig: ApplicationConfig = {
   providers: [
