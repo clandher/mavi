@@ -63,7 +63,7 @@
               <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="openEditModal(studentActivity)">
                 Editar
               </li>
-              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="openPaymentModal()">Registrar pago</li>
+              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="showPaymentModal = true">Registrar pago</li>
               <!-- <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="toggleSubmenu('registrarPagoEn')">
                 Registrar pago en...
                 <ul *ngIf="showSubmenu['registrarPagoEn']" class="pl-4">
@@ -101,7 +101,7 @@
 
 
   <div *ngIf="showPaymentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <app-payment [studentId]="selectedStudentActivity?.student?.id!" (close)="closePaymentModal()">
+    <app-payment [studentId]="selectedStudentActivity?.student?.id!" (complete)="onPaymentComplete($event)">
     </app-payment>
   </div>
 

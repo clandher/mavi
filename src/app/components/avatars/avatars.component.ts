@@ -296,8 +296,8 @@ export class AvatarsComponent {
 	public showPaymentModal: boolean = false;
 
 	// Método para abrir el modal de pago
-	openPaymentModal(): void {
-		this.showPaymentModal = true;
+	onPaymentComplete(value: boolean): void {
+		this.showPaymentModal = false;
 	}
 
 	ngOnInit() {
