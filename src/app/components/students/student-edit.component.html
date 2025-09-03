@@ -12,12 +12,10 @@
         <input id="birthdate" type="date" class="form-control" [(ngModel)]="student.birthdate" name="birthdate"
             required>
 
-        @if (student.id !== 0) {
         <button type="submit" class="btn btn-save" [disabled]="isSaving">
             <span *ngIf="!isSaving">Guardar</span>
             <span *ngIf="isSaving">Guardando...</span>
         </button>
-        }
     </form>
 </div>
 
