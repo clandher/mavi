@@ -26,6 +26,14 @@
                 </option>
             </select>
         </div>
+
+        <div class="filter-group">
+            <label for="sortDebt">Ordenar por adeudo:</label>
+            <select id="sortDebt" [(ngModel)]="sortDebt" (change)="filterStudents()">
+                <option value="desc">Mayor adeudo</option>
+                <option value="asc">Menor adeudo</option>
+            </select>
+        </div>
     </div>
 
     <div *ngIf="isLoading" class="loading-indicator">

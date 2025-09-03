@@ -21,6 +21,7 @@ export class StudentListComponent implements OnInit {
     searchTerm: string = '';
     selectedCategory: number | null = null;
     isLoading = true;
+    sortDebt: 'desc' | 'asc' = 'desc';
 
 
     private studentsAPI: BaseHttp;
@@ -90,6 +91,15 @@ export class StudentListComponent implements OnInit {
 
             return matchesSearch && matchesCategory;
         });
+        this.sortByDebt();
+    }
+
+    sortByDebt(): void {
+        if (this.sortDebt === 'desc') {
+            this.filteredStudents.sort((a, b) => b.debt - a.debt);
+        } else {
+            this.filteredStudents.sort((a, b) => a.debt - b.debt);
+        }
     }
 
     getCategoryName(categoryId: number): string {
