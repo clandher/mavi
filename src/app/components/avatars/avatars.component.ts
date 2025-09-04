@@ -6,7 +6,7 @@ import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { Activity, ActivityType, ApiRes, Category, Charge, CreateActivityDto, CreatePaymentDto, PaymentEntity, Student, StudentActivity } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { PaymentComponent } from "../payment/payment.component";
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
 	selector: 'app-avatars',
@@ -31,36 +31,55 @@ export class AvatarsComponent {
 
 
 	public categories: Category[] = [];
-	selectedCategory: Category | null = null;
 	newCategoryId: number | null = null;
-	selectedCategoryId: number | null = null;
 
 	public newActivities: Activity[] = [];
 
 	public activities: Activity[] = [];
-	selectedActivity: Activity | null = null;
 	newActivityId: number | null = null;
 
 	public studentActivities: StudentActivity[] = [];
 
 
+	selectedCategoryId: number | null = null;
+	selectedActivityId: number | null = null;
+	constructor(
+		private router: Router,
+		private route: ActivatedRoute,
+		private http: HttpClient,
+	) {
+
+		this.route.queryParams.subscribe(params => {
+			const categoryId = params['category'];
+			const activityId = params['activity'];
+
+			if (categoryId) {
+				this.selectedCategoryId = +categoryId;
+			}
+			if (activityId) {
+				this.selectedActivityId = +activityId;
+			}
+		});
+
+		const categories = new BaseHttp(`categories`, this.http);
+		categories.get<Category[]>().subscribe(result => {
+			this.categories = result;
+
+			if (this.categories.length > 0 && !this.selectedCategoryId) {
+				this.selectedCategoryId = this.categories[0].id;
+				this.newActivity.categoryId = this.selectedCategoryId;
+			}
+
+			this.onCategoryChange();
+		});
+	}
+
+
 	onNewCategoryChange() {
 
 		const queryString = RequestQueryBuilder.create({
-			fields: ['id', 'description', 'gracePeriod', 'categoryId', 'typeId'],
 			search: { categoryId: Number(this.newCategoryId!) },
-			// search: {
-			//   'category.id': Number(this.selectedCategoryId)  // Filtra por el ID de la relación
-			// },
-			join: [
-				{ field: 'category', select: ['id', 'name'] },  // Ajusta los campos según tu modelo
-				// { field: 'type', select: ['id', 'name'] }
-			],
-			// sort: [{ field: 'id', order: 'DESC' }],
-			page: 1,
-			limit: 5,
 		}).query();
-
 
 		const activities = new BaseHttp(`activities?${queryString}`, this.http);
 		activities.get<ApiRes<Activity>>().subscribe(result => {
@@ -68,48 +87,53 @@ export class AvatarsComponent {
 
 			if (this.newActivities.length) {
 				this.newActivityId = this.newActivities[0].id;
-				// this.onActivityChange(this.activities[0].id, 0);
 			}
-
 		});
 	}
 
 	onCategoryChange() {
+
+		this.router.navigate([], {
+			relativeTo: this.route,
+			queryParams: { category: this.selectedCategoryId, activity: this.selectedActivityId },
+			queryParamsHandling: 'merge'
+		});
+
 		const queryString = RequestQueryBuilder.create({
-			fields: ['id', 'description', 'gracePeriod', 'categoryId', 'typeId'],
 			search: { categoryId: Number(this.selectedCategoryId!) },
-			// search: {
-			//   'category.id': Number(this.selectedCategoryId)  // Filtra por el ID de la relación
-			// },
-			join: [
-				{ field: 'category', select: ['id', 'name'] },  // Ajusta los campos según tu modelo
-				// { field: 'type', select: ['id', 'name'] }
-			],
-			// sort: [{ field: 'id', order: 'DESC' }],
-			page: 1,
-			limit: 5,
 		}).query();
 
 		this.newActivity.categoryId = this.selectedCategoryId!;
 
 		const activities = new BaseHttp(`activities?${queryString}`, this.http);
-		activities.get<ApiRes<Activity>>().subscribe(result => {
-			this.activities = result.data;
+		activities.get<Activity[]>().subscribe(result => {
+			this.activities = result;
 			this.newActivities = [...this.activities];
 
 			if (this.activities.length) {
-				this.onActivityChange(this.activities[0].id, 0);
+
+				if (this.selectedActivityId && this.activities.some(a => a.id === this.selectedActivityId)) {
+					this.onActivityChange(this.selectedActivityId, 0);
+				} else {
+					this.onActivityChange(this.activities[0].id, 0);
+				}
+
 			}
-
 		});
-
 	}
 
 
 	onActivityChange(activityId: number, index: number): void {
 
-		this.selectedActivity = this.activities.find(activity => activity.id === activityId) ?? null;
+		this.selectedActivityId = activityId;
 		this.selectedStudentActivity = null;
+
+
+		this.router.navigate([], {
+			relativeTo: this.route,
+			queryParams: { category: this.selectedCategoryId, activity: this.selectedActivityId },
+			queryParamsHandling: 'merge'
+		});
 
 		setTimeout(() => {
 			const buttons = document.querySelectorAll('button');
@@ -126,28 +150,11 @@ export class AvatarsComponent {
 	}
 
 
-	constructor(
-		private router: Router,
-		private http: HttpClient,
-	) {
 
-		const categories = new BaseHttp(`categories`, this.http);
-		categories.get<Category[]>().subscribe(result => {
-			this.categories = result;
-
-			if (this.categories.length > 0) {
-				this.selectedCategoryId = this.categories[0].id;
-				this.selectedCategory = this.categories[0]!;
-				this.onCategoryChange();
-				this.newActivity.categoryId = this.selectedCategoryId;
-			}
-		});
-
-	}
 
 	private _loadStudentActivities() {
 		const queryString = RequestQueryBuilder.create({
-			search: { activityId: Number(this.selectedActivity?.id!) },
+			search: { activityId: Number(this.selectedActivityId) },
 		}).query();
 
 		const studentActivitiesAPI = new BaseHttp(`student-activities?${queryString}`, this.http);
@@ -170,7 +177,7 @@ export class AvatarsComponent {
 		this.showModal = true;
 		// Aquí puedes abrir un modal o formulario para agregar un nuevo avatar.
 
-		this.newActivityId = this.selectedActivity?.id!;
+		this.newActivityId = this.selectedActivityId;
 		this.newCategoryId = this.selectedCategoryId;
 	}
 
@@ -190,49 +197,17 @@ export class AvatarsComponent {
 		this.selectedStudentActivity = { ...studentActivity }; // Clonamos para no modificar directamente
 	}
 
-	// Método para cerrar el modal
 	closeModal(): void {
 		this.showModal = false;
 	}
 
 	saveChanges(): void {
-
 		if (this.activeTab === 'existing' && this.selectedExistingStudent) {
-			// Lógica para agregar estudiante existente a la actividad
 			this.addStudentToActivity(this.selectedExistingStudent);
 		} else if (this.activeTab === 'new' && this.newStudent.name) {
-			// Lógica para crear nuevo estudiante y agregarlo a la actividad
 			this.createNewStudent();
 		}
-
 		this.closeModal();
-
-
-		// console.log(this.selectedStudentActivity);
-
-		// const student = { ...this.selectedStudentActivity!.student };
-
-		// const studentsAPI = new BaseHttp(`students/${student.id}`, this.http);
-		// // delete (student as any).id;
-		// studentsAPI.patch(student).subscribe(result => {
-
-		// 	// this.studentActivities = result;
-
-		// 	// this.activities = result.data;
-
-		// 	// if (this.activities.length) {
-		// 	// 	this.onActivityChange(this.activities[0].id, 0);
-		// 	// }
-		// });
-
-		// const activity = this.activities.find(a => a.id === this.selectedActivityId);
-		// if (activity) {
-		//   const index = activity.avatars.findIndex(a => a.id === this.selectedAvatar.id);
-		//   if (index !== -1) {
-		//     activity.avatars[index] = { ...this.selectedAvatar }; // Guardamos los cambios
-		//   }
-		// }
-		// this.showModal = false;
 	}
 
 	highlightWidth = 0;
@@ -299,7 +274,7 @@ export class AvatarsComponent {
 
 		const body = {
 			studentId: student.id,
-			activityId: this.selectedActivity?.id! // Asume que tienes this.activityId disponible
+			activityId: this.selectedActivityId
 		};
 
 		new BaseHttp('student-activities', this.http)

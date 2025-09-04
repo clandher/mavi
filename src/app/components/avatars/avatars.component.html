@@ -20,8 +20,8 @@
       </div>
       <button *ngFor="let activity of activities; let i = index" (click)="onActivityChange(activity.id, i)" #btn class="relative z-10 px-6 py-2 rounded-xl text-sm font-medium transition-all duration-300 whitespace-nowrap 
                hover:text-blue-600 hover:scale-105" [ngClass]="{
-          'text-blue-600': selectedActivity?.id! === activity.id,
-          'text-gray-600': selectedActivity?.id! !== activity.id
+          'text-blue-600': selectedActivityId! === activity.id,
+          'text-gray-600': selectedActivityId! !== activity.id
         }">
         {{ activity.description }}
       </button>
@@ -36,7 +36,7 @@
 
   <div class="relative justify-center ">
     <div *ngFor="let activity of activities">
-      <div *ngIf="selectedActivity?.id! === activity.id" class="grid grid-cols-6 gap-4">
+      <div *ngIf="selectedActivityId! === activity.id" class="grid grid-cols-6 gap-4">
 
         <!-- Botón para agregar nuevo avatar -->
         <div class="relative">
@@ -114,10 +114,6 @@
       <h2 class="text-xl font-semibold mb-4">
         Agregar alumno
       </h2>
-
-      <!-- Categoria: {{this.selectedCategory?.type}} <br>
-      Actividad: {{this.selectedActivity?.description}} -->
-
 
       <div class="form-group">
         <label for="name">Categoria:</label>
