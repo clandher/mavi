@@ -17,6 +17,9 @@ import { ActivatedRoute, Router } from '@angular/router';
 })
 export class AvatarsComponent {
 
+	public showDebt: boolean = true;
+
+
 	public selectedStudentActivity: StudentActivity | null = null;
 	public showSubmenu: { [key: string]: boolean } = {};
 	public showModal: boolean = false;
@@ -160,7 +163,8 @@ export class AvatarsComponent {
 		const studentActivitiesAPI = new BaseHttp(`student-activities?${queryString}`, this.http);
 		studentActivitiesAPI.get<StudentActivity[]>().subscribe(studentActivities => {
 			this.studentActivities = studentActivities.map(studentActivity => {
-				studentActivity.debtActivity = studentActivity.charges?.some(charge => charge.amountRemaining > 0);
+				// studentActivity.debtActivity = studentActivity.charges?.some(charge => charge.amountRemaining > 0);
+				studentActivity.debtActivityAmount = studentActivity.charges?.reduce((acc, charge) => acc + charge.amountRemaining, 0) || 0;
 
 				if (studentActivity.student.photo) {
 					studentActivity.student.photoUrl = buildUrl(`students/${studentActivity.student.id}/photo`);

@@ -61,7 +61,7 @@ export class StudentActivity {
     activityId!: number;
 
     registrationDate!: Date;
-    debtActivity!: boolean;
+    debtActivityAmount!: number;
 
     charges: Charge[] = [];
 }

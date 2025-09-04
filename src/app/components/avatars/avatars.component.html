@@ -69,10 +69,16 @@
             @if (studentActivity.student.photoUrl) {
             <img [src]="studentActivity.student.photoUrl" class="w-full h-full object-cover" />
             }
-            <span *ngIf="studentActivity.debtActivity" (click)="showPaymentModal = true"
+            <!-- <span *ngIf="studentActivity.debtActivity" (click)="showPaymentModal = true"
               class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg z-20">
               ¡Debe!
+            </span> -->
+
+            <span *ngIf="studentActivity.debtActivityAmount > 0" (click)="showPaymentModal = true"
+              class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg z-20">
+              {{showDebt ? '¡Debe!' : '$' + studentActivity.debtActivityAmount}}
             </span>
+
             <span
               class="absolute bottom-0 left-0 bg-black text-white text-xs font-bold px-1 py-0 rounded-tr-lg z-20 overflow-hidden whitespace-nowrap text-ellipsis"
               style="text-overflow: ellipsis;">
@@ -90,7 +96,7 @@
                 Editar
               </li>
 
-              @if(studentActivity.debtActivity){
+              @if(studentActivity.debtActivityAmount > 0){
               <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="showPaymentModal = true">Registrar pago
               </li>
               }
@@ -252,3 +258,12 @@
       </div>
     </div>
   </div>
+
+  <div class="flex justify-end space-x-2 mt-8">
+    <button (click)="showDebt = !showDebt"
+      class="px-4 py-2 rounded-lg text-white"
+      [ngClass]="showDebt ? 'bg-blue-500' : 'bg-gray-400'">
+      {{ showDebt ? 'Mostrar total' : 'Mostrar deuda' }}
+    </button>
+  </div>
+</div>
