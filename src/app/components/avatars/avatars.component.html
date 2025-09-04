@@ -1,14 +1,29 @@
-<div class="w-full max-w-md">
-  <label for="categories" class="block text-sm font-bold text-gray-900 dark:text-gray-100 mb-1">
-    Categoría:
-  </label>
-  <select id="categories" name="categories" [(ngModel)]="selectedCategoryId" (change)="onCategoryChange()"
-    class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-2 border-gray-800 dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
-    <option [value]="null" disabled class="text-gray-500 dark:text-gray-400">-- Selecciona una categoría --</option>
-    <option *ngFor="let category of categories" [value]="category.id" class="text-gray-900 dark:text-gray-100">
-      {{ category.type }}
-    </option>
-  </select>
+<div class="w-full  flex items-center space-x-2 ">
+  <button (click)="selectPreviousCategory()"
+    class="px-3 py-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-blue-500 hover:text-white transition"
+    aria-label="Anterior">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+    </svg>
+  </button>
+
+  <div class="flex-1">
+    <select id="categories" name="categories" [(ngModel)]="selectedCategoryId" (change)="onCategoryChange()"
+      class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-2 border-gray-800 dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
+      <option [value]="null" disabled class="text-gray-500 dark:text-gray-400">-- Selecciona una categoría --</option>
+      <option *ngFor="let category of categories" [value]="category.id" class="text-gray-900 dark:text-gray-100">
+        {{ category.type }}
+      </option>
+    </select>
+  </div>
+
+  <button (click)="selectNextCategory()"
+    class="px-3 py-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-blue-500 hover:text-white transition"
+    aria-label="Siguiente">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+    </svg>
+  </button>
 </div>
 <br>
 

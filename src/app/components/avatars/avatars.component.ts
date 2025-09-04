@@ -418,4 +418,27 @@ export class AvatarsComponent {
 			this.newActivity.typeId > 0;
 	}
 
+
+	// Selecciona la categoría anterior, si es la primera va a la última
+	selectPreviousCategory(): void {
+		const idx = this.categories.findIndex(c => c.id === this.selectedCategoryId);
+		if (idx > 0) {
+			this.selectedCategoryId = this.categories[idx - 1].id;
+		} else if (idx === 0) {
+			this.selectedCategoryId = this.categories[this.categories.length - 1].id;
+		}
+		this.onCategoryChange();
+	}
+
+	// Selecciona la siguiente categoría, si es la última va a la primera
+	selectNextCategory(): void {
+		const idx = this.categories.findIndex(c => c.id === this.selectedCategoryId);
+		if (idx < this.categories.length - 1 && idx !== -1) {
+			this.selectedCategoryId = this.categories[idx + 1].id;
+		} else if (idx === this.categories.length - 1) {
+			this.selectedCategoryId = this.categories[0].id;
+		}
+		this.onCategoryChange();
+	}
+
 }
