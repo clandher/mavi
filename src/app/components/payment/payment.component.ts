@@ -12,7 +12,6 @@ import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 @Component({
     selector: 'app-payment',
     templateUrl: './payment.component.html',
-    //   styleUrl: './payment.component.scss',
     imports: [CommonModule, FormsModule, CurrencyMXPipe],
     standalone: true
 })
@@ -22,17 +21,17 @@ export class PaymentComponent implements OnChanges {
 
     charges: Charge[] = [];
     paymentAmount: number = 0;
-    paymentDistribution: number[] = [];
+    private _paymentDistribution: number[] = [];
 
     constructor(private http: HttpClient) { }
 
     ngOnChanges(changes: SimpleChanges) {
-        this.loadCharges();
+        this._loadCharges();
         this.paymentAmount = 0;
-        this.paymentDistribution = [];
+        this._paymentDistribution = [];
     }
 
-    loadCharges() {
+    private _loadCharges() {
         this.charges = [];
         const qb = RequestQueryBuilder.create({
             search: {
@@ -41,11 +40,6 @@ export class PaymentComponent implements OnChanges {
             },
             sort: { field: 'amountRemaining', order: 'ASC' },
         }).query();
-
-
-        // const qb = RequestQueryBuilder.create()
-        //     .sortBy({ field: 'amountRemaining', order: 'ASC' }).query();
-
 
         const chargersAPI = new BaseHttp(`chargers?${qb}`, this.http);
         chargersAPI.get<Charge[]>().subscribe(result => {
@@ -59,45 +53,44 @@ export class PaymentComponent implements OnChanges {
 
     updatePaymentDistribution() {
         let remainingPayment = this.paymentAmount ?? 0;
-        this.paymentDistribution = [];
+        this._paymentDistribution = [];
 
-        // Distribuye el pago empezando por los cargos más antiguos
         for (let charge of this.charges) {
             const chargeAmount = charge.amountRemaining;
             if (remainingPayment <= 0) {
-                this.paymentDistribution.push(0);
+                this._paymentDistribution.push(0);
             } else if (remainingPayment >= chargeAmount) {
-                this.paymentDistribution.push(chargeAmount);
+                this._paymentDistribution.push(chargeAmount);
                 remainingPayment -= chargeAmount;
             } else {
-                this.paymentDistribution.push(remainingPayment);
+                this._paymentDistribution.push(remainingPayment);
                 remainingPayment = 0;
             }
         }
     }
 
     isChargeCovered(index: number): boolean {
-        return this.paymentDistribution[index] > 0;
+        return this._paymentDistribution[index] > 0;
     }
 
     isChargePartiallyCovered(index: number): boolean {
         const charge = this.charges[index];
-        return this.paymentDistribution[index] > 0 &&
-            this.paymentDistribution[index] < charge.amountRemaining;
+        return this._paymentDistribution[index] > 0 &&
+            this._paymentDistribution[index] < charge.amountRemaining;
     }
 
     getCoveredAmount(index: number): number {
-        return this.paymentDistribution[index] || 0;
+        return this._paymentDistribution[index] || 0;
     }
 
     getRemainingAfterPayment(index: number): number {
         const charge = this.charges[index];
-        return charge.amountRemaining - (this.paymentDistribution[index] || 0);
+        return charge.amountRemaining - (this._paymentDistribution[index] || 0);
     }
 
     getCoveredPercentage(index: number): number {
         const charge = this.charges[index];
-        return (this.paymentDistribution[index] / charge.amountRemaining) * 100;
+        return (this._paymentDistribution[index] / charge.amountRemaining) * 100;
     }
 
     payFullAmount() {
@@ -115,13 +108,6 @@ export class PaymentComponent implements OnChanges {
                 studentId: this.studentId,
                 amount: this.paymentAmount,
             };
-            // this.http.post<{ id: number }>(`/api/payments`, body).subscribe(payment => {
-            //     this.http.get(`/api/payments/${payment.id}/charges`).subscribe(paymentCharges => {
-            //         // Aquí podrías generar el voucher si lo necesitas
-            //         this.paymentCompleted.emit({ payment, paymentCharges });
-            //         this.onClose();
-            //     });
-            // });
 
             const paymentsAPI = new BaseHttp(`payments`, this.http);
             paymentsAPI.post<CreatePaymentDto, { id: number }>(body).subscribe(payment => {
@@ -133,8 +119,4 @@ export class PaymentComponent implements OnChanges {
             });
         }
     }
-
-
-
-
 }

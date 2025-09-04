@@ -16,23 +16,10 @@ import { Router } from '@angular/router';
 	styleUrl: './avatars.component.scss'
 })
 export class AvatarsComponent {
-	// Función para generar un número aleatorio dentro de un rango
-	public getRandomInRange(min: number, max: number) {
-		return Math.floor(Math.random() * (max - min + 1)) + min;
-	}
-
-	// Datos ficticios
-	public fakeNames = ['Juan', 'Pedro', 'Maria', 'Ana', 'Carlos', 'Luis', 'Jose', 'Sofia', 'Jorge', 'Clara'];
-	public fakePositions = ['Delantero', 'Defensor', 'Centrocampista', 'Portero'];
-	public fakeNumbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
-
-
 
 	public selectedStudentActivity: StudentActivity | null = null;
 	public showSubmenu: { [key: string]: boolean } = {};
 	public showModal: boolean = false;
-	public mode: 'add' | 'update' = 'add';
-
 
 	activeTab: 'existing' | 'new' = 'existing';
 	searchTerm = '';
@@ -53,34 +40,9 @@ export class AvatarsComponent {
 	public activities: Activity[] = [];
 	selectedActivity: Activity | null = null;
 	newActivityId: number | null = null;
-	selectedActivityId: number | null = null;
 
 	public studentActivities: StudentActivity[] = [];
-	// selectedActivityId: number | null = null;
 
-
-	private buildQueryString(params: any): string {
-		const queryParams = new URLSearchParams();
-
-		// Convertir arrays a formato de query string
-		Object.keys(params).forEach(key => {
-			if (Array.isArray(params[key])) {
-				params[key].forEach((item: any, index: number) => {
-					if (typeof item === 'object') {
-						Object.keys(item).forEach(subKey => {
-							queryParams.append(`${key}[${index}].${subKey}`, item[subKey]);
-						});
-					} else {
-						queryParams.append(`${key}[${index}]`, item);
-					}
-				});
-			} else {
-				queryParams.append(key, params[key]);
-			}
-		});
-
-		return queryParams.toString();
-	}
 
 	onNewCategoryChange() {
 
@@ -144,52 +106,25 @@ export class AvatarsComponent {
 	}
 
 
-	// Método para seleccionar una actividad
 	onActivityChange(activityId: number, index: number): void {
 
 		this.selectedActivity = this.activities.find(activity => activity.id === activityId) ?? null;
-		this.selectedActivityId = activityId;
 		this.selectedStudentActivity = null;
 
-
-		// Encuentra el botón seleccionado
 		setTimeout(() => {
 			const buttons = document.querySelectorAll('button');
 			const selectedButton = buttons[index] as HTMLElement;
 
 			if (selectedButton) {
-				this.highlightWidth = selectedButton.offsetWidth + 12; // Ajuste del tamaño
-				this.highlightPosition = selectedButton.offsetLeft - 6; // Ajuste de posición
+				this.highlightWidth = selectedButton.offsetWidth + 12;
+				this.highlightPosition = selectedButton.offsetLeft - 6;
 			}
 		}, 50);
 
 
-		const queryString = RequestQueryBuilder.create({
-			// fields: ['id', 'description', 'gracePeriod', 'categoryId', 'typeId'],
-			search: { activityId: Number(this.selectedActivityId!) },
-
-			// limit: 5,
-		}).query();
-
-		const studentActivities = new BaseHttp(`student-activities?${queryString}`, this.http);
-		studentActivities.get<StudentActivity[]>().subscribe(result => {
-
-			this.studentActivities = result;
-
-			// this.activities = result.data;
-
-			// if (this.activities.length) {
-			// 	this.onActivityChange(this.activities[0].id, 0);
-			// }
-		});
-
+		this._loadStudentActivities();
 	}
 
-	private serializeFilterOptions(options: any): any {
-		return {
-			filter: JSON.stringify(options)
-		};
-	}
 
 	constructor(
 		private router: Router,
@@ -198,31 +133,39 @@ export class AvatarsComponent {
 
 		const categories = new BaseHttp(`categories`, this.http);
 		categories.get<Category[]>().subscribe(result => {
-			console.log(result);
 			this.categories = result;
 
 			if (this.categories.length > 0) {
 				this.selectedCategoryId = this.categories[0].id;
 				this.selectedCategory = this.categories[0]!;
 				this.onCategoryChange();
-
 				this.newActivity.categoryId = this.selectedCategoryId;
 			}
 		});
 
-
 	}
 
+	private _loadStudentActivities() {
+		const queryString = RequestQueryBuilder.create({
+			search: { activityId: Number(this.selectedActivity?.id!) },
+		}).query();
 
+		const studentActivitiesAPI = new BaseHttp(`student-activities?${queryString}`, this.http);
+		studentActivitiesAPI.get<StudentActivity[]>().subscribe(studentActivities => {
+			this.studentActivities = studentActivities.map(studentActivity => {
+				studentActivity.debtActivity = studentActivity.charges?.some(charge => charge.amountRemaining > 0);
+				return studentActivity;
+			});
+		});
+	}
 
 	addNewAvatar() {
-		this.mode = 'add';
 		this.selectedStudentActivity = new StudentActivity();
 
 		this.showModal = true;
 		// Aquí puedes abrir un modal o formulario para agregar un nuevo avatar.
 
-		this.newActivityId = this.selectedActivityId;
+		this.newActivityId = this.selectedActivity?.id!;
 		this.newCategoryId = this.selectedCategoryId;
 	}
 
@@ -238,9 +181,6 @@ export class AvatarsComponent {
 
 	// Método para abrir el modal de edición
 	openEditModal(studentActivity: StudentActivity): void {
-		this.mode = 'update';
-
-
 		this.router.navigate([`/app/students/${studentActivity.student.id}/edit/info`]);
 		this.selectedStudentActivity = { ...studentActivity }; // Clonamos para no modificar directamente
 	}
@@ -298,6 +238,11 @@ export class AvatarsComponent {
 	// Método para abrir el modal de pago
 	onPaymentComplete(value: boolean): void {
 		this.showPaymentModal = false;
+
+		if (value) {
+			this._loadStudentActivities();
+		}
+
 	}
 
 	ngOnInit() {
@@ -342,7 +287,6 @@ export class AvatarsComponent {
 
 
 
-
 	addStudentToActivity(student: Student): void {
 		// Implementa la lógica para agregar el estudiante a la actividad
 		console.log('Estudiante seleccionado:', student);
@@ -350,7 +294,7 @@ export class AvatarsComponent {
 
 		const body = {
 			studentId: student.id,
-			activityId: this.selectedActivityId // Asume que tienes this.activityId disponible
+			activityId: this.selectedActivity?.id! // Asume que tienes this.activityId disponible
 		};
 
 		new BaseHttp('student-activities', this.http)
@@ -380,13 +324,6 @@ export class AvatarsComponent {
 			name: this.newStudent.name,
 			birthdate: birthdate
 		};
-
-		// this.studentService.createStudent(newStudentData).subscribe({
-		// 	next: (createdStudent) => {
-		// 		this.addStudentToActivity(createdStudent);
-		// 	},
-		// 	error: (err) => console.error('Error creating student', err)
-		// });
 
 		const studentsAPI = new BaseHttp('students', this.http);
 		studentsAPI.post<typeof newStudentData, Student>(newStudentData).subscribe({
@@ -418,8 +355,6 @@ export class AvatarsComponent {
 
 		return age;
 	}
-
-
 
 
 
@@ -461,12 +396,10 @@ export class AvatarsComponent {
 	}
 
 
-	// Función para cerrar el modal de nuevo evento
 	closeNewEventModal(): void {
 		this.newEventModalVisible = false;
 	}
 
-	// Función para guardar el nuevo evento
 	saveNewActivity(): void {
 		if (this.validateActivity()) {
 

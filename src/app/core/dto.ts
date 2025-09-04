@@ -60,6 +60,9 @@ export class StudentActivity {
     activityId!: number;
 
     registrationDate!: Date;
+    debtActivity!: boolean;
+
+    charges: Charge[] = [];
 }
 
 
@@ -116,7 +119,7 @@ export interface CreateActivityDto {
     price: number;
     categoryId: number;
     typeId: number; // Asumo que también necesitas el tipo de actividad
-  }
+}
 
 export class Charge {
     id!: number;
@@ -127,4 +130,6 @@ export class Charge {
     amountToBePaid!: number;
     amountRemaining!: number;
     surcharge!: boolean;
+    activityId!: number;
+    activity!: Activity;
 }

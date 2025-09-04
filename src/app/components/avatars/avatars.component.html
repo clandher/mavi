@@ -20,8 +20,8 @@
       </div>
       <button *ngFor="let activity of activities; let i = index" (click)="onActivityChange(activity.id, i)" #btn class="relative z-10 px-6 py-2 rounded-xl text-sm font-medium transition-all duration-300 whitespace-nowrap 
                hover:text-blue-600 hover:scale-105" [ngClass]="{
-          'text-blue-600': selectedActivityId === activity.id,
-          'text-gray-600': selectedActivityId !== activity.id
+          'text-blue-600': selectedActivity?.id! === activity.id,
+          'text-gray-600': selectedActivity?.id! !== activity.id
         }">
         {{ activity.description }}
       </button>
@@ -34,10 +34,9 @@
   </div>
 
 
-
   <div class="relative justify-center ">
     <div *ngFor="let activity of activities">
-      <div *ngIf="selectedActivityId === activity.id" class="grid grid-cols-6 gap-4">
+      <div *ngIf="selectedActivity?.id! === activity.id" class="grid grid-cols-6 gap-4">
 
         <!-- Botón para agregar nuevo avatar -->
         <div class="relative">
@@ -47,15 +46,19 @@
           </div>
         </div>
 
-        <!-- Avatares -->
         <div *ngFor="let studentActivity of studentActivities" class="relative">
-          <div (click)="selectAvatar(studentActivity)" [ngClass]="{
-                'border-4 border-blue-500 shadow-lg': selectedStudentActivity === studentActivity
+          <div (click)="selectAvatar(studentActivity)" (dblclick)="openEditModal(studentActivity)" [ngClass]="{
+              'border-4 border-blue-500 shadow-lg': selectedStudentActivity === studentActivity
               }"
             class="w-25 h-25 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-300">
             <img [src]="'https://i.pravatar.cc/150?img=' + studentActivity.id % 70" alt="Avatar"
               class="w-full h-full object-cover" />
+            <span *ngIf="studentActivity.debtActivity" (click)="showPaymentModal = true"
+              class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg z-20">
+              ¡Debe!
+            </span>
           </div>
+
 
           <div *ngIf="selectedStudentActivity === studentActivity"
             class="absolute z-30 mt-2 w-48 bg-white rounded-lg shadow-xl">
@@ -63,16 +66,12 @@
               <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="openEditModal(studentActivity)">
                 Editar
               </li>
-              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="showPaymentModal = true">Registrar pago</li>
-              <!-- <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="toggleSubmenu('registrarPagoEn')">
-                Registrar pago en...
-                <ul *ngIf="showSubmenu['registrarPagoEn']" class="pl-4">
-                  <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="openPaymentModal()">Entrenamiento
-                    (Abril)</li>
-                  <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="openPaymentModal()">Entrenamiento
-                    (Mayo)</li>
-                </ul>
-              </li> -->
+
+              @if(studentActivity.debtActivity){
+              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="showPaymentModal = true">Registrar pago
+              </li>
+              }
+
               <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="toggleSubmenu('inscribir')">
                 Inscribir a...
                 <ul *ngIf="showSubmenu['inscribir']" class="pl-4">
@@ -81,14 +80,14 @@
                 </ul>
               </li>
 
-              <!-- <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="toggleSubmenu('Observaciones')">
+              <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="toggleSubmenu('Observaciones')">
                 Observaciones...
                 <ul *ngIf="showSubmenu['Observaciones']" class="pl-4">
-                  <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Control del baló</li>
-                  <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Regate</li>
-                  <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Cabeceo</li>
+                  <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Practicar tiros libres</li>
+                  <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Mejorar trabajo en equipo</li>
+                  <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Desarrollar liderazgo</li>
                 </ul>
-              </li> -->
+              </li>
             </ul>
           </div>
         </div>
@@ -96,9 +95,6 @@
       </div>
     </div>
   </div>
-
-  <!-- Modal de registrar pago -->
-
 
   <div *ngIf="showPaymentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <app-payment [studentId]="selectedStudentActivity?.student?.id!" (complete)="onPaymentComplete($event)">
@@ -108,7 +104,7 @@
   <div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white p-6 rounded-lg shadow-xl min-w-[40vw] max-h-[80vh] overflow-y-auto">
       <h2 class="text-xl font-semibold mb-4">
-        {{ mode === 'update' ? 'Actualizar a ' + selectedStudentActivity!.student.name : 'Agregar alumno' }}
+        Agregar alumno
       </h2>
 
       <!-- Categoria: {{this.selectedCategory?.type}} <br>
