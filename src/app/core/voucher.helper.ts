@@ -10,78 +10,98 @@ export class VoucherHelper {
         a.click();
     }
 
-    // Método para crear la imagen del voucher (simulación de descarga de imagen)
+    // Método para crear la imagen del voucher (minimalista)
     static buildVoucherImage(studentPayment: StudentPayment): string {
-
-
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
 
         if (ctx) {
-            // Increase canvas size for better layout
+            // Minimalista: blanco, negro y gris
             canvas.width = 600;
-            canvas.height = 400 + (studentPayment.paymentCharges.length * 110); // Dynamic height based on charges
+            canvas.height = 350 + (studentPayment.paymentCharges.length * 80);
 
-            // Background with border
-            ctx.fillStyle = '#ffffff';
+            // Fondo blanco
+            ctx.fillStyle = '#fff';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.strokeStyle = '#4a86e8';
-            ctx.lineWidth = 5;
-            ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
 
-            // Header
-            ctx.fillStyle = '#4a86e8';
-            ctx.fillRect(0, 0, canvas.width, 60);
-            ctx.font = 'bold 28px Arial';
-            ctx.fillStyle = '#ffffff';
+            // Borde negro fino
+            ctx.strokeStyle = '#222';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+
+            // Header minimalista
+            ctx.font = 'bold 26px "Segoe UI", Arial, sans-serif';
+            ctx.fillStyle = '#222';
             ctx.textAlign = 'center';
-            ctx.fillText('COMPROBANTE DE PAGO', canvas.width / 2, 40);
+            ctx.fillText('COMPROBANTE DE PAGO', canvas.width / 2, 50);
 
-            // Reset text alignment
+            // Línea gris debajo del header
+            ctx.strokeStyle = '#bbb';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(60, 70);
+            ctx.lineTo(canvas.width - 60, 70);
+            ctx.stroke();
+
+            // Detalles principales
             ctx.textAlign = 'left';
+            ctx.font = '16px "Segoe UI", Arial, sans-serif';
+            ctx.fillStyle = '#222';
+            ctx.fillText(`Estudiante:`, 40, 110);
+            ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
+            ctx.fillText(`${studentPayment.student.name}`, 160, 110);
 
-            // Payment details
-            const paymentDate = new Date(studentPayment.paymentDate).toLocaleString();
-            const formattedAmount = studentPayment.amount.toFixed(2);
+            ctx.font = '16px "Segoe UI", Arial, sans-serif';
+            ctx.fillText(`Fecha de pago:`, 40, 140);
+            ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
+            ctx.fillText(`${new Date(studentPayment.paymentDate).toLocaleString()}`, 160, 140);
 
-            // Main payment info
-            ctx.font = 'bold 18px Arial';
-            ctx.fillStyle = '#000000';
-            ctx.fillText(`Estudiante: ${studentPayment.student.name}`, 40, 100);
-            ctx.fillText(`Fecha de pago: ${paymentDate}`, 40, 130);
-            ctx.fillText(`Monto total: $${formattedAmount}`, 40, 160);
+            ctx.font = '16px "Segoe UI", Arial, sans-serif';
+            ctx.fillText(`Monto total:`, 40, 170);
+            ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
+            ctx.fillText(`$${studentPayment.amount.toFixed(2)}`, 160, 170);
 
-            // Charges breakdown header
-            ctx.fillStyle = '#4a86e8';
-            ctx.fillRect(40, 190, canvas.width - 80, 30);
-            ctx.font = 'bold 16px Arial';
-            ctx.fillStyle = '#ffffff';
-            ctx.fillText('DETALLE DE CARGOS', 50, 212);
+            // Subtítulo de cargos
+            ctx.font = 'bold 15px "Segoe UI", Arial, sans-serif';
+            ctx.fillStyle = '#222';
+            ctx.fillText('Detalle de cargos', 40, 210);
 
-            // Charges list
-            let yPos = 240;
-            studentPayment.paymentCharges.forEach((charge: PaymentCharge, index: number) => {
-                ctx.font = '14px Arial';
-                ctx.fillStyle = '#000000';
+            // Línea gris debajo del subtítulo
+            ctx.strokeStyle = '#eee';
+            ctx.beginPath();
+            ctx.moveTo(40, 220);
+            ctx.lineTo(canvas.width - 40, 220);
+            ctx.stroke();
 
-                // Charge header con nombre de la actividad
+            // Listado de cargos
+            let yPos = 250;
+            studentPayment.paymentCharges.forEach((charge: PaymentCharge) => {
+                ctx.font = 'bold 14px "Segoe UI", Arial, sans-serif';
+                ctx.fillStyle = '#222';
                 ctx.fillText(`${charge.activity.description}`, 50, yPos);
 
-                // Charge details
-                ctx.fillText(`Monto pagado: $${charge.amount.toFixed(2)}`, 70, yPos + 25);
-                ctx.fillText(`Monto original: $${charge.collection.amountToBePaid.toFixed(2)}`, 70, yPos + 50);
-                ctx.fillText(`Saldo pendiente: $${charge.collection.amountRemaining.toFixed(2)}`, 70, yPos + 75);
+                ctx.font = '14px "Segoe UI", Arial, sans-serif';
+                ctx.fillStyle = '#444';
+                ctx.fillText(`Pagado: $${charge.amount.toFixed(2)}`, 70, yPos + 22);
+                ctx.fillText(`Original: $${charge.collection.amountToBePaid.toFixed(2)}`, 220, yPos + 22);
+                ctx.fillText(`Pendiente: $${charge.collection.amountRemaining.toFixed(2)}`, 370, yPos + 22);
 
-                yPos += 110;
+                // Línea separadora
+                ctx.strokeStyle = '#f0f0f0';
+                ctx.beginPath();
+                ctx.moveTo(50, yPos + 35);
+                ctx.lineTo(canvas.width - 50, yPos + 35);
+                ctx.stroke();
+
+                yPos += 55;
             });
 
-            // Footer
-            ctx.font = 'italic 12px Arial';
-            ctx.fillStyle = '#666666';
+            // Footer minimalista
+            ctx.font = 'italic 13px "Segoe UI", Arial, sans-serif';
+            ctx.fillStyle = '#888';
             ctx.textAlign = 'center';
-            ctx.fillText('Gracias por su pago', canvas.width / 2, yPos + 30);
+            ctx.fillText('Gracias por su pago', canvas.width / 2, yPos + 40);
 
-            // Convert canvas to image URL
             return canvas.toDataURL('image/png');
         }
 
