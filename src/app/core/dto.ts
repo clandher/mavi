@@ -30,6 +30,7 @@ export class Student {
 
     debt!: number;
     photo!: string;
+    photoUrl!: string;
     active!: boolean;
 
     categories!: StudentCategory[];

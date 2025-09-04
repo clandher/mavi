@@ -1,7 +1,7 @@
 <div class="bg-white shadow p-6">
     <form (ngSubmit)="saveStudent()" class="flex gap-1 items-center ">
         <label for="photo" class="photo-label">
-            <img *ngIf="student.photo; else placeholder" [src]="student.photo" class="student-photo" alt="Foto">
+            <img *ngIf="student.photo; else placeholder" [src]="student.photoUrl" class="student-photo" alt="Foto">
             <ng-template #placeholder>
                 <div class="photo-placeholder">+</div>
             </ng-template>
@@ -12,7 +12,6 @@
         <input id="birthdate" type="date" class="form-control" [(ngModel)]="student.birthdate" name="birthdate"
             required>
 
-        <!-- Nuevo input para activo/inactivo -->
         <label class="flex items-center gap-2">
             <input type="checkbox" [(ngModel)]="student.active" name="active">
             <span>{{ student.active ? 'Activo' : 'Inactivo' }}</span>

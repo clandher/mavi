@@ -50,12 +50,20 @@
           <div (click)="selectAvatar(studentActivity)" (dblclick)="openEditModal(studentActivity)" [ngClass]="{
               'border-4 border-blue-500 shadow-lg': selectedStudentActivity === studentActivity
               }"
-            class="w-25 h-25 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-300">
-            <img [src]="'https://i.pravatar.cc/150?img=' + studentActivity.id % 70" alt="Avatar"
-              class="w-full h-full object-cover" />
+            class="w-25 h-25 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-300">
+            @if (studentActivity.student.photoUrl) {
+            <img [src]="studentActivity.student.photoUrl" class="w-full h-full object-cover" />
+            }
             <span *ngIf="studentActivity.debtActivity" (click)="showPaymentModal = true"
               class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg z-20">
               ¡Debe!
+            </span>
+            <span
+              class="absolute bottom-0 left-0 bg-black text-white text-xs font-bold px-1 py-0 rounded-tr-lg z-20 overflow-hidden whitespace-nowrap text-ellipsis"
+              style="text-overflow: ellipsis;">
+              <span style="max-width: 60px; display: inline-block; overflow: hidden; text-overflow: ellipsis;">
+                {{ studentActivity.student.name }}
+              </span>
             </span>
           </div>
 
@@ -82,7 +90,7 @@
 
               <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="toggleSubmenu('Observaciones')">
                 Observaciones...
-                <ul *ngIf="showSubmenu['Observaciones']" class="pl-4">
+                <ul *ngIf="showSubmenu['Observaciones']" class="pl-2">
                   <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Practicar tiros libres</li>
                   <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Mejorar trabajo en equipo</li>
                   <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Desarrollar liderazgo</li>

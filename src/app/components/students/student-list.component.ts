@@ -42,7 +42,11 @@ export class StudentListComponent implements OnInit {
         this.studentsAPI.get<Student[]>().subscribe({
             next: (students) => {
                 this.students = students.map(student => {
-                    student.photo = buildUrl(`students/${student.id}/photo`);
+
+                    if (student.photo) {
+                        student.photoUrl = buildUrl(`students/${student.id}/photo`);
+                    }
+
                     return student;
                 });
                 this.filteredStudents = [...students];

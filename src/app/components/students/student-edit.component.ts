@@ -26,6 +26,7 @@ export class StudentEditComponent {
         activities: [],
         payments: [],
         photo: '',
+        photoUrl: '',
         active: true,
     };
 
@@ -105,7 +106,11 @@ export class StudentEditComponent {
         studentsAPI.get<Student>().subscribe({
             next: (student) => {
                 student.birthdate = new Date(student.birthdate).toISOString().slice(0, 10);
-                student.photo = buildUrl(`students/${id}/photo`);
+                
+                if (student.photo){
+                    student.photoUrl = buildUrl(`students/${id}/photo`);
+                }
+                
                 this.student = student;
             },
             error: (err) => {
@@ -125,7 +130,8 @@ export class StudentEditComponent {
         studentsAPI.post<FormData, any>(formData).subscribe({
             next: (res) => {
                 const timestamp = new Date().getTime();
-                this.student.photo = buildUrl(`students/${this.student.id}/photo`) + `?t=${timestamp}`;
+
+                this.student.photoUrl = buildUrl(`students/${this.student.id}/photo`) + `?t=${timestamp}`;
             },
             error: (err) => {
                 console.error('Error uploading photo', err);

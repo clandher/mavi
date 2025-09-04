@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BaseHttp } from '@app/core/base-http';
+import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { Activity, ActivityType, ApiRes, Category, Charge, CreateActivityDto, CreatePaymentDto, PaymentEntity, Student, StudentActivity } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { PaymentComponent } from "../payment/payment.component";
@@ -154,6 +154,11 @@ export class AvatarsComponent {
 		studentActivitiesAPI.get<StudentActivity[]>().subscribe(studentActivities => {
 			this.studentActivities = studentActivities.map(studentActivity => {
 				studentActivity.debtActivity = studentActivity.charges?.some(charge => charge.amountRemaining > 0);
+
+				if (studentActivity.student.photo) {
+					studentActivity.student.photoUrl = buildUrl(`students/${studentActivity.student.id}/photo`);
+				}
+
 				return studentActivity;
 			});
 		});
