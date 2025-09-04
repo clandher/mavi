@@ -30,9 +30,10 @@
         <div class="font-medium text-gray-700 mb-2">Aplicado a actividades:</div>
         <div *ngFor="let cargo of pago.paymentCharges" class="mb-4">
           <div class="flex justify-between items-center mb-1">
-            <div class="text-sm font-semibold text-gray-700">
+            <a class="text-sm font-semibold text-blue-600 hover:underline"
+              [href]="'/mavi/app/avatars?category=' + cargo.activity.categoryId + '&activity=' + cargo.activity.id">
               {{ cargo.activity.description }}
-            </div>
+            </a>
             <div class="text-xs text-gray-500">
               ${{ cargo.amount }} / ${{ cargo.collection.amountToBePaid }}
             </div>

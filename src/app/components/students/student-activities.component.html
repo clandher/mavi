@@ -3,7 +3,11 @@
   <div *ngFor="let act of activities" class="">
     <div class="flex justify-between items-center mb-2">
       <div>
-        <div class="text-lg font-semibold text-gray-800">{{ act.activity.description }}</div>
+        <!-- http://localhost:4200/mavi/app/avatars?category=10&activity=35 -->
+        <a class="text-lg font-semibold text-blue-600 hover:underline"
+          [href]="'/mavi/app/avatars?category=' + act.activity.categoryId + '&activity=' + act.activity.id">
+          {{ act.activity.description }}
+        </a>
         <div class="text-sm text-gray-500">Inscripción: {{ act.registrationDate | date:'medium' }}</div>
         <div class="text-sm text-gray-500">Inicio: {{ act.activity.startDate | date:'mediumDate' }}</div>
         <div class="text-sm text-gray-500">Fin: {{ act.activity.endDate | date:'mediumDate' }}</div>
