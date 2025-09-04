@@ -1,4 +1,4 @@
-import { StudentPayment } from "@app/components/students/student-payments.component";
+import { PaymentCharge, StudentPayment } from "@app/components/students/student-payments.component";
 
 export class VoucherHelper {
 
@@ -13,7 +13,6 @@ export class VoucherHelper {
     // Método para crear la imagen del voucher (simulación de descarga de imagen)
     static buildVoucherImage(studentPayment: StudentPayment): string {
 
-        console.log('paymentData', studentPayment);
 
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
@@ -48,7 +47,7 @@ export class VoucherHelper {
             // Main payment info
             ctx.font = 'bold 18px Arial';
             ctx.fillStyle = '#000000';
-            ctx.fillText(`Estudiante ID: ${studentPayment.studentId}`, 40, 100);
+            ctx.fillText(`Estudiante: ${studentPayment.student.name}`, 40, 100);
             ctx.fillText(`Fecha de pago: ${paymentDate}`, 40, 130);
             ctx.fillText(`Monto total: $${formattedAmount}`, 40, 160);
 
@@ -61,12 +60,12 @@ export class VoucherHelper {
 
             // Charges list
             let yPos = 240;
-            studentPayment.paymentCharges.forEach((charge: any, index: number) => {
+            studentPayment.paymentCharges.forEach((charge: PaymentCharge, index: number) => {
                 ctx.font = '14px Arial';
                 ctx.fillStyle = '#000000';
 
-                // Charge header
-                ctx.fillText(`Cargo #${index + 1} (ID: ${charge.collection.id})`, 50, yPos);
+                // Charge header con nombre de la actividad
+                ctx.fillText(`${charge.activity.description}`, 50, yPos);
 
                 // Charge details
                 ctx.fillText(`Monto pagado: $${charge.amount.toFixed(2)}`, 70, yPos + 25);

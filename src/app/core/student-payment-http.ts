@@ -7,11 +7,6 @@ export class StudentPaymentHttp extends BaseHttp {
         super('payments', http);
     }
 
-    getWithCharges(id: number): Observable<any> {
-        const url = buildUrl(`payments/${id}/charges`);
-        return this.http.get(url);
-    }
-
     getByStudentWithChargers(studentId: number): Observable<any> {
         const url = buildUrl(`payments/by-student/${studentId}/with-chargers`);
         return this.http.get(url);
