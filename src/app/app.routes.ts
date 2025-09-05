@@ -53,6 +53,10 @@ export const routes: Routes = [
                     {
                         path: 'technical-sheet',
                         loadComponent: () => import('./components/students/student-technical.component').then(m => m.StudentTechnicalComponent)
+                    },
+                    {
+                        path: 'documents',
+                        loadComponent: () => import('./components/students/student-documents.component').then(m => m.StudentDocumentsComponent)
                     }
                 ]
             },

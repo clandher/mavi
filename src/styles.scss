@@ -94,6 +94,10 @@ body {
     }
 }
 
+textarea.form-control {
+    height: unset;
+}
+
 select.form-control {
     padding: 0.4rem;
 }
