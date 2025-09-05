@@ -48,11 +48,21 @@ export class StudentDocumentsComponent {
     }
   }
 
-  onFileSelect(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files) {
-      this.uploadFiles(input.files);
+  isImage(document: any): boolean {
+    const ext = document.name?.split('.').pop()?.toLowerCase();
+    return ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(ext ?? '');
+  }
+
+  onFileSelect(event: any) {
+    const files = event.target.files;
+    for (let file of files) {
+      const doc: any = {
+        name: file.name,
+        file: file
+      };
     }
+
+    this.uploadFiles(files);
   }
 
   uploadFiles(files: FileList) {
@@ -64,9 +74,13 @@ export class StudentDocumentsComponent {
     this.http.post(buildUrl(`student-documents/${this.studentId}/uploads`), formData)
       .subscribe((res: any) => {
         if (res.documents) {
-            const existingIds = new Set(this.documents.map(doc => doc.id));
-            const newDocs = res.documents.filter((doc: StudentDocument) => !existingIds.has(doc.id));
-            this.documents = [...this.documents, ...newDocs];
+            const mappedNewDocs = res.documents.map((doc: StudentDocument) => ({
+              ...doc,
+              previewUrl: this.isImage(doc)
+              ? buildUrl(`student-documents/${this.studentId}/document/${doc.id}`)
+              : undefined
+            }));
+            this.documents = [...this.documents, ...mappedNewDocs];
         }
       });
   }
@@ -95,7 +109,12 @@ export class StudentDocumentsComponent {
 
     this.http.get<StudentDocument[]>(buildUrl(`student-documents?${qb}`))
       .subscribe(result => {
-        this.documents = result;
+        this.documents = result.map(doc => ({
+          ...doc,
+          previewUrl: this.isImage(doc)
+            ? buildUrl(`student-documents/${this.studentId}/document/${doc.id}`)
+            : undefined
+        }));
       });
   }
 
@@ -115,6 +134,6 @@ export class StudentDocumentsComponent {
 interface StudentDocument {
   id: string;
   name: string;
-  type?: number;
+  previewUrl?: string;
 }
 
