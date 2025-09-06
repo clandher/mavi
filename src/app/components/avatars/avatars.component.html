@@ -79,11 +79,11 @@
               {{showDebt ? '¡Debe!' : '$' + studentActivity.debtActivityAmount}}
             </span>
 
-            <span
+            <span [title]="studentActivity.student.name"
               class="absolute bottom-0 left-0 bg-black text-white text-xs font-bold px-1 py-0 rounded-tr-lg z-20 overflow-hidden whitespace-nowrap text-ellipsis"
               style="text-overflow: ellipsis;">
               <span style="max-width: 60px; display: inline-block; overflow: hidden; text-overflow: ellipsis;">
-                {{ studentActivity.student.name }}
+                {{ studentActivity.student.nick !== '' ? studentActivity.student.nick : studentActivity.student.name }}
               </span>
             </span>
           </div>
@@ -186,7 +186,7 @@
           <div *ngFor="let student of filteredStudents" (click)="selectStudent(student)"
             [class.bg-blue-500]="selectedExistingStudent?.id === student.id"
             class="p-3 border cursor-pointer hover:font-bold flex flex-col justify-between items-center">
-            <span>{{ student.name }}</span>
+            <span>{{ student.nick !== '' ? student.nick : student.name }}</span>
             <span class="text-sm text-gray-500">Edad {{ getAge(student.birthdate) }}</span>
           </div>
           <div *ngIf="filteredStudents.length === 0" class="col-span-3 text-center py-4 text-gray-500">
@@ -212,10 +212,10 @@
 
       <div class="flex justify-end space-x-2 mt-4">
         <button (click)="closeModal()" class="bg-gray-400 px-4 py-2 rounded-lg text-white">Cancelar</button>
-        <button (click)="saveChanges()"
+        <button (click)="onInscription()"
           [disabled]="(activeTab === 'existing' && !selectedExistingStudent) || (activeTab === 'new' && !newStudent.name)"
           class="bg-blue-500 px-4 py-2 rounded-lg text-white disabled:bg-blue-300">
-          {{ activeTab === 'existing' ? 'Seleccionar' : 'Crear y agregar' }}
+          {{ activeTab === 'existing' ? 'Inscribir' : 'Crear e inscribir' }}
         </button>
       </div>
     </div>

@@ -21,6 +21,7 @@ export class StudentEditComponent {
         id: 0,
         name: '',
         birthdate: '',
+        nick: '',
         debt: 0,
         categories: [],
         activities: [],
@@ -91,7 +92,7 @@ export class StudentEditComponent {
             next: (student) => {
                 this.student = student;
                 this.isSaving = false;
-                this.router.navigate(['/app/students', student.id, 'edit']);
+                this.router.navigate(['/app/estudiantes', student.id, 'editar']);
             },
             error: (err) => {
                 console.error('Error creating student', err);
@@ -115,7 +116,7 @@ export class StudentEditComponent {
             },
             error: (err) => {
                 console.error('Error loading student', err);
-                this.router.navigate(['/app/students']);
+                this.router.navigate(['/app/estudiantes']);
             }
         });
     }

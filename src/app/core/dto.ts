@@ -25,6 +25,7 @@ export class Student {
     id!: number;
 
     name!: string;
+    nick!: string;
 
     birthdate!: string;
 

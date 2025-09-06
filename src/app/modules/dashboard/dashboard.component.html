@@ -3,8 +3,9 @@
         <div class="header-left">
             <nav class="main-nav">
                 <ul>
-                    <li><a routerLink="/app/avatars" routerLinkActive="active">Actividades</a></li>
-                    <li><a routerLink="/app/students" routerLinkActive="active">Estudiantes</a></li>
+                    <li><a routerLink="/app/actividades" routerLinkActive="active">Actividades</a></li>
+                    <li><a routerLink="/app/estudiantes" routerLinkActive="active">Estudiantes</a></li>
+                    <li><a routerLink="/app/desarrollo" routerLinkActive="active">Desarrollo</a></li>
                 </ul>
             </nav>
         </div>
@@ -16,6 +17,7 @@
                 <span class="menu-icon">▼</span>
             </button>
 
+          
             <div class="menu-dropdown" [class.show]="menuOpen">
                 <div class="menu-item" (click)="logout()">
                     <span class="menu-icon">🚪</span>

@@ -197,7 +197,7 @@ export class AvatarsComponent {
 
 	// Método para abrir el modal de edición
 	openEditModal(studentActivity: StudentActivity): void {
-		this.router.navigate([`/app/students/${studentActivity.student.id}/edit/info`]);
+		this.router.navigate([`/app/estudiantes/${studentActivity.student.id}/editar/info`]);
 		this.selectedStudentActivity = { ...studentActivity }; // Clonamos para no modificar directamente
 	}
 
@@ -205,13 +205,12 @@ export class AvatarsComponent {
 		this.showModal = false;
 	}
 
-	saveChanges(): void {
+	onInscription(): void {
 		if (this.activeTab === 'existing' && this.selectedExistingStudent) {
 			this.addStudentToActivity(this.selectedExistingStudent);
 		} else if (this.activeTab === 'new' && this.newStudent.name) {
 			this.createNewStudent();
 		}
-		this.closeModal();
 	}
 
 	highlightWidth = 0;
@@ -272,10 +271,6 @@ export class AvatarsComponent {
 
 
 	addStudentToActivity(student: Student): void {
-		// Implementa la lógica para agregar el estudiante a la actividad
-		console.log('Estudiante seleccionado:', student);
-		// Aquí llamarías a tu servicio para agregar el estudiante a la actividad
-
 		const body = {
 			studentId: student.id,
 			activityId: this.selectedActivityId
@@ -285,12 +280,10 @@ export class AvatarsComponent {
 			.post<typeof body, StudentActivity>(body)
 			.subscribe({
 				next: (studentActivity) => {
-					console.log('Estudiante agregado a actividad:', studentActivity);
-					// Aquí puedes actualizar tu UI o lista de estudiantes en la actividad
 					this.closeModal();
 					this.loadStudents();
-
 					this.onActivityChange(this.selectedCategoryId!, 0);
+					this.closeModal();
 					// Si necesitas recargar la lista
 				},
 				error: (err) => {

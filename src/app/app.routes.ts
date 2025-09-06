@@ -14,22 +14,27 @@ export const routes: Routes = [
         canActivate: [authGuard],
         children: [
             {
-                path: 'avatars',
+                path: 'actividades',
                 loadComponent: () => import('./components/avatars/avatars.component').then(m => m.AvatarsComponent),
                 title: 'Avatars'
             },
             {
-                path: 'students',
+                path: 'estudiantes',
                 loadComponent: () => import('./components/students/student-list.component').then(m => m.StudentListComponent),
                 title: 'Estudiantes'
             },
             {
-                path: 'students/new',
+                path: 'desarrollo',
+                loadComponent: () => import('./components/develop/develop.component').then(m => m.DevelopComponent),
+                title: 'Desarrollo'
+            },
+            {
+                path: 'estudiantes/nuevo',
                 loadComponent: () => import('./components/students/student-edit.component').then(m => m.StudentEditComponent),
                 title: 'Nuevo Estudiante',
             },
             {
-                path: 'students/:id/edit',
+                path: 'estudiantes/:id/editar',
                 loadComponent: () => import('./components/students/student-edit.component').then(m => m.StudentEditComponent),
                 title: 'Editar Estudiante',
                 children: [
@@ -43,26 +48,26 @@ export const routes: Routes = [
                         loadComponent: () => import('./components/students/student-info.component').then(m => m.StudentInfoComponent)
                     },
                     {
-                        path: 'activities',
+                        path: 'actividades',
                         loadComponent: () => import('./components/students/student-activities.component').then(m => m.StudentActivitiesComponent)
                     },
                     {
-                        path: 'payments',
+                        path: 'pagos',
                         loadComponent: () => import('./components/students/student-payments.component').then(m => m.StudentPaymentsComponent)
                     },
                     {
-                        path: 'technical-sheet',
+                        path: 'ficha-tecnica',
                         loadComponent: () => import('./components/students/student-technical.component').then(m => m.StudentTechnicalComponent)
                     },
                     {
-                        path: 'documents',
+                        path: 'documentos',
                         loadComponent: () => import('./components/students/student-documents.component').then(m => m.StudentDocumentsComponent)
                     }
                 ]
             },
             {
                 path: '',
-                redirectTo: 'avatars',
+                redirectTo: 'actividades',
                 pathMatch: 'full'
             }
         ]
