@@ -63,7 +63,8 @@
 
         <div *ngFor="let studentActivity of studentActivities" class="relative">
           <div (click)="selectAvatar(studentActivity)" (dblclick)="openEditModal(studentActivity)" [ngClass]="{
-              'border-4 border-blue-500 shadow-lg': selectedStudentActivity === studentActivity
+              'border-4 border-blue-500 shadow-lg': selectedStudentActivity === studentActivity,
+              'opacity-20 ': studentActivity.unsubscribed
               }"
             class="w-25 h-25 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-300">
             @if (studentActivity.student.photoUrl) {

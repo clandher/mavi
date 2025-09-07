@@ -60,11 +60,14 @@ export class StudentActivity {
 
     activity!: Activity;
     activityId!: number;
+    price!: number;
 
-    registrationDate!: Date;
+    inscriptionDate!: Date;
     debtActivityAmount!: number;
-
+    
     charges: Charge[] = [];
+    unsubscribedDate!: Date;
+    unsubscribed!: boolean;
 }
 
 
@@ -72,6 +75,7 @@ export class Activity {
     id!: number;
 
     category!: Category;
+    categoryId!: number;
 
     type!: ActivityType;
 
@@ -82,6 +86,7 @@ export class Activity {
     endDate!: Date;
 
     gracePeriod!: number;
+    price!: number;
 }
 
 export class ActivityType {

@@ -7,7 +7,7 @@
           [href]="'/mavi/app/actividades?category=' + act.activity.categoryId + '&activity=' + act.activity.id">
           {{ act.activity.description }}
         </a>
-        <div class="text-sm text-gray-500">Inscripción: {{ act.registrationDate | date:'medium' }}</div>
+        <div class="text-sm text-gray-500">Inscripción: {{ act.inscriptionDate | date:'medium' }}</div>
         <div class="text-sm text-gray-500">Inicio: {{ act.activity.startDate | date:'mediumDate' }}</div>
         <div class="text-sm text-gray-500">Fin: {{ act.activity.endDate | date:'mediumDate' }}</div>
       </div>
@@ -17,6 +17,14 @@
       </div>
     </div>
     <div>
+      <button 
+        (click)="unsubscribeActivity(act)" 
+        [disabled]="act.unsubscribed" 
+        [ngClass]="act.unsubscribed ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600'" 
+        class="text-white text-xs px-3 py-1 rounded mr-2">
+        {{ act.unsubscribed ? 'Dado de baja' : 'Dar de baja' }}
+      </button>
+      <span *ngIf="act.unsubscribed" class="text-xs text-red-600 ml-2">Actividad dada de baja</span>
       <div *ngFor="let cargo of act.charges" class="">
         <div class="flex justify-between items-center mb-1">
           <div class="text-sm font-semibold text-gray-700">

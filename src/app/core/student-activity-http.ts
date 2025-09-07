@@ -16,4 +16,8 @@ export class StudentActivityHttp extends BaseHttp {
         const url = buildUrl(`student-activities/by-student/${studentId}`);
         return this.http.get(url);
     }
+    unsubscribe(studentActivityId: number): Observable<any> {
+        const url = buildUrl(`student-activities/${studentActivityId}/unsubscribe`);
+        return this.http.patch(url, {});
+    }
 }
