@@ -3,7 +3,9 @@
 
 
 body {
-    background-color: #080808;
+    // background-color: #080808;
+    background-color: #0a0a0a;
+    font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 
@@ -209,5 +211,38 @@ select.form-control {
 
     .toast-error {
         background-color: #861b0f;
+    }
+}
+
+
+// .mavi-section {
+//     border: 1px solid #262626;
+//     padding: 24px;
+// }
+
+
+.mavi-tabs {
+    background-color: #101010;
+    height: 36px;
+    padding: 3px;
+    display: flex;
+    overflow: scroll;
+    font-size: 14px;
+    gap: 4px;
+    font-weight: 500;
+
+    .mavi-tab {
+        white-space: nowrap;
+        padding: 0 15px;
+        cursor: pointer;
+        border: 1px solid transparent;
+        color: #a1a1a1;
+
+        &[selected] {
+            background-color: #161616;
+            border: 1px solid #262626;
+            color: oklch(0.985 0 0);
+        }
+
     }
 }
