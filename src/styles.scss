@@ -4,19 +4,22 @@
 /* Custom dark scrollbar for the whole app */
 ::-webkit-scrollbar {
     width: 6px;
+    cursor: grab;
 }
 
 ::-webkit-scrollbar-thumb {
     border-left: 2px solid #fafafa;
     transition: background 0.2s;
+    // background: #444;
+    cursor: grab;
+    outline: none;
 }
 
-::-webkit-scrollbar-thumb:hover {
-    background: #3b82f6;
-}
-
-::-webkit-scrollbar-thumb:active {
-    background: #2563eb;
+::-webkit-scrollbar-thumb:hover,
+::-webkit-scrollbar-thumb:active,
+::-webkit-scrollbar-thumb:focus {
+    background: #444;
+    outline: none;
 }
 
 ::-webkit-scrollbar-corner {
@@ -33,62 +36,7 @@ body {
 
 
 
-/* student-edit.component.scss */
-.mavi-form {
-    .form-group {
-        margin-bottom: 1.5rem;
 
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-        }
-
-        input,
-        select {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-
-            &[type="number"] {
-                max-width: 150px;
-            }
-        }
-    }
-}
-
-.btn-new,
-.btn-save {
-    background-color: #3498db;
-    color: white;
-    padding: 6px 12px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-
-    &:hover {
-        background-color: #4286e2;
-    }
-
-    &:disabled {
-        background-color: #95a5a6;
-        cursor: not-allowed;
-    }
-}
-
-.btn-new {
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-
-    background-color: #34db85;
-
-    &:hover {
-        background-color: #25ea84;
-    }
-}
 
 /* Button Variants */
 .btn {
@@ -106,8 +54,6 @@ body {
 
 .btn-sm {
     height: 32px;
-    // padding: 6px 12px;
-    // font-size: 13px;
 }
 
 .btn-primary {
@@ -189,7 +135,8 @@ body {
     padding: 4px 12px;
     font-size: 14px;
     border: 1px solid oklch(0.269 0 0);
-    background-color: oklab(0.269 0 0 / 0.3);
+    background-color: #18181b;
+    color: #fafafa;
 
     &[type="number"] {
         max-width: 150px;
@@ -201,7 +148,16 @@ textarea.form-control {
 }
 
 select.form-control {
-    padding: 0.4rem;
+    padding: 0.4rem 12px;
+    background-color: #18181b;
+    color: #fafafa;
+    border: 1px solid oklch(0.269 0 0);
+
+    &:focus {
+        // outline: none;
+        // border-color: oklch(62.341% 0.00007 271.152);
+        // background-color: #222;
+    }
 }
 
 
@@ -254,47 +210,6 @@ select.form-control {
 
 
 
-.btn-primary {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    white-space: nowrap;
-    border-radius: 6px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-    background-color: #3498db;
-    color: #fff;
-    padding: 0.5rem 1rem;
-    border: none;
-    outline: none;
-    cursor: pointer;
-
-    &:hover {
-        background-color: #217dbb;
-    }
-
-    &:focus-visible {
-        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
-        border-color: #3498db;
-    }
-
-    &:disabled {
-        opacity: 0.5;
-        pointer-events: none;
-    }
-
-    svg {
-        pointer-events: none;
-        width: 1rem;
-        height: 1rem;
-        flex-shrink: 0;
-    }
-}
-
-
-
 .toast-container {
     font-size: 12px;
 
@@ -323,13 +238,13 @@ select.form-control {
 
 .mavi-tabs {
     background-color: #101010;
-    // height: 36px;
     padding: 6px;
     display: flex;
-    overflow: scroll;
+    overflow-x: auto;
     font-size: 14px;
     gap: 4px;
     font-weight: 500;
+    // height: 43px;
 
     .mavi-tab {
         white-space: nowrap;
@@ -338,7 +253,7 @@ select.form-control {
         border: 1px solid transparent;
         color: #a1a1a1;
 
-        &[selected] {
+        &.selected {
             background-color: #161616;
             border: 1px solid #262626;
             color: oklch(0.985 0 0);
@@ -354,4 +269,34 @@ select.form-control {
     padding: 2px 8px;
     font-weight: 500;
     border: 1px solid oklch(0.269 0 0);
+}
+
+
+.mavi-bottom-actions {
+    position: fixed;
+    bottom: 30px;
+    right: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 50;
+
+    .mavi-bottom-actions-inner {
+        background: #151515;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18), 0 1.5px 8px rgba(52, 152, 219, 0.08);
+        padding: 8px;
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        pointer-events: auto;
+        opacity: 0.7;
+        transition: box-shadow 0.3s, opacity 0.3s, background 0.3s;
+
+        &:hover {
+            // box-shadow: 0 8px 32px rgba(52, 152, 219, 0.18), 0 2px 12px rgba(52, 152, 219, 0.18);
+            opacity: 1;
+            // background: linear-gradient(90deg, #217dbb 0%, #3498db 100%);
+        }
+    }
 }

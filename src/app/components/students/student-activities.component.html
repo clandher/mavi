@@ -1,54 +1,49 @@
-<!-- student-activities.component.html -->
-<div *ngIf="activities.length > 0" class="space-y-6 bg-white shadow p-6">
-  <div *ngFor="let act of activities" class="">
-    <div class="flex justify-between items-center mb-2">
-      <div>
-        <a class="text-lg font-semibold text-blue-600 hover:underline"
-          [href]="'/mavi/app/actividades?category=' + act.activity.categoryId + '&activity=' + act.activity.id">
-          {{ act.activity.description }}
-        </a>
-        <div class="text-sm text-gray-500">Inscripción: {{ act.inscriptionDate | date:'medium' }}</div>
-        <div class="text-sm text-gray-500">Inicio: {{ act.activity.startDate | date:'mediumDate' }}</div>
-        <div class="text-sm text-gray-500">Fin: {{ act.activity.endDate | date:'mediumDate' }}</div>
-      </div>
-      <div class="text-right">
-        <div class="text-sm text-gray-600">Precio: ${{ act.activity.price }}</div>
-        <div class="text-xs text-gray-400">Deuda restante: ${{ act.charges[0]?.amountRemaining }}</div>
-      </div>
-    </div>
+<div *ngFor="let act of activities" class="">
+  <div class="flex justify-between items-center mb-2">
     <div>
-      <button 
-        (click)="unsubscribeActivity(act)" 
-        [disabled]="act.unsubscribed" 
-        [ngClass]="act.unsubscribed ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600'" 
-        class="text-white text-xs px-3 py-1 rounded mr-2">
-        {{ act.unsubscribed ? 'Dado de baja' : 'Dar de baja' }}
-      </button>
-      <span *ngIf="act.unsubscribed" class="text-xs text-red-600 ml-2">Actividad dada de baja</span>
-      <div *ngFor="let cargo of act.charges" class="">
-        <div class="flex justify-between items-center mb-1">
-          <div class="text-sm font-semibold text-gray-700">
-            Cargo #{{ cargo.id }}
+      <a class="text-lg font-semibold text-blue-600 hover:underline"
+        [href]="'/mavi/app/actividades?category=' + act.activity.categoryId + '&activity=' + act.activity.id">
+        {{ act.activity.description }}
+      </a>
+      <div class="text-sm text-gray-500">Inscripción: {{ act.inscriptionDate | date:'medium' }}</div>
+      <div class="text-sm text-gray-500">Inicio: {{ act.activity.startDate | date:'mediumDate' }}</div>
+      <div class="text-sm text-gray-500">Fin: {{ act.activity.endDate | date:'mediumDate' }}</div>
+    </div>
+    <div class="text-right">
+      <div class="text-sm text-gray-600">Precio: ${{ act.activity.price }}</div>
+      <div class="text-xs text-gray-400">Deuda restante: ${{ act.charges[0]?.amountRemaining }}</div>
+    </div>
+  </div>
+  <div>
+    <button (click)="unsubscribeActivity(act)" [disabled]="act.unsubscribed"
+      [ngClass]="act.unsubscribed ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600'"
+      class="text-white text-xs px-3 py-1 rounded mr-2">
+      {{ act.unsubscribed ? 'Dado de baja' : 'Dar de baja' }}
+    </button>
+    <span *ngIf="act.unsubscribed" class="text-xs text-red-600 ml-2">Actividad dada de baja</span>
+    <div *ngFor="let cargo of act.charges" class="">
+      <div class="flex justify-between items-center mb-1">
+        <div class="text-sm font-semibold text-gray-700">
+          Cargo #{{ cargo.id }}
+        </div>
+        <div class="text-xs text-gray-500">
+          ${{ cargo.amountToBePaid }} / ${{ cargo.amountRemaining }}
+        </div>
+      </div>
+      <div class="w-full flex space-x-1">
+        <div class="flex-1 bg-gray-200 h-3 flex">
+          <div class="bg-green-400 h-3"
+            [style.width.%]="((cargo.amountToBePaid - cargo.amountRemaining) / cargo.amountToBePaid) * 100">
           </div>
-          <div class="text-xs text-gray-500">
-            ${{ cargo.amountToBePaid }} / ${{ cargo.amountRemaining }}
+          <div class="bg-gray-200 h-3" [style.width.%]="(cargo.amountRemaining / cargo.amountToBePaid) * 100">
           </div>
         </div>
-        <div class="w-full flex space-x-1">
-          <div class="flex-1 bg-gray-200 h-3 flex">
-            <div class="bg-green-400 h-3"
-              [style.width.%]="((cargo.amountToBePaid - cargo.amountRemaining) / cargo.amountToBePaid) * 100">
-            </div>
-            <div class="bg-gray-200 h-3" [style.width.%]="(cargo.amountRemaining / cargo.amountToBePaid) * 100">
-            </div>
-          </div>
-        </div>
-        <div *ngIf="cargo.amountRemaining > 0" class="text-xs text-gray-400 mt-1">
-          Restante: {{ cargo.amountRemaining | currencyMX }}
-        </div>
-        <div *ngIf="cargo.amountRemaining === 0" class="text-xs text-green-600 mt-1">
-          Pagado
-        </div>
+      </div>
+      <div *ngIf="cargo.amountRemaining > 0" class="text-xs text-gray-400 mt-1">
+        Restante: {{ cargo.amountRemaining | currencyMX }}
+      </div>
+      <div *ngIf="cargo.amountRemaining === 0" class="text-xs text-green-600 mt-1">
+        Pagado
       </div>
     </div>
   </div>

@@ -5,7 +5,6 @@
     justify-content: center;
     align-items: center;
     width: 800px;
-    // background-color: #191818;
     background-color: #0a0a0a;
     margin: 20px;
 
@@ -16,7 +15,6 @@
         justify-content: space-between;
         align-items: center;
         padding: 10px;
-        // background-color: #1a1919;
         color: white;
         width: 100%;
 
@@ -30,14 +28,11 @@
 
     .dashboard-content {
         flex: 1;
-
-
         overflow-y: auto;
         width: 100%;
-
-
         border: 1px solid #262626;
         padding: 24px;
+        padding-bottom: 64px;
     }
 }
 

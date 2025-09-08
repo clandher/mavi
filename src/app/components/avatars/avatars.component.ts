@@ -1,15 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
-import { Activity, ActivityType, ApiRes, Category, Charge, CreateActivityDto, CreatePaymentDto, PaymentEntity, Student, StudentActivity } from '@app/core/dto';
+import { Activity, ActivityType, ApiRes, Category, CreateActivityDto, Student, StudentActivity } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { PaymentComponent } from "../payment/payment.component";
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
-	selector: 'app-avatars',
 	standalone: true,
 	imports: [CommonModule, FormsModule, PaymentComponent],
 	templateUrl: './avatars.component.html',

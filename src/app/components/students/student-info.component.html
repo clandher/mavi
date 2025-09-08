@@ -1,31 +1,29 @@
-<div class="bg-white shadow p-6">
-
-
-    <form class="mavi-form">
-
-        <div class="form-group">
-            <label>Categorías:</label>
-            <div class="categories-list">
-                <div *ngFor="let sc of studentCategories" class="category-item">
-                    <span>
-                        {{sc.category?.type}}
-                    </span>
-                    <button type="button" class="btn-remove" (click)="removeCategory(sc.id)">
-                        ×
-                    </button>
-                </div>
-                <div *ngIf="availableCategories.length > 0" class="add-category">
-                    <select [(ngModel)]="selectedCategoryId" name="newCategory" class="category-select">
-                        <option *ngFor="let cat of availableCategories" [value]="cat.id">
-                            {{ cat.type }}
-                        </option>
-                    </select>
-                    <button type="button" class="btn-add" (click)="addCategory()">
-                        + Añadir Categoría
-                    </button>
-                </div>
-            </div>
+<div class="form-group">
+    <label class="form-label">Categorías</label>
+    <div class="flex gap-2">
+        <div *ngFor="let sc of studentCategories" class="mavi-tag cursor-pointer" (click)="removeCategory(sc.id)">
+            <span>
+                {{sc.category?.type}}
+            </span>
+            <button type="button" class="btn-remove">
+                ×
+            </button>
         </div>
-    </form>
+    </div>
+    <br>
+    <div *ngIf="availableCategories.length > 0" class="flex gap-2">
+        <div class="w-32">
+            <select [(ngModel)]="selectedCategoryId" name="newCategory" class="form-control">
+                <option *ngFor="let cat of availableCategories" [value]="cat.id">
+                    {{ cat.type }}
+                </option>
+            </select>
+        </div>
 
+        <div class="w-32">
+            <button class="btn btn-primary" (click)="addCategory()">
+                + Agregar
+            </button>
+        </div>
+    </div>
 </div>

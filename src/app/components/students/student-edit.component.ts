@@ -28,7 +28,6 @@ export class StudentEditComponent {
         payments: [],
         photo: '',
         photoUrl: '',
-        active: true,
     };
 
     constructor(
@@ -66,7 +65,6 @@ export class StudentEditComponent {
         const updateStudentDto: UpdateStudentDto = {
             name: this.student.name,
             birthdate: new Date(this.student.birthdate),
-            active: this.student.active // <-- agrega esto
         };
 
         studentsAPI.patch(updateStudentDto).subscribe({
@@ -85,7 +83,6 @@ export class StudentEditComponent {
         const createStudentDto: CreateStudentDto = {
             name: this.student.name,
             birthdate: new Date(this.student.birthdate),
-            active: this.student.active // <-- agrega esto
         };
 
         studentsAPI.post<CreateStudentDto, Student>(createStudentDto).subscribe({

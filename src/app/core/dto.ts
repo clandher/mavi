@@ -32,7 +32,6 @@ export class Student {
     debt!: number;
     photo!: string;
     photoUrl!: string;
-    active!: boolean;
 
     categories!: StudentCategory[];
 
@@ -44,7 +43,6 @@ export class Student {
 export class CreateStudentDto {
     name!: string;
     birthdate!: Date;
-    active!: boolean;
 }
 
 export class UpdateStudentDto extends CreateStudentDto {

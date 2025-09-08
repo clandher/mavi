@@ -1,53 +1,49 @@
-<div class="bg-white shadow p-6">
-    <form (ngSubmit)="saveStudent()" class="flex gap-1 items-center ">
-        <label for="photo" class="photo-label">
-            <img *ngIf="student.photo; else placeholder" [src]="student.photoUrl" class="student-photo" alt="Foto">
-            <ng-template #placeholder>
-                <div class="photo-placeholder">+</div>
-            </ng-template>
-            <input id="photo" type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden>
-        </label>
+<form (ngSubmit)="saveStudent()" class="flex gap-3 items-center">
+    <label for="photo" class="photo-label">
+        <img *ngIf="student.photo; else placeholder" [src]="student.photoUrl" class="student-photo" alt="Foto">
+        <ng-template #placeholder>
+            <div class="photo-placeholder">+</div>
+        </ng-template>
+        <input id="photo" type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden>
+    </label>
+
+    <div class="form-group flex-2">
+        <label for="search" class="form-label">Nombre:</label>
         <input id="name" type="text" class="form-control" [(ngModel)]="student.name" name="name" required
             placeholder="Nombre">
+    </div>
+
+    <div class="form-group flex-2">
+        <label for="search" class="form-label">Fecha de nacimiento:</label>
         <input id="birthdate" type="date" class="form-control" [(ngModel)]="student.birthdate" name="birthdate"
             required>
+    </div>
 
-        <label class="flex items-center gap-2">
-            <input type="checkbox" [(ngModel)]="student.active" name="active">
-            <span>{{ student.active ? 'Activo' : 'Inactivo' }}</span>
-        </label>
-
-        <button type="submit" class="btn btn-save" [disabled]="isSaving">
-            <span *ngIf="!isSaving">Guardar</span>
-            <span *ngIf="isSaving">Guardando...</span>
-        </button>
-    </form>
-</div>
+    <button type="submit" class="btn btn-primary mt-4 self-end" [disabled]="isSaving">
+        <span *ngIf="!isSaving">Guardar</span>
+        <span *ngIf="isSaving">Guardando...</span>
+    </button>
+</form>
+<br>
 
 @if (student.id !== 0){
-<div class="bg-black flex">
-    <a routerLink="info" routerLinkActive="border-blue-500 text-blue-600 font-semibold bg-white border-b-4"
-        [routerLinkActiveOptions]="{ exact: true }"
-        class="px-4 py-2 -mb-px border-b-2 focus:outline-none border-transparent text-gray-500 flex-1 text-center">
-         Categorias
-    </a>
-    <a routerLink="actividades" routerLinkActive="border-blue-500 text-blue-600 font-semibold bg-white border-b-4"
-        class="px-4 py-2 -mb-px border-b-2focus:outline-none border-transparent text-gray-500 flex-1 text-center">
+<div class="mavi-tabs">
+    <button routerLink="info" routerLinkActive="selected" [routerLinkActiveOptions]="{ exact: true }" class="mavi-tab">
+        General
+    </button>
+    <button routerLink="actividades" routerLinkActive="selected" class="mavi-tab">
         Actividades
-    </a>
-    <a routerLink="pagos" routerLinkActive="border-blue-500 text-blue-600 font-semibold bg-white border-b-4"
-        class="px-4 py-2 -mb-px border-b-2 focus:outline-none border-transparent text-gray-500 flex-1 text-center">
+    </button>
+    <button routerLink="pagos" routerLinkActive="selected" class="mavi-tab">
         Pagos
-    </a>
-    <a routerLink="ficha-tecnica" routerLinkActive="border-blue-500 text-blue-600 font-semibold bg-white border-b-4"
-        class="px-4 py-2 -mb-px border-b-2 focus:outline-none border-transparent text-gray-500 flex-1 text-center">
+    </button>
+    <button routerLink="ficha-tecnica" routerLinkActive="selected" class="mavi-tab">
         Ficha técnica
-    </a>
-    <a routerLink="documentos" routerLinkActive="border-blue-500 text-blue-600 font-semibold bg-white border-b-4"
-        class="px-4 py-2 -mb-px border-b-2 focus:outline-none border-transparent text-gray-500 flex-1 text-center">
+    </button>
+    <button routerLink="documentos" routerLinkActive="selected" class="mavi-tab">
         Documentos
-    </a>
+    </button>
 </div>
-
+<br>
 <router-outlet></router-outlet>
 }
