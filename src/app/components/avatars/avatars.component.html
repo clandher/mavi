@@ -6,10 +6,11 @@
 	</button>
 
 	<div class="category-select-wrapper">
+		<!-- <label for="categories" class="form-label">Categoría</label> -->
 		<select id="categories" name="categories" [(ngModel)]="selectedCategoryId" (change)="onCategoryChange()"
 			class="category-select">
-			<option [value]="null" disabled class="category-option-disabled">-- Selecciona una categoría --</option>
-			<option *ngFor="let category of categories" [value]="category.id" class="category-option">
+			<option [value]="null" disabled>-- Selecciona una categoría --</option>
+			<option *ngFor="let category of categories" [value]="category.id">
 				{{ category.type }}
 			</option>
 		</select>
@@ -76,8 +77,7 @@
 				</div>
 
 
-				<div *ngIf="selectedStudentActivity === studentActivity"
-					class="absolute z-30 mt-2 w-48 bg-white rounded-lg shadow-xl">
+				<div *ngIf="selectedStudentActivity === studentActivity" class="absolute z-30 mt-2 w-48 mavi-border">
 					<ul class="py-2">
 						<li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="openEditModal(studentActivity)">
 							Editar
@@ -119,83 +119,100 @@
 </div>
 
 <div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-	<div class="bg-white p-6 rounded-lg shadow-xl min-w-[40vw] max-h-[80vh] overflow-y-auto">
+	<div class="mavi-border text-white min-w-[40vw] max-h-[80vh] overflow-y-auto">
 		<h2 class="text-xl font-semibold mb-4">
 			Agregar alumno
 		</h2>
 
-		<div class="form-group">
-			<label for="name">Categoria:</label>
-			<select [(ngModel)]="newCategoryId" name="newCategory" class="category-select"
-				(change)="onNewCategoryChange()">
-				<option *ngFor="let cat of categories" [value]="cat.id">
-					{{ cat.type }}
-				</option>
-			</select>
+		<div class="flex gap-4 justify-between">
+
+			<div class="form-group flex-1">
+				<label for="newCategoryId" class="form-label">Categoría</label>
+				<select id="newCategoryId" [(ngModel)]="newCategoryId" name="newCategory" class="form-control"
+					(change)="onNewCategoryChange()">
+					<option *ngFor="let cat of categories" [value]="cat.id">
+						{{ cat.type }}
+					</option>
+				</select>
+			</div>
+			<div class="form-group flex-1">
+				<label for="newActivityId" class="form-label">Actividad</label>
+				<select id="newActivityId" [(ngModel)]="newActivityId" name="newAcitivity" class="form-control">
+					<option *ngFor="let act of newActivities" [value]="act.id">
+						{{ act.description }}
+					</option>
+				</select>
+			</div>
+
 		</div>
 
-		<div class="form-group">
-			<label for="name">Actividad:</label>
-			<select [(ngModel)]="newActivityId" name="newAcitivity" class="category-select">
-				<option *ngFor="let act of newActivities" [value]="act.id">
-					{{ act.description }}
-				</option>
-			</select>
-		</div>
 
-
-		<div class="flex border-b mb-4">
-			<button (click)="activeTab = 'existing'"
-				[class]="activeTab === 'existing' ? 'border-b-2 border-blue-500 font-medium' : 'text-gray-500'"
-				class="px-4 py-2 focus:outline-none">
+		<br />
+		<div class="mavi-tabs">
+			<button (click)="activeTab = 'existing'" [class]="activeTab === 'existing' ? 'selected' : ''"
+				class="mavi-tab">
 				Seleccionar existente
 			</button>
-			<button (click)="activeTab = 'new'"
-				[class]="activeTab === 'new' ? 'border-b-2 border-blue-500 font-medium' : 'text-gray-500'"
-				class="px-4 py-2 focus:outline-none">
+			<button (click)="activeTab = 'new'" [class]="activeTab === 'new' ? 'selected' : ''" class="mavi-tab">
 				Crear nuevo
 			</button>
 		</div>
-
-		<div *ngIf="activeTab === 'existing'">
-			<div class="mb-4">
-				<label class="block mb-2">Buscar estudiante</label>
-				<input type="text" [(ngModel)]="searchTerm" (input)="filterStudents()"
-					placeholder="Buscar por nombre..." class="w-full p-2 border rounded-lg mb-3">
+		<br />
+		<div class="mavi-border" *ngIf="activeTab === 'existing'">
+			<div class="form-group">
+				<label for="searchTerm" class="form-label">Buscar estudiante</label>
+				<input id="searchTerm" type="text" [(ngModel)]="searchTerm" (input)="filterStudents()"
+					placeholder="Buscar por nombre..." class="form-control">
 			</div>
 
+			<br />
+
 			<div class="grid grid-cols-3 gap-3 mb-4 max-h-60 overflow-y-scroll">
+
+
 				<div *ngFor="let student of filteredStudents" (click)="selectStudent(student)"
-					[class.bg-blue-500]="selectedExistingStudent?.id === student.id"
-					class="p-3 border cursor-pointer hover:font-bold flex flex-col justify-between items-center">
-					<span>{{ student.nick !== '' ? student.nick : student.name }}</span>
-					<span class="text-sm text-gray-500">Edad {{ getAge(student.birthdate) }}</span>
+					[class.bg-gray-500]="selectedExistingStudent?.id === student.id"
+					class="mavi-border p-1 cursor-pointer flex items-center">
+
+					<img *ngIf="student.photo" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
+					<ng-template #placeholder>
+						<div class="photo-placeholder">+</div>
+					</ng-template>
+					<div>{{
+						student.nick
+						!== '' ? student.nick
+						:
+						student.name }}</div>
+
 				</div>
+
+
+
 				<div *ngIf="filteredStudents.length === 0" class="col-span-3 text-center py-4 text-gray-500">
 					No se encontraron estudiantes
 				</div>
 			</div>
 		</div>
 
-		<div *ngIf="activeTab === 'new'">
-			<div class="mb-4">
-				<label class="block mb-2">Nombre</label>
-				<input type="text" [(ngModel)]="newStudent.name" class="w-full p-2 border rounded-lg mb-3"
+		<div class="mavi-border" *ngIf="activeTab === 'new'">
+			<div class="form-group">
+				<label for="newStudentName" class="form-label">Nombre</label>
+				<input id="newStudentName" type="text" [(ngModel)]="newStudent.name" class="form-control"
 					placeholder="Nombre completo del estudiante">
 			</div>
-
-			<div class="mb-4">
-				<label class="block mb-2">Fecha de nacimiento</label>
-				<input type="date" [max]="getFormattedDate(maxBirthdate)" [(ngModel)]="newStudent.birthdate"
-					class="w-full p-2 border rounded-lg mb-3">
+			<br />
+			<div class="form-group">
+				<label for="newStudentBirthdate" class="form-label">Fecha de nacimiento</label>
+				<input id="newStudentBirthdate" type="date" [max]="getFormattedDate(maxBirthdate)"
+					[(ngModel)]="newStudent.birthdate" class="form-control">
 			</div>
 		</div>
 
 		<div class="flex justify-end space-x-2 mt-4">
-			<button (click)="closeModal()" class="bg-gray-400 px-4 py-2 rounded-lg text-white">Cancelar</button>
+			<button (click)="closeModal()" class="btn btn-outline">Cancelar</button>
 			<button (click)="onInscription()"
 				[disabled]="(activeTab === 'existing' && !selectedExistingStudent) || (activeTab === 'new' && !newStudent.name)"
-				class="bg-blue-500 px-4 py-2 rounded-lg text-white disabled:bg-blue-300">
+				class="btn btn-primary">
 				{{ activeTab === 'existing' ? 'Inscribir' : 'Crear e inscribir' }}
 			</button>
 		</div>
@@ -203,37 +220,70 @@
 </div>
 
 <div *ngIf="newEventModalVisible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-	<div class="bg-white p-6 rounded-lg shadow-xl w-96">
+	<div class="mavi-border text-white min-w-[40vw] w-96 ">
 		<h2 class="text-xl font-semibold mb-4">Nueva actividad</h2>
 
-		<label class="block mb-2">Descripción</label>
-		<input type="text" [(ngModel)]="newActivity.description" class="w-full p-2 border rounded-lg mb-3">
+		<div class="form-group">
+			<label for="newActivityDescription" class="form-label">Descripción</label>
+			<input id="newActivityDescription" type="text" [(ngModel)]="newActivity.description" class="form-control">
+		</div>
+		<br />
 
-		<label class="block mb-2">Categoría</label>
-		<select [(ngModel)]="newActivity.categoryId" class="w-full p-2 border rounded-lg mb-3">
-			<option *ngFor="let category of categories" [value]="category.id">{{ category.type }}</option>
-		</select>
+		<div class="flex gap-4 justify-between">
 
-		<label class="block mb-2">Tipo de Actividad</label>
-		<select [(ngModel)]="newActivity.typeId" class="w-full p-2 border rounded-lg mb-3">
-			<option *ngFor="let type of activityTypes" [value]="type.id">{{ type.key }}</option>
-		</select>
 
-		<label class="block mb-2">Fecha de Inicio</label>
-		<input type="datetime-local" [(ngModel)]="newActivity.startDate" class="w-full p-2 border rounded-lg mb-3">
+			<div class="form-group flex-1">
+				<label for="newActivityCategoryId" class="form-label">Categoría</label>
+				<select id="newActivityCategoryId" [(ngModel)]="newActivity.categoryId" class="form-control">
+					<option *ngFor="let category of categories" [value]="category.id">{{ category.type }}</option>
+				</select>
+			</div>
 
-		<label class="block mb-2">Fecha de Fin</label>
-		<input type="datetime-local" [(ngModel)]="newActivity.endDate" class="w-full p-2 border rounded-lg mb-3">
+			<div class="form-group flex-1">
+				<label for="newActivityTypeId" class="form-label">Tipo de Actividad</label>
+				<select id="newActivityTypeId" [(ngModel)]="newActivity.typeId" class="form-control">
+					<option *ngFor="let type of activityTypes" [value]="type.id">{{ type.key }}</option>
+				</select>
+			</div>
 
-		<label class="block mb-2">Período de gracia (días)</label>
-		<input type="number" [(ngModel)]="newActivity.gracePeriod" class="w-full p-2 border rounded-lg mb-3">
+		</div>
+		<br />
 
-		<label class="block mb-2">Precio</label>
-		<input type="number" step="0.01" [(ngModel)]="newActivity.price" class="w-full p-2 border rounded-lg mb-3">
+		<div class="flex gap-4 justify-between">
+
+
+			<div class="form-group flex-1">
+				<label for="newActivityStartDate" class="form-label">Fecha de Inicio</label>
+				<input id="newActivityStartDate" type="datetime-local" [(ngModel)]="newActivity.startDate"
+					class="form-control">
+			</div>
+			<div class="form-group flex-1">
+				<label for="newActivityEndDate" class="form-label">Fecha de Fin</label>
+				<input id="newActivityEndDate" type="datetime-local" [(ngModel)]="newActivity.endDate"
+					class="form-control">
+			</div>
+
+		</div>
+
+		<br />
+
+		<div class="flex gap-4 justify-between">
+
+			<div class="form-group flex-1">
+				<label for="newActivityGracePeriod" class="form-label">Período de gracia (días)</label>
+				<input id="newActivityGracePeriod" type="number" [(ngModel)]="newActivity.gracePeriod"
+					class="form-control">
+			</div>
+			<div class="form-group flex-1">
+				<label for="newActivityPrice" class="form-label">Precio</label>
+				<input id="newActivityPrice" type="number" step="0.01" [(ngModel)]="newActivity.price"
+					class="form-control">
+			</div>
+		</div>
 
 		<div class="flex justify-end space-x-2 mt-4">
-			<button (click)="closeNewEventModal()" class="bg-gray-400 px-4 py-2 rounded-lg text-white">Cancelar</button>
-			<button (click)="saveNewActivity()" class="bg-blue-500 px-4 py-2 rounded-lg text-white">Guardar</button>
+			<button (click)="closeNewEventModal()" class="btn btn-outline">Cancelar</button>
+			<button (click)="saveNewActivity()" class="btn btn-primary">Guardar</button>
 		</div>
 	</div>
 </div>

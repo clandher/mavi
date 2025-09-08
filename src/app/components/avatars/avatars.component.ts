@@ -236,6 +236,11 @@ export class AvatarsComponent {
 		studentsAPI.get<Student[]>().subscribe({
 			next: (students) => {
 				this.students = students;
+				students.forEach(student => {
+					if (student.photo) {
+						student.photoUrl = buildUrl(`students/${student.id}/photo`);
+					}
+				});
 				this.filteredStudents = [...students];
 			},
 			error: (err) => console.error('Error loading students', err)
