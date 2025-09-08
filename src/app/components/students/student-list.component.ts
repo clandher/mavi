@@ -7,14 +7,28 @@ import { Student, Category } from '@app/core/dto';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
+import { RequestQueryBuilder } from '@dataui/crud-request';
+import { PaymentComponent } from "../payment/payment.component";
 
 @Component({
     standalone: true,
-    imports: [CommonModule, RouterModule, FormsModule, CurrencyMXPipe],
+    imports: [CommonModule, RouterModule, FormsModule, CurrencyMXPipe, PaymentComponent],
     templateUrl: './student-list.component.html',
     styleUrls: ['./student-list.component.scss']
 })
 export class StudentListComponent implements OnInit {
+    openPaymentModal(student: Student) {
+        this.selectedStudent = student;
+        this.showPaymentModal = true;
+    }
+
+    onPaymentComplete($event: boolean) {
+        this.showPaymentModal = false;
+        if ($event) {
+            this.loadStudents();
+        }
+    }
+
     students: Student[] = [];
     filteredStudents: Student[] = [];
     allCategories: Category[] = [];
@@ -23,12 +37,12 @@ export class StudentListComponent implements OnInit {
     isLoading = true;
     sortDebt: 'desc' | 'asc' = 'desc';
 
+    selectedStudent: Student | null = null;
+    showPaymentModal: boolean = false;
 
-    private studentsAPI: BaseHttp;
     private categoriesAPI: BaseHttp;
 
     constructor(private http: HttpClient) {
-        this.studentsAPI = new BaseHttp('students', this.http);
         this.categoriesAPI = new BaseHttp('categories', this.http);
     }
 
@@ -39,7 +53,17 @@ export class StudentListComponent implements OnInit {
 
     loadStudents(): void {
         this.isLoading = true;
-        this.studentsAPI.get<Student[]>().subscribe({
+
+
+        const queryString = RequestQueryBuilder.create({
+            // search: { id: 1 }
+        })
+            .setJoin([
+                { field: 'activities' }
+            ])
+            .query();
+
+        this.http.get<Student[]>(buildUrl(`students`)).subscribe({
             next: (students) => {
                 this.students = students.map(student => {
 
@@ -111,6 +135,7 @@ export class StudentListComponent implements OnInit {
         return category ? category.type : 'Desconocida';
     }
 
+    //duda, que pasa si quitamos una categoria que tiene actividades.
     removeCategory(studentCategoryId: number): void {
         if (confirm('¿Estás seguro de quitar esta categoría al estudiante?')) {
             const studentCategoriesAPI = new BaseHttp(`student-categories/${studentCategoryId}`, this.http);;
@@ -123,5 +148,12 @@ export class StudentListComponent implements OnInit {
                 }
             });
         }
+    }
+
+    hasActivitiesForCategory(student: any, categoryId: any): boolean {
+        if (!student.activities || !Array.isArray(student.activities)) {
+            return false;
+        }
+        return student.activities.some((act: any) => act.activity && act.activity.categoryId === categoryId);
     }
 }

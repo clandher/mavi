@@ -11,30 +11,34 @@
     </div>
 
     <div class="student-filters">
-        <div class="filter-group">
-            <label for="search">Buscar:</label>
-            <input id="search" type="text" [(ngModel)]="searchTerm" (input)="filterStudents()"
-                placeholder="Nombre del estudiante">
-        </div>
+        <div class="form-row" style="display: flex; gap: 1rem;">
+            <div class="form-group flex-2">
+                <label for="search" class="form-label">Nombre:</label>
+                <input id="search" class="form-control" type="text" [(ngModel)]="searchTerm" (input)="filterStudents()"
+                    placeholder="Ingresa tu texto aqui...">
+            </div>
 
-        <div class="filter-group">
-            <label for="category">Filtrar por categoría:</label>
-            <select id="category" [(ngModel)]="selectedCategory" (change)="filterStudents()">
-                <option [ngValue]="null">Todas las categorías</option>
-                <option *ngFor="let category of allCategories" [ngValue]="category.id">
-                    {{ category.type }}
-                </option>
-            </select>
-        </div>
+            <div class="form-group flex-1">
+                <label for="category" class="form-label">Categoría:</label>
+                <select id="category" class="form-control" [(ngModel)]="selectedCategory" (change)="filterStudents()">
+                    <option [ngValue]="null">Todas las categorías</option>
+                    <option *ngFor="let category of allCategories" [ngValue]="category.id">
+                        {{ category.type }}
+                    </option>
+                </select>
+            </div>
 
-        <div class="filter-group">
-            <label for="sortDebt">Ordenar por adeudo:</label>
-            <select id="sortDebt" [(ngModel)]="sortDebt" (change)="filterStudents()">
-                <option value="desc">Mayor adeudo</option>
-                <option value="asc">Menor adeudo</option>
-            </select>
+            <div class="form-group flex-1">
+                <label for="sortDebt" class="form-label">Ordenar por:</label>
+                <select id="sortDebt" class="form-control" [(ngModel)]="sortDebt" (change)="filterStudents()">
+                    <option value="desc">Mayor adeudo</option>
+                    <option value="asc">Menor adeudo</option>
+                </select>
+            </div>
         </div>
     </div>
+
+    <br>
 
     <div *ngIf="isLoading" class="loading-indicator">
         Cargando estudiantes...
@@ -52,50 +56,71 @@
                     <ng-template #placeholder>
                         <div class="photo-placeholder">+</div>
                     </ng-template>
-                    <h3 [ngClass]="{'text-gray-400': !student.active}">{{ student.nick !== '' ? student.nick :
+                    <h3 class="cursor-pointer" [ngClass]="{'text-gray-400': !student.active}"
+                        [routerLink]="['/app/estudiantes', student.id, 'editar']">{{ student.nick !== '' ? student.nick
+                        :
                         student.name }}</h3>
                 </div>
-                <span class="student-age">{{ calculateAge(student.birthdate) }} años</span>
             </div>
-            <!-- <div class="student-status" [class.active]="student.active" [class.inactive]="!student.active">
-                {{ student.active ? 'Activo' : 'Inactivo' }}
-            </div> -->
 
-            <div class="student-details">
-                <div class="detail-row">
-                    <span class="detail-label">Actividades:</span>
-                    <span class="detail-value">
-                        {{ student.activities.length }}
-                    </span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">Deuda:</span>
-                    <span class="detail-value" [class.high-debt]="student.debt > 0">
-                        {{ student.debt | currencyMX }}
-                    </span>
-                </div>
-
-                <div class="detail-row">
-                    <span class="detail-label">Categorías:</span>
-                    <div class="student-categories">
-                        <span *ngFor="let sc of student.categories" class="category-badge">
-                            {{ getCategoryName(sc.categoryId) }}
-                            <button class="remove-category" (click)="removeCategory(sc.id)">
-                                ×
-                            </button>
-                        </span>
-                        <span *ngIf="!student.categories?.length" class="no-categories">
-                            Sin categorías
-                        </span>
+            <div class="detail-row">
+                <span class="detail-label mb-1">Actividades</span>
+                <div class="flex flex-col gap-2">
+                    <div *ngFor="let sc of student.categories">
+                        <div class="flex gap-2 items-center">
+                            <div class="mavi-tag">
+                                {{ getCategoryName(sc.categoryId) }}
+                                <!-- <button class="remove-category" (click)="removeCategory(sc.id)">×</button> -->
+                            </div>
+                            <ng-container *ngFor="let act of student.activities">
+                                <span *ngIf="act.activity.categoryId === sc.categoryId" class="mavi-tag"
+                                    [title]="act.activity.details">
+                                    {{ act.activity.description }}
+                                </span>
+                            </ng-container>
+                        </div>
                     </div>
+                    <span *ngIf="!student.categories?.length" class="no-categories">
+                        -
+                    </span>
                 </div>
             </div>
 
-            <div class="student-actions">
-                <a [routerLink]="['/app/estudiantes', student.id, 'editar']" class="btn btn-edit">
-                    Editar
-                </a>
+            <div class="detail-row mt-4">
+                <div class="detail-label">Pendiente:</div>
+                <div class="detail-value" [class.high-debt]="student.debt > 0">
+                    {{ student.debt | currencyMX }}
+                </div>
+            </div>
+
+            <div class="card-actions mt-4">
+                <button class="btn btn-sm btn-outline w-full justify-center"
+                    [routerLink]="['/app/estudiantes', student.id, 'editar']">
+
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" width="20" height="20" class="size-4 me-2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    </svg>
+                    Ver detalle
+                </button>
+                <button class="btn btn-sm btn-outline" (click)="openPaymentModal(student)"
+                    [disabled]="student.debt <= 0">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-4 me-2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
+                    </svg>
+                    Cobrar
+                </button>
             </div>
         </div>
+    </div>
+</div>
+
+<div *ngIf="showPaymentModal && selectedStudent" class="w-full h-lvh overflow-y-auto">
+    <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <app-payment [studentId]="selectedStudent.id" (complete)="onPaymentComplete($event)"></app-payment>
     </div>
 </div>

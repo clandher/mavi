@@ -144,7 +144,6 @@ export class StudentEditComponent {
         const file = (event.target as HTMLInputElement).files?.[0];
         if (file) {
             this.uploadPhoto(file);
-            // Si quieres mostrar preview local:
             const reader = new FileReader();
             reader.onload = () => {
                 this.student.photo = reader.result as string;

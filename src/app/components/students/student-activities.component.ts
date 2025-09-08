@@ -48,7 +48,6 @@ export class StudentActivitiesComponent implements OnInit {
 
       },
       error: () => {
-        // Aquí podrías mostrar un toastr de error si lo deseas
       }
     });
   }

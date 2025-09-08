@@ -1,35 +1,31 @@
-<div class="mavi-section">
 
-  <div class=" w-full  flex items-center space-x-2 ">
-    <button (click)="selectPreviousCategory()"
-      class="px-3 py-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-blue-500 hover:text-white transition"
-      aria-label="Anterior">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+
+  <div class="category-selector">
+    <button (click)="selectPreviousCategory()" class="category-btn" aria-label="Anterior">
+      <svg class="category-btn-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
     </button>
 
-    <div class="flex-1">
+    <div class="category-select-wrapper">
       <select id="categories" name="categories" [(ngModel)]="selectedCategoryId" (change)="onCategoryChange()"
-        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-2 border-gray-800 dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md shadow-sm bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
-        <option [value]="null" disabled class="text-gray-500 dark:text-gray-400">-- Selecciona una categoría --</option>
-        <option *ngFor="let category of categories" [value]="category.id" class="text-gray-900 dark:text-gray-100">
+        class="category-select">
+        <option [value]="null" disabled class="category-option-disabled">-- Selecciona una categoría --</option>
+        <option *ngFor="let category of categories" [value]="category.id" class="category-option">
           {{ category.type }}
         </option>
       </select>
     </div>
 
-    <button (click)="selectNextCategory()"
-      class="px-3 py-2 rounded-md bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-blue-500 hover:text-white transition"
-      aria-label="Siguiente">
-      <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <button (click)="selectNextCategory()" class="category-btn" aria-label="Siguiente">
+      <svg class="category-btn-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
       </svg>
     </button>
   </div>
   <br>
 
-  <div class=" w-full  h-lvh overflow-y-auto">
+  <div class=" w-full  overflow-y-auto">
 
 
     <div class="mavi-tabs">
@@ -260,11 +256,9 @@
     </div>
 
     <div class="flex justify-end space-x-2 mt-8">
-      <button (click)="showDebt = !showDebt" class="px-4 py-2 rounded-lg text-white"
+      <button (click)="showDebt = !showDebt" class="btn btn-secondary"
         [ngClass]="showDebt ? 'bg-blue-500' : 'bg-gray-400'">
         {{ showDebt ? 'Mostrar total' : 'Mostrar deuda' }}
       </button>
     </div>
   </div>
-
-</div>

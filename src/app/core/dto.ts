@@ -80,6 +80,7 @@ export class Activity {
     type!: ActivityType;
 
     description!: string;
+    details!: string;
 
     startDate!: Date;
 

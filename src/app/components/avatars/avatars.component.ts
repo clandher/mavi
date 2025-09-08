@@ -288,7 +288,6 @@ export class AvatarsComponent {
 				},
 				error: (err) => {
 					console.error('Error al agregar estudiante a actividad', err);
-					// Puedes mostrar un mensaje de error al usuario si lo deseas
 				}
 			});
 
@@ -391,14 +390,10 @@ export class AvatarsComponent {
 			const activitiesAPI = new BaseHttp('activities', this.http);
 			activitiesAPI.post<CreateActivityDto, Activity>(activityToSend).subscribe({
 				next: (activity) => {
-					// Aquí puedes manejar la respuesta, por ejemplo:
-					// this.activities.push(activity);
 					this.closeNewEventModal();
-					// Mostrar mensaje de éxito
 				},
 				error: (err) => {
 					console.error('Error al crear la actividad:', err);
-					// Mostrar mensaje de error
 				}
 			});
 		} else {
