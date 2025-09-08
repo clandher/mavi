@@ -131,6 +131,7 @@ export class Charge {
     id!: number;
     studentActivity!: StudentActivity;
     student!: Student;
+    concept!: string;
     studentId!: number;
     chargeDate!: Date;
     amountToBePaid!: number;

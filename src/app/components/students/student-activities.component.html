@@ -1,71 +1,73 @@
-<div *ngFor="let act of activities" class="">
-  <div class="flex justify-between items-center mb-2">
-    <div>
-      <a class="text-lg font-semibold text-blue-600 hover:underline"
-        [href]="'/mavi/app/actividades?category=' + act.activity.categoryId + '&activity=' + act.activity.id">
-        {{ act.activity.description }}
-      </a>
-      <div class="text-sm text-gray-500">Inscripción: {{ act.inscriptionDate | date:'medium' }}</div>
-      <div class="text-sm text-gray-500">Inicio: {{ act.activity.startDate | date:'mediumDate' }}</div>
-      <div class="text-sm text-gray-500">Fin: {{ act.activity.endDate | date:'mediumDate' }}</div>
-    </div>
-    <div class="text-right">
-      <div class="text-sm text-gray-600">Precio: ${{ act.activity.price }}</div>
-      <div class="text-xs text-gray-400">Deuda restante: ${{ act.charges[0]?.amountRemaining }}</div>
-    </div>
-  </div>
-  <div>
-    <button (click)="unsubscribeActivity(act)" [disabled]="act.unsubscribed"
-      [ngClass]="act.unsubscribed ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600'"
-      class="text-white text-xs px-3 py-1 rounded mr-2">
-      {{ act.unsubscribed ? 'Dado de baja' : 'Dar de baja' }}
-    </button>
-    <span *ngIf="act.unsubscribed" class="text-xs text-red-600 ml-2">Actividad dada de baja</span>
-    <div *ngFor="let cargo of act.charges" class="">
-      <div class="flex justify-between items-center mb-1">
-        <div class="text-sm font-semibold text-gray-700">
-          Cargo #{{ cargo.id }}
-        </div>
-        <div class="text-xs text-gray-500">
-          ${{ cargo.amountToBePaid }} / ${{ cargo.amountRemaining }}
-        </div>
-      </div>
-      <div class="w-full flex space-x-1">
-        <div class="flex-1 bg-gray-200 h-3 flex">
-          <div class="bg-green-400 h-3"
-            [style.width.%]="((cargo.amountToBePaid - cargo.amountRemaining) / cargo.amountToBePaid) * 100">
-          </div>
-          <div class="bg-gray-200 h-3" [style.width.%]="(cargo.amountRemaining / cargo.amountToBePaid) * 100">
-          </div>
-        </div>
-      </div>
-      <div *ngIf="cargo.amountRemaining > 0" class="text-xs text-gray-400 mt-1">
-        Restante: {{ cargo.amountRemaining | currencyMX }}
-      </div>
-      <div *ngIf="cargo.amountRemaining === 0" class="text-xs text-green-600 mt-1">
-        Pagado
-      </div>
-    </div>
-  </div>
+<div class="mavi-grid">
+
+	<div *ngFor="let act of activities" class="mavi-card">
+		<div class="flex justify-between items-center mb-2">
+			<div>
+				<div class="hover-link" [routerLink]="['/mavi/app/actividades']"
+					[queryParams]="{ category: act.activity.categoryId, activity: act.activity.id }">
+					{{ act.activity.description }}
+				</div>
+				<div class="text-sm text-gray-500"
+					title="{{ act.activity.startDate | date:'medium' }} - {{ act.activity.endDate | date:'medium' }}">
+					{{ act.activity.startDate | date:'mediumDate' }} - {{ act.activity.endDate | date:'mediumDate' }}
+				</div>
+			</div>
+			<div class="text-right">
+				<!-- <div class="text-sm text-gray-600">Precio: ${{ act.activity.price }}</div> -->
+				<!-- <div class="text-xs text-gray-400">Deuda restante: ${{ act.charges[0]?.amountRemaining }}</div> -->
+			</div>
+		</div>
+
+		<br />
+
+		<div *ngFor="let cargo of act.charges" class="mavi-border">
+			<div class="flex justify-between items-center mb-1">
+				<div>
+					{{ cargo.concept }}
+				</div>
+
+				<div class="text-xs text-gray-500">
+					{{ cargo.chargeDate | date:'mediumDate' }}
+				</div>
+			</div>
+			<div class="flex justify-between">
+				<div class="detail-row">
+					<div class="detail-label">Total pagado</div>
+					<div class="detail-value high-paid">
+						{{ cargo.amountToBePaid - cargo.amountRemaining | currencyMX }}
+					</div>
+				</div>
+
+
+				<div *ngIf="cargo.amountRemaining > 0" class="detail-row">
+					<div class="detail-label">Pendiente</div>
+					<div class="detail-value" [class.high-debt]="cargo.amountRemaining > 0">
+						{{ cargo.amountRemaining | currencyMX }}
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		<div class="mavi-card-actions mt-4">
+			<button (click)="unsubscribeActivity(act)" [disabled]="act.unsubscribed"
+				[ngClass]="act.unsubscribed ? 'bg-gray-400 cursor-not-allowed' : 'bg-red-500 hover:bg-red-600'"
+				class="btn btn-sm btn-destructive">
+
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+					stroke="currentColor" class="size-4 me-2">
+					<path stroke-linecap="round" stroke-linejoin="round"
+						d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+				</svg>
+
+
+				{{ act.unsubscribed ? 'Dado de baja' : 'Dar de baja' }}
+			</button>
+		</div>
+
+	</div>
 </div>
+
 <div *ngIf="activities.length === 0" class="text-gray-500 text-center py-8">
-  No hay actividades inscritas.
+	No hay actividades inscritas.
 </div>
-
-<style>
-  .activity-list {
-    list-style: none;
-    padding: 0;
-  }
-
-  .activity-card {
-    background: #f9f9f9;
-    border-radius: 8px;
-    padding: 16px;
-    box-shadow: 0 2px 8px #eee;
-  }
-
-  .activity-card h3 {
-    margin-top: 0;
-  }
-</style>

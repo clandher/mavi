@@ -2,59 +2,27 @@
     position: relative;
 }
 
-.student-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 1.5rem;
-    color: oklch(0.985 0 0);
 
-    .student-card {
-        border: 1px solid #262626;
-        padding: 1.5rem;
-        background-color: transparent;
 
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        transition: transform 0.2s, box-shadow 0.2s;
+.student-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
 
-        .student-card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
+    h3 {
+        margin: 0;
+        font-size: 1.2rem;
+    }
 
-            h3 {
-                margin: 0;
-                font-size: 1.2rem;
-            }
-
-            .student-age {
-                color: #666;
-                font-size: 0.9rem;
-            }
-        }
+    .student-age {
+        color: #666;
+        font-size: 0.9rem;
     }
 }
 
 
 
-.detail-row {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 0.75rem;
-
-    .detail-label {
-        font-size: 14px;
-        color: #a1a1a1;
-    }
-
-
-}
-
-.card-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-}
 
 .loading-indicator,
 .no-results {

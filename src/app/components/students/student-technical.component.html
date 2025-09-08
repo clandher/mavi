@@ -1,55 +1,66 @@
-<form>
-  <div class="mb-3 flex gap-4">
-    <div class="flex-1">
-      <label for="foot" class="block font-medium mb-1">Pierna hábil</label>
-      <select id="foot" class="form-control w-full">
-        <option value="">Selecciona pierna hábil</option>
-        <option value="Derecha">Derecha</option>
-        <option value="Izquierda">Izquierda</option>
-        <option value="Ambas">Ambas</option>
-      </select>
-    </div>
-    <div class="flex-1">
+<form class="mavi-border">
+	<div class="flex gap-4">
+		<div class="form-group flex-1">
+			<label for="foot" class="form-label">Pierna hábil</label>
+			<select id="foot" class="form-control">
+				<option value="">Selecciona pierna hábil</option>
+				<option value="Derecha">Derecha</option>
+				<option value="Izquierda">Izquierda</option>
+				<option value="Ambas">Ambas</option>
+			</select>
+		</div>
 
-      <label for="position" class="block font-medium mb-1">Posición</label>
-      <select id="position" class="form-control w-full">
-        <option value="">Selecciona posición</option>
-        <option value="Portero">Portero</option>
-        <option value="Defensa">Defensa</option>
-        <option value="Medio">Medio</option>
-        <option value="Delantero">Delantero</option>
-      </select>
-    </div>
-  </div>
-  <div class="mb-3 flex gap-4">
-    <div class="flex-1">
-      <label for="height" class="block font-medium mb-1">Altura (cm)</label>
-      <input id="height" type="number" class="form-control w-full" min="100" max="250" placeholder="Ej. 175">
-    </div>
-    <div class="flex-1">
-      <label for="weight" class="block font-medium mb-1">Peso (kg)</label>
-      <input id="weight" type="number" class="form-control w-full" min="30" max="150" placeholder="Ej. 70">
-    </div>
-    <div class="flex-1">
-      <label for="number" class="block font-medium mb-1">Número</label>
-      <input id="number" type="number" class="form-control w-full" min="1" max="99" placeholder="Número">
-    </div>
-  </div>
-  <div class="mb-3">
-    <label for="observations" class="block font-medium mb-1">Observaciones</label>
-    <textarea id="observations" class="form-control w-full" rows="3"
-      placeholder="Observaciones técnicas, físicas, etc."></textarea>
-  </div>
-  <div class="mb-3">
-    <label for="strengths" class="block font-medium mb-1">Fortalezas</label>
-    <textarea id="strengths" class="form-control w-full" rows="3"
-      placeholder="Fortalezas técnicas, físicas, etc."></textarea>
-  </div>
-  <div class="mb-3">
-    <label for="weaknesses" class="block font-medium mb-1">Debilidades</label>
-    <textarea id="weaknesses" class="form-control w-full" rows="3"
-      placeholder="Debilidades técnicas, físicas, etc."></textarea>
-  </div>
-  <button type="submit" class="btn btn-save">Guardar ficha técnica</button>
+		<div class="form-group flex-1">
+			<label for="position" class="form-label">Posición</label>
+			<select id="position" class="form-control">
+				<option value="">Selecciona posición</option>
+				<option value="Portero">Portero</option>
+				<option value="Defensa">Defensa</option>
+				<option value="Medio">Medio</option>
+				<option value="Delantero">Delantero</option>
+			</select>
+		</div>
+	</div>
 
+	<br>
+	<div class="flex gap-4">
+		<div class="form-group flex-1">
+			<label for="height" class="form-label">Altura (cm)</label>
+			<input id="height" type="number" class="form-control" min="100" max="250" placeholder="Ej. 175">
+		</div>
+		<div class="form-group flex-1">
+			<label for="weight" class="form-label">Peso (kg)</label>
+			<input id="weight" type="number" class="form-control" min="30" max="150" placeholder="Ej. 70">
+		</div>
+		<div class="form-group flex-1">
+			<label for="number" class="form-label">Número</label>
+			<input id="number" type="number" class="form-control" min="1" max="99" placeholder="Número">
+		</div>
+	</div>
+	<br>
+
+
+	<div class="form-group">
+		<label for="observations" class="form-label">Observaciones</label>
+		<textarea id="observations" class="form-control" rows="3"
+			placeholder="Observaciones técnicas, físicas, etc."></textarea>
+	</div>
+	<br>
+	<div class="form-group">
+		<label for="strengths" class="form-label">Fortalezas</label>
+		<textarea id="strengths" class="form-control" rows="3"
+			placeholder="Fortalezas técnicas, físicas, etc."></textarea>
+	</div>
+	<br>
+	<div class="form-group">
+		<label for="weaknesses" class="form-label">Debilidades</label>
+		<textarea id="weaknesses" class="form-control" rows="3"
+			placeholder="Debilidades técnicas, físicas, etc."></textarea>
+	</div>
+
+	<div class="mavi-bottom-actions">
+		<div class="mavi-bottom-actions-inner">
+			<button type="submit" class="btn btn-primary">Guardar ficha técnica</button>
+		</div>
+	</div>
 </form>

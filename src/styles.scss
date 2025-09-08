@@ -50,6 +50,17 @@ body {
     transition: background 0.2s, color 0.2s, border 0.2s;
     display: flex;
     align-items: center;
+
+    &:disabled {
+        background: #555;
+        color: #ccc;
+        cursor: not-allowed;
+        border: none;
+
+        &:hover {
+            background: #555;
+        }
+    }
 }
 
 .btn-sm {
@@ -101,12 +112,11 @@ body {
     background: #6a1a1a;
     color: #fff;
     border: 1px solid #6a1a1a;
-}
 
-.btn-destructive:hover {
-    background: #a32a2a;
+    &:hover {
+        background: #a32a2a;
+    }
 }
-
 
 .btn-back {
     background-color: #95a5a6;
@@ -137,10 +147,6 @@ body {
     border: 1px solid oklch(0.269 0 0);
     background-color: #18181b;
     color: #fafafa;
-
-    &[type="number"] {
-        max-width: 150px;
-    }
 }
 
 textarea.form-control {
@@ -205,6 +211,11 @@ select.form-control {
 .high-debt {
     color: #e74c3c;
     color: oklch(.704 .191 22.216);
+    font-weight: bold;
+}
+
+.high-paid {
+    color: #05df72;
     font-weight: bold;
 }
 
@@ -299,4 +310,57 @@ select.form-control {
             // background: linear-gradient(90deg, #217dbb 0%, #3498db 100%);
         }
     }
+}
+
+
+.mavi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    color: oklch(0.985 0 0);
+
+    .mavi-card {
+        border: 1px solid #262626;
+        padding: 24px;
+        background-color: transparent;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: transform 0.2s, box-shadow 0.2s;
+
+
+    }
+
+    .mavi-card-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+}
+
+.hover-link {
+    color: oklch(0.985 0 0);
+    text-decoration: none;
+    transition: color 0.2s, text-decoration 0.2s;
+    cursor: pointer;
+
+    &:hover {
+        color: oklch(0.8 0 0);
+        text-decoration: underline;
+    }
+}
+
+
+.detail-row {
+    display: flex;
+    flex-direction: column;
+
+    .detail-label {
+        font-size: 14px;
+        color: #a1a1a1;
+    }
+}
+
+.mavi-border {
+    border: 1px solid #262626;
+    padding: 16px;
+
 }

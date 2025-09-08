@@ -135,7 +135,6 @@ export class StudentListComponent implements OnInit {
         return category ? category.type : 'Desconocida';
     }
 
-    //duda, que pasa si quitamos una categoria que tiene actividades.
     removeCategory(studentCategoryId: number): void {
         if (confirm('¿Estás seguro de quitar esta categoría al estudiante?')) {
             const studentCategoriesAPI = new BaseHttp(`student-categories/${studentCategoryId}`, this.http);;

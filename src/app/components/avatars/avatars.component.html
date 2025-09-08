@@ -1,255 +1,255 @@
 <div class="category-selector">
-  <button (click)="selectPreviousCategory()" class="category-btn" aria-label="Anterior">
-    <svg class="category-btn-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-    </svg>
-  </button>
+	<button (click)="selectPreviousCategory()" class="category-btn" aria-label="Anterior">
+		<svg class="category-btn-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+			<path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+		</svg>
+	</button>
 
-  <div class="category-select-wrapper">
-    <select id="categories" name="categories" [(ngModel)]="selectedCategoryId" (change)="onCategoryChange()"
-      class="category-select">
-      <option [value]="null" disabled class="category-option-disabled">-- Selecciona una categoría --</option>
-      <option *ngFor="let category of categories" [value]="category.id" class="category-option">
-        {{ category.type }}
-      </option>
-    </select>
-  </div>
+	<div class="category-select-wrapper">
+		<select id="categories" name="categories" [(ngModel)]="selectedCategoryId" (change)="onCategoryChange()"
+			class="category-select">
+			<option [value]="null" disabled class="category-option-disabled">-- Selecciona una categoría --</option>
+			<option *ngFor="let category of categories" [value]="category.id" class="category-option">
+				{{ category.type }}
+			</option>
+		</select>
+	</div>
 
-  <button (click)="selectNextCategory()" class="category-btn" aria-label="Siguiente">
-    <svg class="category-btn-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-    </svg>
-  </button>
+	<button (click)="selectNextCategory()" class="category-btn" aria-label="Siguiente">
+		<svg class="category-btn-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+			<path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+		</svg>
+	</button>
 </div>
 <br>
 
 
 <div class="mavi-tabs">
-  <button class="mavi-tab" [ngClass]="{ selected: selectedActivityId === activity.id }"
-    *ngFor="let activity of activities; let i = index" (click)="onActivityChange(activity.id, i)">
-    {{ activity.description }}
-  </button>
+	<button class="mavi-tab" [ngClass]="{ selected: selectedActivityId === activity.id }"
+		*ngFor="let activity of activities; let i = index" (click)="onActivityChange(activity.id, i)">
+		{{ activity.description }}
+	</button>
 
-  <button class="mavi-tab" (click)="openNewEventModal()">
-    Nueva actividad
-  </button>
+	<button class="mavi-tab" (click)="openNewEventModal()">
+		Nueva actividad
+	</button>
 </div>
 <br>
 
 
 <div class="relative justify-center ">
-  <div *ngFor="let activity of activities">
-    <div *ngIf="selectedActivityId! === activity.id" class="grid grid-cols-6 gap-4">
+	<div *ngFor="let activity of activities">
+		<div *ngIf="selectedActivityId! === activity.id" class="grid grid-cols-6 gap-4">
 
-      <div class="relative">
-        <div (click)="addNewAvatar()"
-          class="w-25 h-25 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-300 hover:bg-gray-300">
-          <span class="text-3xl font-bold text-gray-600">+</span>
-        </div>
-      </div>
+			<div class="relative">
+				<div (click)="addNewAvatar()"
+					class="w-25 h-25 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-300 hover:bg-gray-300">
+					<span class="text-3xl font-bold text-gray-600">+</span>
+				</div>
+			</div>
 
-      <div *ngFor="let studentActivity of studentActivities" class="relative">
-        <div (click)="selectAvatar(studentActivity)" (dblclick)="openEditModal(studentActivity)" [ngClass]="{
+			<div *ngFor="let studentActivity of studentActivities" class="relative">
+				<div (click)="selectAvatar(studentActivity)" (dblclick)="openEditModal(studentActivity)" [ngClass]="{
               'border-4 border-blue-500 shadow-lg': selectedStudentActivity === studentActivity,
               'opacity-20 ': studentActivity.unsubscribed
               }"
-          class="w-25 h-25 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-300">
-          @if (studentActivity.student.photoUrl) {
-          <img [src]="studentActivity.student.photoUrl" class="w-full h-full object-cover" />
-          }
+					class="w-25 h-25 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-300">
+					@if (studentActivity.student.photoUrl) {
+					<img [src]="studentActivity.student.photoUrl" class="w-full h-full object-cover" />
+					}
 
-          <span *ngIf="studentActivity.debtActivityAmount > 0" (click)="showPaymentModal = true"
-            class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg z-20">
-            {{showDebt ? '¡Debe!' : '$' + studentActivity.debtActivityAmount}}
-          </span>
+					<span *ngIf="studentActivity.debtActivityAmount > 0" (click)="showPaymentModal = true"
+						class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg z-20">
+						{{showDebt ? '¡Debe!' : '$' + studentActivity.debtActivityAmount}}
+					</span>
 
-          <span [title]="studentActivity.student.name"
-            class="absolute bottom-0 left-0 bg-black text-white text-xs font-bold px-1 py-0 rounded-tr-lg z-20 overflow-hidden whitespace-nowrap text-ellipsis"
-            style="text-overflow: ellipsis;">
-            <span style="max-width: 60px; display: inline-block; overflow: hidden; text-overflow: ellipsis;">
-              {{ studentActivity.student.nick !== '' ? studentActivity.student.nick : studentActivity.student.name
-              }}
-            </span>
-          </span>
-        </div>
+					<span [title]="studentActivity.student.name"
+						class="absolute bottom-0 left-0 bg-black text-white text-xs font-bold px-1 py-0 rounded-tr-lg z-20 overflow-hidden whitespace-nowrap text-ellipsis"
+						style="text-overflow: ellipsis;">
+						<span
+							style="max-width: 60px; display: inline-block; overflow: hidden; text-overflow: ellipsis;">
+							{{ studentActivity.student.nick !== '' ? studentActivity.student.nick :
+							studentActivity.student.name
+							}}
+						</span>
+					</span>
+				</div>
 
 
-        <div *ngIf="selectedStudentActivity === studentActivity"
-          class="absolute z-30 mt-2 w-48 bg-white rounded-lg shadow-xl">
-          <ul class="py-2">
-            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="openEditModal(studentActivity)">
-              Editar
-            </li>
+				<div *ngIf="selectedStudentActivity === studentActivity"
+					class="absolute z-30 mt-2 w-48 bg-white rounded-lg shadow-xl">
+					<ul class="py-2">
+						<li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="openEditModal(studentActivity)">
+							Editar
+						</li>
 
-            @if(studentActivity.debtActivityAmount > 0){
-            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="showPaymentModal = true">Registrar pago
-            </li>
-            }
+						@if(studentActivity.debtActivityAmount > 0){
+						<li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="showPaymentModal = true">
+							Registrar pago
+						</li>
+						}
 
-            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="toggleSubmenu('inscribir')">
-              Inscribir a...
-              <ul *ngIf="showSubmenu['inscribir']" class="pl-4">
-                <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Liga X</li>
-                <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Torneo X</li>
-              </ul>
-            </li>
+						<li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="toggleSubmenu('inscribir')">
+							Inscribir a...
+							<ul *ngIf="showSubmenu['inscribir']" class="pl-4">
+								<li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Liga X</li>
+								<li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Torneo X</li>
+							</ul>
+						</li>
 
-            <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="toggleSubmenu('Observaciones')">
-              Observaciones...
-              <ul *ngIf="showSubmenu['Observaciones']" class="pl-2">
-                <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Practicar tiros libres</li>
-                <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Mejorar trabajo en equipo</li>
-                <li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Desarrollar liderazgo</li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-      </div>
+						<li class="px-4 py-2 hover:bg-gray-100 cursor-pointer" (click)="toggleSubmenu('Observaciones')">
+							Observaciones...
+							<ul *ngIf="showSubmenu['Observaciones']" class="pl-2">
+								<li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Practicar tiros libres</li>
+								<li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Mejorar trabajo en equipo</li>
+								<li class="px-4 py-2 hover:bg-gray-100 cursor-pointer">Desarrollar liderazgo</li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
 
-    </div>
-  </div>
+		</div>
+	</div>
 </div>
 
 <div *ngIf="showPaymentModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-  <app-payment [studentId]="selectedStudentActivity?.student?.id!" (complete)="onPaymentComplete($event)">
-  </app-payment>
+	<app-payment [studentId]="selectedStudentActivity?.student?.id!" (complete)="onPaymentComplete($event)">
+	</app-payment>
 </div>
 
 <div *ngIf="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-  <div class="bg-white p-6 rounded-lg shadow-xl min-w-[40vw] max-h-[80vh] overflow-y-auto">
-    <h2 class="text-xl font-semibold mb-4">
-      Agregar alumno
-    </h2>
+	<div class="bg-white p-6 rounded-lg shadow-xl min-w-[40vw] max-h-[80vh] overflow-y-auto">
+		<h2 class="text-xl font-semibold mb-4">
+			Agregar alumno
+		</h2>
 
-    <div class="form-group">
-      <label for="name">Categoria:</label>
-      <select [(ngModel)]="newCategoryId" name="newCategory" class="category-select" (change)="onNewCategoryChange()">
-        <option *ngFor="let cat of categories" [value]="cat.id">
-          {{ cat.type }}
-        </option>
-      </select>
-    </div>
+		<div class="form-group">
+			<label for="name">Categoria:</label>
+			<select [(ngModel)]="newCategoryId" name="newCategory" class="category-select"
+				(change)="onNewCategoryChange()">
+				<option *ngFor="let cat of categories" [value]="cat.id">
+					{{ cat.type }}
+				</option>
+			</select>
+		</div>
 
-    <div class="form-group">
-      <label for="name">Actividad:</label>
-      <select [(ngModel)]="newActivityId" name="newAcitivity" class="category-select">
-        <option *ngFor="let act of newActivities" [value]="act.id">
-          {{ act.description }}
-        </option>
-      </select>
-    </div>
+		<div class="form-group">
+			<label for="name">Actividad:</label>
+			<select [(ngModel)]="newActivityId" name="newAcitivity" class="category-select">
+				<option *ngFor="let act of newActivities" [value]="act.id">
+					{{ act.description }}
+				</option>
+			</select>
+		</div>
 
 
-    <div class="flex border-b mb-4">
-      <button (click)="activeTab = 'existing'"
-        [class]="activeTab === 'existing' ? 'border-b-2 border-blue-500 font-medium' : 'text-gray-500'"
-        class="px-4 py-2 focus:outline-none">
-        Seleccionar existente
-      </button>
-      <button (click)="activeTab = 'new'"
-        [class]="activeTab === 'new' ? 'border-b-2 border-blue-500 font-medium' : 'text-gray-500'"
-        class="px-4 py-2 focus:outline-none">
-        Crear nuevo
-      </button>
-    </div>
+		<div class="flex border-b mb-4">
+			<button (click)="activeTab = 'existing'"
+				[class]="activeTab === 'existing' ? 'border-b-2 border-blue-500 font-medium' : 'text-gray-500'"
+				class="px-4 py-2 focus:outline-none">
+				Seleccionar existente
+			</button>
+			<button (click)="activeTab = 'new'"
+				[class]="activeTab === 'new' ? 'border-b-2 border-blue-500 font-medium' : 'text-gray-500'"
+				class="px-4 py-2 focus:outline-none">
+				Crear nuevo
+			</button>
+		</div>
 
-    <div *ngIf="activeTab === 'existing'">
-      <div class="mb-4">
-        <label class="block mb-2">Buscar estudiante</label>
-        <input type="text" [(ngModel)]="searchTerm" (input)="filterStudents()" placeholder="Buscar por nombre..."
-          class="w-full p-2 border rounded-lg mb-3">
-      </div>
+		<div *ngIf="activeTab === 'existing'">
+			<div class="mb-4">
+				<label class="block mb-2">Buscar estudiante</label>
+				<input type="text" [(ngModel)]="searchTerm" (input)="filterStudents()"
+					placeholder="Buscar por nombre..." class="w-full p-2 border rounded-lg mb-3">
+			</div>
 
-      <div class="grid grid-cols-3 gap-3 mb-4 max-h-60 overflow-y-scroll">
-        <div *ngFor="let student of filteredStudents" (click)="selectStudent(student)"
-          [class.bg-blue-500]="selectedExistingStudent?.id === student.id"
-          class="p-3 border cursor-pointer hover:font-bold flex flex-col justify-between items-center">
-          <span>{{ student.nick !== '' ? student.nick : student.name }}</span>
-          <span class="text-sm text-gray-500">Edad {{ getAge(student.birthdate) }}</span>
-        </div>
-        <div *ngIf="filteredStudents.length === 0" class="col-span-3 text-center py-4 text-gray-500">
-          No se encontraron estudiantes
-        </div>
-      </div>
-    </div>
+			<div class="grid grid-cols-3 gap-3 mb-4 max-h-60 overflow-y-scroll">
+				<div *ngFor="let student of filteredStudents" (click)="selectStudent(student)"
+					[class.bg-blue-500]="selectedExistingStudent?.id === student.id"
+					class="p-3 border cursor-pointer hover:font-bold flex flex-col justify-between items-center">
+					<span>{{ student.nick !== '' ? student.nick : student.name }}</span>
+					<span class="text-sm text-gray-500">Edad {{ getAge(student.birthdate) }}</span>
+				</div>
+				<div *ngIf="filteredStudents.length === 0" class="col-span-3 text-center py-4 text-gray-500">
+					No se encontraron estudiantes
+				</div>
+			</div>
+		</div>
 
-    <div *ngIf="activeTab === 'new'">
-      <div class="mb-4">
-        <label class="block mb-2">Nombre</label>
-        <input type="text" [(ngModel)]="newStudent.name" class="w-full p-2 border rounded-lg mb-3"
-          placeholder="Nombre completo del estudiante">
-      </div>
+		<div *ngIf="activeTab === 'new'">
+			<div class="mb-4">
+				<label class="block mb-2">Nombre</label>
+				<input type="text" [(ngModel)]="newStudent.name" class="w-full p-2 border rounded-lg mb-3"
+					placeholder="Nombre completo del estudiante">
+			</div>
 
-      <div class="mb-4">
-        <label class="block mb-2">Fecha de nacimiento</label>
-        <input type="date" [max]="getFormattedDate(maxBirthdate)" [(ngModel)]="newStudent.birthdate"
-          class="w-full p-2 border rounded-lg mb-3">
-      </div>
-    </div>
+			<div class="mb-4">
+				<label class="block mb-2">Fecha de nacimiento</label>
+				<input type="date" [max]="getFormattedDate(maxBirthdate)" [(ngModel)]="newStudent.birthdate"
+					class="w-full p-2 border rounded-lg mb-3">
+			</div>
+		</div>
 
-    <div class="flex justify-end space-x-2 mt-4">
-      <button (click)="closeModal()" class="bg-gray-400 px-4 py-2 rounded-lg text-white">Cancelar</button>
-      <button (click)="onInscription()"
-        [disabled]="(activeTab === 'existing' && !selectedExistingStudent) || (activeTab === 'new' && !newStudent.name)"
-        class="bg-blue-500 px-4 py-2 rounded-lg text-white disabled:bg-blue-300">
-        {{ activeTab === 'existing' ? 'Inscribir' : 'Crear e inscribir' }}
-      </button>
-    </div>
-  </div>
+		<div class="flex justify-end space-x-2 mt-4">
+			<button (click)="closeModal()" class="bg-gray-400 px-4 py-2 rounded-lg text-white">Cancelar</button>
+			<button (click)="onInscription()"
+				[disabled]="(activeTab === 'existing' && !selectedExistingStudent) || (activeTab === 'new' && !newStudent.name)"
+				class="bg-blue-500 px-4 py-2 rounded-lg text-white disabled:bg-blue-300">
+				{{ activeTab === 'existing' ? 'Inscribir' : 'Crear e inscribir' }}
+			</button>
+		</div>
+	</div>
 </div>
 
 <div *ngIf="newEventModalVisible" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-  <div class="bg-white p-6 rounded-lg shadow-xl w-96">
-    <h2 class="text-xl font-semibold mb-4">Nueva actividad</h2>
+	<div class="bg-white p-6 rounded-lg shadow-xl w-96">
+		<h2 class="text-xl font-semibold mb-4">Nueva actividad</h2>
 
-    <label class="block mb-2">Descripción</label>
-    <input type="text" [(ngModel)]="newActivity.description" class="w-full p-2 border rounded-lg mb-3">
+		<label class="block mb-2">Descripción</label>
+		<input type="text" [(ngModel)]="newActivity.description" class="w-full p-2 border rounded-lg mb-3">
 
-    <label class="block mb-2">Categoría</label>
-    <select [(ngModel)]="newActivity.categoryId" class="w-full p-2 border rounded-lg mb-3">
-      <option *ngFor="let category of categories" [value]="category.id">{{ category.type }}</option>
-    </select>
+		<label class="block mb-2">Categoría</label>
+		<select [(ngModel)]="newActivity.categoryId" class="w-full p-2 border rounded-lg mb-3">
+			<option *ngFor="let category of categories" [value]="category.id">{{ category.type }}</option>
+		</select>
 
-    <label class="block mb-2">Tipo de Actividad</label>
-    <select [(ngModel)]="newActivity.typeId" class="w-full p-2 border rounded-lg mb-3">
-      <option *ngFor="let type of activityTypes" [value]="type.id">{{ type.key }}</option>
-    </select>
+		<label class="block mb-2">Tipo de Actividad</label>
+		<select [(ngModel)]="newActivity.typeId" class="w-full p-2 border rounded-lg mb-3">
+			<option *ngFor="let type of activityTypes" [value]="type.id">{{ type.key }}</option>
+		</select>
 
-    <label class="block mb-2">Fecha de Inicio</label>
-    <input type="datetime-local" [(ngModel)]="newActivity.startDate" class="w-full p-2 border rounded-lg mb-3">
+		<label class="block mb-2">Fecha de Inicio</label>
+		<input type="datetime-local" [(ngModel)]="newActivity.startDate" class="w-full p-2 border rounded-lg mb-3">
 
-    <label class="block mb-2">Fecha de Fin</label>
-    <input type="datetime-local" [(ngModel)]="newActivity.endDate" class="w-full p-2 border rounded-lg mb-3">
+		<label class="block mb-2">Fecha de Fin</label>
+		<input type="datetime-local" [(ngModel)]="newActivity.endDate" class="w-full p-2 border rounded-lg mb-3">
 
-    <label class="block mb-2">Período de gracia (días)</label>
-    <input type="number" [(ngModel)]="newActivity.gracePeriod" class="w-full p-2 border rounded-lg mb-3">
+		<label class="block mb-2">Período de gracia (días)</label>
+		<input type="number" [(ngModel)]="newActivity.gracePeriod" class="w-full p-2 border rounded-lg mb-3">
 
-    <label class="block mb-2">Precio</label>
-    <input type="number" step="0.01" [(ngModel)]="newActivity.price" class="w-full p-2 border rounded-lg mb-3">
+		<label class="block mb-2">Precio</label>
+		<input type="number" step="0.01" [(ngModel)]="newActivity.price" class="w-full p-2 border rounded-lg mb-3">
 
-    <div class="flex justify-end space-x-2 mt-4">
-      <button (click)="closeNewEventModal()" class="bg-gray-400 px-4 py-2 rounded-lg text-white">Cancelar</button>
-      <button (click)="saveNewActivity()" class="bg-blue-500 px-4 py-2 rounded-lg text-white">Guardar</button>
-    </div>
-  </div>
+		<div class="flex justify-end space-x-2 mt-4">
+			<button (click)="closeNewEventModal()" class="bg-gray-400 px-4 py-2 rounded-lg text-white">Cancelar</button>
+			<button (click)="saveNewActivity()" class="bg-blue-500 px-4 py-2 rounded-lg text-white">Guardar</button>
+		</div>
+	</div>
 </div>
 
 
 
 <div class="mavi-bottom-actions">
-  <div class="mavi-bottom-actions-inner">
-
-
-
-    <button (click)="showDebt = !showDebt" class="btn btn-secondary"
-      [ngClass]="showDebt ? 'bg-blue-500' : 'bg-gray-400'">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-        class="size-4 me-2">
-        <path stroke-linecap="round" stroke-linejoin="round"
-          d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-      </svg>
-      {{ showDebt ? 'Mostrar total' : 'Mostrar deuda' }}
-    </button>
-
-  </div>
+	<div class="mavi-bottom-actions-inner">
+		<button (click)="showDebt = !showDebt" class="btn btn-secondary"
+			[ngClass]="showDebt ? 'bg-blue-500' : 'bg-gray-400'">
+			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+				stroke="currentColor" class="size-4 me-2">
+				<path stroke-linecap="round" stroke-linejoin="round"
+					d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+			</svg>
+			{{ showDebt ? 'Mostrar total' : 'Mostrar deuda' }}
+		</button>
+	</div>
 </div>

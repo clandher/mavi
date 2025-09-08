@@ -1,59 +1,83 @@
-<div class="flex items-end justify-end mb-6">
-  <button class="btn-new" (click)="showPaymentModal = true">
+<div class="mavi-grid">
+	<div *ngFor="let pago of paymentsWithChargers" class="mavi-card">
+		<div class="flex justify-between items-center mb-4">
+			<div class="">Pago de ${{ pago.amount }}</div>
+			<div class="text-sm text-gray-500" title="{{ pago.paymentDate | date:'medium' }}"> {{ pago.paymentDate |
+				date:'mediumDate' }}</div>
+		</div>
 
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-      class="size-6">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-    </svg>
-    Nuevo pago
-  </button>
+
+		<div>
+			<div class="font-medium text-gray-700 mb-2">Actividades aplicadas</div>
+			<div *ngFor="let cargo of pago.paymentCharges" class="mb-4">
+				<div class="flex justify-between items-center mb-1">
+					<a class="hover-link"
+						[href]="'/mavi/app/actividades?category=' + cargo.activity.categoryId + '&activity=' + cargo.activity.id">
+						{{ cargo.activity.description }}
+					</a>
+					<div class="text-xs text-gray-500">
+						${{ cargo.collection.amountToBePaid }}
+					</div>
+				</div>
+				<div class="w-full flex space-x-1">
+					<div class="flex-1 bg-gray-200 h-3 flex">
+						<div class="bg-yellow-500 h-3"
+							[style.width.%]="((cargo.collection.amountToBePaid - cargo.amountRemained) / cargo.collection.amountToBePaid) * 100">
+						</div>
+						<div class="bg-green-400 h-3"
+							[style.width.%]="(cargo.amount / cargo.collection.amountToBePaid) * 100">
+						</div>
+					</div>
+				</div>
+				<div *ngIf="cargo.amountRemained - cargo.amount > 0" class="text-xs  mt-1">
+					Pendiente:
+					<span class="high-debt">
+						{{ cargo.amountRemained - cargo.amount | currencyMX }}
+					</span>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="mavi-card-actions mt-4">
+			<!-- <div class="hover-link" (click)="generateVoucher(pago)">Comprobante</div> -->
+
+			<button (click)="generateVoucher(pago)" class="btn btn-sm btn-secondary">
+
+				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+					stroke="currentColor" class="size-4 me-2">
+					<path stroke-linecap="round" stroke-linejoin="round"
+						d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v7.5m2.25-6.466a9.016 9.016 0 0 0-3.461-.203c-.536.072-.974.478-1.021 1.017a4.559 4.559 0 0 0-.018.402c0 .464.336.844.775.994l2.95 1.012c.44.15.775.53.775.994 0 .136-.006.27-.018.402-.047.539-.485.945-1.021 1.017a9.077 9.077 0 0 1-3.461-.203M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+				</svg>
+
+				Comprobate
+			</button>
+		</div>
+	</div>
 </div>
-<div *ngIf="paymentsWithChargers.length > 0" class="space-y-6">
-  <div *ngFor="let pago of paymentsWithChargers" class="bg-white shadow p-6">
-    <div class="flex justify-between items-center mb-4">
-      <div>
-        <div class="text-lg font-semibold text-gray-800">Pago de ${{ pago.amount }}</div>
-        <div class="text-sm text-gray-500">Fecha: {{ pago.paymentDate | date:'medium' }}</div>
-        <div class="text-sm text-blue-500 cursor-pointer" (click)="generateVoucher(pago)">Comprobante</div>
-      </div>
-      <div class="text-right">
-      </div>
-    </div>
-    <div>
-      <div class="font-medium text-gray-700 mb-2">Aplicado a actividades:</div>
-      <div *ngFor="let cargo of pago.paymentCharges" class="mb-4">
-        <div class="flex justify-between items-center mb-1">
-          <a class="text-sm font-semibold text-blue-600 hover:underline"
-            [href]="'/mavi/app/actividades?category=' + cargo.activity.categoryId + '&activity=' + cargo.activity.id">
-            {{ cargo.activity.description }}
-          </a>
-          <div class="text-xs text-gray-500">
-            ${{ cargo.amount }} / ${{ cargo.collection.amountToBePaid }}
-          </div>
-        </div>
-        <div class="w-full flex space-x-1">
-          <div class="flex-1 bg-gray-200 h-3 flex">
-            <div class="bg-yellow-500 h-3"
-              [style.width.%]="((cargo.collection.amountToBePaid - cargo.amountRemained) / cargo.collection.amountToBePaid) * 100">
-            </div>
-            <div class="bg-green-400 h-3" [style.width.%]="(cargo.amount / cargo.collection.amountToBePaid) * 100">
-            </div>
-          </div>
-        </div>
-        <div *ngIf="cargo.amountRemained - cargo.amount > 0" class="text-xs text-gray-400 mt-1">
-          Restaron: {{ cargo.amountRemained - cargo.amount | currencyMX }}
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
+
+
 <div *ngIf="paymentsWithChargers.length === 0" class="text-gray-500 text-center py-8">
-  No hay pagos realizados.
+	No hay pagos realizados.
 </div>
 
 
 <div *ngIf="showPaymentModal" class="w-full h-lvh overflow-y-auto">
-  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <app-payment [studentId]="+studentId!" (complete)="onPaymentComplete($event)"></app-payment>
-  </div>
+	<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+		<app-payment [studentId]="+studentId!" (complete)="onPaymentComplete($event)"></app-payment>
+	</div>
+</div>
+
+
+
+<div class="mavi-bottom-actions">
+	<div class="mavi-bottom-actions-inner">
+		<button class="btn btn-secondary" (click)="showPaymentModal = true">
+			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+				stroke="currentColor" class="size-4">
+				<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+			</svg>
+			Nuevo pago
+		</button>
+	</div>
 </div>

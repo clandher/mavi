@@ -36,15 +36,15 @@
         No se encontraron estudiantes que coincidan con los criterios de búsqueda.
     </div>
 
-    <div class="student-grid">
-        <div *ngFor="let student of filteredStudents" class="student-card">
+    <div class="mavi-grid">
+        <div *ngFor="let student of filteredStudents" class="mavi-card">
             <div class="student-card-header">
                 <div class="flex items-center">
                     <img *ngIf="student.photo" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
                     <ng-template #placeholder>
                         <div class="photo-placeholder">+</div>
                     </ng-template>
-                    <div class="cursor-pointer" [routerLink]="['/app/estudiantes', student.id, 'editar']">{{
+                    <div class="hover-link" [routerLink]="['/app/estudiantes', student.id, 'editar']">{{
                         student.nick
                         !== '' ? student.nick
                         :
@@ -76,13 +76,13 @@
             </div>
 
             <div class="detail-row mt-4">
-                <div class="detail-label">Pendiente:</div>
+                <div class="detail-label">Pendiente</div>
                 <div class="detail-value" [class.high-debt]="student.debt > 0">
                     {{ student.debt | currencyMX }}
                 </div>
             </div>
 
-            <div class="card-actions mt-4">
+            <div class="mavi-card-actions mt-4">
                 <button class="btn btn-sm btn-outline w-full justify-center"
                     [routerLink]="['/app/estudiantes', student.id, 'editar']">
 
