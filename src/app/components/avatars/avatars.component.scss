@@ -1,10 +1,3 @@
-// Minimalista, juvenil, tonos oscuros, bordes rectos, acciones sutiles
-
-// ::-webkit-scrollbar {
-//   display: none;
-// }
-
-
 .category-selector {
   width: 100%;
   display: flex;
@@ -12,10 +5,8 @@
   gap: 0.5rem;
   background: #18181b;
   padding: 4px;
-  // border-radius: 0.5rem;
-  // border: 1px solid #23232a;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
- background-color: #101010;
+  background-color: #101010;
 
   .category-btn {
     background: #23232a;
@@ -75,5 +66,14 @@
   .category-option {
     color: #e5e7eb;
     background: #23232a;
+  }
+}
+
+.menu-context {
+  background: #151515;
+  color: #e5e7eb;
+
+  li:hover {
+    background: #101010;
   }
 }

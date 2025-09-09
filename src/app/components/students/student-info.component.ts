@@ -2,9 +2,9 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { BaseHttp } from '@app/core/base-http';
-import { Student, Category, CreateStudentDto, UpdateStudentDto, StudentCategory } from '@app/core/dto';
+import { Category, StudentCategory } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 
 @Component({

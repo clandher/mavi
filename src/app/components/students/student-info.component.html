@@ -3,7 +3,7 @@
     <div class="flex gap-2">
         <div *ngFor="let sc of studentCategories" class="mavi-tag cursor-pointer" (click)="removeCategory(sc.id)">
             <span>
-                {{sc.category?.type}}
+                {{sc.category.type}}
             </span>
             <button type="button" class="btn-remove">
                 ×

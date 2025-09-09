@@ -101,11 +101,19 @@ export class AvatarsComponent {
 			queryParamsHandling: 'merge'
 		});
 
+
+		this.newActivity.categoryId = this.selectedCategoryId!;
+
+		this._loadActivities();
+	}
+
+
+	private _loadActivities() {
+
 		const queryString = RequestQueryBuilder.create({
 			search: { categoryId: Number(this.selectedCategoryId!) },
 		}).query();
 
-		this.newActivity.categoryId = this.selectedCategoryId!;
 
 		const activities = new BaseHttp(`activities?${queryString}`, this.http);
 		activities.get<Activity[]>().subscribe(result => {
@@ -123,7 +131,6 @@ export class AvatarsComponent {
 			}
 		});
 	}
-
 
 	onActivityChange(activityId: number, index: number): void {
 
@@ -178,7 +185,6 @@ export class AvatarsComponent {
 		this.selectedStudentActivity = new StudentActivity();
 
 		this.showModal = true;
-		// Aquí puedes abrir un modal o formulario para agregar un nuevo avatar.
 
 		this.newActivityId = this.selectedActivityId;
 		this.newCategoryId = this.selectedCategoryId;
@@ -395,6 +401,7 @@ export class AvatarsComponent {
 			activitiesAPI.post<CreateActivityDto, Activity>(activityToSend).subscribe({
 				next: (activity) => {
 					this.closeNewEventModal();
+					this._loadActivities();
 				},
 				error: (err) => {
 					console.error('Error al crear la actividad:', err);

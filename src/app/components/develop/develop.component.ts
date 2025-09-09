@@ -1,16 +1,14 @@
 // student-list.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Student, Category } from '@app/core/dto';
 import { HttpClient } from '@angular/common/http';
-import { BaseHttp, buildUrl } from '@app/core/base-http';
-import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
+import { BaseHttp } from '@app/core/base-http';
 
 @Component({
     standalone: true,
-    imports: [CommonModule, RouterModule, FormsModule, CurrencyMXPipe],
+    imports: [CommonModule, RouterModule, FormsModule],
     templateUrl: './develop.component.html',
     styleUrls: ['./develop.component.scss']
 })
