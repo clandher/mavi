@@ -45,8 +45,7 @@
                         <div class="photo-placeholder">+</div>
                     </ng-template>
                     <div class="hover-link" [routerLink]="['/app/estudiantes', student.id, 'editar']">{{
-                        student.nick
-                        !== '' ? student.nick
+                        student.nick ? student.nick
                         :
                         student.name }}</div>
                 </div>

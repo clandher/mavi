@@ -1,0 +1,68 @@
+<div class="modal-overlay">
+	<div class="modal-content">
+		<h2 class="text-xl font-semibold mb-4">Agregar alumno</h2>
+		<div class="flex gap-4 justify-between">
+			<div class="form-group flex-1">
+				<label for="newCategoryId" class="form-label">Categoría</label>
+				<select id="newCategoryId" [(ngModel)]="newCategoryId" name="newCategory" class="form-control"
+					(change)="onNewCategoryChange()">
+					<option *ngFor="let cat of categories" [value]="cat.id">{{ cat.type }}</option>
+				</select>
+			</div>
+			<div class="form-group flex-1">
+				<label for="newActivityId" class="form-label">Actividad</label>
+				<select id="newActivityId" [(ngModel)]="newActivityId" name="newAcitivity" class="form-control">
+					<option *ngFor="let act of newActivities" [value]="act.id">{{ act.description }} - {{ act.details }}</option>
+				</select>
+			</div>
+		</div>
+		<br />
+		<div class="mavi-tabs">
+			<button (click)="activeTab = 'existing'" [class]="activeTab === 'existing' ? 'selected' : ''"
+				class="mavi-tab">Seleccionar existente</button>
+			<button (click)="activeTab = 'new'" [class]="activeTab === 'new' ? 'selected' : ''" class="mavi-tab">Crear
+				nuevo</button>
+		</div>
+		<br />
+		<div class="mavi-border" *ngIf="activeTab === 'existing'">
+			<div class="form-group">
+				<label for="searchTerm" class="form-label">Buscar estudiante</label>
+				<input id="searchTerm" type="text" [(ngModel)]="searchTerm" (input)="filterStudents()"
+					placeholder="Buscar por nombre..." class="form-control">
+			</div>
+			<br />
+			<div class="grid grid-cols-3 gap-3 mb-4 max-h-60 overflow-y-scroll">
+				<div *ngFor="let student of filteredStudents" (click)="selectStudent(student)"
+					[class.bg-gray-500]="selectedExistingStudent?.id === student.id"
+					class="mavi-border p-1 cursor-pointer flex items-center">
+					<img *ngIf="student.photo" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
+					<ng-template #placeholder>
+						<div class="photo-placeholder">+</div>
+					</ng-template>
+					<div>{{ student.nick ? student.nick : student.name }}</div>
+				</div>
+				<div *ngIf="filteredStudents.length === 0" class="col-span-3 text-center py-4 text-gray-500">No se
+					encontraron estudiantes</div>
+			</div>
+		</div>
+		<div class="mavi-border" *ngIf="activeTab === 'new'">
+			<div class="form-group">
+				<label for="newStudentName" class="form-label">Nombre</label>
+				<input id="newStudentName" type="text" [(ngModel)]="newStudent.name" class="form-control"
+					placeholder="Nombre completo del estudiante">
+			</div>
+			<br />
+			<div class="form-group">
+				<label for="newStudentBirthdate" class="form-label">Fecha de nacimiento</label>
+				<input id="newStudentBirthdate" type="date" [max]="maxBirthdate" [(ngModel)]="newStudent.birthdate"
+					class="form-control">
+			</div>
+		</div>
+		<div class="flex justify-end space-x-2 mt-4">
+			<button (click)="onCancel()" class="btn btn-outline">Cancelar</button>
+			<button (click)="onInscription()"
+				[disabled]="(activeTab === 'existing' && !selectedExistingStudent) || (activeTab === 'new' && !newStudent.name)"
+				class="btn btn-primary">{{ activeTab === 'existing' ? 'Inscribir' : 'Crear e inscribir' }}</button>
+		</div>
+	</div>
+</div>

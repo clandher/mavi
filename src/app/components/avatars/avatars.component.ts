@@ -6,11 +6,12 @@ import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { Activity, ActivityType, ApiRes, Category, CreateActivityDto, Student, StudentActivity } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { PaymentComponent } from "../payment/payment.component";
+import { InscriptionComponent } from '../inscription';
 import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
 	standalone: true,
-	imports: [CommonModule, FormsModule, PaymentComponent],
+	imports: [CommonModule, FormsModule, PaymentComponent, InscriptionComponent],
 	templateUrl: './avatars.component.html',
 	styleUrl: './avatars.component.scss'
 })
@@ -23,20 +24,11 @@ export class AvatarsComponent {
 	public showSubmenu: { [key: string]: boolean } = {};
 	public showModal: boolean = false;
 
-	activeTab: 'existing' | 'new' = 'existing';
-	searchTerm = '';
-	students: Student[] = []; // Lista completa de estudiantes
-	filteredStudents: Student[] = []; // Lista filtrada para búsqueda
-	selectedExistingStudent: Student | null = null;
-	newStudent: { name: string; birthdate: string } = { name: '', birthdate: '' };
-	maxBirthdate = new Date();
-
 
 	public categories: Category[] = [];
 	newCategoryId: number | null = null;
 
 	public newActivities: Activity[] = [];
-
 	public activities: Activity[] = [];
 	newActivityId: number | null = null;
 
@@ -210,114 +202,29 @@ export class AvatarsComponent {
 		this.showModal = false;
 	}
 
-	onInscription(): void {
-		if (this.activeTab === 'existing' && this.selectedExistingStudent) {
-			this.addStudentToActivity(this.selectedExistingStudent);
-		} else if (this.activeTab === 'new' && this.newStudent.name) {
-			this.createNewStudent();
-		}
-	}
+
 
 	highlightWidth = 0;
 	highlightPosition = 0;
 
 	public showPaymentModal: boolean = false;
 
-	// Método para abrir el modal de pago
 	onPaymentComplete(value: boolean): void {
 		this.showPaymentModal = false;
 
 		if (value) {
 			this._loadStudentActivities();
 		}
-
 	}
 
-	ngOnInit() {
-		this.loadStudents();
-	}
 
-	loadStudents(): void {
-		const studentsAPI = new BaseHttp('students', this.http);
-		studentsAPI.get<Student[]>().subscribe({
-			next: (students) => {
-				this.students = students;
-				students.forEach(student => {
-					if (student.photo) {
-						student.photoUrl = buildUrl(`students/${student.id}/photo`);
-					}
-				});
-				this.filteredStudents = [...students];
-			},
-			error: (err) => console.error('Error loading students', err)
-		});
-	}
+	onInscriptionComplete(value: boolean): void {
+		this.showModal = false;
 
-	filterStudents(): void {
-		if (!this.searchTerm) {
-			this.filteredStudents = [...this.students];
-			return;
+		if (value) {
+			this._loadStudentActivities();
 		}
 
-		const term = this.searchTerm.toLowerCase();
-		this.filteredStudents = this.students.filter(student =>
-			student.name.toLowerCase().includes(term)
-		);
-	}
-
-	selectStudent(student: Student): void {
-		this.selectedExistingStudent = student;
-	}
-
-	openModal(): void {
-		this.showModal = true;
-		this.activeTab = 'existing';
-		this.searchTerm = '';
-		this.selectedExistingStudent = null;
-		this.newStudent = { name: '', birthdate: '' };
-		this.filterStudents();
-	}
-
-
-
-	addStudentToActivity(student: Student): void {
-		const body = {
-			studentId: student.id,
-			activityId: this.selectedActivityId
-		};
-
-		new BaseHttp('student-activities', this.http)
-			.post<typeof body, StudentActivity>(body)
-			.subscribe({
-				next: (studentActivity) => {
-					this.closeModal();
-					this.loadStudents();
-					this.onActivityChange(this.selectedCategoryId!, 0);
-					this.closeModal();
-					// Si necesitas recargar la lista
-				},
-				error: (err) => {
-					console.error('Error al agregar estudiante a actividad', err);
-				}
-			});
-
-	}
-
-	createNewStudent(): void {
-		const birthdate = this.newStudent.birthdate ? new Date(this.newStudent.birthdate) : new Date();
-
-		const newStudentData = {
-			name: this.newStudent.name,
-			birthdate: birthdate
-		};
-
-		const studentsAPI = new BaseHttp('students', this.http);
-		studentsAPI.post<typeof newStudentData, Student>(newStudentData).subscribe({
-			next: (createdStudent) => {
-				this.addStudentToActivity(createdStudent);
-			},
-			error: (err) => console.error('Error creating student', err)
-		})
 	}
 
 	getFormattedDate(date: Date): string {
@@ -328,22 +235,6 @@ export class AvatarsComponent {
 		const day = ('0' + d.getDate()).slice(-2);
 		return `${year}-${month}-${day}`;
 	}
-
-	getAge(birthdate: string): number {
-		const today = new Date();
-		const birthDate = new Date(birthdate);
-		let age = today.getFullYear() - birthDate.getFullYear();
-		const monthDiff = today.getMonth() - birthDate.getMonth();
-
-		if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-			age--;
-		}
-
-		return age;
-	}
-
-
-
 
 	closePaymentModal() {
 		this.showPaymentModal = false;
