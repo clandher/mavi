@@ -114,13 +114,11 @@
 	</div>
 </div>
 
-<div *ngIf="showPaymentModal">
-	<app-payment [studentId]="selectedStudentActivity?.student?.id!" (complete)="onPaymentComplete($event)">
-	</app-payment>
-</div>
+<app-payment *ngIf="showPaymentModal" [studentId]="selectedStudentActivity?.student?.id!"
+	(complete)="onPaymentComplete($event)">
+</app-payment>
 
 <app-inscription *ngIf="showModal" (complete)="onInscriptionComplete($event)">
-
 </app-inscription>
 
 <div *ngIf="newEventModalVisible" class="modal-overlay">
