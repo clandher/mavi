@@ -13,9 +13,12 @@ import { Activity, ActivityType, Category, CreateActivityDto, Student, StudentAc
     styleUrls: ['./inscription.component.scss']
 })
 export class InscriptionComponent implements OnInit {
+    isStudentSelected(student: Student): boolean {
+        return this.selectedExistingStudents.some(s => s.id === student.id);
+    }
     onCancel() {
         this.activeTab = 'existing';
-        this.selectedExistingStudent = null;
+        this.selectedExistingStudents = [];
         this.newStudent = { name: '', birthdate: '' };
         this.complete.emit(false);
     }
@@ -27,7 +30,7 @@ export class InscriptionComponent implements OnInit {
     activityTypes: ActivityType[] = [];
     maxBirthdate: string = '';
     filteredStudents: Student[] = [];
-    selectedExistingStudent: Student | null = null;
+    selectedExistingStudents: Student[] = [];
     newStudent: { name: string; birthdate: string } = { name: '', birthdate: '' };
     activeTab: 'existing' | 'new' = 'existing';
     searchTerm: string = '';
@@ -101,12 +104,24 @@ export class InscriptionComponent implements OnInit {
 
 
     selectStudent(student: Student) {
-        this.selectedExistingStudent = student;
+        const idx = this.selectedExistingStudents.findIndex(s => s.id === student.id);
+        if (idx > -1) {
+            // Si ya está seleccionado, lo quitamos
+            this.selectedExistingStudents.splice(idx, 1);
+        } else {
+            // Si no está, lo agregamos
+            this.selectedExistingStudents.push(student);
+        }
     }
 
     onInscription() {
-        if (this.activeTab === 'existing' && this.selectedExistingStudent) {
-            this.addStudentToActivity(this.selectedExistingStudent);
+        if (this.activeTab === 'existing' && this.selectedExistingStudents.length > 0) {
+            this.selectedExistingStudents.forEach(student => {
+                this.addStudentToActivity(student);
+            });
+
+            this.complete.emit(true);
+            this.selectedExistingStudents = [];
         } else if (this.activeTab === 'new' && this.newStudent.name) {
             this.createNewStudent();
         }
@@ -120,7 +135,7 @@ export class InscriptionComponent implements OnInit {
         new BaseHttp('student-activities', this.http)
             .post<typeof body, StudentActivity>(body)
             .subscribe(() => {
-                this.selectedExistingStudent = null;
+                // No limpiar selectedExistingStudents aquí, se hace en onInscription
                 this.newStudent = { name: '', birthdate: '' };
             });
     }

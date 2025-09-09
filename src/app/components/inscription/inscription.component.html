@@ -31,9 +31,12 @@
 					placeholder="Buscar por nombre..." class="form-control">
 			</div>
 			<br />
+			<div class="flex items-center mb-2">
+				<span class="font-semibold">Seleccionados: {{ selectedExistingStudents.length }}</span>
+			</div>
 			<div class="grid grid-cols-3 gap-3 mb-4 max-h-60 overflow-y-scroll">
 				<div *ngFor="let student of filteredStudents" (click)="selectStudent(student)"
-					[class.bg-gray-500]="selectedExistingStudent?.id === student.id"
+					[class.bg-gray-500]="isStudentSelected(student)"
 					class="mavi-border p-1 cursor-pointer flex items-center">
 					<img *ngIf="student.photo" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
 					<ng-template #placeholder>
@@ -61,7 +64,7 @@
 		<div class="flex justify-end space-x-2 mt-4">
 			<button (click)="onCancel()" class="btn btn-outline">Cancelar</button>
 			<button (click)="onInscription()"
-				[disabled]="(activeTab === 'existing' && !selectedExistingStudent) || (activeTab === 'new' && !newStudent.name)"
+				[disabled]="(activeTab === 'existing' && selectedExistingStudents.length === 0) || (activeTab === 'new' && !newStudent.name)"
 				class="btn btn-primary">{{ activeTab === 'existing' ? 'Inscribir' : 'Crear e inscribir' }}</button>
 		</div>
 	</div>
