@@ -1,8 +1,5 @@
 {
   "workbench.colorCustomizations": {
-    // Barra de título
-    "titleBar.activeBackground": "#3282F6",
-    "titleBar.inactiveBackground": "#3282F6",
 
     // Panel inferior (Status Bar)
     "statusBar.background": "#3282F6",
