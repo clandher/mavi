@@ -62,7 +62,7 @@ export class StudentActivity {
 
     inscriptionDate!: Date;
     debtActivityAmount!: number;
-    
+
     charges: Charge[] = [];
     unsubscribedDate!: Date;
     unsubscribed!: boolean;
@@ -75,14 +75,17 @@ export class Activity {
     category!: Category;
     categoryId!: number;
 
+
+
     type!: ActivityType;
+    typeId!: number;
 
     description!: string;
     details!: string;
 
-    startDate!: Date;
+    startDate!: string;
 
-    endDate!: Date;
+    endDate!: string;
 
     gracePeriod!: number;
     price!: number;
@@ -119,8 +122,8 @@ export class CreatePaymentDto {
 
 export interface CreateActivityDto {
     description: string;
-    startDate: Date;
-    endDate: Date;
+    startDate: string; // formato 'YYYY-MM-DDTHH:mm'
+    endDate: string;   // formato 'YYYY-MM-DDTHH:mm'
     gracePeriod: number;
     price: number;
     categoryId: number;

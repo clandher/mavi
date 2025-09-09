@@ -30,10 +30,6 @@
 		*ngFor="let activity of activities; let i = index" (click)="onActivityChange(activity.id, i)">
 		{{ activity.description }}
 	</button>
-
-	<button class="mavi-tab" (click)="openNewEventModal()">
-		Nueva actividad
-	</button>
 </div>
 <br>
 
@@ -121,6 +117,9 @@
 <app-inscription *ngIf="showModal" (complete)="onInscriptionComplete($event)">
 </app-inscription>
 
+<app-activity *ngIf="newEventModalVisible" [activityId]="newActivityId" (complete)="onActivityComplete($event)">
+</app-activity>
+<!-- 
 <div *ngIf="newEventModalVisible" class="modal-overlay">
 	<div class="modal-content">
 		<h2 class="text-xl font-semibold mb-4">Nueva actividad</h2>
@@ -188,7 +187,7 @@
 			<button (click)="saveNewActivity()" class="btn btn-primary">Guardar</button>
 		</div>
 	</div>
-</div>
+</div> -->
 
 
 
@@ -202,6 +201,24 @@
 					d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
 			</svg>
 			{{ showDebt ? 'Mostrar total' : 'Mostrar deuda' }}
+		</button>
+
+		<button class="btn btn-secondary ms-2" (click)="onEditActivity()" [disabled]="!selectedActivityId">
+			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+				stroke="currentColor" class="size-4 me-2">
+				<path stroke-linecap="round" stroke-linejoin="round"
+					d="M16.862 4.487a2.1 2.1 0 1 1 2.97 2.97L7.5 19.789l-4 1 1-4 12.362-12.302Z" />
+			</svg>
+			Editar actividad
+		</button>
+
+		<button class="btn btn-secondary ms-2" (click)="onNewActivity()" [disabled]="!selectedActivityId">
+			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+				stroke="currentColor" class="size-4 me-2">
+				<path stroke-linecap="round" stroke-linejoin="round"
+					d="M16.862 4.487a2.1 2.1 0 1 1 2.97 2.97L7.5 19.789l-4 1 1-4 12.362-12.302Z" />
+			</svg>
+			Nueva actividad
 		</button>
 	</div>
 </div>

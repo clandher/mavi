@@ -8,17 +8,17 @@ import { RequestQueryBuilder } from '@dataui/crud-request';
 import { PaymentComponent } from "../payment/payment.component";
 import { InscriptionComponent } from '../inscription';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ActivityComponent } from "../activity/activity.component";
 
 @Component({
 	standalone: true,
-	imports: [CommonModule, FormsModule, PaymentComponent, InscriptionComponent],
+	imports: [CommonModule, FormsModule, PaymentComponent, InscriptionComponent, ActivityComponent],
 	templateUrl: './avatars.component.html',
 	styleUrl: './avatars.component.scss'
 })
 export class AvatarsComponent {
 
 	public showDebt: boolean = true;
-
 
 	public selectedStudentActivity: StudentActivity | null = null;
 	public showSubmenu: { [key: string]: boolean } = {};
@@ -61,7 +61,6 @@ export class AvatarsComponent {
 
 			if (this.categories.length > 0 && !this.selectedCategoryId) {
 				this.selectedCategoryId = this.categories[0].id;
-				this.newActivity.categoryId = this.selectedCategoryId;
 			}
 
 			this.onCategoryChange();
@@ -78,10 +77,6 @@ export class AvatarsComponent {
 		const activities = new BaseHttp(`activities?${queryString}`, this.http);
 		activities.get<ApiRes<Activity>>().subscribe(result => {
 			this.newActivities = result.data;
-
-			if (this.newActivities.length) {
-				this.newActivityId = this.newActivities[0].id;
-			}
 		});
 	}
 
@@ -93,8 +88,6 @@ export class AvatarsComponent {
 			queryParamsHandling: 'merge'
 		});
 
-
-		this.newActivity.categoryId = this.selectedCategoryId!;
 
 		this._loadActivities();
 	}
@@ -178,7 +171,6 @@ export class AvatarsComponent {
 
 		this.showModal = true;
 
-		this.newActivityId = this.selectedActivityId;
 		this.newCategoryId = this.selectedCategoryId;
 	}
 
@@ -218,6 +210,7 @@ export class AvatarsComponent {
 	}
 
 
+
 	onInscriptionComplete(value: boolean): void {
 		this.showModal = false;
 
@@ -227,90 +220,17 @@ export class AvatarsComponent {
 
 	}
 
-	getFormattedDate(date: Date): string {
-		if (!date) return '';
-		const d = new Date(date);
-		const year = d.getFullYear();
-		const month = ('0' + (d.getMonth() + 1)).slice(-2);
-		const day = ('0' + d.getDate()).slice(-2);
-		return `${year}-${month}-${day}`;
-	}
-
 	closePaymentModal() {
 		this.showPaymentModal = false;
 	}
 
 
-	activityTypes: ActivityType[] = [];
 
 
-	newActivity: CreateActivityDto = {
-		description: '',
-		startDate: new Date(),
-		endDate: new Date(),
-		gracePeriod: 0,
-		price: 0,
-		categoryId: this.selectedCategoryId!,
-		typeId: 0
-	};
 
 	public newEventModalVisible: boolean = false;
-	public newEventName: string = '';
-	public newEventStartDate: string = '';
-	public newEventEndDate: string = '';
-	public newEventCost: number | null = null;
-
-	// Función para abrir el modal de nuevo evento
-	openNewEventModal(): void {
-		this.newEventModalVisible = true;
 
 
-		const activityTypesAPI = new BaseHttp('activity-types', this.http);
-		activityTypesAPI.get<ActivityType[]>().subscribe(result => {
-			this.activityTypes = result;
-
-		});
-	}
-
-
-	closeNewEventModal(): void {
-		this.newEventModalVisible = false;
-	}
-
-	saveNewActivity(): void {
-		if (this.validateActivity()) {
-
-
-			const activityToSend = {
-				...this.newActivity,
-				categoryId: Number(this.newActivity.categoryId),
-				typeId: Number(this.newActivity.typeId)
-			};
-
-
-			const activitiesAPI = new BaseHttp('activities', this.http);
-			activitiesAPI.post<CreateActivityDto, Activity>(activityToSend).subscribe({
-				next: (activity) => {
-					this.closeNewEventModal();
-					this._loadActivities();
-				},
-				error: (err) => {
-					console.error('Error al crear la actividad:', err);
-				}
-			});
-		} else {
-			alert('Por favor, complete todos los campos correctamente.');
-		}
-	}
-
-	validateActivity(): boolean {
-		return !!this.newActivity.description &&
-			!!this.newActivity.startDate &&
-			!!this.newActivity.endDate &&
-			this.newActivity.price > 0 &&
-			this.newActivity.categoryId > 0 &&
-			this.newActivity.typeId > 0;
-	}
 
 
 	// Selecciona la categoría anterior, si es la primera va a la última
@@ -335,4 +255,22 @@ export class AvatarsComponent {
 		this.onCategoryChange();
 	}
 
+	onNewActivity(): void {
+		this.newActivityId = 0;
+		this.newEventModalVisible = true;
+	}
+
+	onEditActivity(): void {
+		if (this.selectedActivityId) {
+			this.newActivityId = this.selectedActivityId;
+			this.newEventModalVisible = true;
+		}
+	}
+
+	onActivityComplete(value: boolean): void {
+		this.newEventModalVisible = false;
+		if (value) {
+			this._loadActivities();
+		}
+	}
 }

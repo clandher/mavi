@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { Activity, ActivityType, Category, CreateActivityDto, Student, StudentActivity } from '@app/core/dto';
+import { formatDateForDisplay } from '@app/core/helpers';
 
 @Component({
     selector: 'app-inscription',
@@ -36,15 +37,7 @@ export class InscriptionComponent implements OnInit {
     searchTerm: string = '';
     newCategoryId: number | null = null;
     newActivityId: number | null = null;
-    newActivity: CreateActivityDto = {
-        description: '',
-        startDate: new Date(),
-        endDate: new Date(),
-        gracePeriod: 0,
-        price: 0,
-        categoryId: 0,
-        typeId: 0
-    };
+
     showPaymentModal: boolean = false;
     selectedStudentActivity: StudentActivity | null = null;
 
@@ -53,7 +46,7 @@ export class InscriptionComponent implements OnInit {
     ngOnInit() {
         this.loadCategories();
         this.loadStudents();
-        this.maxBirthdate = this.getFormattedDate(new Date());
+        this.maxBirthdate = formatDateForDisplay(new Date());
     }
 
     loadCategories() {
@@ -62,7 +55,6 @@ export class InscriptionComponent implements OnInit {
             this.categories = result;
             if (this.categories.length > 0) {
                 this.newCategoryId = this.categories[0].id;
-                this.newActivity.categoryId = this.newCategoryId;
                 this.onNewCategoryChange();
             }
         });
@@ -157,12 +149,5 @@ export class InscriptionComponent implements OnInit {
         });
     }
 
-    getFormattedDate(date: Date): string {
-        if (!date) return '';
-        const d = new Date(date);
-        const year = d.getFullYear();
-        const month = ('0' + (d.getMonth() + 1)).slice(-2);
-        const day = ('0' + d.getDate()).slice(-2);
-        return `${year}-${month}-${day}`;
-    }
+
 }
