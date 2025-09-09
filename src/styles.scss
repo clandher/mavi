@@ -1,10 +1,25 @@
-// .wow-active {
-//         opacity: 1;
-//         pointer-events: auto;
-//         transition: opacity 0.5s cubic-bezier(.77, 0, .18, 1), transform 0.5s cubic-bezier(.77, 0, .18, 1), box-shadow 0.3s;
-//         box-shadow: 0 2px 12px 0 rgba(255,255,255,0.18);
-//         animation: wow-bounce-sutil 0.32s cubic-bezier(.77,0,.18,1);
-// }
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8); // Fondo translúcido
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+}
+
+.modal-content {
+    background: #111111; // Gris sutil
+    color: #e5e7eb;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    padding: 2rem;
+    min-width: 350px;
+    max-width: 90vw;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
 
 @keyframes wow-bounce-sutil {
     0% {
