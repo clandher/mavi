@@ -1,65 +1,75 @@
 <div class="modal-overlay">
 	<div class="modal-content">
-	<div class="mb-4">
-		<label class="form-label">Monto a pagar</label>
-		<div class="relative">
-			<input type="number" [(ngModel)]="paymentAmount" (input)="updatePaymentDistribution()"
-				[class.border-red-500]="paymentAmount > getTotalDebt()" class="form-control" min="0"
-				[max]="getTotalDebt()" step="0.01">
+
+		<div class="modal-body">
 
 
-			<button (click)="payFullAmount()"
-				class="cursor-pointer absolute right-2  text-xs bg-blue-100 text-blue-600 px-2 py-1  hover:bg-blue-200 transition"
-				style="top:6px">
-				Pagar total
-			</button>
-		</div>
-		<p *ngIf="paymentAmount > getTotalDebt()" class="text-red-500 text-sm">
-			El monto excede el adeudo total
-		</p>
-		<p class="text-sm text-gray-500" *ngIf="getTotalDebt() - paymentAmount > 0">
-			Monto total restante:
+			<div class="mb-4">
+				<label class="form-label">Monto a pagar</label>
+				<div class="relative">
+					<input type="number" [(ngModel)]="paymentAmount" (input)="updatePaymentDistribution()"
+						[class.border-red-500]="paymentAmount > getTotalDebt()" class="form-control" min="0"
+						[max]="getTotalDebt()" step="0.01">
 
-			<span class="high-debt">
-				{{getTotalDebt() - paymentAmount | currencyMX}}
-			</span>
-		</p>
-	</div>
 
-	<div class="mb-4">
-		<h3 class="font-medium mb-2">Cargos pendientes</h3>
-		<div class="space-y-2">
-			<div *ngFor="let charge of charges; let i = index" class="mavi-border">
-				<div class="flex justify-between">
-					<div>
-						<span class="font-medium">{{charge.concept}}</span>
-						<span class="text-sm text-gray-500 block">{{charge.chargeDate | date:'dd/MM/yyyy'}}</span>
-					</div>
-					<div class="text-right">
-						<div class="font-medium">{{getCoveredAmount(i) | currencyMX}}</div>
-						<div class="text-sm " *ngIf="getRemainingAfterPayment(i) > 0">
-							<span class="high-debt">
-								{{getRemainingAfterPayment(i) | currencyMX}}
-							</span>
-						</div>
-					</div>
+					<button (click)="payFullAmount()"
+						class="cursor-pointer absolute right-2  text-xs bg-blue-100 text-blue-600 px-2 py-1  hover:bg-blue-200 transition"
+						style="top:6px">
+						Pagar total
+					</button>
 				</div>
-				<!-- <div *ngIf="isChargePartiallyCovered(i)" class="mt-1">
+				<p *ngIf="paymentAmount > getTotalDebt()" class="text-red-500 text-sm">
+					El monto excede el adeudo total
+				</p>
+				<p class="text-sm text-gray-500" *ngIf="getTotalDebt() - paymentAmount > 0">
+					Monto total restante:
+
+					<span class="high-debt">
+						{{getTotalDebt() - paymentAmount | currencyMX}}
+					</span>
+				</p>
+			</div>
+
+			<div class="mb-4">
+				<h3 class="font-medium mb-2">Cargos pendientes</h3>
+				<div class="space-y-2">
+					<div *ngFor="let charge of charges; let i = index" class="mavi-border">
+						<div class="flex justify-between">
+							<div>
+								<span class="font-medium">{{charge.concept}}</span>
+								<span class="text-sm text-gray-500 block">{{charge.chargeDate |
+									date:'dd/MM/yyyy'}}</span>
+							</div>
+							<div class="text-right">
+								<div class="font-medium">{{getCoveredAmount(i) | currencyMX}}</div>
+								<div class="text-sm " *ngIf="getRemainingAfterPayment(i) > 0">
+									<span class="high-debt">
+										{{getRemainingAfterPayment(i) | currencyMX}}
+									</span>
+								</div>
+							</div>
+						</div>
+						<!-- <div *ngIf="isChargePartiallyCovered(i)" class="mt-1">
 					<div class="h-2 bg-gray-200 rounded-full overflow-hidden">
 						<div class="h-full bg-blue-500" [style.width.%]="getCoveredPercentage(i)"></div>
 					</div>
 				</div> -->
+					</div>
+				</div>
+			</div>
+
+		</div>
+
+		<div class="modal-footer">
+			<div class="flex justify-end space-x-2 mt-4">
+				<button (click)="onClose()" class="btn btn-outline">
+					Cancelar
+				</button>
+				<button (click)="onSave()" [disabled]="paymentAmount <= 0 || paymentAmount > getTotalDebt()"
+					class="btn btn-primary">
+					Guardar
+				</button>
 			</div>
 		</div>
-	</div>
-
-	<div class="flex justify-end space-x-2 mt-4">
-		<button (click)="onClose()" class="btn btn-outline">
-			Cancelar
-		</button>
-		<button (click)="onSave()" [disabled]="paymentAmount <= 0 || paymentAmount > getTotalDebt()"
-			class="btn btn-primary">
-			Guardar
-		</button>
 	</div>
 </div>

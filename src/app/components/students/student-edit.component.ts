@@ -6,6 +6,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { CreateStudentDto, Student, UpdateStudentDto } from '@app/core/dto';
+import { uploadStudentPhoto } from '@app/core/helpers';
 
 @Component({
     standalone: true,
@@ -104,11 +105,11 @@ export class StudentEditComponent {
         studentsAPI.get<Student>().subscribe({
             next: (student) => {
                 student.birthdate = new Date(student.birthdate).toISOString().slice(0, 10);
-                
-                if (student.photo){
+
+                if (student.photo) {
                     student.photoUrl = buildUrl(`students/${id}/photo`);
                 }
-                
+
                 this.student = student;
             },
             error: (err) => {
@@ -118,34 +119,36 @@ export class StudentEditComponent {
         });
     }
 
-    uploadPhoto(file: File): void {
-        if (!file || !this.student.id) return;
-
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const studentsAPI = new BaseHttp(`students/${this.student.id}/upload`, this.http);
-        studentsAPI.post<FormData, any>(formData).subscribe({
-            next: (res) => {
-                const timestamp = new Date().getTime();
-
-                this.student.photoUrl = buildUrl(`students/${this.student.id}/photo`) + `?t=${timestamp}`;
-            },
-            error: (err) => {
-                console.error('Error uploading photo', err);
-            }
-        });
-    }
 
     onPhotoSelected(event: Event) {
-        const file = (event.target as HTMLInputElement).files?.[0];
-        if (file) {
-            this.uploadPhoto(file);
-            const reader = new FileReader();
-            reader.onload = () => {
-                this.student.photo = reader.result as string;
-            };
-            reader.readAsDataURL(file);
-        }
+        uploadStudentPhoto(event, this.student, this.http);
+
+        // const file = (event.target as HTMLInputElement).files?.[0];
+        // if (file) {
+
+
+        //     if (!file || !this.student.id) return;
+
+        //     const formData = new FormData();
+        //     formData.append('file', file);
+
+        //     const studentsAPI = new BaseHttp(`students/${this.student.id}/upload`, this.http);
+        //     studentsAPI.post<FormData, any>(formData).subscribe({
+        //         next: (res) => {
+        //             const timestamp = new Date().getTime();
+
+        //             this.student.photoUrl = buildUrl(`students/${this.student.id}/photo`) + `?t=${timestamp}`;
+        //         },
+        //         error: (err) => {
+        //             console.error('Error uploading photo', err);
+        //         }
+        //     });
+
+        //     const reader = new FileReader();
+        //     reader.onload = () => {
+        //         this.student.photo = reader.result as string;
+        //     };
+        //     reader.readAsDataURL(file);
+        // }
     }
 }

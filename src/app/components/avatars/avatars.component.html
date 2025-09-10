@@ -23,33 +23,27 @@
 </div>
 <br>
 
-
 <div class="mavi-tabs">
-	<button class="mavi-tab" [ngClass]="{ selected: selectedActivityId === activity.id }"
+	<button class="mavi-tab" [ngClass]="{ selected: selectedActivityId === activity.id }" [title]="activity.details"
 		*ngFor="let activity of activities; let i = index" (click)="onActivityChange(activity.id, i)">
 		{{ activity.description }}
 	</button>
 </div>
 <br>
 
+<input id="photo" type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden>
 
 <div class="relative justify-center ">
 	<div *ngFor="let activity of activities">
 		<div *ngIf="selectedActivityId! === activity.id" class="grid grid-cols-6 gap-4">
 
-			<div class="relative">
-				<div (click)="addNewAvatar()"
-					class="w-25 h-25 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-300 hover:bg-gray-300">
-					<span class="text-3xl font-bold text-gray-600">+</span>
-				</div>
-			</div>
+
 
 			<div *ngFor="let studentActivity of studentActivities" class="relative">
 				<div (click)="selectAvatar(studentActivity)" (dblclick)="openEditModal(studentActivity)" [ngClass]="{
-              'border-4 border-blue-500 shadow-lg': selectedStudentActivity === studentActivity,
+              'border-2 border-white shadow-lg': selectedStudentActivity === studentActivity,
               'opacity-20 ': studentActivity.unsubscribed
-              }"
-					class="w-25 h-25 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-300">
+              }" class="avatar-circle" [class.no-image]="!studentActivity.student.photoUrl">
 					@if (studentActivity.student.photoUrl) {
 					<img [src]="studentActivity.student.photoUrl" class="w-full h-full object-cover" />
 					}
@@ -76,14 +70,20 @@
 					class="menu-context  mavi-border absolute z-30 mt-2 w-48 ">
 					<ul class="py-2">
 						<li class="px-4 py-2  cursor-pointer" (click)="openEditModal(studentActivity)">
-							Editar
+							Editar...
 						</li>
 
 						@if(studentActivity.debtActivityAmount > 0){
 						<li class="px-4 py-2  cursor-pointer" (click)="showPaymentModal = true">
-							Registrar pago
+							Registrar pago...
 						</li>
 						}
+
+						<li *ngIf="!studentActivity.student.photoUrl" class="px-4 py-2 cursor-pointer">
+							<label for="photo">
+								Subir imagen...
+							</label>
+						</li>
 
 						<li class="px-4 py-2  cursor-pointer" (click)="toggleSubmenu('inscribir')">
 							Inscribir a...
@@ -102,6 +102,14 @@
 							</ul>
 						</li>
 					</ul>
+				</div>
+			</div>
+
+
+			<div class="relative">
+				<div (click)="addNewAvatar()"
+					class="w-25 h-25 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-300 hover:bg-gray-300">
+					<span class="text-3xl font-bold text-gray-600">+</span>
 				</div>
 			</div>
 

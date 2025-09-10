@@ -39,11 +39,9 @@
 			<div class="grid grid-cols-3 gap-3 mb-4 max-h-60 overflow-y-scroll">
 				<div *ngFor="let student of filteredStudents"
 					(click)="!hasActivityAssigned(student) && selectStudent(student)"
-					[class.bg-green-600]="isStudentSelected(student)"
-					[class.opacity-50]="hasActivityAssigned(student)"
+					[class.bg-green-600]="isStudentSelected(student)" [class.opacity-50]="hasActivityAssigned(student)"
 					[class.cursor-pointer]="!hasActivityAssigned(student)"
-					[class.cursor-not-allowed]="hasActivityAssigned(student)"
-					class="mavi-border p-1 flex flex-col ">
+					[class.cursor-not-allowed]="hasActivityAssigned(student)" class="mavi-border p-1 flex flex-col ">
 
 					<div class="flex items-center gap-2">
 						<img *ngIf="student.photo" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
@@ -53,7 +51,8 @@
 
 						<div>
 							<div>{{ student.nick ? student.nick : student.name }}</div>
-							<span *ngIf="hasActivityAssigned(student)" class="mavi-tag me-2 mavi-tag--primary">Inscrito</span>
+							<span *ngIf="hasActivityAssigned(student)"
+								class="mavi-tag me-2 mavi-tag--primary">Inscrito</span>
 							<span *ngFor="let category of student.categories" class="mavi-tag me-2">
 								{{ category.category.type }}
 							</span>
@@ -78,11 +77,15 @@
 					class="form-control">
 			</div>
 		</div>
-		<div class="flex justify-end space-x-2 mt-4">
-			<button (click)="onCancel()" class="btn btn-outline">Cancelar</button>
-			<button (click)="onInscription()"
-				[disabled]="(activeTab === 'existing' && selectedExistingStudents.length === 0) || (activeTab === 'new' && !newStudent.name)"
-				class="btn btn-primary">{{ activeTab === 'existing' ? 'Inscribir' : 'Crear e inscribir' }}</button>
+
+
+		<div class="modal-footer">
+			<div class="flex justify-end space-x-2 mt-4">
+				<button (click)="onCancel()" class="btn btn-outline">Cancelar</button>
+				<button (click)="onInscription()"
+					[disabled]="(activeTab === 'existing' && selectedExistingStudents.length === 0) || (activeTab === 'new' && !newStudent.name)"
+					class="btn btn-primary">{{ activeTab === 'existing' ? 'Inscribir' : 'Crear e inscribir' }}</button>
+			</div>
 		</div>
 	</div>
 </div>

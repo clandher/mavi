@@ -9,6 +9,7 @@ import { PaymentComponent } from "../payment/payment.component";
 import { InscriptionComponent } from '../inscription';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActivityComponent } from "../activity/activity.component";
+import { uploadStudentPhoto } from '@app/core/helpers';
 
 @Component({
 	standalone: true,
@@ -17,6 +18,7 @@ import { ActivityComponent } from "../activity/activity.component";
 	styleUrl: './avatars.component.scss'
 })
 export class AvatarsComponent {
+
 
 	public showDebt: boolean = true;
 
@@ -271,6 +273,13 @@ export class AvatarsComponent {
 		this.newEventModalVisible = false;
 		if (value) {
 			this._loadActivities();
+		}
+	}
+
+
+	onPhotoSelected($event: Event) {
+		if (this.selectedStudentActivity?.student) {
+			uploadStudentPhoto($event, this.selectedStudentActivity?.student, this.http);
 		}
 	}
 }

@@ -20,8 +20,8 @@ export class InscriptionComponent implements OnInit {
     }
 
     hasActivityAssigned(student: Student): boolean {
-        if (!student.activities || !Array.isArray(student.activities)) return false;
-        return student.activities.some(act => act.activity && act.activity.id === Number(this.newActivityId));
+        if (!student.activities || !Array.isArray(student.activities) || student.activities.length === 0) return false;
+        return student.activities.some(act => act.activityId === Number(this.newActivityId));
     }
 
     onCancel() {
@@ -51,20 +51,38 @@ export class InscriptionComponent implements OnInit {
 
     constructor(private http: HttpClient, private changeDetectorRef: ChangeDetectorRef) { }
 
-    ngOnInit() {
-        this.loadCategories();
-        this.loadStudents();
+    async ngOnInit() {
         this.maxBirthdate = formatDateForDisplay(new Date());
+        await Promise.all([
+            this.loadCategories(),
+            this.loadStudents()
+        ]);
+
+        this.filteredStudents = this.students.map(student => {
+            student.categories = student.categories.map(studentCategory => {
+                studentCategory.category = this.categories.find(c => c.id === studentCategory.categoryId) || { id: 0, type: '-', students: [], activities: [] };
+                return studentCategory;
+            });
+
+            if (student.photo) {
+                student.photoUrl = buildUrl(`students/${student.id}/photo`);
+            }
+
+            return student;
+        });
     }
 
-    loadCategories() {
+    loadCategories(): Promise<void> {
         const categories = new BaseHttp(`categories`, this.http);
-        categories.get<Category[]>().subscribe(result => {
-            this.categories = result;
-            if (this.categories.length > 0) {
-                this.newCategoryId = this.categories[0].id;
-                this.onNewCategoryChange();
-            }
+        return new Promise(resolve => {
+            categories.get<Category[]>().subscribe(result => {
+                this.categories = result;
+                if (this.categories.length > 0) {
+                    this.newCategoryId = this.categories[0].id;
+                    this.onNewCategoryChange();
+                }
+                resolve();
+            });
         });
     }
 
@@ -92,21 +110,12 @@ export class InscriptionComponent implements OnInit {
         this.changeDetectorRef.detectChanges();
     }
 
-    loadStudents() {
+    loadStudents(): Promise<void> {
         const studentsAPI = new BaseHttp('students', this.http);
-        studentsAPI.get<Student[]>().subscribe(students => {
-            this.students = students;
-            this.filteredStudents = students.map(student => {
-                if (student.photo) {
-                    student.photoUrl = buildUrl(`students/${student.id}/photo`);
-                }
-
-                student.categories = student.categories.map(studentCategory => {
-                    studentCategory.category = this.categories.find(c => c.id === studentCategory.categoryId) || { id: 0, type: 'as', students: [], activities: [] };
-                    return studentCategory;
-                });
-
-                return student;
+        return new Promise(resolve => {
+            studentsAPI.get<Student[]>().subscribe(students => {
+                this.students = students;
+                resolve();
             });
         });
     }
