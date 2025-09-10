@@ -6,6 +6,7 @@ import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { Activity, ActivityType, Category, CreateActivityDto, Student, StudentActivity } from '@app/core/dto';
 import { formatDateForDisplay } from '@app/core/helpers';
 import { RequestQueryBuilder } from '@dataui/crud-request';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
     selector: 'app-inscription',
@@ -65,13 +66,29 @@ export class InscriptionComponent implements OnInit {
     showPaymentModal: boolean = false;
     selectedStudentActivity: StudentActivity | null = null;
 
-    constructor(private http: HttpClient, private changeDetectorRef: ChangeDetectorRef) { }
+    constructor(
+        private http: HttpClient,
+        private route: ActivatedRoute,
+    ) {
+
+        this.route.queryParams.subscribe(params => {
+            const categoryId = params['category'];
+            const activityId = params['activity'];
+
+            if (categoryId) {
+                this.newCategoryId = +categoryId;
+            }
+            if (activityId) {
+                this.newActivityId = +activityId;
+            }
+        });
+    }
 
     async ngOnInit() {
         this.maxBirthdate = formatDateForDisplay(new Date());
         await Promise.all([
-            this.loadCategories(),
-            this.loadStudents()
+            this._loadCategories(),
+            this._loadStudents()
         ]);
 
         this.filteredStudents = this.students.map(student => {
@@ -90,22 +107,9 @@ export class InscriptionComponent implements OnInit {
         this.filteredStudents = this.sortStudents();
     }
 
-    loadCategories(): Promise<void> {
-        const categories = new BaseHttp(`categories`, this.http);
-        return new Promise(resolve => {
-            categories.get<Category[]>().subscribe(result => {
-                this.categories = result;
-                if (this.categories.length > 0) {
-                    this.newCategoryId = this.categories[0].id;
-                    this.onNewCategoryChange();
-                }
-                resolve();
-            });
-        });
-    }
+
 
     onNewCategoryChange() {
-
         const queryString = RequestQueryBuilder.create({
             search: { categoryId: Number(this.newCategoryId) },
         }).query();
@@ -113,7 +117,7 @@ export class InscriptionComponent implements OnInit {
         const activities = new BaseHttp(`activities?${queryString}`, this.http);
         activities.get<Activity[]>().subscribe(result => {
             this.activities = result;
-            if (this.activities.length) {
+            if (this.activities.length > 0 && !this.newActivityId) {
                 this.newActivityId = this.activities[0].id;
             }
             this.filteredStudents = this.sortStudents();
@@ -124,7 +128,14 @@ export class InscriptionComponent implements OnInit {
         this.filteredStudents = this.sortStudents();
     }
 
-    loadStudents(): Promise<void> {
+    onSearch() {
+        const term = this.searchTerm.toLowerCase();
+        this.filteredStudents = this.students.filter(student =>
+            student.name.toLowerCase().includes(term)
+        );
+    }
+
+    _loadStudents(): Promise<void> {
         const studentsAPI = new BaseHttp('students', this.http);
         return new Promise(resolve => {
             studentsAPI.get<Student[]>().subscribe(students => {
@@ -134,16 +145,23 @@ export class InscriptionComponent implements OnInit {
         });
     }
 
-    filterStudents() {
-
-        const term = this.searchTerm.toLowerCase();
-        this.filteredStudents = this.students.filter(student =>
-            student.name.toLowerCase().includes(term)
-        );
+    _loadCategories(): Promise<void> {
+        const categories = new BaseHttp(`categories`, this.http);
+        return new Promise(resolve => {
+            categories.get<Category[]>().subscribe(result => {
+                this.categories = result;
+                if (this.categories.length > 0 && !this.newCategoryId) {
+                    this.newCategoryId = this.categories[0].id;
+                }
+                this.onNewCategoryChange();
+                resolve();
+            });
+        });
     }
 
 
-    selectStudent(student: Student) {
+
+    onSelectStudent(student: Student) {
         const idx = this.selectedExistingStudents.findIndex(s => s.id === student.id);
         if (idx > -1) {
             this.selectedExistingStudents.splice(idx, 1);
@@ -160,7 +178,7 @@ export class InscriptionComponent implements OnInit {
                     const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http);
                     await studentCategoriesAPI.post({ studentId: student.id, categoryId: Number(this.newCategoryId) }).toPromise();
                 }
-                await this.addStudentToActivityAsync(student);
+                await this._addStudentToActivityAsync(student);
             });
 
             await Promise.all(promises);
@@ -168,11 +186,11 @@ export class InscriptionComponent implements OnInit {
             this.complete.emit(true);
             this.selectedExistingStudents = [];
         } else if (this.activeTab === 'new' && this.newStudent.name) {
-            this.createNewStudent();
+            this._createNewStudent();
         }
     }
 
-    private async addStudentToActivityAsync(student: Student) {
+    private async _addStudentToActivityAsync(student: Student) {
         const body = {
             studentId: student.id,
             activityId: Number(this.newActivityId),
@@ -183,20 +201,8 @@ export class InscriptionComponent implements OnInit {
         this.newStudent = { name: '', birthdate: '' };
     }
 
-    addStudentToActivity(student: Student) {
-        const body = {
-            studentId: student.id,
-            activityId: Number(this.newActivityId),
-        };
-        new BaseHttp('student-activities', this.http)
-            .post<typeof body, StudentActivity>(body)
-            .subscribe(() => {
-                // No limpiar selectedExistingStudents aquí, se hace en onInscription
-                this.newStudent = { name: '', birthdate: '' };
-            });
-    }
 
-    createNewStudent() {
+    private _createNewStudent() {
         const birthdate = this.newStudent.birthdate ? new Date(this.newStudent.birthdate) : new Date();
         const newStudentData = {
             name: this.newStudent.name,
@@ -206,12 +212,9 @@ export class InscriptionComponent implements OnInit {
         studentsAPI.post<typeof newStudentData, Student>(newStudentData).subscribe(createdStudent => {
             const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http)
             studentCategoriesAPI.post({ studentId: createdStudent.id, categoryId: Number(this.newCategoryId) }).subscribe(() => {
-                this.addStudentToActivity(createdStudent);
-
+                this._addStudentToActivityAsync(createdStudent);
                 this.complete.emit(true);
             });
         });
     }
-
-
 }
