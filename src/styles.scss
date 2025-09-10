@@ -24,17 +24,20 @@
 @keyframes wow-bounce-sutil {
     0% {
         transform: scale(0.98);
-        box-shadow: 0 2px 12px 0 rgba(255,255,255,0.18);
+        box-shadow: 0 2px 12px 0 rgba(255, 255, 255, 0.18);
     }
+
     60% {
         transform: scale(1.03);
-        box-shadow: 0 4px 18px 0 rgba(255,255,255,0.22);
+        box-shadow: 0 4px 18px 0 rgba(255, 255, 255, 0.22);
     }
+
     100% {
         transform: scale(1);
-        box-shadow: 0 2px 12px 0 rgba(255,255,255,0.18);
+        box-shadow: 0 2px 12px 0 rgba(255, 255, 255, 0.18);
     }
 }
+
 /* WOW Animaciones variadas */
 
 @import "tailwindcss";
@@ -186,6 +189,12 @@ body {
     border: 1px solid oklch(0.269 0 0);
     background-color: #18181b;
     color: #fafafa;
+
+    &[disabled] {
+        background: #121212;
+        color: #555;
+        cursor: not-allowed;
+    }
 }
 
 textarea.form-control {
@@ -321,6 +330,31 @@ select.form-control {
     border: 1px solid oklch(0.269 0 0);
 }
 
+
+/* Variante: Activo (verde) */
+.mavi-tag--primary {
+    background-color: oklch(.627 .194 149.214);
+    border-color: oklch(.627 .194 149.214)
+;
+}
+
+/* Variante: Pendiente (gris) */
+.mavi-tag--secondary {
+    background-color: #444;
+    border-color: #444;
+}
+
+/* Variante: Vencido (rojo oscuro) */
+.mavi-tag--danger {
+    background-color: #651f1f;
+    border-color: #651f1f;
+}
+
+/* Variante: Inactivo (gris oscuro/negro) */
+.mavi-tag--muted {
+    background-color: #1a1a1a;
+    border-color: #1a1a1a;
+}
 
 .mavi-bottom-actions {
     position: fixed;

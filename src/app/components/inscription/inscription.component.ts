@@ -1,10 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, output, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { Activity, ActivityType, Category, CreateActivityDto, Student, StudentActivity } from '@app/core/dto';
 import { formatDateForDisplay } from '@app/core/helpers';
+import { RequestQueryBuilder } from '@dataui/crud-request';
 
 @Component({
     selector: 'app-inscription',
@@ -17,6 +18,12 @@ export class InscriptionComponent implements OnInit {
     isStudentSelected(student: Student): boolean {
         return this.selectedExistingStudents.some(s => s.id === student.id);
     }
+
+    hasActivityAssigned(student: Student): boolean {
+        if (!student.activities || !Array.isArray(student.activities)) return false;
+        return student.activities.some(act => act.activity && act.activity.id === Number(this.newActivityId));
+    }
+
     onCancel() {
         this.activeTab = 'existing';
         this.selectedExistingStudents = [];
@@ -27,9 +34,10 @@ export class InscriptionComponent implements OnInit {
     @Output() complete = new EventEmitter<boolean>();
 
     categories: Category[] = [];
-    newActivities: Activity[] = [];
+    activities: Activity[] = [];
     activityTypes: ActivityType[] = [];
     maxBirthdate: string = '';
+    students: Student[] = [];
     filteredStudents: Student[] = [];
     selectedExistingStudents: Student[] = [];
     newStudent: { name: string; birthdate: string } = { name: '', birthdate: '' };
@@ -41,7 +49,7 @@ export class InscriptionComponent implements OnInit {
     showPaymentModal: boolean = false;
     selectedStudentActivity: StudentActivity | null = null;
 
-    constructor(private http: HttpClient) { }
+    constructor(private http: HttpClient, private changeDetectorRef: ChangeDetectorRef) { }
 
     ngOnInit() {
         this.loadCategories();
@@ -61,35 +69,52 @@ export class InscriptionComponent implements OnInit {
     }
 
     onNewCategoryChange() {
-        const queryString = `categoryId=${this.newCategoryId}`;
+
+        const queryString = RequestQueryBuilder.create({
+            search: { categoryId: Number(this.newCategoryId) },
+        }).query();
+
+        // const queryString = `categoryId=${this.newCategoryId}`;
         const activities = new BaseHttp(`activities?${queryString}`, this.http);
         activities.get<Activity[]>().subscribe(result => {
-            this.newActivities = result;
-            if (this.newActivities.length) {
-                this.newActivityId = this.newActivities[0].id;
+            this.activities = result;
+            if (this.activities.length) {
+                this.newActivityId = this.activities[0].id;
             }
         });
+    }
+
+    onNewActivityChange() {
+        // Si tienes lógica para filtrar o actualizar, ponla aquí.
+        // Si no, puedes forzar la detección de cambios:
+        this.filterStudents(); // si existe
+        // O usa ChangeDetectorRef si es necesario
+        this.changeDetectorRef.detectChanges();
     }
 
     loadStudents() {
         const studentsAPI = new BaseHttp('students', this.http);
         studentsAPI.get<Student[]>().subscribe(students => {
+            this.students = students;
             this.filteredStudents = students.map(student => {
                 if (student.photo) {
                     student.photoUrl = buildUrl(`students/${student.id}/photo`);
                 }
+
+                student.categories = student.categories.map(studentCategory => {
+                    studentCategory.category = this.categories.find(c => c.id === studentCategory.categoryId) || { id: 0, type: 'as', students: [], activities: [] };
+                    return studentCategory;
+                });
+
                 return student;
             });
         });
     }
 
     filterStudents() {
-        if (!this.searchTerm) {
-            this.loadStudents();
-            return;
-        }
+
         const term = this.searchTerm.toLowerCase();
-        this.filteredStudents = this.filteredStudents.filter(student =>
+        this.filteredStudents = this.students.filter(student =>
             student.name.toLowerCase().includes(term)
         );
     }
@@ -98,19 +123,24 @@ export class InscriptionComponent implements OnInit {
     selectStudent(student: Student) {
         const idx = this.selectedExistingStudents.findIndex(s => s.id === student.id);
         if (idx > -1) {
-            // Si ya está seleccionado, lo quitamos
             this.selectedExistingStudents.splice(idx, 1);
         } else {
-            // Si no está, lo agregamos
             this.selectedExistingStudents.push(student);
         }
     }
 
-    onInscription() {
+    async onInscription() {
         if (this.activeTab === 'existing' && this.selectedExistingStudents.length > 0) {
-            this.selectedExistingStudents.forEach(student => {
-                this.addStudentToActivity(student);
+            const promises = this.selectedExistingStudents.map(async student => {
+                const hasCategory = student.categories.some(sc => sc.categoryId === Number(this.newCategoryId));
+                if (!hasCategory) {
+                    const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http);
+                    await studentCategoriesAPI.post({ studentId: student.id, categoryId: Number(this.newCategoryId) }).toPromise();
+                }
+                await this.addStudentToActivityAsync(student);
             });
+
+            await Promise.all(promises);
 
             this.complete.emit(true);
             this.selectedExistingStudents = [];
@@ -119,10 +149,21 @@ export class InscriptionComponent implements OnInit {
         }
     }
 
+    private async addStudentToActivityAsync(student: Student) {
+        const body = {
+            studentId: student.id,
+            activityId: Number(this.newActivityId),
+        };
+        await new BaseHttp('student-activities', this.http)
+            .post<typeof body, StudentActivity>(body)
+            .toPromise();
+        this.newStudent = { name: '', birthdate: '' };
+    }
+
     addStudentToActivity(student: Student) {
         const body = {
             studentId: student.id,
-            activityId: this.newActivityId
+            activityId: Number(this.newActivityId),
         };
         new BaseHttp('student-activities', this.http)
             .post<typeof body, StudentActivity>(body)

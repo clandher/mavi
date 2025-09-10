@@ -49,6 +49,11 @@ export class UpdateStudentDto extends CreateStudentDto {
 }
 
 
+export class CreateChargeDto {
+    studentActivityId!: number;
+    amountToBePaid!: number;
+    concept!: string;
+}
 
 export class StudentActivity {
     id!: number;

@@ -14,6 +14,7 @@ import { formatDateForDisplay, dateToDatetimeLocalString, datetimeLocalStringToD
     styleUrls: ['./activity.component.scss']
 })
 export class ActivityComponent implements OnInit {
+    public todayDatetimeLocal: string = dateToDatetimeLocalString(new Date());
     @Input() activityId: number | null = 0;
 
     @Output() complete = new EventEmitter<boolean>();
@@ -83,7 +84,8 @@ export class ActivityComponent implements OnInit {
 
 
     saveActivity(): void {
-        if (this.validateActivity()) {
+        const validationResult = this.validateActivity();
+        if (validationResult === true) {
             // Convertir fechas a Date antes de enviar
             const activityToSave = {
                 ...this.newActivity,
@@ -106,16 +108,37 @@ export class ActivityComponent implements OnInit {
                 });
             }
         } else {
-            alert('Por favor, complete todos los campos correctamente.');
+            alert(validationResult);
         }
     }
 
-    validateActivity(): boolean {
-        return !!this.newActivity.description &&
-            !!this.newActivity.startDate &&
-            !!this.newActivity.endDate &&
-            this.newActivity.price > 0 &&
-            this.newActivity.categoryId > 0 &&
-            this.newActivity.typeId > 0;
+    validateActivity(): true | string {
+        if (!this.newActivity.description) {
+            return 'La descripción es obligatoria.';
+        }
+        if (!this.newActivity.startDate) {
+            return 'La fecha de inicio es obligatoria.';
+        }
+        if (!this.newActivity.endDate) {
+            return 'La fecha de fin es obligatoria.';
+        }
+        if (this.newActivity.price <= 0) {
+            return 'El precio debe ser mayor a 0.';
+        }
+        if (this.newActivity.categoryId <= 0) {
+            return 'Debe seleccionar una categoría válida.';
+        }
+        if (this.newActivity.typeId <= 0) {
+            return 'Debe seleccionar un tipo de actividad válido.';
+        }
+
+        // Validar que la fecha de fin sea mayor a la fecha de inicio
+        const start = new Date(this.newActivity.startDate);
+        const end = new Date(this.newActivity.endDate);
+        if (end <= start) {
+            return 'La fecha de fin debe ser mayor a la fecha de inicio.';
+        }
+
+        return true;
     }
 }

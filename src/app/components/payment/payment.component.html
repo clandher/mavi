@@ -32,7 +32,7 @@
 			<div *ngFor="let charge of charges; let i = index" class="mavi-border">
 				<div class="flex justify-between">
 					<div>
-						<span class="font-medium">{{charge.activity.description}}</span>
+						<span class="font-medium">{{charge.concept}}</span>
 						<span class="text-sm text-gray-500 block">{{charge.chargeDate | date:'dd/MM/yyyy'}}</span>
 					</div>
 					<div class="text-right">

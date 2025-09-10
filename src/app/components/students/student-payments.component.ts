@@ -79,6 +79,7 @@ export interface Collection {
   amountToBePaid: number;
   amountRemaining: number;
   activityId: number;
+  concept: string;
 }
 
 export interface PaymentCharge {
