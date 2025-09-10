@@ -15,6 +15,22 @@ import { RequestQueryBuilder } from '@dataui/crud-request';
     styleUrls: ['./inscription.component.scss']
 })
 export class InscriptionComponent implements OnInit {
+
+    private sortStudents(): Student[] {
+        return this.filteredStudents.slice().sort((a, b) => {
+            const hasCategoryA = a.categories && a.categories.length > 0 && a.categories.some(sc => sc.categoryId && sc.categoryId !== 0);
+            const hasCategoryB = b.categories && b.categories.length > 0 && b.categories.some(sc => sc.categoryId && sc.categoryId !== 0);
+            const inscritoA = hasCategoryA && a.activities && a.activities.some(act => act.activityId === Number(this.newActivityId));
+            const inscritoB = hasCategoryB && b.activities && b.activities.some(act => act.activityId === Number(this.newActivityId));
+            if (hasCategoryA && !inscritoA && (!hasCategoryB || inscritoB)) return -1;
+            if (hasCategoryB && !inscritoB && (!hasCategoryA || inscritoA)) return 1;
+            if (hasCategoryA && inscritoA && (!hasCategoryB || !inscritoB)) return -1;
+            if (hasCategoryB && inscritoB && (!hasCategoryA || !inscritoA)) return 1;
+            if (hasCategoryA && !hasCategoryB) return -1;
+            if (hasCategoryB && !hasCategoryA) return 1;
+            return 0;
+        });
+    }
     isStudentSelected(student: Student): boolean {
         return this.selectedExistingStudents.some(s => s.id === student.id);
     }
@@ -70,6 +86,8 @@ export class InscriptionComponent implements OnInit {
 
             return student;
         });
+
+        this.filteredStudents = this.sortStudents();
     }
 
     loadCategories(): Promise<void> {
@@ -92,22 +110,18 @@ export class InscriptionComponent implements OnInit {
             search: { categoryId: Number(this.newCategoryId) },
         }).query();
 
-        // const queryString = `categoryId=${this.newCategoryId}`;
         const activities = new BaseHttp(`activities?${queryString}`, this.http);
         activities.get<Activity[]>().subscribe(result => {
             this.activities = result;
             if (this.activities.length) {
                 this.newActivityId = this.activities[0].id;
             }
+            this.filteredStudents = this.sortStudents();
         });
     }
 
     onNewActivityChange() {
-        // Si tienes lógica para filtrar o actualizar, ponla aquí.
-        // Si no, puedes forzar la detección de cambios:
-        this.filterStudents(); // si existe
-        // O usa ChangeDetectorRef si es necesario
-        this.changeDetectorRef.detectChanges();
+        this.filteredStudents = this.sortStudents();
     }
 
     loadStudents(): Promise<void> {
