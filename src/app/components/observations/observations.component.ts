@@ -16,7 +16,7 @@ import { ActivatedRoute } from '@angular/router';
     styleUrls: ['./observations.component.scss']
 })
 export class ObservationsComponent implements OnInit {
-    @Input() studentActivityId: number | null = null;
+    @Input() studentActivity!: StudentActivity;
     @Output() complete = new EventEmitter<boolean>();
 
 
@@ -71,7 +71,6 @@ export class ObservationsComponent implements OnInit {
     selectedObservations: string[] = [];
 
     showPaymentModal: boolean = false;
-    selectedStudentActivity: StudentActivity | null = null;
     // Métodos para selección de observaciones
     toggleObservation(obs: string) {
         const idx = this.selectedObservations.indexOf(obs);
@@ -86,11 +85,7 @@ export class ObservationsComponent implements OnInit {
         return this.selectedObservations.includes(obs);
     }
 
-    onAssignObservations() {
-        this.complete.emit(true);
-        this.selectedExistingStudents = [];
-        this.selectedObservations = [];
-    }
+
 
     constructor(
         private http: HttpClient,
@@ -163,7 +158,17 @@ export class ObservationsComponent implements OnInit {
         return new Promise(resolve => {
             studentsAPI.get<Student[]>().subscribe(students => {
                 this.students = students;
+
+                if (this.studentActivity && this.studentActivity.studentId) {
+                    const studentToSelect = this.students.find(s => s.id === this.studentActivity.studentId);
+                    if (studentToSelect) {
+                        this.selectedExistingStudents = [studentToSelect];
+
+                    }
+                }
+
                 resolve();
+
             });
         });
     }
@@ -195,10 +200,33 @@ export class ObservationsComponent implements OnInit {
 
 
 
-    private _createNewStudent() {
-        const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http)
-        studentCategoriesAPI.post({ studentId: 1, categoryId: Number(this.newCategoryId) }).subscribe(() => {
+
+    async onAssignObservations() {
+        const studentObservationsAPI = new BaseHttp(`student-observations`, this.http);
+        const activityId = Number(this.newActivityId);
+        const requests: Promise<boolean>[] = [];
+        for (const student of this.selectedExistingStudents) {
+            for (const observation of this.selectedObservations) {
+                const payload = {
+                    studentId: student.id,
+                    observation,
+                    activityId
+                };
+                requests.push(new Promise(resolve => {
+                    studentObservationsAPI.post(payload).subscribe(
+                        () => resolve(true),
+                        () => resolve(false)
+                    );
+                }));
+            }
+        }
+        const results = await Promise.all(requests);
+        const allSucceeded = results.every(r => r);
+        if (allSucceeded) {
             this.complete.emit(true);
-        });
+            this.selectedExistingStudents = [];
+            this.selectedObservations = [];
+        }
+        // Si alguno falla, no se cierra ni limpia
     }
 }

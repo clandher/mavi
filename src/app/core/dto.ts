@@ -148,3 +148,13 @@ export class Charge {
     activityId!: number;
     activity!: Activity;
 }
+
+export class StudentObservation {
+    id!: number;
+    studentId!: number
+    observation!: string;
+    activity!: Activity
+    createdAt!: string;
+    activityId!: number;
+    student!: Student;
+}

@@ -36,8 +36,8 @@ export class StudentInfoComponent {
       search: { studentId: this.studentId, },
     }).query();
 
-    this.categoriesAPI = new BaseHttp('categories', this.http);
     this.studentCategoriesAPI = new BaseHttp(`student-categories?${queryString}`, this.http);
+    this.categoriesAPI = new BaseHttp('categories', this.http);
   }
 
   ngAfterViewInit(): void {

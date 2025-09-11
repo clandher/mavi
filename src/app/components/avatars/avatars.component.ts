@@ -217,7 +217,6 @@ export class AvatarsComponent {
 
 
 
-	// Selecciona la categoría anterior, si es la primera va a la última
 	selectPreviousCategory(): void {
 		const idx = this.categories.findIndex(c => c.id === this.selectedCategoryId);
 		if (idx > 0) {

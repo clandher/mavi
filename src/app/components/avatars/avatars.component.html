@@ -122,7 +122,7 @@
 <app-activity *ngIf="newEventModalVisible" [activityId]="newActivityId" (complete)="onActivityComplete($event)">
 </app-activity>
 
-<app-observations *ngIf="showObservations" [studentActivityId]="selectedStudentActivity?.id!"
+<app-observations *ngIf="showObservations" [studentActivity]="selectedStudentActivity!"
 	(complete)="onObservationsComplete($event)">
 </app-observations>
 
