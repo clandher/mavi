@@ -17,55 +17,80 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ObservationsComponent implements OnInit {
     @Input() studentActivityId: number | null = null;
+    @Output() complete = new EventEmitter<boolean>();
 
-    private sortStudents(): Student[] {
-        return this.filteredStudents.slice().sort((a, b) => {
-            const hasCategoryA = a.categories && a.categories.length > 0 && a.categories.some(sc => sc.categoryId && sc.categoryId !== 0);
-            const hasCategoryB = b.categories && b.categories.length > 0 && b.categories.some(sc => sc.categoryId && sc.categoryId !== 0);
-            const inscritoA = hasCategoryA && a.activities && a.activities.some(act => act.activityId === Number(this.newActivityId));
-            const inscritoB = hasCategoryB && b.activities && b.activities.some(act => act.activityId === Number(this.newActivityId));
-            if (hasCategoryA && !inscritoA && (!hasCategoryB || inscritoB)) return -1;
-            if (hasCategoryB && !inscritoB && (!hasCategoryA || inscritoA)) return 1;
-            if (hasCategoryA && inscritoA && (!hasCategoryB || !inscritoB)) return -1;
-            if (hasCategoryB && inscritoB && (!hasCategoryA || !inscritoA)) return 1;
-            if (hasCategoryA && !hasCategoryB) return -1;
-            if (hasCategoryB && !hasCategoryA) return 1;
-            return 0;
-        });
+
+
+    observationSearchTerm: string = '';
+    filteredObservations: string[] = [];
+    onObservationSearch() {
+        const term = this.observationSearchTerm.toLowerCase();
+        this.filteredObservations = this.trainingObservations.filter(obs =>
+            obs.toLowerCase().includes(term)
+        );
     }
+
     isStudentSelected(student: Student): boolean {
         return this.selectedExistingStudents.some(s => s.id === student.id);
     }
 
-    hasActivityAssigned(student: Student): boolean {
-        if (!student.activities || !Array.isArray(student.activities) || student.activities.length === 0) return false;
-        return student.activities.some(act => act.activityId === Number(this.newActivityId));
-    }
 
     onCancel() {
-        this.activeTab = 'existing';
         this.selectedExistingStudents = [];
-        this.newStudent = { name: '', birthdate: '' };
         this.complete.emit(false);
     }
 
-    @Output() complete = new EventEmitter<boolean>();
 
     categories: Category[] = [];
     activities: Activity[] = [];
-    activityTypes: ActivityType[] = [];
-    maxBirthdate: string = '';
     students: Student[] = [];
     filteredStudents: Student[] = [];
     selectedExistingStudents: Student[] = [];
-    newStudent: { name: string; birthdate: string } = { name: '', birthdate: '' };
-    activeTab: 'existing' | 'new' = 'existing';
     searchTerm: string = '';
     newCategoryId: number | null = null;
     newActivityId: number | null = null;
 
+    // Observaciones de entrenamiento de fútbol
+    trainingObservations: string[] = [
+        'Buena actitud en el entrenamiento',
+        'Mejorar la precisión en los pases',
+        'Excelente desempeño físico',
+        'Debe trabajar en la resistencia',
+        'Participa activamente en los ejercicios',
+        'Necesita mejorar la comunicación en el campo',
+        'Gran capacidad de liderazgo',
+        'Debe enfocarse en la técnica de tiro',
+        'Muestra compromiso y disciplina',
+        'Debe mejorar la marcación defensiva',
+        'Destaca en el trabajo en equipo',
+        'Debe prestar atención a las indicaciones del entrenador',
+        'Excelente control del balón',
+        'Debe mejorar la velocidad de reacción',
+        'Gran progreso en la táctica grupal'
+    ];
+    selectedObservations: string[] = [];
+
     showPaymentModal: boolean = false;
     selectedStudentActivity: StudentActivity | null = null;
+    // Métodos para selección de observaciones
+    toggleObservation(obs: string) {
+        const idx = this.selectedObservations.indexOf(obs);
+        if (idx > -1) {
+            this.selectedObservations.splice(idx, 1);
+        } else {
+            this.selectedObservations.push(obs);
+        }
+    }
+
+    isObservationSelected(obs: string): boolean {
+        return this.selectedObservations.includes(obs);
+    }
+
+    onAssignObservations() {
+        this.complete.emit(true);
+        this.selectedExistingStudents = [];
+        this.selectedObservations = [];
+    }
 
     constructor(
         private http: HttpClient,
@@ -86,7 +111,6 @@ export class ObservationsComponent implements OnInit {
     }
 
     async ngOnInit() {
-        this.maxBirthdate = formatDateForDisplay(new Date());
         await Promise.all([
             this._loadCategories(),
             this._loadStudents()
@@ -105,7 +129,7 @@ export class ObservationsComponent implements OnInit {
             return student;
         });
 
-        this.filteredStudents = this.sortStudents();
+        this.filteredObservations = [...this.trainingObservations];
     }
 
 
@@ -121,12 +145,10 @@ export class ObservationsComponent implements OnInit {
             if (this.activities.length > 0 && !this.newActivityId) {
                 this.newActivityId = this.activities[0].id;
             }
-            this.filteredStudents = this.sortStudents();
         });
     }
 
     onNewActivityChange() {
-        this.filteredStudents = this.sortStudents();
     }
 
     onSearch() {
@@ -171,51 +193,12 @@ export class ObservationsComponent implements OnInit {
         }
     }
 
-    async onInscription() {
-        if (this.activeTab === 'existing' && this.selectedExistingStudents.length > 0) {
-            const promises = this.selectedExistingStudents.map(async student => {
-                const hasCategory = student.categories.some(sc => sc.categoryId === Number(this.newCategoryId));
-                if (!hasCategory) {
-                    const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http);
-                    await studentCategoriesAPI.post({ studentId: student.id, categoryId: Number(this.newCategoryId) }).toPromise();
-                }
-                await this._addStudentToActivityAsync(student);
-            });
-
-            await Promise.all(promises);
-
-            this.complete.emit(true);
-            this.selectedExistingStudents = [];
-        } else if (this.activeTab === 'new' && this.newStudent.name) {
-            this._createNewStudent();
-        }
-    }
-
-    private async _addStudentToActivityAsync(student: Student) {
-        const body = {
-            studentId: student.id,
-            activityId: Number(this.newActivityId),
-        };
-        await new BaseHttp('student-activities', this.http)
-            .post<typeof body, StudentActivity>(body)
-            .toPromise();
-        this.newStudent = { name: '', birthdate: '' };
-    }
 
 
     private _createNewStudent() {
-        const birthdate = this.newStudent.birthdate ? new Date(this.newStudent.birthdate) : new Date();
-        const newStudentData = {
-            name: this.newStudent.name,
-            birthdate: birthdate
-        };
-        const studentsAPI = new BaseHttp('students', this.http);
-        studentsAPI.post<typeof newStudentData, Student>(newStudentData).subscribe(createdStudent => {
-            const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http)
-            studentCategoriesAPI.post({ studentId: createdStudent.id, categoryId: Number(this.newCategoryId) }).subscribe(() => {
-                this._addStudentToActivityAsync(createdStudent);
-                this.complete.emit(true);
-            });
+        const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http)
+        studentCategoriesAPI.post({ studentId: 1, categoryId: Number(this.newCategoryId) }).subscribe(() => {
+            this.complete.emit(true);
         });
     }
 }

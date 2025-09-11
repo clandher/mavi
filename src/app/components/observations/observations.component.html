@@ -1,6 +1,6 @@
 <div class="modal-overlay">
-	<div class="modal-content ">
-		<h2 class="text-xl font-semibold mb-4">Inscribir alumnos</h2>
+	<div class="modal-content">
+		<h2 class="text-xl font-semibold mb-4">Asignar observaciones de entrenamiento</h2>
 		<div class="flex gap-4 justify-between">
 			<div class="form-group flex-1">
 				<label for="newCategoryId" class="form-label">Categoría</label>
@@ -19,72 +19,62 @@
 			</div>
 		</div>
 		<br />
-		<div class="mavi-tabs">
-			<button (click)="activeTab = 'existing'" [class]="activeTab === 'existing' ? 'selected' : ''"
-				class="mavi-tab">Seleccionar existentes</button>
-			<button (click)="activeTab = 'new'" [class]="activeTab === 'new' ? 'selected' : ''" class="mavi-tab">Crear
-				nuevo</button>
-		</div>
-		<br />
-		<div class="mavi-border" *ngIf="activeTab === 'existing'">
-			<div class="form-group">
-				<label for="searchTerm" class="form-label">Buscar estudiante</label>
-				<input id="searchTerm" type="text" [(ngModel)]="searchTerm" (input)="onSearch()"
-					placeholder="Buscar por nombre..." class="form-control">
-			</div>
-			<br />
-			<div class="flex items-center mb-2">
-				<span class="font-semibold">Seleccionados: {{ selectedExistingStudents.length }}</span>
-			</div>
-			<div class="grid grid-cols-3 gap-3 mb-4 max-h-60 overflow-y-scroll">
-				<div *ngFor="let student of filteredStudents"
-					(click)="!hasActivityAssigned(student) && onSelectStudent(student)"
-					[class.bg-green-600]="isStudentSelected(student)" [class.opacity-50]="hasActivityAssigned(student)"
-					[class.cursor-pointer]="!hasActivityAssigned(student)"
-					[class.cursor-not-allowed]="hasActivityAssigned(student)" class="mavi-border p-1 flex flex-col ">
-
-					<div class="flex items-center gap-2">
-						<img *ngIf="student.photo" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
-						<ng-template #placeholder>
-							<div class="photo-placeholder">+</div>
-						</ng-template>
-
-						<div>
-							<div>{{ student.nick ? student.nick : student.name }}</div>
-							<span *ngIf="hasActivityAssigned(student)"
-								class="mavi-tag me-2 mavi-tag--primary">Inscrito</span>
-							<span *ngFor="let category of student.categories" class="mavi-tag me-2">
-								{{ category.category.type }}
-							</span>
-						</div>
-
-					</div>
-
+		<div class="flex gap-6">
+			<div class="flex-1 mavi-border p-2">
+				<div class="form-group">
+					<label for="searchTerm" class="form-label">Buscar estudiante</label>
+					<input id="searchTerm" type="text" [(ngModel)]="searchTerm" (input)="onSearch()"
+						placeholder="Buscar por nombre..." class="form-control">
 				</div>
-				<div *ngIf="filteredStudents.length === 0" class="col-span-3 text-center py-4 text-gray-500">No se
-					encontraron estudiantes</div>
+				<br />
+				<div class="mb-2">
+					<span class="font-semibold">Seleccionados: {{ selectedExistingStudents.length }}</span>
+				</div>
+				<div class="grid grid-cols-1 gap-2 mb-4 max-h-100 overflow-y-scroll">
+					<div *ngFor="let student of filteredStudents" (click)=" onSelectStudent(student)"
+						[class.bg-green-600]="isStudentSelected(student)"
+						class="mavi-border p-1 flex flex-col cursor-pointer">
+						<div class="flex items-center gap-2">
+							<img *ngIf="student.photo" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
+							<div>
+								<div>{{ student.nick ? student.nick : student.name }}</div>
+								<span *ngFor="let category of student.categories" class="mavi-tag me-2">{{
+									category.category.type }}</span>
+							</div>
+						</div>
+					</div>
+					<div *ngIf="filteredStudents.length === 0" class="col-span-2 text-center py-4 text-gray-500">No se
+						encontraron estudiantes</div>
+				</div>
+			</div>
+			<div class="flex-1 mavi-border p-2">
+				<div class="form-group">
+					<label class="form-label">Observaciones</label>
+					<input type="text" [(ngModel)]="observationSearchTerm" (input)="onObservationSearch()"
+						placeholder="Buscar observación..." class="form-control mt-1" />
+				</div>
+				<br />
+				<div class="mb-2">
+					<span class="font-semibold">Seleccionadas: {{ selectedObservations.length }}</span>
+				</div>
+				<div class="grid grid-cols-1 gap-2 max-h-100 overflow-y-scroll">
+					<div *ngFor="let obs of filteredObservations" (click)="toggleObservation(obs)"
+						[class.bg-green-600]="isObservationSelected(obs)" [class.cursor-pointer]="true"
+						class="mavi-border p-2 flex items-center">
+						<span>{{ obs }}</span>
+					</div>
+					<div *ngIf="filteredObservations.length === 0" class="text-center py-4 text-gray-500">No se
+						encontraron observaciones</div>
+				</div>
+
 			</div>
 		</div>
-		<div class="mavi-border flex gap-3" *ngIf="activeTab === 'new'">
-			<div class="form-group flex-1">
-				<label for="newStudentName" class="form-label">Nombre</label>
-				<input id="newStudentName" type="text" [(ngModel)]="newStudent.name" class="form-control"
-					placeholder="Nombre completo del estudiante">
-			</div>
-			<div class="form-group flex-1">
-				<label for="newStudentBirthdate" class="form-label">Fecha de nacimiento</label>
-				<input id="newStudentBirthdate" type="date" [max]="maxBirthdate" [(ngModel)]="newStudent.birthdate"
-					class="form-control">
-			</div>
-		</div>
-
-
 		<div class="modal-footer">
 			<div class="flex justify-end space-x-2 mt-4">
 				<button (click)="onCancel()" class="btn btn-outline">Cancelar</button>
-				<button (click)="onInscription()"
-					[disabled]="(activeTab === 'existing' && selectedExistingStudents.length === 0) || (activeTab === 'new' && !newStudent.name)"
-					class="btn btn-primary">{{ activeTab === 'existing' ? 'Inscribir' : 'Crear e inscribir' }}</button>
+				<button (click)="onAssignObservations()"
+					[disabled]="selectedExistingStudents.length === 0 || selectedObservations.length === 0"
+					class="btn btn-primary">Asignar observaciones</button>
 			</div>
 		</div>
 	</div>

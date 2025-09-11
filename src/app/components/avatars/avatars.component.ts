@@ -11,10 +11,11 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ActivityComponent } from "../activity/activity.component";
 import { uploadStudentPhoto } from '@app/core/helpers';
 import { ObservationsComponent } from "../observations";
+import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 
 @Component({
 	standalone: true,
-	imports: [CommonModule, FormsModule, PaymentComponent, InscriptionComponent, ActivityComponent, ObservationsComponent],
+	imports: [CommonModule, FormsModule, PaymentComponent, InscriptionComponent, ActivityComponent, ObservationsComponent, CurrencyMXPipe],
 	templateUrl: './avatars.component.html',
 	styleUrl: './avatars.component.scss'
 })
