@@ -256,6 +256,7 @@ export class AvatarsComponent {
 			const activities = new BaseHttp(`activities`, this.http);
 			activities.get<Activity[]>().subscribe(result => {
 				this.activities = result;
+				this._filterActivities();
 			});
 		}
 	}

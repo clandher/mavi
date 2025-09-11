@@ -23,11 +23,11 @@ export class ActivityComponent implements OnInit {
     public activityTypes: ActivityType[] = [];
     public categories: Category[] = [];
     public newActivity: CreateActivityDto = {
-        description: '',
+        description: 'Nueva actividad...',
         startDate: dateToDatetimeLocalString(new Date()),
-        endDate: dateToDatetimeLocalString(new Date()),
-        gracePeriod: 0,
-        price: 0,
+        endDate: dateToDatetimeLocalString(new Date(Date.now() + 60 * 60 * 1000)),
+        gracePeriod: 15,
+        price: 200,
         categoryId: 0,
         typeId: 2,
     };
@@ -92,6 +92,10 @@ export class ActivityComponent implements OnInit {
                 startDate: this.newActivity.startDate,
                 endDate: this.newActivity.endDate,
             };
+
+            activityToSave.typeId = Number(activityToSave.typeId);
+            activityToSave.categoryId = Number(activityToSave.categoryId);
+
             if (this.isEdit) {
                 // Actualizar actividad existente
                 const activitiesAPI = new BaseHttp(`activities/${this.activityId}`, this.http);
