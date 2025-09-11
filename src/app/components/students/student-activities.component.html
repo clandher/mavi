@@ -3,7 +3,7 @@
 	<div *ngFor="let act of activities" class="mavi-card">
 		<div class="flex justify-between items-center mb-2">
 			<div>
-				<div class="hover-link" [routerLink]="['/mavi/app/actividades']"
+				<div class="hover-link" [routerLink]="['/app/actividades']"
 					[queryParams]="{ category: act.activity.categoryId, activity: act.activity.id }">
 					{{ act.activity.description }}
 				</div>

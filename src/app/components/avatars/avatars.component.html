@@ -25,7 +25,7 @@
 
 <div class="mavi-tabs">
 	<button class="mavi-tab" [ngClass]="{ selected: selectedActivityId === activity.id }" [title]="activity.details"
-		*ngFor="let activity of activities; let i = index" (click)="onActivityChange(activity.id, i)">
+		*ngFor="let activity of activitiesByCategory; let i = index" (click)="onActivityChange(activity.id, i)">
 		{{ activity.description }}
 	</button>
 </div>
@@ -33,86 +33,81 @@
 
 <input id="photo" type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden>
 
-<div class="relative justify-center ">
-	<div *ngFor="let activity of activities">
-		<div *ngIf="selectedActivityId! === activity.id" class="grid grid-cols-6 gap-4">
+<div class="grid grid-cols-6 gap-4">
 
-
-
-			<div *ngFor="let studentActivity of studentActivities" class="relative">
-				<div (click)="selectAvatar(studentActivity)" (dblclick)="openEditModal(studentActivity)" [ngClass]="{
+	<div *ngFor="let studentActivity of studentActivities" class="relative">
+		<div (click)="selectAvatar(studentActivity)" (dblclick)="openEditModal(studentActivity)" [ngClass]="{
               'border-2 border-white shadow-lg': selectedStudentActivity === studentActivity,
               'opacity-20 ': studentActivity.unsubscribed
               }" class="avatar-circle" [class.no-image]="!studentActivity.student.photoUrl">
-					@if (studentActivity.student.photoUrl) {
-					<img [src]="studentActivity.student.photoUrl" class="w-full h-full object-cover" />
-					}
+			@if (studentActivity.student.photoUrl) {
+			<img [src]="studentActivity.student.photoUrl" class="w-full h-full object-cover" />
+			}
 
-					<span *ngIf="studentActivity.debtActivityAmount > 0" (click)="showPaymentModal = true"
-						class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg z-20">
-						{{showDebt ? '¡Debe!' : '$' + studentActivity.debtActivityAmount}}
-					</span>
+			<span *ngIf="studentActivity.debtActivityAmount > 0" (click)="showPaymentModal = true"
+				class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg z-20">
+				{{showDebt ? '¡Debe!' : '$' + studentActivity.debtActivityAmount}}
+			</span>
 
-					<span [title]="studentActivity.student.name"
-						class="absolute bottom-0 left-0 bg-black text-white text-xs font-bold px-1 py-0 rounded-tr-lg z-20 overflow-hidden whitespace-nowrap text-ellipsis"
-						style="text-overflow: ellipsis;">
-						<span
-							style="max-width: 60px; display: inline-block; overflow: hidden; text-overflow: ellipsis;">
-							{{ studentActivity.student.nick ? studentActivity.student.nick :
-							studentActivity.student.name
-							}}
-						</span>
-					</span>
-				</div>
+			<span [title]="studentActivity.student.name"
+				class="absolute bottom-0 left-0 bg-black text-white text-xs font-bold px-1 py-0 rounded-tr-lg z-20 overflow-hidden whitespace-nowrap text-ellipsis"
+				style="text-overflow: ellipsis;">
+				<span style="max-width: 60px; display: inline-block; overflow: hidden; text-overflow: ellipsis;">
+					{{ studentActivity.student.nick ? studentActivity.student.nick :
+					studentActivity.student.name
+					}}
+				</span>
+			</span>
+		</div>
 
 
-				<div *ngIf="selectedStudentActivity === studentActivity"
-					class="menu-context  mavi-border absolute z-30 mt-2 w-48 ">
-					<ul class="py-2">
-						<li class="px-4 py-2  cursor-pointer" (click)="openEditModal(studentActivity)">
-							Editar...
+		<div *ngIf="selectedStudentActivity === studentActivity" class="menu-context  mavi-border absolute z-30 mt-2  ">
+			<ul class="py-2">
+				<li class="px-4 py-2  cursor-pointer" (click)="openEditModal(studentActivity)">
+					Editar...
+				</li>
+
+				@if(studentActivity.debtActivityAmount > 0){
+				<li class="px-4 py-2  cursor-pointer" (click)="showPaymentModal = true">
+					Registrar pago...
+				</li>
+				}
+
+				<li *ngIf="!studentActivity.student.photoUrl" class="px-4 py-2 cursor-pointer">
+					<label for="photo">
+						Subir imagen...
+					</label>
+				</li>
+
+				<li class="px-4 py-2 cursor-pointer" (click)="toggleSubmenu('inscribir', studentActivity)">
+					Inscribir a...
+					<ul *ngIf="showSubmenu['inscribir']" class="pl-4">
+						<li *ngFor="let activity of getNonRecurrentActivitiesForStudent(selectedStudentActivity)"
+							class="px-4 py-2 cursor-pointer whitespace-nowrap overflow-hidden text-ellipsis"
+							(click)="onInscribir(studentActivity.student, activity)">
+							{{ activity.description }}
 						</li>
-
-						@if(studentActivity.debtActivityAmount > 0){
-						<li class="px-4 py-2  cursor-pointer" (click)="showPaymentModal = true">
-							Registrar pago...
-						</li>
-						}
-
-						<li *ngIf="!studentActivity.student.photoUrl" class="px-4 py-2 cursor-pointer">
-							<label for="photo">
-								Subir imagen...
-							</label>
-						</li>
-
-						<li class="px-4 py-2  cursor-pointer" (click)="toggleSubmenu('inscribir')">
-							Inscribir a...
-							<ul *ngIf="showSubmenu['inscribir']" class="pl-4">
-								<li class="px-4 py-2  cursor-pointer">Liga X</li>
-								<li class="px-4 py-2  cursor-pointer">Torneo X</li>
-							</ul>
-						</li>
-
-						<li class="px-4 py-2  cursor-pointer" (click)="toggleSubmenu('Observaciones')">
-							Observaciones...
-							<ul *ngIf="showSubmenu['Observaciones']" class="pl-2">
-								<li class="px-4 py-2  cursor-pointer">Practicar tiros libres</li>
-								<li class="px-4 py-2  cursor-pointer">Mejorar trabajo en equipo</li>
-								<li class="px-4 py-2  cursor-pointer">Desarrollar liderazgo</li>
-							</ul>
-						</li>
+						<li *ngIf="getNonRecurrentActivitiesForStudent(selectedStudentActivity).length === 0"
+							class="px-4 py-2 text-gray-400">No hay actividades disponibles</li>
 					</ul>
-				</div>
-			</div>
+				</li>
 
+				<li class="px-4 py-2  cursor-pointer" (click)="toggleSubmenu('Observaciones', studentActivity)">
+					Observaciones...
+					<ul *ngIf="showSubmenu['Observaciones']" class="pl-2">
+						<li class="px-4 py-2  cursor-pointer">Practicar tiros libres</li>
+						<li class="px-4 py-2  cursor-pointer">Mejorar trabajo en equipo</li>
+						<li class="px-4 py-2  cursor-pointer">Desarrollar liderazgo</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
 
-			<div class="relative">
-				<div (click)="addNewAvatar()"
-					class="w-25 h-25 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-300 hover:bg-gray-300">
-					<span class="text-3xl font-bold text-gray-600">+</span>
-				</div>
-			</div>
-
+	<div class="relative">
+		<div (click)="addNewAvatar()"
+			class="w-25 h-25 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-300 hover:bg-gray-300">
+			<span class="text-3xl font-bold text-gray-600">+</span>
 		</div>
 	</div>
 </div>

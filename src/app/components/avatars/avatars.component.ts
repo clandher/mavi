@@ -20,6 +20,7 @@ import { uploadStudentPhoto } from '@app/core/helpers';
 export class AvatarsComponent {
 
 
+
 	public showDebt: boolean = true;
 
 	public selectedStudentActivity: StudentActivity | null = null;
@@ -28,14 +29,12 @@ export class AvatarsComponent {
 
 
 	public categories: Category[] = [];
-	newCategoryId: number | null = null;
 
-	public newActivities: Activity[] = [];
+	public activitiesByCategory: Activity[] = [];
 	public activities: Activity[] = [];
 	newActivityId: number | null = null;
 
 	public studentActivities: StudentActivity[] = [];
-
 
 	selectedCategoryId: number | null = null;
 	selectedActivityId: number | null = null;
@@ -57,9 +56,15 @@ export class AvatarsComponent {
 			}
 		});
 
-		const categories = new BaseHttp(`categories`, this.http);
-		categories.get<Category[]>().subscribe(result => {
-			this.categories = result;
+
+
+
+		Promise.all([
+			new BaseHttp(`categories`, this.http).get<Category[]>().toPromise(),
+			new BaseHttp(`activities`, this.http).get<Activity[]>().toPromise()
+		]).then(([categories, activities]) => {
+			this.categories = categories || [];
+			this.activities = activities || [];
 
 			if (this.categories.length > 0 && !this.selectedCategoryId) {
 				this.selectedCategoryId = this.categories[0].id;
@@ -70,18 +75,6 @@ export class AvatarsComponent {
 	}
 
 
-	onNewCategoryChange() {
-
-		const queryString = RequestQueryBuilder.create({
-			search: { categoryId: Number(this.newCategoryId!) },
-		}).query();
-
-		const activities = new BaseHttp(`activities?${queryString}`, this.http);
-		activities.get<ApiRes<Activity>>().subscribe(result => {
-			this.newActivities = result.data;
-		});
-	}
-
 	onCategoryChange() {
 
 		this.router.navigate([], {
@@ -91,32 +84,22 @@ export class AvatarsComponent {
 		});
 
 
-		this._loadActivities();
+		this._filterActivities();
 	}
 
 
-	private _loadActivities() {
+	private _filterActivities() {
 
-		const queryString = RequestQueryBuilder.create({
-			search: { categoryId: Number(this.selectedCategoryId!) },
-		}).query();
+		this.activitiesByCategory = this.activities.filter(a => a.categoryId === this.selectedCategoryId);
 
-
-		const activities = new BaseHttp(`activities?${queryString}`, this.http);
-		activities.get<Activity[]>().subscribe(result => {
-			this.activities = result;
-			this.newActivities = [...this.activities];
-
-			if (this.activities.length) {
-
-				if (this.selectedActivityId && this.activities.some(a => a.id === this.selectedActivityId)) {
-					this.onActivityChange(this.selectedActivityId, 0);
-				} else {
-					this.onActivityChange(this.activities[0].id, 0);
-				}
-
+		if (this.activitiesByCategory.length) {
+			if (this.selectedActivityId && this.activitiesByCategory.some(a => a.id === this.selectedActivityId)) {
+				this.onActivityChange(this.selectedActivityId, 0);
+			} else {
+				this.onActivityChange(this.activitiesByCategory[0].id, 0);
 			}
-		});
+		}
+
 	}
 
 	onActivityChange(activityId: number, index: number): void {
@@ -170,21 +153,17 @@ export class AvatarsComponent {
 
 	addNewAvatar() {
 		this.selectedStudentActivity = new StudentActivity();
-
 		this.showModal = true;
-
-		this.newCategoryId = this.selectedCategoryId;
 	}
 
 	// Método para seleccionar un avatar
 	selectAvatar(avatar: any | null): void {
 		this.selectedStudentActivity = this.selectedStudentActivity === avatar ? null : avatar;
+		this.showSubmenu['inscribir'] = false;
+		this.showSubmenu['Observaciones'] = false;
 	}
 
-	// Método para alternar la visibilidad de un submenú
-	toggleSubmenu(option: string): void {
-		this.showSubmenu[option] = !this.showSubmenu[option];
-	}
+
 
 	// Método para abrir el modal de edición
 	openEditModal(studentActivity: StudentActivity): void {
@@ -272,7 +251,10 @@ export class AvatarsComponent {
 	onActivityComplete(value: boolean): void {
 		this.newEventModalVisible = false;
 		if (value) {
-			this._loadActivities();
+			const activities = new BaseHttp(`activities`, this.http);
+			activities.get<Activity[]>().subscribe(result => {
+				this.activities = result;
+			});
 		}
 	}
 
@@ -281,5 +263,58 @@ export class AvatarsComponent {
 		if (this.selectedStudentActivity?.student) {
 			uploadStudentPhoto($event, this.selectedStudentActivity?.student, this.http);
 		}
+	}
+
+	getNonRecurrentActivitiesForStudent(studentActivity: StudentActivity): Activity[] {
+		// if (!studentActivity.student || !this.activities) return [];
+		const enrolledActivityIds = studentActivity.student.activities
+			.filter(sa => sa.student.id === studentActivity.student.id)
+			.map(sa => sa.activity.id);
+
+		return this.activities.filter(activity => !activity.type.recurrent &&
+			!enrolledActivityIds.includes(activity.id)
+		);
+	}
+
+
+	// Método para alternar la visibilidad de un submenú
+	toggleSubmenu(option: string, studentActivity: StudentActivity): void {
+		this.showSubmenu[option] = !this.showSubmenu[option];
+
+		if ('inscribir' === option) {
+			const queryString = RequestQueryBuilder.create({
+				search: { studentId: studentActivity.student.id },
+			}).query();
+
+			new BaseHttp(`student-activities?${queryString}`, this.http).get<StudentActivity[]>().subscribe(activities => {
+				studentActivity.student.activities = activities;
+			});
+		}
+	}
+
+
+	async onInscribir(student: Student, activity: Activity): Promise<void> {
+		console.log('student.categories', student.categories);
+
+		const queryString = RequestQueryBuilder.create({
+			search: { studentId: student.id },
+		}).query();
+
+		const studentCategories = await new BaseHttp(`student-categories?${queryString}`, this.http).get<Category[]>().toPromise() ?? [];
+
+		const hasCategory = studentCategories.some(sc => sc.id === activity.categoryId);
+		if (!hasCategory) {
+			const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http);
+			await studentCategoriesAPI.post({ studentId: student.id, categoryId: activity.categoryId }).toPromise();
+		}
+
+		const body = {
+			studentId: student.id,
+			activityId: activity.id,
+		};
+
+		await new BaseHttp('student-activities', this.http)
+			.post<typeof body, StudentActivity>(body)
+			.toPromise();
 	}
 }
