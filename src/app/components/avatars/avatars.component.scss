@@ -98,3 +98,10 @@
 
   // w-25 h-25 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-300
 }
+
+
+.menu-context ul ul li {
+  &:hover {
+    background: #201f1f; // Cambia este color al que prefieras
+  }
+}
