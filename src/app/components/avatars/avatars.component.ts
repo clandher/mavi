@@ -10,10 +10,11 @@ import { InscriptionComponent } from '../inscription';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ActivityComponent } from "../activity/activity.component";
 import { uploadStudentPhoto } from '@app/core/helpers';
+import { ObservationsComponent } from "../observations";
 
 @Component({
 	standalone: true,
-	imports: [CommonModule, FormsModule, PaymentComponent, InscriptionComponent, ActivityComponent],
+	imports: [CommonModule, FormsModule, PaymentComponent, InscriptionComponent, ActivityComponent, ObservationsComponent],
 	templateUrl: './avatars.component.html',
 	styleUrl: './avatars.component.scss'
 })
@@ -210,6 +211,7 @@ export class AvatarsComponent {
 
 
 	public newEventModalVisible: boolean = false;
+	public showObservations: boolean = false;
 
 
 
@@ -256,6 +258,20 @@ export class AvatarsComponent {
 				this.activities = result;
 			});
 		}
+	}
+
+	onObservations(): void {
+		this.showObservations = true;
+	}
+
+	onObservationsComplete(value: boolean): void {
+		this.showObservations = false;
+		// if (value) {
+		// 	const activities = new BaseHttp(`activities`, this.http);
+		// 	activities.get<Activity[]>().subscribe(result => {
+		// 		this.activities = result;
+		// 	});
+		// }
 	}
 
 
