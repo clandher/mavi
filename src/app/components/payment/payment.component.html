@@ -6,14 +6,13 @@
 
 			<div class="mb-4">
 				<label class="form-label">Monto a pagar</label>
-				<div class="relative">
+				<div class="relative flex items-center">
 					<input type="number" [(ngModel)]="paymentAmount" (input)="updatePaymentDistribution()"
 						[class.border-red-500]="paymentAmount > getTotalDebt()" class="form-control" min="0"
 						[max]="getTotalDebt()" step="0.01">
 
 
-					<button (click)="payFullAmount()"
-						class="cursor-pointer absolute right-2  text-xs bg-blue-100 text-blue-600 px-2 py-1  hover:bg-blue-200 transition"
+					<button (click)="payFullAmount()" class="btn btn-xs btn-primary absolute right-2" [style]="'margin-top: 1px'"
 						style="top:6px">
 						Pagar total
 					</button>

@@ -55,17 +55,23 @@
                 <span class="detail-label mb-1">Actividades</span>
                 <div class="flex flex-col gap-2">
                     <div *ngFor="let sc of student.categories">
-                        <div class="flex gap-2 items-center">
-                            <div class="mavi-tag">
+                        <div class="flex gap-2 ">
+                            <div class="mavi-tag" style="min-width: 45px; text-align: center    ;">
                                 {{ getCategoryName(sc.categoryId) }}
                                 <!-- <button class="remove-category" (click)="removeCategory(sc.id)">×</button> -->
                             </div>
-                            <ng-container *ngFor="let act of student.activities">
-                                <span *ngIf="act.activity.categoryId === sc.categoryId" class="mavi-tag"
-                                    [title]="act.activity.details">
-                                    {{ act.activity.description }}
-                                </span>
-                            </ng-container>
+
+                            <div class="flex gap-1 flex-wrap">
+
+                                <ng-container *ngFor="let act of student.activities">
+                                    <span *ngIf="act.activity.categoryId === sc.categoryId" class="mavi-tag"
+                                        [title]="act.activity.details">
+                                        {{ act.activity.description }}
+                                    </span>
+                                </ng-container>
+
+                            </div>
+
                         </div>
                     </div>
                     <span *ngIf="!student.categories?.length" class="no-categories">

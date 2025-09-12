@@ -122,6 +122,11 @@ body {
     height: 32px;
 }
 
+.btn-xs {
+    height: 22px;
+    font-size: 12px;
+}
+
 .btn-primary {
     background: #fff;
     color: #181818;
@@ -387,7 +392,7 @@ select.form-control {
     display: flex;
     justify-content: center;
     pointer-events: none;
-    z-index: 50;
+    z-index: 2;
 
     .mavi-bottom-actions-inner {
         background: #151515;

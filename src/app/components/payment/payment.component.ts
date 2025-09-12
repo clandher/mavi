@@ -48,7 +48,8 @@ export class PaymentComponent implements OnChanges {
     }
 
     getTotalDebt(): number {
-        return this.charges.reduce((total, charge) => total + charge.amountRemaining, 0);
+        const total = this.charges.reduce((sum, charge) => sum + charge.amountRemaining, 0);
+        return Number(total.toFixed(2));
     }
 
     updatePaymentDistribution() {

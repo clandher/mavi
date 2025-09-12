@@ -30,3 +30,20 @@
     padding: 2rem;
     color: #666;
 }
+
+.scrolling-text {
+    // display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    animation: scroll-left 8s linear infinite;
+}
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
