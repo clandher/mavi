@@ -334,4 +334,10 @@ export class AvatarsComponent {
 			.post<typeof body, StudentActivity>(body)
 			.toPromise();
 	}
+
+	ngAfterViewInit() {
+		setTimeout(() => {
+			this.onNewActivity();
+		}, 0);
+	}
 }

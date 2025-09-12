@@ -1,0 +1,42 @@
+
+import { AbstractControl, ValidationErrors } from "@angular/forms";
+
+export class MaviValidators {
+    static minDate(compareToKey: string, message: string): (control: AbstractControl) => ValidationErrors | null {
+        return (control: AbstractControl) => {
+            if (!control.parent) return null;
+            const compareToValue = control.parent.get(compareToKey)?.value;
+            if (compareToValue && control.value) {
+                const dateValue = new Date(control.value);
+                const compareDate = new Date(compareToValue);
+                if (dateValue <= compareDate) {
+                    return { message: message };
+                }
+            }
+            return null;
+        };
+    }
+    static required(message: string = 'Campo requerido'): ValidationErrors | null {
+        return (control: AbstractControl) => {
+            if (control.value === null || control.value === undefined || control.value === '') {
+                return {
+                    message
+                };
+            }
+            return null;
+        }
+    }
+
+    static min(minValue: number, message: string = `El valor mínimo es ${minValue}`): ValidationErrors | null {
+        return (control: AbstractControl) => {
+            if (control.value !== null && control.value !== undefined && control.value < minValue) {
+                return {
+                    message
+                };
+            }
+            return null;
+        }
+    }
+
+
+}

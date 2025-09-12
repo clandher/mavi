@@ -1,57 +1,44 @@
-<div *ngIf="showModal" class="modal-overlay">
+<div class="modal-overlay">
 	<div class="modal-content">
-		<h2 class="text-xl font-semibold mb-4">{{ isEdit ? 'Editar actividad' : 'Nueva actividad' }}</h2>
-		<div class="form-group">
-			<label for="newActivityDescription" class="form-label">Descripción</label>
-			<input id="newActivityDescription" type="text" [(ngModel)]="newActivity.description" class="form-control"
-				[readonly]="false">
-		</div>
-		<br />
-		<div class="flex gap-4 justify-between">
-			<div class="form-group flex-1">
-				<label for="newActivityCategoryId" class="form-label">Categoría</label>
-				<select id="newActivityCategoryId" [(ngModel)]="newActivity.categoryId" class="form-control"
-					[disabled]="isEdit">
-					<option *ngFor="let category of categories" [value]="category.id">{{ category.type }}</option>
-				</select>
+		<h2 class="text-xl font-semibold mb-4">{{ activityId !== 0 ? 'Editar actividad' : 'Nueva actividad' }}</h2>
+		<form [formGroup]="activityForm" (ngSubmit)="saveActivity()">
+			<app-form-group [title]="'Descripción'" [control]="activityForm.get('description')" class="form-group">
+				<input id="newActivityDescription" type="text" formControlName="description" class="form-control"
+					[readonly]="false">
+			</app-form-group>
+			<div class="flex gap-4 justify-between">
+				<app-form-group [title]="'Categoría'" [control]="activityForm.get('categoryId')" class="flex-1">
+					<select id="newActivityCategoryId" formControlName="categoryId" class="form-control">
+						<option *ngFor="let category of categories" [value]="category.id">{{ category.type }}</option>
+					</select>
+				</app-form-group>
+				<app-form-group [title]="'Tipo de Actividad'" [control]="activityForm.get('typeId')" class="flex-1">
+					<select id="newActivityTypeId" formControlName="typeId" class="form-control">
+						<option *ngFor="let type of activityTypes" [value]="type.id">{{ type.key }}</option>
+					</select>
+				</app-form-group>
 			</div>
-			<div class="form-group flex-1">
-				<label for="newActivityTypeId" class="form-label">Tipo de Actividad</label>
-				<select id="newActivityTypeId" [(ngModel)]="newActivity.typeId" class="form-control"
-					[disabled]="isEdit">
-					<option *ngFor="let type of activityTypes" [value]="type.id">{{ type.key }}</option>
-				</select>
+			<div class="flex gap-4 justify-between">
+				<app-form-group [title]="'Fecha de Inicio'" [control]="activityForm.get('startDate')" class="flex-1">
+					<input id="newActivityStartDate" type="datetime-local" formControlName="startDate" class="form-control" [min]="todayDatetimeLocal">
+				</app-form-group>
+				<app-form-group [title]="'Fecha de Fin'" [control]="activityForm.get('endDate')" class="flex-1">
+					<input id="newActivityEndDate" type="datetime-local" formControlName="endDate" class="form-control" [min]="activityForm.get('startDate')?.value">
+				</app-form-group>
 			</div>
-		</div>
-		<br />
-		<div class="flex gap-4 justify-between">
-			<div class="form-group flex-1">
-				<label for="newActivityStartDate" class="form-label">Fecha de Inicio</label>
-				<input id="newActivityStartDate" type="datetime-local" [(ngModel)]="newActivity.startDate"
-					class="form-control" [disabled]="isEdit" [min]="todayDatetimeLocal">
+			<div class="flex gap-4 justify-between">
+				<app-form-group [title]="'Período de gracia (días)'" [control]="activityForm.get('gracePeriod')"
+					class="flex-1">
+					<input id="newActivityGracePeriod" type="number" formControlName="gracePeriod" min="1" class="form-control">
+				</app-form-group>
+				<app-form-group [title]="'Precio'" [control]="activityForm.get('price')" class="flex-1">
+					<input id="newActivityPrice" type="number" step="0.01" formControlName="price" class="form-control">
+				</app-form-group>
 			</div>
-			<div class="form-group flex-1">
-				<label for="newActivityEndDate" class="form-label">Fecha de Fin</label>
-				<input id="newActivityEndDate" type="datetime-local" [(ngModel)]="newActivity.endDate"
-					class="form-control" [disabled]="isEdit" [min]="newActivity.startDate">
+			<div class="flex justify-end space-x-2 mt-4">
+				<button type="button" (click)="closeModal()" class="btn btn-outline">Cancelar</button>
+				<button type="submit" class="btn btn-primary" [disabled]="activityForm.invalid">Guardar</button>
 			</div>
-		</div>
-		<br />
-		<div class="flex gap-4 justify-between">
-			<div class="form-group flex-1">
-				<label for="newActivityGracePeriod" class="form-label">Período de gracia (días)</label>
-				<input id="newActivityGracePeriod" type="number" [(ngModel)]="newActivity.gracePeriod" min="1"
-					class="form-control" [disabled]="isEdit">
-			</div>
-			<div class="form-group flex-1">
-				<label for="newActivityPrice" class="form-label">Precio</label>
-				<input id="newActivityPrice" type="number" step="0.01" [(ngModel)]="newActivity.price"
-					class="form-control" [disabled]="isEdit">
-			</div>
-		</div>
-		<div class="flex justify-end space-x-2 mt-4">
-			<button (click)="closeModal()" class="btn btn-outline">Cancelar</button>
-			<button (click)="saveActivity()" class="btn btn-primary">Guardar</button>
-		</div>
+		</form>
 	</div>
 </div>
