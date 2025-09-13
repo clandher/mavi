@@ -20,11 +20,12 @@ export class MaviValidators {
         return (control: AbstractControl) => {
             if (control.value === null || control.value === undefined || control.value === '') {
                 return {
+                    required: true,
                     message
                 };
             }
             return null;
-        }
+        };
     }
 
     static min(minValue: number, message: string = `El valor mínimo es ${minValue}`): ValidationErrors | null {
@@ -35,7 +36,7 @@ export class MaviValidators {
                 };
             }
             return null;
-        }
+        };
     }
 
 
