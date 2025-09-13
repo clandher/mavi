@@ -2,15 +2,12 @@
 	<div class="modal-content ">
 
 		<div class="modal-header">
-
 			<div class="mb-4">
 				<label class="form-label">Monto a pagar</label>
 				<div class="relative flex items-center">
 					<input type="number" [(ngModel)]="paymentAmount" (input)="updatePaymentDistribution()"
 						[class.border-red-500]="paymentAmount > getTotalDebt()" class="form-control" min="0"
 						[max]="getTotalDebt()" step="0.01">
-
-
 					<button (click)="payFullAmount()" class="btn btn-xs btn-primary absolute right-2"
 						[style]="'margin-top: 1px'" style="top:6px">
 						Pagar total
@@ -21,14 +18,14 @@
 				</p>
 				<p class="text-sm text-gray-500 mt-1" *ngIf="getTotalDebt() - paymentAmount > 0">
 					Monto total restante:
-
 					<span class="high-debt">
 						{{getTotalDebt() - paymentAmount | currencyMX}}
 					</span>
 				</p>
 			</div>
-			<h3 class="font-medium mb-2">Cargos pendientes</h3>
+			<!-- Checkbox para preferencia de descarga automática del voucher -->
 
+			<h3 class="font-medium mb-2">Cargos pendientes</h3>
 		</div>
 		<div class="modal-body">
 			<div class="space-y-2">
@@ -85,6 +82,12 @@
 		</div>
 
 		<div class="modal-footer">
+			<br>
+			<div class="mb-4 flex items-center">
+				<input type="checkbox" id="autoDownloadVoucher" [(ngModel)]="autoDownloadVoucher"
+					(change)="onAutoDownloadChange()" />
+				<label for="autoDownloadVoucher" class="ml-2">Descargar voucher automáticamente</label>
+			</div>
 			<div class="flex justify-end space-x-2 mt-4">
 				<button (click)="onClose()" class="btn btn-outline">
 					Cancelar

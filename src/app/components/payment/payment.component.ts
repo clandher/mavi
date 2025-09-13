@@ -23,12 +23,43 @@ export class PaymentComponent implements OnChanges {
     paymentAmount: number = 0;
     private _paymentDistribution: number[] = [];
 
-    constructor(private http: HttpClient) { }
+    // Preferencia de descarga automática del voucher
+    autoDownloadVoucher: boolean = true;
+
+    constructor(private http: HttpClient) {
+        this.loadPreferences();
+    }
 
     ngOnChanges(changes: SimpleChanges) {
         this._loadCharges();
         this.paymentAmount = 0;
         this._paymentDistribution = [];
+    }
+
+    // Cargar preferencia desde localStorage
+    loadPreferences() {
+        const prefs = localStorage.getItem('preferences');
+        if (prefs) {
+            try {
+                const obj = JSON.parse(prefs);
+                this.autoDownloadVoucher = obj.autoDownloadVoucher !== undefined ? obj.autoDownloadVoucher : true;
+            } catch {
+                this.autoDownloadVoucher = true;
+            }
+        }
+    }
+
+    // Guardar preferencia en localStorage
+    onAutoDownloadChange() {
+        const prefs = localStorage.getItem('preferences');
+        let obj: any = {};
+        if (prefs) {
+            try {
+                obj = JSON.parse(prefs);
+            } catch {}
+        }
+        obj.autoDownloadVoucher = this.autoDownloadVoucher;
+        localStorage.setItem('preferences', JSON.stringify(obj));
     }
 
     private _loadCharges() {
@@ -117,7 +148,10 @@ export class PaymentComponent implements OnChanges {
             paymentsAPI.post<CreatePaymentDto, { id: number }>(body).subscribe(payment => {
                 const paymentChargesAPI = new BaseHttp(`payments/${payment.id}/charges`, this.http);
                 paymentChargesAPI.get<StudentPayment>().subscribe((studentPayment: StudentPayment) => {
-                    VoucherHelper.download(studentPayment);
+                    // Descargar voucher solo si la preferencia está activa
+                    if (this.autoDownloadVoucher) {
+                        VoucherHelper.download(studentPayment);
+                    }
                     this.complete.emit(true);
                 })
             });
