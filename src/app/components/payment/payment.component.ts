@@ -48,8 +48,8 @@ export class PaymentComponent implements OnChanges {
     }
 
     getTotalDebt(): number {
-        const total = this.charges.reduce((sum, charge) => sum + charge.amountRemaining, 0);
-        return Number(total.toFixed(2));
+    const total = this.charges.reduce((sum, charge) => sum + charge.amountRemaining, 0);
+    return Number(total.toFixed(2));
     }
 
     updatePaymentDistribution() {
@@ -81,17 +81,20 @@ export class PaymentComponent implements OnChanges {
     }
 
     getCoveredAmount(index: number): number {
-        return this._paymentDistribution[index] || 0;
+    const covered = this._paymentDistribution[index] || 0;
+    return Number(covered.toFixed(2));
     }
 
     getRemainingAfterPayment(index: number): number {
-        const charge = this.charges[index];
-        return charge.amountRemaining - (this._paymentDistribution[index] || 0);
+    const charge = this.charges[index];
+    const remaining = charge.amountRemaining - (this._paymentDistribution[index] || 0);
+    return Number(remaining.toFixed(2));
     }
 
     getCoveredPercentage(index: number): number {
-        const charge = this.charges[index];
-        return (this._paymentDistribution[index] / charge.amountRemaining) * 100;
+    const charge = this.charges[index];
+    const percentage = (this._paymentDistribution[index] / charge.amountRemaining) * 100;
+    return Number(percentage.toFixed(2));
     }
 
     payFullAmount() {
