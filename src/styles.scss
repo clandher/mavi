@@ -211,6 +211,48 @@ body {
         color: #555;
         cursor: not-allowed;
     }
+
+
+
+    &[type="checkbox"] {
+        &+label {
+            cursor: pointer;
+        }
+
+        appearance: none;
+        -webkit-appearance: none;
+        width: 20px;
+        height: 20px;
+        border: 1px solid #444;
+        background: #18181b;
+        border-radius: 4px;
+        display: inline-block;
+        position: relative;
+        cursor: pointer;
+        transition: background 0.2s,
+        border 0.2s;
+        vertical-align: middle;
+        margin: 0 4px 0 0;
+        padding: 9px;
+    }
+
+    &[type="checkbox"]:checked {
+        background: #fff;
+        border-color: #444;
+    }
+
+    &[type="checkbox"]:checked::after {
+        content: '';
+        position: absolute;
+        left: 5px;
+        top: 2px;
+        width: 7px;
+        height: 12px;
+        border: solid #18181b;
+        border-width: 0 3px 3px 0;
+        transform: rotate(45deg);
+        display: block;
+    }
 }
 
 textarea.form-control {

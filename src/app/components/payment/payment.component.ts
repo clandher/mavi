@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { LocalStorage } from '../../core/local-storage';
 import { HttpClient } from '@angular/common/http';
 import { Charge, CreatePaymentDto } from '@app/core/dto';
 import { CommonModule } from '@angular/common';
@@ -23,12 +24,9 @@ export class PaymentComponent implements OnChanges {
     paymentAmount: number = 0;
     private _paymentDistribution: number[] = [];
 
-    // Preferencia de descarga automática del voucher
-    autoDownloadVoucher: boolean = true;
+    public downloadVoucher = new LocalStorage<boolean>('download.voucher', true);
 
-    constructor(private http: HttpClient) {
-        this.loadPreferences();
-    }
+    constructor(private http: HttpClient) { }
 
     ngOnChanges(changes: SimpleChanges) {
         this._loadCharges();
@@ -36,31 +34,6 @@ export class PaymentComponent implements OnChanges {
         this._paymentDistribution = [];
     }
 
-    // Cargar preferencia desde localStorage
-    loadPreferences() {
-        const prefs = localStorage.getItem('preferences');
-        if (prefs) {
-            try {
-                const obj = JSON.parse(prefs);
-                this.autoDownloadVoucher = obj.autoDownloadVoucher !== undefined ? obj.autoDownloadVoucher : true;
-            } catch {
-                this.autoDownloadVoucher = true;
-            }
-        }
-    }
-
-    // Guardar preferencia en localStorage
-    onAutoDownloadChange() {
-        const prefs = localStorage.getItem('preferences');
-        let obj: any = {};
-        if (prefs) {
-            try {
-                obj = JSON.parse(prefs);
-            } catch {}
-        }
-        obj.autoDownloadVoucher = this.autoDownloadVoucher;
-        localStorage.setItem('preferences', JSON.stringify(obj));
-    }
 
     private _loadCharges() {
         this.charges = [];
@@ -79,8 +52,8 @@ export class PaymentComponent implements OnChanges {
     }
 
     getTotalDebt(): number {
-    const total = this.charges.reduce((sum, charge) => sum + charge.amountRemaining, 0);
-    return Number(total.toFixed(2));
+        const total = this.charges.reduce((sum, charge) => sum + charge.amountRemaining, 0);
+        return Number(total.toFixed(2));
     }
 
     updatePaymentDistribution() {
@@ -112,20 +85,20 @@ export class PaymentComponent implements OnChanges {
     }
 
     getCoveredAmount(index: number): number {
-    const covered = this._paymentDistribution[index] || 0;
-    return Number(covered.toFixed(2));
+        const covered = this._paymentDistribution[index] || 0;
+        return Number(covered.toFixed(2));
     }
 
     getRemainingAfterPayment(index: number): number {
-    const charge = this.charges[index];
-    const remaining = charge.amountRemaining - (this._paymentDistribution[index] || 0);
-    return Number(remaining.toFixed(2));
+        const charge = this.charges[index];
+        const remaining = charge.amountRemaining - (this._paymentDistribution[index] || 0);
+        return Number(remaining.toFixed(2));
     }
 
     getCoveredPercentage(index: number): number {
-    const charge = this.charges[index];
-    const percentage = (this._paymentDistribution[index] / charge.amountRemaining) * 100;
-    return Number(percentage.toFixed(2));
+        const charge = this.charges[index];
+        const percentage = (this._paymentDistribution[index] / charge.amountRemaining) * 100;
+        return Number(percentage.toFixed(2));
     }
 
     payFullAmount() {
@@ -149,12 +122,16 @@ export class PaymentComponent implements OnChanges {
                 const paymentChargesAPI = new BaseHttp(`payments/${payment.id}/charges`, this.http);
                 paymentChargesAPI.get<StudentPayment>().subscribe((studentPayment: StudentPayment) => {
                     // Descargar voucher solo si la preferencia está activa
-                    if (this.autoDownloadVoucher) {
+                    if (this.downloadVoucher.value) {
                         VoucherHelper.download(studentPayment);
                     }
                     this.complete.emit(true);
                 })
             });
         }
+    }
+
+    onAutoDownloadChange() {
+        this.downloadVoucher.value = !this.downloadVoucher.value;
     }
 }

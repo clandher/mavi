@@ -84,7 +84,7 @@
 		<div class="modal-footer">
 			<br>
 			<div class="mb-4 flex items-center">
-				<input type="checkbox" id="autoDownloadVoucher" [(ngModel)]="autoDownloadVoucher"
+				<input  class="form-control" type="checkbox" id="autoDownloadVoucher" [checked]="downloadVoucher.value"
 					(change)="onAutoDownloadChange()" />
 				<label for="autoDownloadVoucher" class="ml-2">Descargar voucher automáticamente</label>
 			</div>
