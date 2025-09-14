@@ -1,12 +1,132 @@
-<button class="btn btn-primary" (click)="onRestart()" [disabled]="isLoading">
-    Reiniciar
-    <span *ngIf="isLoading" style="margin-left:8px;">
-        <span class="spinner"
-            style="display:inline-block;width:16px;height:16px;border:2px solid #ccc;border-top:2px solid #333;border-radius:50%;animation:spin 0.8s linear infinite;"></span>
-    </span>
-</button>
+<div class="mavi-tabs">
+    <button class="mavi-tab" (click)="selectedSchoolTab='schools'"
+        [ngClass]="{'selected': selectedSchoolTab === 'schools'}">
+        Escuela
+    </button>
+    <button class="mavi-tab" (click)="selectedSchoolTab='development'"
+        [ngClass]="{'selected': selectedSchoolTab === 'development'}">
+        Desarrollo
+    </button>
+</div>
+<br>
+<div [ngSwitch]="selectedSchoolTab" class="mavi-border">
+    <div *ngSwitchCase="'development'" class="schools-list">
+        <button class="btn btn-primary" (click)="onRestart()" [disabled]="isLoading">
+            Reiniciar
+            <span *ngIf="isLoading" style="margin-left:8px;">
+                <span class="spinner"
+                    style="display:inline-block;width:16px;height:16px;border:2px solid #ccc;border-top:2px solid #333;border-radius:50%;animation:spin 0.8s linear infinite;"></span>
+            </span>
+        </button>
+    </div>
+    <div *ngSwitchCase="'schools'">
+        <div *ngFor="let school of schools" class="school-card">
+            <div class="school-header">
+                <label for="logo{{school.id}}" class="logo-label">
+                    <img *ngIf="school.logoUrl; else logoPlaceholder" [src]="school.logoUrl" class="school-logo-large"
+                        alt="Logo">
+                    <ng-template #logoPlaceholder>
+                        <div class="logo-placeholder-large">+</div>
+                    </ng-template>
+                    <input id="logo{{school.id}}" type="file" accept="image/*" (change)="onLogoSelected($event, school)"
+                        hidden>
+                </label>
+                <div class="school-name">
+                    <textarea class="form-control school-name-input" rows="2" [(ngModel)]="school.description"
+                        name="school{{school.description}}"></textarea>
+                </div>
+            </div>
+            <div class="school-actions">
+                <button type="button" class="btn btn-primary btn-sm" (click)="saveSchool(school)">
+                    <i class="fa fa-save"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <style>
+    .schools-list {
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+        color: #fff;
+    }
+
+    .school-card {
+        background: rgba(0, 0, 0, 0.15);
+        border-radius: 16px;
+        padding: 24px 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .school-header {
+        display: flex;
+        align-items: center;
+        gap: 32px;
+    }
+
+    .logo-label {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+    }
+
+    .school-logo-large {
+        width: 96px;
+        height: 96px;
+        border-radius: 16px;
+        object-fit: cover;
+        background: #eee;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        transition: box-shadow 0.2s;
+    }
+
+    .school-logo-large:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+    }
+
+    .logo-placeholder-large {
+        width: 96px;
+        height: 96px;
+        border-radius: 16px;
+        background: #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3em;
+        color: #bbb;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .school-name {
+        flex: 1;
+        display: flex;
+        align-items: center;
+    }
+
+    .school-name-input {
+        font-size: 1.5em;
+        font-weight: 600;
+        background: transparent;
+        color: #fff;
+        border: none;
+        resize: none;
+        width: 100%;
+        padding: 8px 0;
+        outline: none;
+    }
+
+    .school-actions {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 8px;
+    }
+
     @keyframes spin {
         0% {
             transform: rotate(0deg);

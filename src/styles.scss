@@ -102,7 +102,9 @@ body {
     transition: background 0.2s, color 0.2s, border 0.2s;
     display: flex;
     align-items: center;
+    justify-content: center;
     text-wrap: nowrap;
+    max-width: 200px;
 
     &:disabled {
         background: #555;

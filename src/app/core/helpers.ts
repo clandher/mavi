@@ -1,5 +1,5 @@
 import { HttpClient } from "@angular/common/http";
-import { Student } from "./dto";
+import { Student, School } from "./dto";
 import { BaseHttp, buildUrl } from "./base-http";
 
 export function formatDateForDisplay(date: Date): string {

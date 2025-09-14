@@ -24,9 +24,9 @@ export const routes: Routes = [
                 title: 'Estudiantes'
             },
             {
-                path: 'desarrollo',
+                path: 'configuración',
                 loadComponent: () => import('./components/develop/develop.component').then(m => m.DevelopComponent),
-                title: 'Desarrollo'
+                title: 'Configuración'
             },
             {
                 path: 'estudiantes/nuevo',

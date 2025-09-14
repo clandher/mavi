@@ -148,6 +148,16 @@ export class Charge {
     activityId!: number;
     activity!: Activity;
 }
+export class CreateSchoolDto {
+    description!: string;
+}
+
+export class School {
+    id!: number;
+    description!: string;
+    logo!: string;
+    logoUrl?: string;
+}
 
 export class StudentObservation {
     id!: number;
