@@ -43,8 +43,8 @@ export class StudentPaymentsComponent implements OnInit {
 	private _loadPayments() {
 		const paymentHttp = new StudentPaymentHttp(this.http);
 		paymentHttp.getByStudentWithChargers(+this.studentId!).subscribe(data => {
-			this.paymentsWithChargers = data.reverse();
-			this.previewVoucher(this.paymentsWithChargers[0]);
+			this.paymentsWithChargers = data;
+			// this.previewVoucher(this.paymentsWithChargers[0]);
 		});
 	}
 
