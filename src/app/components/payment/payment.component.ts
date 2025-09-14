@@ -9,6 +9,7 @@ import { RequestQueryBuilder } from '@dataui/crud-request';
 import { StudentPayment } from '../students/student-payments.component';
 import { VoucherHelper } from '@app/core/voucher.helper';
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
+import { SchoolService } from '@app/core/school.service';
 
 @Component({
     selector: 'app-payment',
@@ -26,7 +27,10 @@ export class PaymentComponent implements OnChanges {
 
     public downloadVoucher = new LocalStorage<boolean>('download.voucher', true);
 
-    constructor(private http: HttpClient) { }
+    constructor(
+        private http: HttpClient,
+        private schoolService: SchoolService
+    ) { }
 
     ngOnChanges(changes: SimpleChanges) {
         this._loadCharges();
@@ -123,7 +127,7 @@ export class PaymentComponent implements OnChanges {
                 paymentChargesAPI.get<StudentPayment>().subscribe((studentPayment: StudentPayment) => {
                     // Descargar voucher solo si la preferencia está activa
                     if (this.downloadVoucher.value) {
-                        VoucherHelper.download(studentPayment);
+                        VoucherHelper.download(studentPayment, this.schoolService.school);
                     }
                     this.complete.emit(true);
                 })

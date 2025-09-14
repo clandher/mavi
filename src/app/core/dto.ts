@@ -155,7 +155,7 @@ export class CreateSchoolDto {
 export class School {
     id!: number;
     description!: string;
-    logo!: string;
+    logo?: string;
     logoUrl?: string;
 }
 

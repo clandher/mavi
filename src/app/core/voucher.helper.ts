@@ -1,9 +1,10 @@
 import { PaymentCharge, StudentPayment } from "@app/components/students/student-payments.component";
+import { School } from "./dto";
 
 export class VoucherHelper {
 
-    static download(studentPayment: StudentPayment): void {
-        const voucherImage = VoucherHelper.buildVoucherImage(studentPayment);
+    static download(studentPayment: StudentPayment, school: School): void {
+        const voucherImage = VoucherHelper.buildVoucherImage(studentPayment, school);
         const a = document.createElement('a');
         a.href = voucherImage;
         a.download = 'voucher.png';
@@ -11,13 +12,13 @@ export class VoucherHelper {
     }
 
     // Método para crear la imagen del voucher (minimalista)
-    static buildVoucherImage(studentPayment: StudentPayment): string {
-        const canvas = VoucherHelper.buildVoucherCanvas(studentPayment);
+    static buildVoucherImage(studentPayment: StudentPayment, school: School): string {
+        const canvas = VoucherHelper.buildVoucherCanvas(studentPayment, school);
         return canvas ? canvas.toDataURL('image/png') : '';
     }
 
     // Nuevo método: retorna el canvas para previsualización
-    static buildVoucherCanvas(studentPayment: StudentPayment): HTMLCanvasElement {
+    static buildVoucherCanvas(studentPayment: StudentPayment, school: School ): HTMLCanvasElement {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
 
@@ -43,7 +44,17 @@ export class VoucherHelper {
             ctx.fillStyle = '#fff';
             ctx.font = 'bold 22px "Segoe UI", Arial, sans-serif';
             ctx.textAlign = 'left';
-            ctx.fillRect(30, 30, 40, 40); // logo cuadrado
+            // Dibuja el logo desde school.logoUrl si existe, si no, usa el cuadrado
+            if (school.logoUrl) {
+                const img = new window.Image();
+                img.src = school.logoUrl;
+                // Dibuja el logo cuando la imagen esté cargada
+                img.onload = () => {
+                    ctx.drawImage(img, 30, 30, 40, 40);
+                };
+            } else {
+                ctx.fillRect(30, 30, 40, 40); // logo cuadrado por defecto
+            }
             ctx.fillStyle = '#111';
             ctx.font = 'bold 20px "Segoe UI", Arial, sans-serif';
             ctx.fillText('SM', 40, 60);
@@ -51,16 +62,14 @@ export class VoucherHelper {
             ctx.textAlign = 'left';
             ctx.fillStyle = '#fff';
             ctx.font = 'bold 22px "Segoe UI", Arial, sans-serif';
-            ctx.fillText('Centro Deportivo StudyManager', 90, 50);
+            ctx.fillText(school.description, 90, 50);
             ctx.font = '16px "Segoe UI", Arial, sans-serif';
             ctx.fillText('RECIBO DE PAGO', 90, 70);
 
             // Folio y fecha
             ctx.textAlign = 'right';
-            ctx.font = 'bold 20px "Segoe UI", Arial, sans-serif';
-            ctx.fillText(`REC-${studentPayment.id || 'XXXX'}-001`, width - 40, 50);
             ctx.font = '16px "Segoe UI", Arial, sans-serif';
-            ctx.fillText(`${new Date(studentPayment.paymentDate).toLocaleDateString()}`, width - 40, 70);
+            ctx.fillText(`${new Date(studentPayment.paymentDate).toLocaleString()   }`, width - 40, 50);
 
             // Estudiante
             ctx.textAlign = 'left';
@@ -74,20 +83,24 @@ export class VoucherHelper {
             let yPos = 190;
             studentPayment.paymentCharges.forEach((charge: PaymentCharge) => {
                 ctx.font = '16px "Segoe UI", Arial, sans-serif';
-                ctx.fillText('Categoría:', 40, 140);
-                ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
-                ctx.fillStyle = '#222';
-                ctx.fillRect(160, 120, 90, 30);
-                ctx.fillStyle = '#fff';
+                ctx.fillText(charge.activity.categoryId.toString() , 40, yPos);
+               
+                // ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
+                // ctx.fillStyle = '#222';
+                // ctx.fillRect(160, 120, 90, 30);
+                
                 ctx.font = 'bold 15px "Segoe UI", Arial, sans-serif';
+                ctx.fillStyle = '#fff';
                 ctx.fillText(`${charge.activity.categoryId || 'Deportes'}`, 170, yPos);
 
                 ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
                 ctx.fillStyle = '#fff';
                 ctx.fillText(`${charge.activity.description}`, 40, yPos);
+                
                 ctx.font = '14px "Segoe UI", Arial, sans-serif';
                 ctx.fillStyle = '#aaa';
                 ctx.fillText(`(${charge.activity.description || 'Febrero 2025'})`, 250, yPos);
+                
                 ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
                 ctx.fillStyle = '#fff';
                 ctx.fillText(`$${charge.amount.toFixed(0)}`, width - 120, yPos);

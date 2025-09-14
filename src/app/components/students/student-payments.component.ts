@@ -9,6 +9,7 @@ import { StudentPaymentHttp } from 'src/app/core/student-payment-http';
 import { PaymentComponent } from "../payment/payment.component";
 import { VoucherHelper } from '@app/core/voucher.helper';
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
+import { SchoolService } from '@app/core/school.service';
 
 @Component({
 	standalone: true,
@@ -27,6 +28,7 @@ export class StudentPaymentsComponent implements OnInit {
 		private http: HttpClient,
 		private route: ActivatedRoute,
 		private router: Router,
+		private schoolService: SchoolService
 	) {
 
 		this.studentId = this.route.parent!.snapshot.paramMap.get('id');
@@ -57,14 +59,14 @@ export class StudentPaymentsComponent implements OnInit {
 	}
 
 	generateVoucher(studentPayment: StudentPayment) {
-		VoucherHelper.download(studentPayment);
+		VoucherHelper.download(studentPayment, this.schoolService.school);
 	}
 
 	previewVoucher(studentPayment: StudentPayment) {
 		this.voucherPayment = studentPayment;
 		this.showVoucherModal = true;
 		setTimeout(() => {
-			const canvas = VoucherHelper.buildVoucherCanvas(studentPayment);
+			const canvas = VoucherHelper.buildVoucherCanvas(studentPayment, this.schoolService.school);
 			const container = document.getElementById('voucher-preview-canvas');
 			if (container) {
 				container.innerHTML = '';
