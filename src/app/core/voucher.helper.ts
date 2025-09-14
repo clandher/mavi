@@ -35,7 +35,7 @@ export class VoucherHelper {
         ctx.fillStyle = '#111';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Marca de agua: logo centrado, proporcional y translúcido
+    // Marca de agua: logo centrado, proporcional y translúcido
         if (school.logoUrl) {
             await new Promise<void>((resolve) => {
                 const img = new window.Image();
@@ -91,6 +91,13 @@ export class VoucherHelper {
             ctx.fillStyle = '#fff';
             ctx.fillRect(30, 30, 40, 40);
         }
+
+    // Borde blanco profesional alrededor del voucher
+    ctx.save();
+    ctx.strokeStyle = '#fff';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
+    ctx.restore();
 
         ctx.fillStyle = '#111';
         ctx.font = 'bold 20px "Segoe UI", Arial, sans-serif';
