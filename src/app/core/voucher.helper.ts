@@ -18,51 +18,78 @@ export class VoucherHelper {
 
     // Nuevo método: retorna el canvas para previsualización y espera el logo si es necesario
     static async buildVoucherCanvas(studentPayment: StudentPayment, school: School): Promise<HTMLCanvasElement> {
+
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
-
         if (!ctx) return canvas;
 
         // Estilo voucher oscuro
         const width = 800;
-        const baseHeight = 250;
+        const baseHeight = 250; // altura mínima profesional
         const chargeHeight = 30;
         const charges = studentPayment.paymentCharges.length;
         canvas.width = width;
-        canvas.height = baseHeight + (charges * chargeHeight);
+        canvas.height = Math.max(baseHeight, baseHeight + (charges * chargeHeight));
 
         // Fondo negro
         ctx.fillStyle = '#111';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Borde claro
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 2;
-        ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
-
-        // Header: logo cuadrado y título
-        ctx.fillStyle = '#fff';
-        ctx.font = 'bold 22px "Segoe UI", Arial, sans-serif';
-        ctx.textAlign = 'left';
-
-        // Dibuja el logo desde school.logoUrl si existe, si no, usa el cuadrado
+        // Marca de agua: logo centrado, proporcional y translúcido
         if (school.logoUrl) {
             await new Promise<void>((resolve) => {
                 const img = new window.Image();
-                img.crossOrigin = 'anonymous'; // Habilita CORS
+                img.crossOrigin = 'anonymous';
                 img.src = school.logoUrl || '';
                 img.onload = () => {
+                    // Calcular tamaño máximo permitido
+                    const maxW = Math.min(canvas.width * 0.7, 500); // más grande
+                    const maxH = Math.min(canvas.height * 0.7, 220); // más alto
+                    // Mantener proporción
+                    let drawW = img.width;
+                    let drawH = img.height;
+                    const ratio = drawW / drawH;
+                    if (drawW > maxW) {
+                        drawW = maxW;
+                        drawH = drawW / ratio;
+                    }
+                    if (drawH > maxH) {
+                        drawH = maxH;
+                        drawW = drawH * ratio;
+                    }
+                    const dx = (canvas.width - drawW) / 2;
+                    const dy = (canvas.height - drawH) / 2;
+                    ctx.save();
+                    ctx.globalAlpha = 0.06; // opacidad más sutil
+                    ctx.drawImage(img, dx, dy, drawW, drawH);
+                    ctx.restore();
+                    // Logo normal en header (sin proporción, tamaño fijo)
                     ctx.drawImage(img, 30, 30, 40, 40);
                     resolve();
                 };
                 img.onerror = () => {
-                    // Si falla, dibuja cuadrado por defecto
+                    // Marca de agua cuadrada por defecto
+                    ctx.save();
+                    ctx.globalAlpha = 0.06;
+                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(canvas.width/2-140, canvas.height/2-70, 280, 140);
+                    ctx.restore();
+                    // Logo normal en header
+                    ctx.fillStyle = '#fff';
                     ctx.fillRect(30, 30, 40, 40);
                     resolve();
                 };
             });
         } else {
-            ctx.fillRect(30, 30, 40, 40); // logo cuadrado por defecto
+            // Marca de agua cuadrada por defecto
+            ctx.save();
+            ctx.globalAlpha = 0.08;
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(canvas.width/2-140, canvas.height/2-70, 280, 140);
+            ctx.restore();
+            // Logo normal en header
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(30, 30, 40, 40);
         }
 
         ctx.fillStyle = '#111';
@@ -145,10 +172,10 @@ export class VoucherHelper {
         // TOTAL
         ctx.font = 'bold 18px "Segoe UI", Arial, sans-serif';
         ctx.fillStyle = '#fff';
-        ctx.fillText('TOTAL:', 650, yPos + 40);
+        ctx.fillText('TOTAL:', 80, yPos + 40);
         ctx.font = 'bold 28px "Segoe UI", Arial, sans-serif';
         ctx.textAlign = 'right';
-        ctx.fillText(`$${studentPayment.amount.toLocaleString('es-MX', { minimumFractionDigits: 0 })}`, width - 30, yPos + 40);
+        ctx.fillText(`$${studentPayment.amount.toLocaleString('es-MX', { minimumFractionDigits: 2 })}`, width - 30, yPos + 40);
 
         // Recibido por
         // ctx.font = '14px "Segoe UI", Arial, sans-serif';
