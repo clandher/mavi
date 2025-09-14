@@ -123,9 +123,9 @@ export class PaymentComponent implements OnChanges {
             const paymentsAPI = new BaseHttp(`payments`, this.http);
             paymentsAPI.post<CreatePaymentDto, { id: number }>(body).subscribe(payment => {
                 const paymentChargesAPI = new BaseHttp(`payments/${payment.id}/charges`, this.http);
-                paymentChargesAPI.get<StudentPayment>().subscribe((studentPayment: StudentPayment) => {
+                paymentChargesAPI.get<StudentPayment>().subscribe(async (studentPayment: StudentPayment) => {
                     if (this.downloadVoucher.value) {
-                        VoucherHelper.download(studentPayment, this.schoolService.school);
+                        await VoucherHelper.download(studentPayment, this.schoolService.school);
                     }
                     this.complete.emit(true);
                 })

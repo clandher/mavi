@@ -56,15 +56,15 @@ export class StudentPaymentsComponent implements OnInit {
 		}
 	}
 
-	generateVoucher(studentPayment: StudentPayment) {
-		VoucherHelper.download(studentPayment, this.schoolService.school);
+	async generateVoucher(studentPayment: StudentPayment) {
+		await VoucherHelper.download(studentPayment, this.schoolService.school);
 	}
 
 	previewVoucher(studentPayment: StudentPayment) {
 		this.voucherPayment = studentPayment;
 		this.showVoucherModal = true;
-		setTimeout(() => {
-			const canvas = VoucherHelper.buildVoucherCanvas(studentPayment, this.schoolService.school);
+		setTimeout(async () => {
+			const canvas = await VoucherHelper.buildVoucherCanvas(studentPayment, this.schoolService.school);
 			const container = document.getElementById('voucher-preview-canvas');
 			if (container) {
 				container.innerHTML = '';
