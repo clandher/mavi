@@ -336,8 +336,8 @@ export class AvatarsComponent {
 	}
 
 	ngAfterViewInit() {
-		setTimeout(() => {
-			this.onNewActivity();
-		}, 0);
+		// setTimeout(() => {
+		// 	this.onNewActivity();
+		// }, 0);
 	}
 }

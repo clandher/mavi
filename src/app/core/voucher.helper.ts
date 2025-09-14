@@ -12,100 +12,116 @@ export class VoucherHelper {
 
     // Método para crear la imagen del voucher (minimalista)
     static buildVoucherImage(studentPayment: StudentPayment): string {
+        const canvas = VoucherHelper.buildVoucherCanvas(studentPayment);
+        return canvas ? canvas.toDataURL('image/png') : '';
+    }
+
+    // Nuevo método: retorna el canvas para previsualización
+    static buildVoucherCanvas(studentPayment: StudentPayment): HTMLCanvasElement {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
 
         if (ctx) {
-            // Minimalista: blanco, negro y gris
-            canvas.width = 600;
-            canvas.height = 350 + (studentPayment.paymentCharges.length * 80);
+            // Estilo voucher oscuro
+            const width = 800;
+            const baseHeight = 320;
+            const chargeHeight = 50;
+            const charges = studentPayment.paymentCharges.length;
+            canvas.width = width;
+            canvas.height = baseHeight + (charges * chargeHeight);
 
-            // Fondo blanco
-            ctx.fillStyle = '#fff';
+            // Fondo negro
+            ctx.fillStyle = '#111';
             ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-            // Borde negro fino
-            ctx.strokeStyle = '#222';
+            // Borde claro
+            ctx.strokeStyle = '#fff';
             ctx.lineWidth = 2;
-            ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
+            ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
 
-            // Header minimalista
-            ctx.font = 'bold 26px "Segoe UI", Arial, sans-serif';
-            ctx.fillStyle = '#222';
-            ctx.textAlign = 'center';
-            ctx.fillText('COMPROBANTE DE PAGO', canvas.width / 2, 50);
+            // Header: logo cuadrado y título
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 22px "Segoe UI", Arial, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillRect(30, 30, 40, 40); // logo cuadrado
+            ctx.fillStyle = '#111';
+            ctx.font = 'bold 20px "Segoe UI", Arial, sans-serif';
+            ctx.fillText('SM', 40, 60);
 
-            // Línea gris debajo del header
-            ctx.strokeStyle = '#bbb';
-            ctx.lineWidth = 1;
-            ctx.beginPath();
-            ctx.moveTo(60, 70);
-            ctx.lineTo(canvas.width - 60, 70);
-            ctx.stroke();
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 22px "Segoe UI", Arial, sans-serif';
+            ctx.fillText('Centro Deportivo StudyManager', 90, 50);
+            ctx.font = '16px "Segoe UI", Arial, sans-serif';
+            ctx.fillText('RECIBO DE PAGO', 90, 70);
 
-            // Detalles principales
+            // Folio y fecha
+            ctx.textAlign = 'right';
+            ctx.font = 'bold 20px "Segoe UI", Arial, sans-serif';
+            ctx.fillText(`REC-${studentPayment.id || 'XXXX'}-001`, width - 40, 50);
+            ctx.font = '16px "Segoe UI", Arial, sans-serif';
+            ctx.fillText(`${new Date(studentPayment.paymentDate).toLocaleDateString()}`, width - 40, 70);
+
+            // Estudiante
             ctx.textAlign = 'left';
             ctx.font = '16px "Segoe UI", Arial, sans-serif';
-            ctx.fillStyle = '#222';
-            ctx.fillText(`Estudiante:`, 40, 110);
+            ctx.fillStyle = '#fff';
+            ctx.fillText('Estudiante:', 40, 110);
             ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
-            ctx.fillText(`${studentPayment.student.name}`, 160, 110);
+            ctx.fillText(`${studentPayment.student.name} `, 160, 110);
 
-            ctx.font = '16px "Segoe UI", Arial, sans-serif';
-            ctx.fillText(`Fecha de pago:`, 40, 140);
-            ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
-            ctx.fillText(`${new Date(studentPayment.paymentDate).toLocaleString()}`, 160, 140);
-
-            ctx.font = '16px "Segoe UI", Arial, sans-serif';
-            ctx.fillText(`Monto total:`, 40, 170);
-            ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
-            ctx.fillText(`$${studentPayment.amount.toFixed(2)}`, 160, 170);
-
-            // Subtítulo de cargos
-            ctx.font = 'bold 15px "Segoe UI", Arial, sans-serif';
-            ctx.fillStyle = '#222';
-            ctx.fillText('Detalle de cargos', 40, 210);
-
-            // Línea gris debajo del subtítulo
-            ctx.strokeStyle = '#eee';
-            ctx.beginPath();
-            ctx.moveTo(40, 220);
-            ctx.lineTo(canvas.width - 40, 220);
-            ctx.stroke();
-
-            // Listado de cargos
-            let yPos = 250;
+            // Mensualidades
+            let yPos = 190;
             studentPayment.paymentCharges.forEach((charge: PaymentCharge) => {
-                ctx.font = 'bold 14px "Segoe UI", Arial, sans-serif';
+                ctx.font = '16px "Segoe UI", Arial, sans-serif';
+                ctx.fillText('Categoría:', 40, 140);
+                ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
                 ctx.fillStyle = '#222';
-                ctx.fillText(`${charge.activity.description}`, 50, yPos);
+                ctx.fillRect(160, 120, 90, 30);
+                ctx.fillStyle = '#fff';
+                ctx.font = 'bold 15px "Segoe UI", Arial, sans-serif';
+                ctx.fillText(`${charge.activity.categoryId || 'Deportes'}`, 170, yPos);
 
+                ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
+                ctx.fillStyle = '#fff';
+                ctx.fillText(`${charge.activity.description}`, 40, yPos);
                 ctx.font = '14px "Segoe UI", Arial, sans-serif';
-                ctx.fillStyle = '#444';
-                ctx.fillText(`Pagado: $${charge.amount.toFixed(2)}`, 70, yPos + 22);
-                ctx.fillText(`Original: $${charge.collection.amountToBePaid.toFixed(2)}`, 220, yPos + 22);
-                ctx.fillText(`Pendiente: $${charge.collection.amountRemaining.toFixed(2)}`, 370, yPos + 22);
-
-                // Línea separadora
-                ctx.strokeStyle = '#f0f0f0';
-                ctx.beginPath();
-                ctx.moveTo(50, yPos + 35);
-                ctx.lineTo(canvas.width - 50, yPos + 35);
-                ctx.stroke();
-
-                yPos += 55;
+                ctx.fillStyle = '#aaa';
+                ctx.fillText(`(${charge.activity.description || 'Febrero 2025'})`, 250, yPos);
+                ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
+                ctx.fillStyle = '#fff';
+                ctx.fillText(`$${charge.amount.toFixed(0)}`, width - 120, yPos);
+                yPos += chargeHeight;
             });
 
-            // Footer minimalista
-            ctx.font = 'italic 13px "Segoe UI", Arial, sans-serif';
-            ctx.fillStyle = '#888';
-            ctx.textAlign = 'center';
-            ctx.fillText('Gracias por su pago', canvas.width / 2, yPos + 40);
+            // Línea separadora
+            ctx.strokeStyle = '#fff';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(40, yPos);
+            ctx.lineTo(width - 40, yPos);
+            ctx.stroke();
 
-            return canvas.toDataURL('image/png');
+            // TOTAL
+            ctx.font = 'bold 18px "Segoe UI", Arial, sans-serif';
+            ctx.fillStyle = '#fff';
+            ctx.fillText('TOTAL:', 60, yPos + 40);
+            ctx.font = 'bold 28px "Segoe UI", Arial, sans-serif';
+            ctx.fillText(`$${studentPayment.amount.toFixed(0)}`, width - 120, yPos + 40);
+
+            // Recibido por
+            ctx.font = '14px "Segoe UI", Arial, sans-serif';
+            ctx.fillStyle = '#aaa';
+            ctx.fillText(`Recibido por: ${false || 'María González'}`, 40, yPos + 80);
+
+            // PDF icono
+            ctx.font = '16px "Segoe UI Symbol", Arial, sans-serif';
+            ctx.fillStyle = '#aaa';
+            ctx.fillText('⭳ PDF', width - 80, yPos + 80);
+
         }
 
-        return '';
+        return canvas;
     }
 
 }

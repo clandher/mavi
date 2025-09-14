@@ -11,92 +11,113 @@ import { VoucherHelper } from '@app/core/voucher.helper';
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, PaymentComponent, CurrencyMXPipe],
-  templateUrl: './student-payments.component.html',
-  providers: []
+	standalone: true,
+	imports: [CommonModule, PaymentComponent, CurrencyMXPipe],
+	templateUrl: './student-payments.component.html',
+	providers: []
 })
 export class StudentPaymentsComponent implements OnInit {
 
-  paymentsWithChargers: StudentPayment[] = [];
+	paymentsWithChargers: StudentPayment[] = [];
+	studentId: string | null = null;
+	public showVoucherModal: boolean = false;
+	public voucherPayment: StudentPayment | null = null;
 
-  studentId: string | null = null;
+	constructor(
+		private http: HttpClient,
+		private route: ActivatedRoute,
+		private router: Router,
+	) {
 
-  constructor(
-    private http: HttpClient,
-    private route: ActivatedRoute,
-    private router: Router,
-  ) {
+		this.studentId = this.route.parent!.snapshot.paramMap.get('id');
 
-    this.studentId = this.route.parent!.snapshot.paramMap.get('id');
+	}
 
-  }
+	ngOnInit(): void {
+		this._loadPayments();
+	}
 
-  ngOnInit(): void {
-    this._loadPayments();
-  }
 
-  public showPaymentModal: boolean = false;
+	public showPaymentModal: boolean = false;
 
-  private _loadPayments() {
-    const paymentHttp = new StudentPaymentHttp(this.http);
-    paymentHttp.getByStudentWithChargers(+this.studentId!).subscribe(data => {
-      this.paymentsWithChargers = data;
-    });
-  }
+	private _loadPayments() {
+		const paymentHttp = new StudentPaymentHttp(this.http);
+		paymentHttp.getByStudentWithChargers(+this.studentId!).subscribe(data => {
+			this.paymentsWithChargers = data;
+			this.previewVoucher(this.paymentsWithChargers[0]);
+		});
+	}
 
-  onPaymentComplete(value: boolean) {
-    this.showPaymentModal = false;
+	onPaymentComplete(value: boolean) {
+		this.showPaymentModal = false;
 
-    if (value) {
-      this._loadPayments();
-    }
-  }
+		if (value) {
+			this._loadPayments();
+		}
+	}
 
-  generateVoucher(studentPayment: StudentPayment) {
-    console.log('studentPayment', studentPayment);
+	generateVoucher(studentPayment: StudentPayment) {
+		VoucherHelper.download(studentPayment);
+	}
 
-    VoucherHelper.download(studentPayment);
-  }
+	previewVoucher(studentPayment: StudentPayment) {
+		this.voucherPayment = studentPayment;
+		this.showVoucherModal = true;
+		setTimeout(() => {
+			const canvas = VoucherHelper.buildVoucherCanvas(studentPayment);
+			const container = document.getElementById('voucher-preview-canvas');
+			if (container) {
+				container.innerHTML = '';
+				container.appendChild(canvas);
+			}
+		}, 0);
+	}
+
+	closeVoucherModal() {
+		this.showVoucherModal = false;
+		this.voucherPayment = null;
+		const container = document.getElementById('voucher-preview-canvas');
+		if (container) container.innerHTML = '';
+	}
 
 }
 
 
 export interface Activity {
-  id: number;
-  categoryId: number;
-  description: string;
-  startDate: string;
-  endDate: string;
-  gracePeriod: number;
-  price: number;
+	id: number;
+	categoryId: number;
+	description: string;
+	startDate: string;
+	endDate: string;
+	gracePeriod: number;
+	price: number;
 }
 
 export interface Collection {
-  id: number;
-  studentId: number;
-  chargeDate: string;
-  amountToBePaid: number;
-  amountRemaining: number;
-  activityId: number;
-  concept: string;
+	id: number;
+	studentId: number;
+	chargeDate: string;
+	amountToBePaid: number;
+	amountRemaining: number;
+	activityId: number;
+	concept: string;
 }
 
 export interface PaymentCharge {
-  id: number;
-  amount: number;
-  amountRemained: number;
-  activityId: number;
-  collection: Collection;
-  activity: Activity;
+	id: number;
+	amount: number;
+	amountRemained: number;
+	activityId: number;
+	collection: Collection;
+	activity: Activity;
 }
 
 export interface StudentPayment {
-  id: number;
-  studentId: number;
-  amount: number;
-  paymentDate: string;
-  voucher: string;
-  student: Student;
-  paymentCharges: PaymentCharge[];
+	id: number;
+	studentId: number;
+	amount: number;
+	paymentDate: string;
+	voucher: string;
+	student: Student;
+	paymentCharges: PaymentCharge[];
 }
