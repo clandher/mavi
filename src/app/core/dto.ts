@@ -168,3 +168,43 @@ export class StudentObservation {
     activityId!: number;
     student!: Student;
 }
+
+export interface Activity {
+    id: number;
+    categoryId: number;
+    category: Category;
+    description: string;
+    startDate: string;
+    endDate: string;
+    gracePeriod: number;
+    price: number;
+}
+
+export interface Collection {
+    id: number;
+    studentId: number;
+    chargeDate: string;
+    amountToBePaid: number;
+    amountRemaining: number;
+    activityId: number;
+    concept: string;
+}
+
+export interface PaymentCharge {
+    id: number;
+    amount: number;
+    amountRemained: number;
+    activityId: number;
+    collection: Collection;
+    activity: Activity;
+}
+
+export interface StudentPayment {
+    id: number;
+    studentId: number;
+    amount: number;
+    paymentDate: string;
+    voucher: string;
+    student: Student;
+    paymentCharges: PaymentCharge[];
+}

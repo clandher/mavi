@@ -1,5 +1,4 @@
-import { PaymentCharge, StudentPayment } from "@app/components/students/student-payments.component";
-import { School } from "./dto";
+import { PaymentCharge, School, StudentPayment } from "./dto";
 
 export class VoucherHelper {
 
@@ -18,15 +17,15 @@ export class VoucherHelper {
     }
 
     // Nuevo método: retorna el canvas para previsualización
-    static buildVoucherCanvas(studentPayment: StudentPayment, school: School ): HTMLCanvasElement {
+    static buildVoucherCanvas(studentPayment: StudentPayment, school: School): HTMLCanvasElement {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d');
 
         if (ctx) {
             // Estilo voucher oscuro
             const width = 800;
-            const baseHeight = 320;
-            const chargeHeight = 50;
+            const baseHeight = 250;
+            const chargeHeight = 30;
             const charges = studentPayment.paymentCharges.length;
             canvas.width = width;
             canvas.height = baseHeight + (charges * chargeHeight);
@@ -44,6 +43,7 @@ export class VoucherHelper {
             ctx.fillStyle = '#fff';
             ctx.font = 'bold 22px "Segoe UI", Arial, sans-serif';
             ctx.textAlign = 'left';
+
             // Dibuja el logo desde school.logoUrl si existe, si no, usa el cuadrado
             if (school.logoUrl) {
                 const img = new window.Image();
@@ -55,9 +55,10 @@ export class VoucherHelper {
             } else {
                 ctx.fillRect(30, 30, 40, 40); // logo cuadrado por defecto
             }
+
             ctx.fillStyle = '#111';
             ctx.font = 'bold 20px "Segoe UI", Arial, sans-serif';
-            ctx.fillText('SM', 40, 60);
+            ctx.fillText('', 40, 60);
 
             ctx.textAlign = 'left';
             ctx.fillStyle = '#fff';
@@ -69,41 +70,58 @@ export class VoucherHelper {
             // Folio y fecha
             ctx.textAlign = 'right';
             ctx.font = '16px "Segoe UI", Arial, sans-serif';
-            ctx.fillText(`${new Date(studentPayment.paymentDate).toLocaleString()   }`, width - 40, 50);
+            ctx.fillText(`${new Date(studentPayment.paymentDate).toLocaleString()}`, width - 40, 50);
 
             // Estudiante
             ctx.textAlign = 'left';
-            ctx.font = '16px "Segoe UI", Arial, sans-serif';
-            ctx.fillStyle = '#fff';
-            ctx.fillText('Estudiante:', 40, 110);
+            ctx.font = 'bold 15px "Segoe UI", Arial, sans-serif';
+            ctx.fillStyle = '#aaa';
+            ctx.fillText('Estudiante:', 30, 110);
+            
             ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
-            ctx.fillText(`${studentPayment.student.name} `, 160, 110);
+            ctx.fillStyle = '#fff';
+            ctx.fillText(`${studentPayment.student.name} `, 130, 110);
 
             // Mensualidades
-            let yPos = 190;
-            studentPayment.paymentCharges.forEach((charge: PaymentCharge) => {
-                ctx.font = '16px "Segoe UI", Arial, sans-serif';
-                ctx.fillText(charge.activity.categoryId.toString() , 40, yPos);
-               
-                // ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
-                // ctx.fillStyle = '#222';
-                // ctx.fillRect(160, 120, 90, 30);
-                
-                ctx.font = 'bold 15px "Segoe UI", Arial, sans-serif';
-                ctx.fillStyle = '#fff';
-                ctx.fillText(`${charge.activity.categoryId || 'Deportes'}`, 170, yPos);
+            let yPos = 170;
+            // Encabezados de la tabla
+            ctx.font = 'bold 15px "Segoe UI", Arial, sans-serif';
+            ctx.fillStyle = '#aaa';
+            ctx.textAlign = 'left';
+            ctx.fillText('Actividades:', 30, yPos - 30);
+            ctx.fillText('Monto', 705, yPos - 30);
+            // ctx.fillText('Restante', 670, yPos - 30);
 
-                ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
-                ctx.fillStyle = '#fff';
-                ctx.fillText(`${charge.activity.description}`, 40, yPos);
-                
+            studentPayment.paymentCharges.forEach((charge: PaymentCharge) => {
+                // Categoría
                 ctx.font = '14px "Segoe UI", Arial, sans-serif';
-                ctx.fillStyle = '#aaa';
-                ctx.fillText(`(${charge.activity.description || 'Febrero 2025'})`, 250, yPos);
-                
-                ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
                 ctx.fillStyle = '#fff';
-                ctx.fillText(`$${charge.amount.toFixed(0)}`, width - 120, yPos);
+                ctx.textAlign = 'left';
+                const categoryText = `${charge.activity.category.type || ''}`;
+                const textMetrics = ctx.measureText(categoryText);
+                const rectX = 30;
+                const rectY = yPos - 16;
+                const rectHeight = 22;
+                const rectWidth = Math.max(textMetrics.width + 10, 40); // Minimum width 40
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1.5;
+                ctx.strokeRect(rectX, rectY, rectWidth, rectHeight);
+                ctx.fillText(categoryText, 35, yPos);
+
+                ctx.font = '14px "Segoe UI", Arial, sans-serif';
+                ctx.fillText(`${charge.activity.description || ''} (${charge.collection.concept})`, 80, yPos);
+
+                ctx.font = 'bold 14px "Segoe UI", Arial, sans-serif';
+                ctx.textAlign = 'right';
+                ctx.fillText(`$${charge.amount.toFixed(2)}`, 750, yPos);
+
+                // if (charge.collection.amountRemaining && charge.collection.amountRemaining > 0) {
+                //     ctx.font = 'bold 14px "Segoe UI", Arial, sans-serif';
+                //     ctx.textAlign = 'right';
+                //     ctx.fillStyle = '#ffb300';
+                //     ctx.fillText(`$${(charge.collection.amountRemaining).toFixed(2)}`, 760, yPos);
+                // }
+
                 yPos += chargeHeight;
             });
 
@@ -118,20 +136,15 @@ export class VoucherHelper {
             // TOTAL
             ctx.font = 'bold 18px "Segoe UI", Arial, sans-serif';
             ctx.fillStyle = '#fff';
-            ctx.fillText('TOTAL:', 60, yPos + 40);
+            ctx.fillText('TOTAL:', 650, yPos + 40);
             ctx.font = 'bold 28px "Segoe UI", Arial, sans-serif';
-            ctx.fillText(`$${studentPayment.amount.toFixed(0)}`, width - 120, yPos + 40);
+            ctx.textAlign = 'right';
+            ctx.fillText(`$${studentPayment.amount.toLocaleString('es-MX', { minimumFractionDigits: 0 })}`, width - 30, yPos + 40);
 
             // Recibido por
-            ctx.font = '14px "Segoe UI", Arial, sans-serif';
-            ctx.fillStyle = '#aaa';
-            ctx.fillText(`Recibido por: ${false || 'María González'}`, 40, yPos + 80);
-
-            // PDF icono
-            ctx.font = '16px "Segoe UI Symbol", Arial, sans-serif';
-            ctx.fillStyle = '#aaa';
-            ctx.fillText('⭳ PDF', width - 80, yPos + 80);
-
+            // ctx.font = '14px "Segoe UI", Arial, sans-serif';
+            // ctx.fillStyle = '#aaa';
+            // ctx.fillText(`Recibido por: ${false || 'María González'}`, 40, yPos + 80);
         }
 
         return canvas;

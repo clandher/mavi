@@ -1,12 +1,11 @@
 import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
 import { LocalStorage } from '../../core/local-storage';
 import { HttpClient } from '@angular/common/http';
-import { Charge, CreatePaymentDto } from '@app/core/dto';
+import { Charge, CreatePaymentDto, StudentPayment } from '@app/core/dto';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { BaseHttp } from '@app/core/base-http';
 import { RequestQueryBuilder } from '@dataui/crud-request';
-import { StudentPayment } from '../students/student-payments.component';
 import { VoucherHelper } from '@app/core/voucher.helper';
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 import { SchoolService } from '@app/core/school.service';
@@ -125,7 +124,6 @@ export class PaymentComponent implements OnChanges {
             paymentsAPI.post<CreatePaymentDto, { id: number }>(body).subscribe(payment => {
                 const paymentChargesAPI = new BaseHttp(`payments/${payment.id}/charges`, this.http);
                 paymentChargesAPI.get<StudentPayment>().subscribe((studentPayment: StudentPayment) => {
-                    // Descargar voucher solo si la preferencia está activa
                     if (this.downloadVoucher.value) {
                         VoucherHelper.download(studentPayment, this.schoolService.school);
                     }
