@@ -6,25 +6,33 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
 @Component({
-  standalone: true,
-  imports: [CommonModule, RouterModule],
-  templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+    standalone: true,
+    imports: [CommonModule, RouterModule],
+    templateUrl: './dashboard.component.html',
+    styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent {
-  menuOpen = false;
+    menuOpen = false;
 
-  constructor(
-    public authService: AuthService,
-    public schoolService: SchoolService
-  ) { }
+    constructor(
+        public authService: AuthService,
+        public schoolService: SchoolService
+    ) { }
 
-  toggleMenu(): void {
-    this.menuOpen = !this.menuOpen;
-  }
+    toggleMenu(): void {
+        this.menuOpen = !this.menuOpen;
+    }
 
-  logout(): void {
-    this.authService.logout();
-    this.menuOpen = false;
-  }
+    logout(): void {
+        this.authService.logout();
+        this.menuOpen = false;
+    }
+
+
+    getInitials(name: string): string {
+        return name.split(' ')
+            .map(part => part[0])
+            .join('')
+            .toUpperCase();
+    }
 }

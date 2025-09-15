@@ -23,6 +23,7 @@ export class PaymentComponent implements OnChanges {
     charges: Charge[] = [];
     paymentAmount: number = 0;
     private _paymentDistribution: number[] = [];
+        isSaving: boolean = false;
 
     public downloadVoucher = new LocalStorage<boolean>('download.voucher', true);
 
@@ -115,20 +116,32 @@ export class PaymentComponent implements OnChanges {
 
     onSave() {
         if (this.paymentAmount > 0 && this.paymentAmount <= this.getTotalDebt()) {
+            this.isSaving = true;
             const body: CreatePaymentDto = {
                 studentId: this.studentId,
                 amount: this.paymentAmount,
             };
 
             const paymentsAPI = new BaseHttp(`payments`, this.http);
-            paymentsAPI.post<CreatePaymentDto, { id: number }>(body).subscribe(payment => {
-                const paymentChargesAPI = new BaseHttp(`payments/${payment.id}/charges`, this.http);
-                paymentChargesAPI.get<StudentPayment>().subscribe(async (studentPayment: StudentPayment) => {
-                    if (this.downloadVoucher.value) {
-                        await VoucherHelper.download(studentPayment, this.schoolService.school);
-                    }
-                    this.complete.emit(true);
-                })
+            paymentsAPI.post<CreatePaymentDto, { id: number }>(body).subscribe({
+                next: payment => {
+                    const paymentChargesAPI = new BaseHttp(`payments/${payment.id}/charges`, this.http);
+                    paymentChargesAPI.get<StudentPayment>().subscribe({
+                        next: async (studentPayment: StudentPayment) => {
+                            if (this.downloadVoucher.value) {
+                                await VoucherHelper.download(studentPayment, this.schoolService.school);
+                            }
+                            this.complete.emit(true);
+                            this.isSaving = false;
+                        },
+                        error: () => {
+                            this.isSaving = false;
+                        }
+                    });
+                },
+                error: () => {
+                    this.isSaving = false;
+                }
             });
         }
     }

@@ -17,11 +17,40 @@
         padding: 10px;
         color: white;
         width: 100%;
+        position: relative;
+
+        .logo {
+            position: absolute;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 66px;
+            height: 66px;
+            background-color: #3498db;
+            border-radius: 50%;
+            font-weight: bold;
+            top: 2px;
+            left: 10px;
+        }
 
         .header-left {
             display: flex;
             align-items: center;
             gap: 2rem;
+            margin-left: 70px;
+        }
+
+
+
+        .user-avatar {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background-color: #3498db;
+            border-radius: 50%;
+            font-weight: bold;
         }
     }
 
@@ -54,6 +83,7 @@
         &:hover,
         &.active {
             background-color: oklch(0.269 0 0);
+            border-radius: 4px;
         }
     }
 }
@@ -115,14 +145,5 @@
     gap: 0.5rem;
     cursor: pointer;
 
-    .school-logo {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 32px;
-        height: 32px;
-        background-color: #3498db;
-        border-radius: 50%;
-        font-weight: bold;
-    }
+
 }

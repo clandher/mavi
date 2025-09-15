@@ -84,7 +84,7 @@
 		<div class="modal-footer">
 			<br>
 			<div class="mb-4 flex items-center">
-				<input  class="form-control" type="checkbox" id="autoDownloadVoucher" [checked]="downloadVoucher.value"
+				<input class="form-control" type="checkbox" id="autoDownloadVoucher" [checked]="downloadVoucher.value"
 					(change)="onAutoDownloadChange()" />
 				<label for="autoDownloadVoucher" class="ml-2">Descargar voucher automáticamente</label>
 			</div>
@@ -92,7 +92,7 @@
 				<button (click)="onClose()" class="btn btn-outline">
 					Cancelar
 				</button>
-				<button (click)="onSave()" [disabled]="paymentAmount <= 0 || paymentAmount > getTotalDebt()"
+				<button (click)="onSave()" [disabled]="isSaving || paymentAmount <= 0 || paymentAmount > getTotalDebt()"
 					class="btn btn-primary">
 					Guardar
 				</button>
