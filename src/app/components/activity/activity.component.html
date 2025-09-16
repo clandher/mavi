@@ -20,19 +20,23 @@
 			</div>
 			<div class="flex gap-4 justify-between">
 				<app-form-group [title]="'Fecha de Inicio'" [control]="activityForm.get('startDate')" class="flex-1">
-					<input id="newActivityStartDate" type="datetime-local" formControlName="startDate" class="form-control" [min]="todayDatetimeLocal">
+					<input id="newActivityStartDate" type="datetime-local" formControlName="startDate"
+						class="form-control" [min]="todayDatetimeLocal">
 				</app-form-group>
 				<app-form-group [title]="'Fecha de Fin'" [control]="activityForm.get('endDate')" class="flex-1">
-					<input id="newActivityEndDate" type="datetime-local" formControlName="endDate" class="form-control" [min]="activityForm.get('startDate')?.value">
+					<input id="newActivityEndDate" type="datetime-local" formControlName="endDate" class="form-control"
+						[min]="activityForm.get('startDate')?.value">
 				</app-form-group>
 			</div>
 			<div class="flex gap-4 justify-between">
 				<app-form-group [title]="'Período de gracia (días)'" [control]="activityForm.get('gracePeriod')"
 					class="flex-1">
-					<input id="newActivityGracePeriod" type="number" formControlName="gracePeriod" min="1" class="form-control">
+					<input id="newActivityGracePeriod" type="text" formControlName="gracePeriod" class="form-control" mask="0*" [allowNegativeNumbers]="false" />
 				</app-form-group>
 				<app-form-group [title]="'Precio'" [control]="activityForm.get('price')" class="flex-1">
-					<input id="newActivityPrice" type="number" step="0.01" formControlName="price" class="form-control">
+					<input id="newActivityPrice" type="text" formControlName="price" class="form-control"
+						positiveNumberOnly mask="separator.2" [thousandSeparator]="','" [decimalMarker]="'.'"
+						[allowNegativeNumbers]="false" />
 				</app-form-group>
 			</div>
 			<div class="flex justify-end space-x-2 mt-4">

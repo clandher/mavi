@@ -1,17 +1,18 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { BaseHttp, buildUrl } from '@app/core/base-http';
+import { BaseHttp } from '@app/core/base-http';
 import { Activity, ActivityType, CreateActivityDto, Category } from '@app/core/dto';
-import { formatDateForDisplay, dateToDatetimeLocalString, datetimeLocalStringToDate } from '@app/core/helpers';
+import { dateToDatetimeLocalString } from '@app/core/helpers';
 import { FormGroupComponent } from "../form-group/form-group.component";
+import { NgxMaskDirective } from 'ngx-mask';
 import { MaviValidators } from '@app/core/mavi-validators';
 
 @Component({
     selector: 'app-activity',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormGroupComponent],
+    imports: [CommonModule, ReactiveFormsModule, FormGroupComponent, NgxMaskDirective],
     templateUrl: './activity.component.html',
     styleUrls: ['./activity.component.scss']
 })
@@ -31,7 +32,7 @@ export class ActivityComponent implements OnInit {
             description: ['Nueva actividad...', MaviValidators.required()],
             startDate: [dateToDatetimeLocalString(new Date()), MaviValidators.required()],
             endDate: [dateToDatetimeLocalString(new Date(Date.now() + 60 * 60 * 1000)), [MaviValidators.required(), MaviValidators.minDate('startDate', 'La fecha debe ser mayor a la fecha de inicio.')]],
-            gracePeriod: [15, [MaviValidators.required(), MaviValidators.min(1)]],
+            gracePeriod: [15, [MaviValidators.required(), MaviValidators.min(0)]],
             price: [200, [MaviValidators.required(), MaviValidators.min(0.01)]],
             categoryId: [0, [MaviValidators.required()]],
             typeId: [2, [MaviValidators.required()]],

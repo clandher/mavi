@@ -11,11 +11,12 @@ import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 import { SchoolService } from '@app/core/school.service';
 import { SubmitComponent } from '../submit/submit.component';
 import { catchError, firstValueFrom, switchMap, tap } from 'rxjs';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
     selector: 'app-payment',
     templateUrl: './payment.component.html',
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, CurrencyMXPipe, SubmitComponent],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, CurrencyMXPipe, SubmitComponent, NgxMaskDirective],
     standalone: true
 })
 export class PaymentComponent implements OnChanges {

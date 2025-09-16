@@ -5,15 +5,19 @@
 			<div class="mb-4">
 				<label class="form-label">Monto a pagar</label>
 				<div class="relative flex items-center">
-					<input type="number" formControlName="paymentAmount"
+
+					<input id="paymentAmount" type="text" formControlName="paymentAmount" class="form-control"
 						[class.border-red-500]="formGroup.get('paymentAmount')?.value > getTotalDebt()"
-						class="form-control" min="0" [max]="getTotalDebt()" step="0.01">
+						mask="separator.2" [thousandSeparator]="','" [decimalMarker]="'.'"
+						[allowNegativeNumbers]="false" min="0" [max]="getTotalDebt()" />
+
+
 					<button (click)="payFullAmount()" class="btn btn-xs btn-primary absolute right-2"
 						[style]="'margin-top: 1px'" style="top:6px">
 						Pagar total
 					</button>
 				</div>
-				<p *ngIf="formGroup.get('paymentAmount')?.value > getTotalDebt()" class="text-red-500 text-sm">
+				<p *ngIf="formGroup.get('paymentAmount')?.value > getTotalDebt()" class="form-control-error">
 					El monto excede el adeudo total
 				</p>
 				<p class="text-sm text-gray-500 mt-1"

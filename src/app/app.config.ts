@@ -11,6 +11,7 @@ import { provideToastr } from 'ngx-toastr';
 
 import { registerLocaleData } from '@angular/common';
 import localeEsMX from '@angular/common/locales/es-MX';
+import { provideNgxMask } from 'ngx-mask';
 registerLocaleData(localeEsMX);
 
 export const appConfig: ApplicationConfig = {
@@ -25,7 +26,8 @@ export const appConfig: ApplicationConfig = {
       ])
     ),
     { provide: LOCALE_ID, useValue: 'es-MX' },
-    provideAnimations(), // required animations providers
-    provideToastr(), // Toastr providers
+    provideAnimations(),
+    provideToastr(),
+    provideNgxMask(),
   ]
 };

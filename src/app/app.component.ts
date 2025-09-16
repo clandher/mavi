@@ -1,6 +1,15 @@
 import { Component, AfterViewInit } from '@angular/core';
+import { FormControlName } from '@angular/forms';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+
+
+const originFormControlNameNgOnChanges = FormControlName.prototype.ngOnChanges;
+FormControlName.prototype.ngOnChanges = function () {
+  const result = originFormControlNameNgOnChanges.apply(this, arguments as any);
+  ((this.control as any).nativeElement as any) = (this.valueAccessor as any)?._elementRef?.nativeElement;
+  return result;
+}
 
 @Component({
   selector: 'app-root',
