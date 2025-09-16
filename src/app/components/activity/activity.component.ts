@@ -6,13 +6,14 @@ import { BaseHttp } from '@app/core/base-http';
 import { Activity, ActivityType, CreateActivityDto, Category } from '@app/core/dto';
 import { dateToDatetimeLocalString } from '@app/core/helpers';
 import { FormGroupComponent } from "../form-group/form-group.component";
+import { SubmitComponent } from '../submit/submit.component';
 import { NgxMaskDirective } from 'ngx-mask';
 import { MaviValidators } from '@app/core/mavi-validators';
 
 @Component({
     selector: 'app-activity',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormGroupComponent, NgxMaskDirective],
+    imports: [CommonModule, ReactiveFormsModule, FormGroupComponent, NgxMaskDirective, SubmitComponent],
     templateUrl: './activity.component.html',
     styleUrls: ['./activity.component.scss']
 })
@@ -22,7 +23,6 @@ export class ActivityComponent implements OnInit {
 
     @Output() complete = new EventEmitter<boolean>();
 
-    public showModal: boolean = true;
     public activityTypes: ActivityType[] = [];
     public categories: Category[] = [];
     public activityForm: FormGroup;
@@ -90,30 +90,38 @@ export class ActivityComponent implements OnInit {
     }
 
     closeModal(): void {
-        this.showModal = false;
         this.complete.emit(true);
     }
 
 
-    saveActivity(): void {
-        const formValue = this.activityForm.value;
-        const activityToSave = {
-            ...formValue,
-            typeId: Number(formValue.typeId),
-            categoryId: Number(formValue.categoryId)
-        };
-        if (this.activityId !== 0) {
-            const activitiesAPI = new BaseHttp(`activities/${this.activityId}`, this.http);
-            activitiesAPI.patch<CreateActivityDto, Activity>(activityToSave).subscribe({
-                next: () => this.closeModal(),
-                error: (err) => console.error('Error al actualizar la actividad:', err)
-            });
-        } else {
-            const activitiesAPI = new BaseHttp('activities', this.http);
-            activitiesAPI.post<CreateActivityDto, Activity>(activityToSave).subscribe({
-                next: () => this.closeModal(),
-                error: (err) => console.error('Error al crear la actividad:', err)
-            });
-        }
+    saveActivity(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            const formValue = this.activityForm.value;
+
+            if (this.activityId !== 0) {
+                const activityToSave = {
+                    ...formValue,
+                };
+
+                const activitiesAPI = new BaseHttp(`activities/${this.activityId}`, this.http);
+                activitiesAPI.patch<CreateActivityDto, Activity>(activityToSave).subscribe({
+                    next: () => { this.closeModal(); resolve(); },
+                    error: (err) => { console.error('Error al actualizar la actividad:', err); reject(err); }
+                });
+            } else {
+
+                const activityToSave = {
+                    ...formValue,
+                    typeId: Number(formValue.typeId),
+                    categoryId: Number(formValue.categoryId)
+                };
+
+                const activitiesAPI = new BaseHttp('activities', this.http);
+                activitiesAPI.post<CreateActivityDto, Activity>(activityToSave).subscribe({
+                    next: () => { this.closeModal(); resolve(); },
+                    error: (err) => { console.error('Error al crear la actividad:', err); reject(err); }
+                });
+            }
+        });
     }
 }

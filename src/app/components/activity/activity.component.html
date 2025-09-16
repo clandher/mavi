@@ -31,7 +31,8 @@
 			<div class="flex gap-4 justify-between">
 				<app-form-group [title]="'Período de gracia (días)'" [control]="activityForm.get('gracePeriod')"
 					class="flex-1">
-					<input id="newActivityGracePeriod" type="text" formControlName="gracePeriod" class="form-control" mask="0*" [allowNegativeNumbers]="false" />
+					<input id="newActivityGracePeriod" type="text" formControlName="gracePeriod" class="form-control"
+						mask="0*" [allowNegativeNumbers]="false" />
 				</app-form-group>
 				<app-form-group [title]="'Precio'" [control]="activityForm.get('price')" class="flex-1">
 					<input id="newActivityPrice" type="text" formControlName="price" class="form-control"
@@ -39,10 +40,7 @@
 						[allowNegativeNumbers]="false" />
 				</app-form-group>
 			</div>
-			<div class="flex justify-end space-x-2 mt-4">
-				<button type="button" (click)="closeModal()" class="btn btn-outline">Cancelar</button>
-				<button type="submit" class="btn btn-primary" [disabled]="activityForm.invalid">Guardar</button>
-			</div>
+			<app-submit [form]="activityForm" [submit]="saveActivity.bind(this)" (discard)="closeModal()"></app-submit>
 		</form>
 	</div>
 </div>
