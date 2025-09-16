@@ -4,6 +4,7 @@ import { AuthService } from '../../core/auth.service';
 import { SchoolService } from '../../core/school.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { School } from '@app/core/dto';
 
 @Component({
     standalone: true,
@@ -14,10 +15,16 @@ import { RouterModule } from '@angular/router';
 export class DashboardComponent {
     menuOpen = false;
 
+    public school: School | null = null;
+
     constructor(
         public authService: AuthService,
         public schoolService: SchoolService
-    ) { }
+    ) {
+        this.schoolService.changes.subscribe(school => {
+            this.school = school;
+        });
+    }
 
     toggleMenu(): void {
         this.menuOpen = !this.menuOpen;

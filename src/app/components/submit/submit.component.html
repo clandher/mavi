@@ -1,0 +1,10 @@
+<div class="flex justify-end space-x-2 mt-4">
+	<button (click)="onDiscard()" class="btn btn-outline">
+		Cancelar
+	</button>
+	<button type="button" class="btn btn-primary flex items-center justify-center"
+		[disabled]="loading || disabled || (form && form.invalid)" (click)="onSubmit()">
+		<span *ngIf="loading" class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>
+		{{ submitText }}
+	</button>
+</div>

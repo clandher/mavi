@@ -1,7 +1,9 @@
 <div class="dashboard-container">
     <header class="dashboard-header">
 
-        <img class="logo" [src]="schoolService.school.logoUrl" alt="Logo" *ngIf="schoolService.school.logoUrl">
+        @if (school) {
+        <img class="logo" [src]="school.logoUrl" alt="Logo" *ngIf="school.logoUrl">
+        }
 
         <div class="header-left">
             <nav class="main-nav">

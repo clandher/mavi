@@ -6,6 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { CreateSchoolDto, School } from '@app/core/dto';
+import { SchoolService } from '@app/core/school.service';
 
 @Component({
     standalone: true,
@@ -18,6 +19,11 @@ export class DevelopComponent {
 
     schools: School[] = [];
     selectedSchoolTab: string = 'schools';
+
+    constructor(
+        private http: HttpClient,
+        private schoolService: SchoolService
+    ) { }
 
     ngOnInit() {
         this.getSchools();
@@ -66,6 +72,7 @@ export class DevelopComponent {
             next: (res) => {
                 const timestamp = new Date().getTime();
                 school.logoUrl = buildUrl(`schools/${school.id}/logo`) + `?t=${timestamp}`;
+                this.schoolService.fetch();
             },
             error: (err) => {
                 console.error('Error uploading logo', err);
@@ -80,9 +87,7 @@ export class DevelopComponent {
 
     }
 
-    constructor(private http: HttpClient) {
 
-    }
 
     onRestart() {
         this.isLoading = true;

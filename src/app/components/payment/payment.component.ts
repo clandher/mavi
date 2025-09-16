@@ -3,38 +3,47 @@ import { LocalStorage } from '../../core/local-storage';
 import { HttpClient } from '@angular/common/http';
 import { Charge, CreatePaymentDto, StudentPayment } from '@app/core/dto';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormGroup, FormControl, Validators } from '@angular/forms';
 import { BaseHttp } from '@app/core/base-http';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { VoucherHelper } from '@app/core/voucher.helper';
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 import { SchoolService } from '@app/core/school.service';
+import { SubmitComponent } from '../submit/submit.component';
+import { catchError, firstValueFrom, switchMap, tap } from 'rxjs';
 
 @Component({
     selector: 'app-payment',
     templateUrl: './payment.component.html',
-    imports: [CommonModule, FormsModule, CurrencyMXPipe],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, CurrencyMXPipe, SubmitComponent],
     standalone: true
 })
 export class PaymentComponent implements OnChanges {
     @Input() studentId!: number;
     @Output() complete = new EventEmitter<boolean>();
 
-    charges: Charge[] = [];
-    paymentAmount: number = 0;
-    private _paymentDistribution: number[] = [];
-        isSaving: boolean = false;
-
+    public charges: Charge[] = [];
     public downloadVoucher = new LocalStorage<boolean>('download.voucher', true);
+    public formGroup: FormGroup;
+
+    private _paymentDistribution: number[] = [];
 
     constructor(
         private http: HttpClient,
         private schoolService: SchoolService
-    ) { }
+    ) {
+        this.formGroup = new FormGroup({
+            paymentAmount: new FormControl('', [Validators.required, Validators.min(0)])
+        });
+
+        this.formGroup.get('paymentAmount')?.valueChanges.subscribe(() => {
+            this.updatePaymentDistribution();
+        });
+    }
 
     ngOnChanges(changes: SimpleChanges) {
         this._loadCharges();
-        this.paymentAmount = 0;
+        this.formGroup.get('paymentAmount')?.setValue(0);
         this._paymentDistribution = [];
     }
 
@@ -61,7 +70,7 @@ export class PaymentComponent implements OnChanges {
     }
 
     updatePaymentDistribution() {
-        let remainingPayment = this.paymentAmount ?? 0;
+        let remainingPayment = this.formGroup.get('paymentAmount')?.value ?? 0;
         this._paymentDistribution = [];
 
         for (let charge of this.charges) {
@@ -106,44 +115,28 @@ export class PaymentComponent implements OnChanges {
     }
 
     payFullAmount() {
-        this.paymentAmount = this.getTotalDebt();
+        this.formGroup.get('paymentAmount')?.setValue(this.getTotalDebt());
         this.updatePaymentDistribution();
     }
 
-    onClose() {
+    onDiscard() {
         this.complete.emit(false);
     }
 
-    onSave() {
-        if (this.paymentAmount > 0 && this.paymentAmount <= this.getTotalDebt()) {
-            this.isSaving = true;
-            const body: CreatePaymentDto = {
-                studentId: this.studentId,
-                amount: this.paymentAmount,
-            };
-
-            const paymentsAPI = new BaseHttp(`payments`, this.http);
-            paymentsAPI.post<CreatePaymentDto, { id: number }>(body).subscribe({
-                next: payment => {
-                    const paymentChargesAPI = new BaseHttp(`payments/${payment.id}/charges`, this.http);
-                    paymentChargesAPI.get<StudentPayment>().subscribe({
-                        next: async (studentPayment: StudentPayment) => {
-                            if (this.downloadVoucher.value) {
-                                await VoucherHelper.download(studentPayment, this.schoolService.school);
-                            }
-                            this.complete.emit(true);
-                            this.isSaving = false;
-                        },
-                        error: () => {
-                            this.isSaving = false;
-                        }
-                    });
-                },
-                error: () => {
-                    this.isSaving = false;
-                }
-            });
+    async onSubmit(): Promise<void> {
+        const paymentAmount = this.formGroup.get('paymentAmount')?.value ?? 0;
+        if (!(paymentAmount > 0 && paymentAmount <= this.getTotalDebt())) {
+            return;
         }
+
+        const body: CreatePaymentDto = { studentId: this.studentId, amount: paymentAmount };
+        const payment = await firstValueFrom(new BaseHttp(`payments`, this.http).post<CreatePaymentDto, { id: number }>(body));
+        const studentPayment = await firstValueFrom(new BaseHttp(`payments/${payment.id}/charges`, this.http).get<StudentPayment>());
+        if (this.downloadVoucher.value) {
+            await VoucherHelper.download(studentPayment, this.schoolService.value);
+        }
+
+        this.complete.emit(true);
     }
 
     onAutoDownloadChange() {
