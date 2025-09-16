@@ -30,8 +30,20 @@ export class ActivityComponent implements OnInit {
     constructor(private http: HttpClient, private fb: FormBuilder) {
         this.activityForm = this.fb.group({
             description: ['Nueva actividad...', MaviValidators.required()],
-            startDate: [dateToDatetimeLocalString(new Date()), MaviValidators.required()],
-            endDate: [dateToDatetimeLocalString(new Date(Date.now() + 60 * 60 * 1000)), [MaviValidators.required(), MaviValidators.minDate('startDate', 'La fecha debe ser mayor a la fecha de inicio.')]],
+            startDate: [
+                dateToDatetimeLocalString(new Date()),
+                [
+                    MaviValidators.required(),
+                    MaviValidators.maxDate('endDate', 'La fecha de inicio debe ser menor a la fecha de fin.')
+                ]
+            ],
+            endDate: [
+                dateToDatetimeLocalString(new Date(Date.now() + 60 * 60 * 1000)),
+                [
+                    MaviValidators.required(),
+                    MaviValidators.minDate('startDate', 'La fecha debe ser mayor a la fecha de inicio.')
+                ]
+            ],
             gracePeriod: [15, [MaviValidators.required(), MaviValidators.min(0)]],
             price: [200, [MaviValidators.required(), MaviValidators.min(0.01)]],
             categoryId: [0, [MaviValidators.required()]],
