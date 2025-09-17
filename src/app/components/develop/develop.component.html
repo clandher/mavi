@@ -7,6 +7,10 @@
         [ngClass]="{'selected': selectedSchoolTab === 'development'}">
         Desarrollo
     </button>
+    <button class="mavi-tab" (click)="selectedSchoolTab='categories'"
+        [ngClass]="{'selected': selectedSchoolTab === 'categories'}">
+        Categorías
+    </button>
 </div>
 <br>
 <div [ngSwitch]="selectedSchoolTab" class="mavi-border">
@@ -42,6 +46,23 @@
                 </button>
             </div>
         </div>
+    </div>
+    <div *ngSwitchCase="'categories'" [formGroup]="categoryForm">
+        <app-form-group title="Nueva categoría" [control]="categoryForm.get('newCategory')">
+            <input type="text" formControlName="newCategory" placeholder="Nueva categoría" class="form-control" />
+        </app-form-group>
+
+        <div class="flex gap-2 justify-end">
+            <button class="btn btn-primary" (click)="addCategory()">Agregar</button>
+        </div>
+
+        <ul class="category-list" formArrayName="categories">
+            <li *ngFor="let category of categoriesControls; let i = index" [formGroupName]="i"
+                class="flex gap-2 mb-2 items-center">
+                <label class="text-white">{{ category.value.type }}</label>
+                <button class="btn btn-destructive" (click)="deleteCategory(category.value.id, i)">Eliminar</button>
+            </li>
+        </ul>
     </div>
 </div>
 
