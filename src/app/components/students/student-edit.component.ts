@@ -1,4 +1,3 @@
-// student-edit.component.ts
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -17,6 +16,7 @@ import { uploadStudentPhoto } from '@app/core/helpers';
 export class StudentEditComponent {
 
     isSaving = false;
+    private pendingPhotoFile: File | null = null;
 
     student: Student = {
         id: 0,
@@ -46,22 +46,21 @@ export class StudentEditComponent {
             this.student.id = 0;
             this.student.birthdate = new Date().toISOString().slice(0, 10);
         } else {
-            this.loadStudent(+studentId!);
+            this._loadStudent(+studentId!);
         }
-
     }
 
-    saveStudent(): void {
+    public saveStudent(): void {
         this.isSaving = true;
 
         if (this.student.id === 0) {
-            this.createStudent();
+            this._createStudent();
         } else {
-            this.updateStudent();
+            this._updateStudent();
         }
     }
 
-    private updateStudent(): void {
+    private _updateStudent(): void {
         const studentsAPI = new BaseHttp(`students/${this.student.id}`, this.http);
         const updateStudentDto: UpdateStudentDto = {
             name: this.student.name,
@@ -79,7 +78,7 @@ export class StudentEditComponent {
         });
     }
 
-    private createStudent(): void {
+    private _createStudent(): void {
         const studentsAPI = new BaseHttp('students', this.http);
         const createStudentDto: CreateStudentDto = {
             name: this.student.name,
@@ -89,6 +88,7 @@ export class StudentEditComponent {
         studentsAPI.post<CreateStudentDto, Student>(createStudentDto).subscribe({
             next: (student) => {
                 this.student = student;
+                this._uploadPendingPhotoIfAny();
                 this.isSaving = false;
                 this.router.navigate(['/app/estudiantes', student.id, 'editar']);
             },
@@ -99,56 +99,59 @@ export class StudentEditComponent {
         });
     }
 
-    loadStudent(id: number): void {
+    private _loadStudent(studentId: number): void {
 
-        const studentsAPI = new BaseHttp(`students/${id}`, this.http);
+        const studentsAPI = new BaseHttp(`students/${studentId}`, this.http);
         studentsAPI.get<Student>().subscribe({
             next: (student) => {
                 student.birthdate = new Date(student.birthdate).toISOString().slice(0, 10);
 
                 if (student.photo) {
-                    student.photoUrl = buildUrl(`students/${id}/photo`);
+                    student.photoUrl = buildUrl(`students/${studentId}/photo`);
                 }
 
                 this.student = student;
-            },
-            error: (err) => {
+            }, error: (err) => {
                 console.error('Error loading student', err);
                 this.router.navigate(['/app/estudiantes']);
             }
         });
     }
 
-
     onPhotoSelected(event: Event) {
+
+        if (this.student.id > 0) {
+            uploadStudentPhoto(event, this.student, this.http);
+            return;
+        }
+
+        const input = event.target as HTMLInputElement;
+        if (input.files && input.files.length > 0) {
+            const file = input.files[0];
+
+            const reader = new FileReader();
+            reader.onload = () => {
+                const base64 = reader.result as string;
+                this.student.photo = base64;
+                this.student.photoUrl = base64;
+            };
+            reader.readAsDataURL(file);
+            this.pendingPhotoFile = file;
+        }
+    }
+
+    private _uploadPendingPhotoIfAny() {
+        if (!this.pendingPhotoFile) {
+            return;
+        }
+
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(this.pendingPhotoFile);
+        const fakeInput = document.createElement('input');
+        fakeInput.type = 'file';
+        fakeInput.files = dataTransfer.files;
+        const event = { target: fakeInput } as unknown as Event;
         uploadStudentPhoto(event, this.student, this.http);
-
-        // const file = (event.target as HTMLInputElement).files?.[0];
-        // if (file) {
-
-
-        //     if (!file || !this.student.id) return;
-
-        //     const formData = new FormData();
-        //     formData.append('file', file);
-
-        //     const studentsAPI = new BaseHttp(`students/${this.student.id}/upload`, this.http);
-        //     studentsAPI.post<FormData, any>(formData).subscribe({
-        //         next: (res) => {
-        //             const timestamp = new Date().getTime();
-
-        //             this.student.photoUrl = buildUrl(`students/${this.student.id}/photo`) + `?t=${timestamp}`;
-        //         },
-        //         error: (err) => {
-        //             console.error('Error uploading photo', err);
-        //         }
-        //     });
-
-        //     const reader = new FileReader();
-        //     reader.onload = () => {
-        //         this.student.photo = reader.result as string;
-        //     };
-        //     reader.readAsDataURL(file);
-        // }
+        this.pendingPhotoFile = null;
     }
 }
