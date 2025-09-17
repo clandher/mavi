@@ -54,7 +54,6 @@
 	</div>
 	<br>
 	<div [ngSwitch]="selectedTab" class="mavi-border">
-
 		<div *ngSwitchCase="'observations'">
 			<div class="form-group">
 				<label for="observations" class="form-label">Observaciones</label>
@@ -78,6 +77,8 @@
 			<div class="mavi-bottom-actions">
 				<div class="mavi-bottom-actions-inner">
 					<button type="submit" class="btn btn-primary">Guardar ficha técnica</button>
+					<button type="button" class="btn btn-primary" (click)="showObservations = true">Agregar
+						observación</button>
 				</div>
 			</div>
 		</div>
@@ -108,7 +109,16 @@
 					</div>
 				</div>
 			</div>
+			<div class="mavi-bottom-actions">
+				<div class="mavi-bottom-actions-inner">
+					<button type="submit" class="btn btn-primary">Guardar ficha técnica</button>
+					<button type="button" class="btn btn-primary" (click)="showObservations = true">Agregar
+						observación</button>
+				</div>
+			</div>
 		</div>
 	</div>
-
 </form>
+
+<app-observations *ngIf="showObservations" [studentId]="studentId!" (complete)="onObservationsComplete($event)">
+</app-observations>

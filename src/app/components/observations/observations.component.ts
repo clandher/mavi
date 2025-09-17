@@ -1,10 +1,9 @@
-import { Component, EventEmitter, Input, OnInit, Output, output, ChangeDetectorRef } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
-import { Activity, ActivityType, Category, CreateActivityDto, Student, StudentActivity } from '@app/core/dto';
-import { formatDateForDisplay } from '@app/core/helpers';
+import { Activity, Category, Student, StudentActivity } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { ActivatedRoute } from '@angular/router';
 
@@ -16,7 +15,8 @@ import { ActivatedRoute } from '@angular/router';
     styleUrls: ['./observations.component.scss']
 })
 export class ObservationsComponent implements OnInit {
-    @Input() studentActivity!: StudentActivity;
+    @Input() studentId!: number;
+    // @Input() studentActivity!: StudentActivity;
     @Output() complete = new EventEmitter<boolean>();
 
 
@@ -159,12 +159,10 @@ export class ObservationsComponent implements OnInit {
             studentsAPI.get<Student[]>().subscribe(students => {
                 this.students = students;
 
-                if (this.studentActivity && this.studentActivity.studentId) {
-                    const studentToSelect = this.students.find(s => s.id === this.studentActivity.studentId);
-                    if (studentToSelect) {
-                        this.selectedExistingStudents = [studentToSelect];
+                const studentToSelect = this.students.find(s => s.id === this.studentId);
+                if (studentToSelect) {
+                    this.selectedExistingStudents = [studentToSelect];
 
-                    }
                 }
 
                 resolve();
