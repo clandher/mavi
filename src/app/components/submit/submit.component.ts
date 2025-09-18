@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, ValueChangeEvent } from '@angular/forms';
-import { take } from 'rxjs';
+import { filter, take } from 'rxjs';
 
 @Component({
 	selector: 'app-submit',
@@ -13,6 +13,7 @@ import { take } from 'rxjs';
 export class SubmitComponent {
 	@Input() form?: FormGroup;
 	@Input() disabled: boolean = false;
+	@Input() isModal: boolean = true;
 	@Input() submitText: string = 'Guardar';
 	@Input() submit!: () => Promise<any>;
 	@Output() discard: EventEmitter<void> = new EventEmitter<void>();
@@ -21,26 +22,18 @@ export class SubmitComponent {
 	private _originalValue: any;
 
 	ngOnInit() {
-		this.form?.events.pipe(take(1)).subscribe((event) => {
-			if (event instanceof ValueChangeEvent) {
-				this._originalValue = event.value;
-			}
+		this.form?.events.pipe(filter(event => event instanceof ValueChangeEvent), take(1)).subscribe((event) => {
+			this._originalValue = event.value;
+			this.form?.markAsPristine();
 		});
 	}
 
 	async onDiscard() {
-		if (this.form?.pristine) {
-			return;
-		}
 		this.form?.reset(this._originalValue);
 		this.discard.emit();
 	}
 
 	async onSubmit() {
-		if (this.loading || this.disabled || (this.form && this.form.invalid)) {
-			return;
-		}
-
 		this.loading = true;
 		try {
 			await this.submit();

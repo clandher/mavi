@@ -1,4 +1,4 @@
-<form [formGroup]="studentForm" (ngSubmit)="saveStudent()">
+<form [formGroup]="studentForm">
     <div class="flex gap-3 items-center">
         <label for="photo" class="photo-label">
             <img *ngIf="studentForm.value.photo; else placeholder" [src]="studentForm.value.photoUrl"
@@ -45,8 +45,7 @@
 
 </form>
 
-<app-submit [form]="studentForm" [disabled]="studentForm.invalid" [submit]="saveStudent.bind(this)" submitText="Guardar"
-    (discard)="closeModal()">
+<app-submit [form]="studentForm" [submit]="saveStudent.bind(this)" (discard)="closeModal()" [isModal]="false">
 </app-submit>
 <br>
 

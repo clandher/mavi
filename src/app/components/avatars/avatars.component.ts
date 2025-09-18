@@ -12,10 +12,11 @@ import { ActivityComponent } from "../activity/activity.component";
 import { uploadStudentPhoto } from '@app/core/helpers';
 import { ObservationsComponent } from "../observations";
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
+import { StudentEditComponent } from '../students/student-edit.component';
 
 @Component({
 	standalone: true,
-	imports: [CommonModule, FormsModule, PaymentComponent, InscriptionComponent, ActivityComponent, ObservationsComponent, CurrencyMXPipe],
+	imports: [CommonModule, FormsModule, PaymentComponent, InscriptionComponent, ActivityComponent, ObservationsComponent, CurrencyMXPipe, StudentEditComponent],
 	templateUrl: './avatars.component.html',
 	styleUrl: './avatars.component.scss'
 })
@@ -211,6 +212,7 @@ export class AvatarsComponent {
 
 
 
+	public newStudentModalVisible: boolean = false;
 	public newEventModalVisible: boolean = false;
 	public showObservations: boolean = false;
 

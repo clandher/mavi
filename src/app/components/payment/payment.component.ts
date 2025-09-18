@@ -10,7 +10,7 @@ import { VoucherHelper } from '@app/core/voucher.helper';
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 import { SchoolService } from '@app/core/school.service';
 import { SubmitComponent } from '../submit/submit.component';
-import { catchError, firstValueFrom, switchMap, tap } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
@@ -62,6 +62,8 @@ export class PaymentComponent implements OnChanges {
         const chargersAPI = new BaseHttp(`chargers?${qb}`, this.http);
         chargersAPI.get<Charge[]>().subscribe(result => {
             this.charges = result.sort((a, b) => new Date(a.chargeDate).getTime() - new Date(b.chargeDate).getTime());
+            this.formGroup.patchValue({ paymentAmount: this.getTotalDebt() });
+            this.formGroup.markAsDirty();
         });
     }
 

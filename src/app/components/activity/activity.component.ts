@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -17,9 +17,9 @@ import { MaviValidators } from '@app/core/mavi-validators';
     templateUrl: './activity.component.html',
     styleUrls: ['./activity.component.scss']
 })
-export class ActivityComponent implements OnInit {
+export class ActivityComponent {
     public todayDatetimeLocal: string = dateToDatetimeLocalString(new Date());
-    @Input() activityId: number | null = 0;
+    @Input() activityId: number = 0;
 
     @Output() complete = new EventEmitter<boolean>();
 
@@ -27,7 +27,10 @@ export class ActivityComponent implements OnInit {
     public categories: Category[] = [];
     public activityForm: FormGroup;
 
-    constructor(private http: HttpClient, private fb: FormBuilder) {
+    constructor(
+        private http: HttpClient,
+        private fb: FormBuilder,
+    ) {
         this.activityForm = this.fb.group({
             description: ['Nueva actividad...', MaviValidators.required()],
             startDate: [
@@ -51,22 +54,10 @@ export class ActivityComponent implements OnInit {
         });
     }
 
-    ngOnInit(): void {
+    ngAfterViewInit(): void {
         this.loadCategories();
         this.loadActivityTypes();
-
-        if (this.activityId && this.activityId > 0) {
-            this.loadActivity(this.activityId);
-        }
-
-        if (this.activityId !== 0) {
-            this.activityForm.get('categoryId')?.disable();
-            this.activityForm.get('typeId')?.disable();
-            this.activityForm.get('startDate')?.disable();
-            this.activityForm.get('endDate')?.disable();
-            this.activityForm.get('gracePeriod')?.disable();
-            this.activityForm.get('price')?.disable();
-        }
+        this.loadActivity(this.activityId);
     }
 
     loadCategories() {
@@ -75,6 +66,7 @@ export class ActivityComponent implements OnInit {
             this.categories = result;
             if (this.activityId === 0 && this.categories.length > 0) {
                 this.activityForm.patchValue({ categoryId: this.categories[0].id });
+                this.activityForm.markAsDirty();
             }
         });
     }
@@ -87,24 +79,33 @@ export class ActivityComponent implements OnInit {
     }
 
     loadActivity(id: number) {
-        const activityAPI = new BaseHttp(`activities/${id}`, this.http);
-        activityAPI.get<Activity>().subscribe(result => {
-            this.activityForm.patchValue({
-                description: result.description,
-                startDate: dateToDatetimeLocalString(new Date(result.startDate)),
-                endDate: dateToDatetimeLocalString(new Date(result.endDate)),
-                gracePeriod: result.gracePeriod,
-                price: result.price,
-                categoryId: result.categoryId,
-                typeId: result.typeId
+
+        if (this.activityId > 0) {
+            const activityAPI = new BaseHttp(`activities/${id}`, this.http);
+            activityAPI.get<Activity>().subscribe(result => {
+                this.activityForm.patchValue({
+                    description: result.description,
+                    startDate: dateToDatetimeLocalString(new Date(result.startDate)),
+                    endDate: dateToDatetimeLocalString(new Date(result.endDate)),
+                    gracePeriod: result.gracePeriod,
+                    price: result.price,
+                    categoryId: result.categoryId,
+                    typeId: result.typeId
+                });
             });
-        });
+
+            this.activityForm.get('categoryId')?.disable({ emitEvent: false });
+            this.activityForm.get('typeId')?.disable({ emitEvent: false });
+            this.activityForm.get('startDate')?.disable({ emitEvent: false });
+            this.activityForm.get('endDate')?.disable({ emitEvent: false });
+            this.activityForm.get('gracePeriod')?.disable({ emitEvent: false });
+            this.activityForm.get('price')?.disable({ emitEvent: false });
+        }
     }
 
     closeModal(): void {
-        this.complete.emit(true);
+        this.complete.emit(false);
     }
-
 
     saveActivity(): Promise<void> {
         return new Promise((resolve, reject) => {
@@ -117,7 +118,7 @@ export class ActivityComponent implements OnInit {
 
                 const activitiesAPI = new BaseHttp(`activities/${this.activityId}`, this.http);
                 activitiesAPI.patch<CreateActivityDto, Activity>(activityToSave).subscribe({
-                    next: () => { this.closeModal(); resolve(); },
+                    next: () => { this.complete.emit(false); resolve(); },
                     error: (err) => { console.error('Error al actualizar la actividad:', err); reject(err); }
                 });
             } else {
@@ -130,7 +131,7 @@ export class ActivityComponent implements OnInit {
 
                 const activitiesAPI = new BaseHttp('activities', this.http);
                 activitiesAPI.post<CreateActivityDto, Activity>(activityToSave).subscribe({
-                    next: () => { this.closeModal(); resolve(); },
+                    next: () => { this.complete.emit(false); resolve(); },
                     error: (err) => { console.error('Error al crear la actividad:', err); reject(err); }
                 });
             }

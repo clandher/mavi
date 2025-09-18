@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -9,18 +9,21 @@ import { uploadStudentPhoto } from '@app/core/helpers';
 import { FormGroupComponent } from '../form-group/form-group.component';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { SubmitComponent } from '../submit/submit.component';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
     standalone: true,
-    imports: [CommonModule, FormsModule, RouterModule, FormGroupComponent, ReactiveFormsModule, SubmitComponent],
+    selector: 'app-student-edit',
+    imports: [CommonModule, FormsModule, RouterModule, FormGroupComponent, NgxMaskDirective, ReactiveFormsModule, SubmitComponent],
     templateUrl: './student-edit.component.html',
     styleUrls: ['./student-edit.component.scss']
 })
 export class StudentEditComponent {
+    @Output() complete = new EventEmitter<boolean>();
 
     private pendingPhotoFile: File | null = null;
 
-    studentForm: FormGroup;
+    public studentForm: FormGroup;
 
     constructor(
         private route: ActivatedRoute,
@@ -29,7 +32,6 @@ export class StudentEditComponent {
         private fb: FormBuilder
     ) {
         this.studentForm = this.fb.group({
-            id: [0],
             name: [''],
             birthdate: [''],
             nick: [''],
@@ -37,12 +39,12 @@ export class StudentEditComponent {
             photoUrl: [''],
             curp: [''],
             phone: [''],
-            placeOfBirth: ['']
+            placeOfBirth: [''],
         });
     }
 
     ngAfterViewInit(): void {
-        const studentId = this.route.snapshot.paramMap.get('id');
+        const studentId = this.route.snapshot.paramMap.get('id') ?? 0;
         if (!studentId) {
             this.studentForm.patchValue({
                 id: 0,
@@ -51,6 +53,28 @@ export class StudentEditComponent {
         } else {
             this._loadStudent(+studentId!);
         }
+    }
+
+    private _loadStudent(studentId: number): void {
+        const studentsAPI = new BaseHttp(`students/${studentId}`, this.http);
+        studentsAPI.get<Student>().subscribe({
+            next: (student) => {
+                this.studentForm.patchValue({
+                    name: student.name,
+                    birthdate: new Date(student.birthdate).toISOString().slice(0, 10),
+                    curp: student.curp,
+                    phone: student.phone,
+                    placeOfBirth: student.placeOfBirth,
+                    nick: student.nick,
+                    photo: student.photo,
+                    photoUrl: buildUrl(`students/${studentId}/photo`),
+                });
+            },
+            error: (err) => {
+                console.error('Error loading student', err);
+                this.router.navigate(['/app/estudiantes']);
+            }
+        });
     }
 
     public async saveStudent(): Promise<void> {
@@ -101,28 +125,7 @@ export class StudentEditComponent {
         this.router.navigate(['/app/estudiantes', student.id, 'editar']);
     }
 
-    private _loadStudent(studentId: number): void {
-        const studentsAPI = new BaseHttp(`students/${studentId}`, this.http);
-        studentsAPI.get<Student>().subscribe({
-            next: (student) => {
-                this.studentForm.patchValue({
-                    id: student.id,
-                    name: student.name,
-                    birthdate: new Date(student.birthdate).toISOString().slice(0, 10),
-                    curp: student.curp,
-                    phone: student.phone,
-                    placeOfBirth: student.placeOfBirth,
-                    nick: student.nick,
-                    photo: student.photo,
-                    photoUrl: buildUrl(`students/${studentId}/photo`)
-                });
-            },
-            error: (err) => {
-                console.error('Error loading student', err);
-                this.router.navigate(['/app/estudiantes']);
-            }
-        });
-    }
+
 
     onPhotoSelected(event: Event) {
         if (this.studentForm.value.id > 0) {
@@ -163,6 +166,6 @@ export class StudentEditComponent {
     }
 
     closeModal(): void {
-
+        this.complete.emit(false);
     }
 }
