@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -43,7 +43,6 @@ export class StudentEditComponent {
 
     ngAfterViewInit(): void {
         const studentId = this.route.snapshot.paramMap.get('id');
-
         if (!studentId) {
             this.studentForm.patchValue({
                 id: 0,
@@ -67,6 +66,10 @@ export class StudentEditComponent {
         const updateStudentDto: UpdateStudentDto = {
             name: this.studentForm.value.name,
             birthdate: new Date(this.studentForm.value.birthdate),
+            curp: this.studentForm.value.curp,
+            phone: this.studentForm.value.phone,
+            placeOfBirth: this.studentForm.value.placeOfBirth,
+            nick: this.studentForm.value.nick
         };
 
         await studentsAPI.patch(updateStudentDto).toPromise();
@@ -77,6 +80,10 @@ export class StudentEditComponent {
         const createStudentDto: CreateStudentDto = {
             name: this.studentForm.value.name,
             birthdate: new Date(this.studentForm.value.birthdate),
+            curp: this.studentForm.value.curp,
+            phone: this.studentForm.value.phone,
+            placeOfBirth: this.studentForm.value.placeOfBirth,
+            nick: this.studentForm.value.nick
         };
 
         const student = await studentsAPI.post<CreateStudentDto, Student>(createStudentDto).toPromise();
@@ -102,6 +109,10 @@ export class StudentEditComponent {
                     id: student.id,
                     name: student.name,
                     birthdate: new Date(student.birthdate).toISOString().slice(0, 10),
+                    curp: student.curp,
+                    phone: student.phone,
+                    placeOfBirth: student.placeOfBirth,
+                    nick: student.nick,
                     photo: student.photo,
                     photoUrl: buildUrl(`students/${studentId}/photo`)
                 });
@@ -152,7 +163,6 @@ export class StudentEditComponent {
     }
 
     closeModal(): void {
-        // Implementar lógica para cerrar el modal o realizar acciones al descartar
-        console.log('Modal cerrado');
+
     }
 }

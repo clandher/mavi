@@ -1,4 +1,3 @@
-
 export class ApiRes<T> {
     data!: T[];
 }
@@ -28,6 +27,10 @@ export class Student {
     nick!: string;
 
     birthdate!: string;
+    curp!: string;
+    phone!: string;
+    placeOfBirth!: string;
+
 
     debt!: number;
     photo!: string;
@@ -43,6 +46,10 @@ export class Student {
 export class CreateStudentDto {
     name!: string;
     birthdate!: Date;
+    curp?: string;
+    phone?: string;
+    placeOfBirth?: string;
+    nick?: string;
 }
 
 export class UpdateStudentDto extends CreateStudentDto {

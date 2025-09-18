@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormGroup } from '@angular/forms';
+import { FormGroup, ValueChangeEvent } from '@angular/forms';
+import { take } from 'rxjs';
 
 @Component({
 	selector: 'app-submit',
@@ -17,9 +18,21 @@ export class SubmitComponent {
 	@Output() discard: EventEmitter<void> = new EventEmitter<void>();
 
 	public loading = false;
+	private _originalValue: any;
+
+	ngOnInit() {
+		this.form?.events.pipe(take(1)).subscribe((event) => {
+			if (event instanceof ValueChangeEvent) {
+				this._originalValue = event.value;
+			}
+		});
+	}
 
 	async onDiscard() {
-		this.form?.reset();
+		if (this.form?.pristine) {
+			return;
+		}
+		this.form?.reset(this._originalValue);
 		this.discard.emit();
 	}
 
@@ -31,6 +44,8 @@ export class SubmitComponent {
 		this.loading = true;
 		try {
 			await this.submit();
+			this._originalValue = this.form?.getRawValue();
+			this.form?.markAsPristine();
 		} finally {
 			this.loading = false;
 		}
