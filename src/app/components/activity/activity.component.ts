@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp } from '@app/core/base-http';
 import { Activity, ActivityType, CreateActivityDto, Category } from '@app/core/dto';
-import { dateToDatetimeLocalString } from '@app/core/helpers';
+import { dateToDatetimeLocalString, setFocus } from '@app/core/helpers';
 import { FormGroupComponent } from "../form-group/form-group.component";
 import { SubmitComponent } from '../submit/submit.component';
 import { NgxMaskDirective } from 'ngx-mask';
@@ -92,6 +92,9 @@ export class ActivityComponent {
                     categoryId: result.categoryId,
                     typeId: result.typeId
                 });
+
+                setFocus('description');
+
             });
 
             this.activityForm.get('categoryId')?.disable({ emitEvent: false });
@@ -100,6 +103,9 @@ export class ActivityComponent {
             this.activityForm.get('endDate')?.disable({ emitEvent: false });
             this.activityForm.get('gracePeriod')?.disable({ emitEvent: false });
             this.activityForm.get('price')?.disable({ emitEvent: false });
+
+        } else {
+            setFocus('description');
         }
     }
 

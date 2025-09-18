@@ -3,7 +3,7 @@
 		<h2 class="text-xl font-semibold mb-4">{{ activityId !== 0 ? 'Editar actividad' : 'Nueva actividad' }}</h2>
 		<form [formGroup]="activityForm" (ngSubmit)="saveActivity()">
 			<app-form-group [title]="'Descripción'" [control]="activityForm.get('description')" class="form-group">
-				<input id="newActivityDescription" type="text" formControlName="description" class="form-control"
+				<input id="description" type="text" formControlName="description" class="form-control"
 					[readonly]="false">
 			</app-form-group>
 			<div class="flex gap-4 justify-between">

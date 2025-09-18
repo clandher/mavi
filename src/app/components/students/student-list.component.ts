@@ -9,6 +9,7 @@ import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { PaymentComponent } from "../payment/payment.component";
+import { setFocus } from '@app/core/helpers';
 
 @Component({
     standalone: true,
@@ -49,6 +50,7 @@ export class StudentListComponent implements OnInit {
     ngOnInit(): void {
         this.loadStudents();
         this.loadCategories();
+        setFocus('search');
     }
 
     loadStudents(): void {

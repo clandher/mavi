@@ -12,6 +12,7 @@ import { SchoolService } from '@app/core/school.service';
 import { SubmitComponent } from '../submit/submit.component';
 import { firstValueFrom } from 'rxjs';
 import { NgxMaskDirective } from 'ngx-mask';
+import { setFocus } from '@app/core/helpers';
 
 @Component({
     selector: 'app-payment',
@@ -64,6 +65,7 @@ export class PaymentComponent implements OnChanges {
             this.charges = result.sort((a, b) => new Date(a.chargeDate).getTime() - new Date(b.chargeDate).getTime());
             this.formGroup.patchValue({ paymentAmount: this.getTotalDebt() });
             this.formGroup.markAsDirty();
+            setTimeout(() => setFocus('paymentAmount'), 50);
         });
     }
 

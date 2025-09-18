@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { CreateStudentDto, Student, UpdateStudentDto } from '@app/core/dto';
-import { uploadStudentPhoto } from '@app/core/helpers';
+import { setFocus, uploadStudentPhoto } from '@app/core/helpers';
 import { FormGroupComponent } from '../form-group/form-group.component';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { SubmitComponent } from '../submit/submit.component';
@@ -50,6 +50,7 @@ export class StudentEditComponent {
                 id: 0,
                 birthdate: new Date().toISOString().slice(0, 10)
             });
+            setFocus('name');
         } else {
             this._loadStudent(+studentId!);
         }
@@ -69,6 +70,7 @@ export class StudentEditComponent {
                     photo: student.photo,
                     photoUrl: buildUrl(`students/${studentId}/photo`),
                 });
+                setFocus('name', false);
             },
             error: (err) => {
                 console.error('Error loading student', err);

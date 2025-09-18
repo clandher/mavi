@@ -54,3 +54,14 @@ export function uploadStudentPhoto(event: Event, student: Student, http: HttpCli
     };
     reader.readAsDataURL(file);
 }
+
+export function setFocus(elementId: string, select: boolean = true) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        (element as HTMLElement).focus();
+        if (select) {
+            (element as HTMLInputElement).select();
+        }
+    }
+}
+

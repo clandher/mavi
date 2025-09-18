@@ -1,18 +1,22 @@
 <div class="modal-overlay">
-  <div class="modal-content">
-    <h2 class="text-xl font-semibold mb-4">Nuevo cobro</h2>
-    <div class="form-group mt-4">
-      <label for="amountToBePaid" class="form-label">Monto a cobrar</label>
-      <input id="amountToBePaid" type="number" step="0.01" [(ngModel)]="newCharge.amountToBePaid" class="form-control"
-        min="0.01">
-    </div>
-    <div class="form-group mt-4">
-      <label for="concept" class="form-label">Concepto</label>
-      <input id="concept" type="text" [(ngModel)]="newCharge.concept" class="form-control">
-    </div>
-    <div class="flex justify-end space-x-2 mt-4">
-      <button (click)="closeModal()" class="btn btn-outline">Cancelar</button>
-      <button (click)="saveCharge()" class="btn btn-primary">Guardar</button>
-    </div>
-  </div>
+	<div class="modal-content">
+		<h2 class="text-xl font-semibold mb-4">Nuevo cobro</h2>
+
+		<form [formGroup]="formGroup">
+			<app-form-group title="Monto a cobrar" [control]="formGroup.get('amountToBePaid')">
+				<input id="amountToBePaid" type="text" formControlName="amountToBePaid" class="form-control"
+					mask="separator.2" [thousandSeparator]="','" [decimalMarker]="'.'" [allowNegativeNumbers]="false"
+					min="0.01">
+			</app-form-group>
+			<app-form-group title="Concepto" [control]="formGroup.get('concept')">
+				<input id="concept" type="text" formControlName="concept" class="form-control">
+			</app-form-group>
+		</form>
+
+		<div class="flex justify-end space-x-2 mt-4">
+			<app-submit [form]="formGroup" submitText="Guardar" [submit]="saveCharge.bind(this)"
+				(discard)="closeModal()">
+			</app-submit>
+		</div>
+	</div>
 </div>
