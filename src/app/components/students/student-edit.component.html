@@ -1,32 +1,55 @@
-<form (ngSubmit)="saveStudent()" class="flex gap-3 items-center">
-    <label for="photo" class="photo-label">
-        <img *ngIf="student.photo; else placeholder" [src]="student.photoUrl" class="student-photo" alt="Foto">
-        <ng-template #placeholder>
-            <div class="photo-placeholder">+</div>
-        </ng-template>
-        <input id="photo" type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden>
-    </label>
+<form [formGroup]="studentForm" (ngSubmit)="saveStudent()">
+    <div class="flex gap-3 items-center">
+        <label for="photo" class="photo-label">
+            <img *ngIf="studentForm.value.photo; else placeholder" [src]="studentForm.value.photoUrl"
+                class="student-photo" alt="Foto">
+            <ng-template #placeholder>
+                <div class="photo-placeholder">+</div>
+            </ng-template>
+            <input id="photo" type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden>
+        </label>
 
-    <div class="form-group flex-2">
-        <label for="search" class="form-label">Nombre:</label>
-        <input id="name" type="text" class="form-control" [(ngModel)]="student.name" name="name" required
+        <app-form-group class="flex-2" title="Nombre:" [control]="studentForm.get('name')" name="name" required
             placeholder="Nombre">
+            <input id="name" type="text" class="form-control" formControlName="name" placeholder="Nombre">
+        </app-form-group>
+
+        <app-form-group class="flex-2" title="Fecha de nacimiento" [control]="studentForm.get('birthdate')"
+            name="birthdate" required type="date">
+            <input id="birthdate" type="date" class="form-control" formControlName="birthdate">
+        </app-form-group>
+    </div>
+    
+    <div class="flex gap-3 items-center">
+        <app-form-group class="flex-2" title="CURP:" [control]="studentForm.get('curp')" name="curp" placeholder="CURP">
+            <input id="curp" type="text" class="form-control" formControlName="curp" placeholder="CURP">
+        </app-form-group>
+
+        <app-form-group class="flex-2" title="Teléfono:" [control]="studentForm.get('phone')" name="phone"
+            placeholder="Teléfono">
+            <input id="phone" type="text" class="form-control" formControlName="phone" placeholder="Teléfono">
+        </app-form-group>
+
+        <app-form-group class="flex-2" title="Lugar de nacimiento:" [control]="studentForm.get('placeOfBirth')"
+            name="placeOfBirth" placeholder="Lugar de nacimiento">
+            <input id="placeOfBirth" type="text" class="form-control" formControlName="placeOfBirth"
+                placeholder="Lugar de nacimiento">
+        </app-form-group>
     </div>
 
-    <div class="form-group flex-2">
-        <label for="search" class="form-label">Fecha de nacimiento:</label>
-        <input id="birthdate" type="date" class="form-control" [(ngModel)]="student.birthdate" name="birthdate"
-            required>
+    <div class="flex gap-3 items-center">
+        <app-form-group class="flex-2" title="Apodo:" [control]="studentForm.get('nick')" name="nick" placeholder="Apodo">
+            <input id="nick" type="text" class="form-control" formControlName="nick" placeholder="Apodo">
+        </app-form-group>
     </div>
 
-    <button type="submit" class="btn btn-primary mt-4 self-end" [disabled]="isSaving">
-        <span *ngIf="!isSaving">Guardar</span>
-        <span *ngIf="isSaving">Guardando...</span>
-    </button>
+    <app-submit [form]="studentForm" [disabled]="studentForm.invalid" [submit]="saveStudent.bind(this)"
+        submitText="Guardar" (discard)="closeModal()">
+    </app-submit>
 </form>
 <br>
 
-@if (student.id !== 0){
+@if (studentForm.value.id !== 0){
 <div class="mavi-tabs">
     <button routerLink="info" routerLinkActive="selected" [routerLinkActiveOptions]="{ exact: true }" class="mavi-tab">
         General

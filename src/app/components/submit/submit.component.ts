@@ -19,6 +19,7 @@ export class SubmitComponent {
 	public loading = false;
 
 	async onDiscard() {
+		this.form?.reset();
 		this.discard.emit();
 	}
 
