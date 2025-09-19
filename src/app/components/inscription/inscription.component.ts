@@ -195,6 +195,8 @@ export class InscriptionComponent implements OnInit {
         } else {
             this.selectedExistingStudents.push(student);
         }
+
+        this.form.markAsDirty();
     }
 
     async onInscription() {
