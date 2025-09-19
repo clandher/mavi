@@ -51,6 +51,7 @@
 
 						<div>
 							<div>{{ student.nick ? student.nick : student.name }}</div>
+							{{student.activities.length}} actividades
 							<span *ngIf="hasActivityAssigned(student)"
 								class="mavi-tag me-2 mavi-tag--primary">Inscrito</span>
 							<span *ngFor="let category of student.categories" class="mavi-tag me-2">
@@ -82,9 +83,9 @@
 		<div class="modal-footer">
 			<div class="flex justify-end space-x-2 mt-4">
 				<button (click)="onCancel()" class="btn btn-outline">Cancelar</button>
-				<button (click)="onInscription()"
-					[disabled]="(activeTab === 'existing' && selectedExistingStudents.length === 0) || (activeTab === 'new' && !newStudent.name)"
-					class="btn btn-primary">{{ activeTab === 'existing' ? 'Inscribir' : 'Crear e inscribir' }}</button>
+				<button (click)="onInscription()" [disabled]="isSubmitting || (activeTab === 'existing' && selectedExistingStudents.length === 0) || (activeTab === 'new' && !newStudent.name)" class="btn btn-primary">
+				  {{ activeTab === 'existing' ? 'Inscribir' : 'Crear e inscribir' }}
+				</button>
 			</div>
 		</div>
 	</div>

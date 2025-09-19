@@ -48,7 +48,6 @@ export class AuthService {
         const authLogin = new BaseHttp('auth/login', this.http);
         return authLogin.post(credentials).pipe(
             tap((response: any) => {
-                // Guardar token y redirigir
                 localStorage.setItem('auth_token', response.token);
                 localStorage.setItem('user_data', JSON.stringify(response.user));
                 this._loadUserFromStorage();

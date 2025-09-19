@@ -286,7 +286,7 @@ export class AvatarsComponent {
 
 	getNonRecurrentActivitiesForStudent(studentActivity: StudentActivity): Activity[] {
 		// if (!studentActivity.student || !this.activities) return [];
-		const enrolledActivityIds = studentActivity.student.activities
+		const enrolledActivityIds = (studentActivity.student.activities || [])
 			.filter(sa => sa.student.id === studentActivity.student.id)
 			.map(sa => sa.activity.id);
 

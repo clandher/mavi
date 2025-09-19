@@ -97,7 +97,7 @@
 
 			<app-submit [form]="formGroup"
 				[disabled]="formGroup.get('paymentAmount')?.value <= 0 || formGroup.get('paymentAmount')?.value > getTotalDebt()"
-				[submit]="onSubmit.bind(this)" submitText="Guardar" (discard)="onDiscard()">
+				[submit]="onSubmit.bind(this)" (discard)="onDiscard()">
 			</app-submit>
 		</div>
 	</div>

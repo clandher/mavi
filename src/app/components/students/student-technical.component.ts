@@ -76,20 +76,18 @@ export class StudentTechnicalComponent implements OnInit {
 				// Puedes mostrar un mensaje de éxito o redirigir
 			},
 			error: (err) => {
-				// Manejo de error
-				console.error('Error al guardar ficha técnica', err);
+
 			}
 		});
 	}
 
 	saveObservation(obs: StudentObservation) {
-		// Guardar la observación individual
 		this.http.patch(buildUrl(`student-observations/${obs.id}`), { observation: obs.observation }).subscribe({
 			next: () => {
 				// Puedes mostrar un mensaje de éxito
 			},
 			error: (err) => {
-				console.error('Error al guardar observación', err);
+
 			}
 		});
 	}

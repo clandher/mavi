@@ -7,16 +7,17 @@ import { Activity, ActivityType, Category, CreateActivityDto, Student, StudentAc
 import { formatDateForDisplay } from '@app/core/helpers';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { ActivatedRoute } from '@angular/router';
+import { SubmitComponent } from "../submit/submit.component";
 
 @Component({
     selector: 'app-inscription',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, SubmitComponent],
     templateUrl: './inscription.component.html',
     styleUrls: ['./inscription.component.scss']
 })
 export class InscriptionComponent implements OnInit {
-
+    isSubmitting: boolean = false;
     private sortStudents(): Student[] {
         return this.filteredStudents.slice().sort((a, b) => {
             const hasCategoryA = a.categories && a.categories.length > 0 && a.categories.some(sc => sc.categoryId && sc.categoryId !== 0);
@@ -171,22 +172,31 @@ export class InscriptionComponent implements OnInit {
     }
 
     async onInscription() {
-        if (this.activeTab === 'existing' && this.selectedExistingStudents.length > 0) {
-            const promises = this.selectedExistingStudents.map(async student => {
-                const hasCategory = student.categories.some(sc => sc.categoryId === Number(this.newCategoryId));
-                if (!hasCategory) {
-                    const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http);
-                    await studentCategoriesAPI.post({ studentId: student.id, categoryId: Number(this.newCategoryId) }).toPromise();
-                }
-                await this._addStudentToActivityAsync(student);
-            });
+        if (this.isSubmitting) return;
+        this.isSubmitting = true;
 
-            await Promise.all(promises);
+        try {
+            if (this.activeTab === 'existing' && this.selectedExistingStudents.length > 0) {
+                const promises = this.selectedExistingStudents.map(async student => {
+                    const hasCategory = student.categories.some(sc => sc.categoryId === Number(this.newCategoryId));
+                    if (!hasCategory) {
+                        const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http);
+                        await studentCategoriesAPI.post({ studentId: student.id, categoryId: Number(this.newCategoryId) }).toPromise();
+                    }
+                    await this._addStudentToActivityAsync(student);
+                });
 
-            this.complete.emit(true);
-            this.selectedExistingStudents = [];
-        } else if (this.activeTab === 'new' && this.newStudent.name) {
-            this._createNewStudent();
+                await Promise.all(promises);
+
+                this.complete.emit(true);
+                this.selectedExistingStudents = [];
+            } else if (this.activeTab === 'new' && this.newStudent.name) {
+                await this._createNewStudent();
+            }
+        } catch (error) {
+            console.error('Error during inscription:', error);
+        } finally {
+            this.isSubmitting = false;
         }
     }
 

@@ -14,8 +14,7 @@
 		</form>
 
 		<div class="flex justify-end space-x-2 mt-4">
-			<app-submit [form]="formGroup" submitText="Guardar" [submit]="saveCharge.bind(this)"
-				(discard)="closeModal()">
+			<app-submit [form]="formGroup" [submit]="saveCharge.bind(this)" (discard)="closeModal()">
 			</app-submit>
 		</div>
 	</div>
