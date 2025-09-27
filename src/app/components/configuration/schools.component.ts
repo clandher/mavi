@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { ImageHttpClient } from '@app/core/image-http-client';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { SchoolService } from '@app/core/school.service';
 import { School } from '@app/core/dto';
 import { NgIf, NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
 	selector: 'app-schools',
@@ -15,7 +16,11 @@ import { FormsModule } from '@angular/forms';
 export class SchoolsComponent {
 	schools: School[] = [];
 
-	constructor(private http: HttpClient, private schoolService: SchoolService) { }
+	constructor(
+		private imageHttp: ImageHttpClient,
+		private http: HttpClient,
+		private schoolService: SchoolService,
+	) { }
 
 	ngOnInit() {
 		this.getSchools();
@@ -27,7 +32,9 @@ export class SchoolsComponent {
 			next: (data: any) => {
 				this.schools = data.map((school: any) => {
 					if (school.logo) {
-						school.logoUrl = buildUrl(`schools/${school.id}/logo`) + `?t=${new Date().getTime()}`;
+						this.imageHttp.fetch(buildUrl(`schools/${school.id}/logo`) + `?t=${new Date().getTime()}`).subscribe(blobUrl => {
+							school.logoUrl = blobUrl;
+						});
 					}
 					return school;
 				});
