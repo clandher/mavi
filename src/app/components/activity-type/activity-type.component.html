@@ -1,0 +1,19 @@
+<div class="modal-overlay">
+    <div class="modal-content">
+        <h2 class="text-xl font-semibold mb-4">{{ activityTypeId !== 0 ? 'Editar tipo de actividad' : 'Nuevo tipo de actividad' }}</h2>
+        <form [formGroup]="activityTypeForm" (ngSubmit)="saveActivityType()">
+            <app-form-group [title]="'Clave'" [control]="activityTypeForm.get('key')" class="form-group">
+                <input id="key" type="text" formControlName="key" class="form-control" [readonly]="false" autocomplete="off">
+            </app-form-group>
+
+            <app-form-group [title]="'Recurrente'" [control]="activityTypeForm.get('recurrent')" class="form-group">
+                <input id="recurrent" type="checkbox" formControlName="recurrent">
+            </app-form-group>
+
+            <app-form-group [title]="'Regla (opcional)'" [control]="activityTypeForm.get('rule')" class="form-group">
+                <input id="rule" type="text" formControlName="rule" class="form-control" [readonly]="false" autocomplete="off">
+            </app-form-group>
+        </form>
+        <app-submit [form]="activityTypeForm" [submit]="saveActivityType.bind(this)" (discard)="closeModal()"></app-submit>
+    </div>
+</div>

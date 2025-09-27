@@ -44,6 +44,10 @@ export const routes: Routes = [
                     {
                         path: 'categorias',
                         loadComponent: () => import('./components/configuration/categories.component').then(m => m.CategoriesComponent)
+                    },
+                    {
+                        path: 'tipos-de-actividad',
+                        loadComponent: () => import('./components/activity-types/activity-types.component').then(m => m.ActivityTypesComponent)
                     }
                 ]
             },

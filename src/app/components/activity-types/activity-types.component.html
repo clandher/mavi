@@ -1,0 +1,47 @@
+<div *ngIf="showActivityTypeModal">
+    <app-activity-type [activityTypeId]="activityTypeId" (complete)="loadActivityTypes()"></app-activity-type>
+</div>
+
+<div class="mavi-grid">
+    <div *ngFor="let activityType of activityTypes" class="mavi-card">
+        <div class="flex justify-between items-center mb-2">
+            {{ activityType.key }}
+        </div>
+
+        <div class="detail-row">
+            <div class="detail-label">Recurrente</div>
+            <div class="detail-value">
+                {{ activityType.recurrent ? 'Sí' : 'No' }}
+            </div>
+        </div>
+
+        <br>
+        <div class="detail-row" *ngIf="activityType.rule">
+            <div class="detail-label">Periodicidad</div>
+            <div class="detail-value">
+                {{ activityType.rule }}
+            </div>
+        </div>
+
+        <div class="mavi-card-actions mt-4">
+            <button class="btn btn-sm btn-outline" (click)="editActivityType(activityType.id)">
+                Editar
+            </button>
+            <button class="btn btn-sm btn-destructive" (click)="deleteActivityType(activityType.id)" [disabled]="activityType.id <= 2">
+                Eliminar
+            </button>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="activityTypes.length === 0" class="text-gray-500 text-center py-8">
+    No hay tipos de actividad disponibles.
+</div>
+
+<div class="mavi-bottom-actions">
+    <div class="mavi-bottom-actions-inner">
+        <button class="btn btn-secondary" (click)="showActivityTypeModal = true">
+            Nuevo tipo de actividad
+        </button>
+    </div>
+</div>
