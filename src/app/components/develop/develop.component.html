@@ -45,22 +45,30 @@
             </div>
         </div>
     </div>
-    <div *ngSwitchCase="'categories'" [formGroup]="categoryForm">
-        <app-form-group title="Nueva categoría" [control]="categoryForm.get('newCategory')">
-            <input type="text" formControlName="newCategory" placeholder="Nueva categoría" class="form-control" />
-        </app-form-group>
+    <div *ngSwitchCase="'categories'">
+        @if (showCategoryModal) {
+        <app-category [categoryId]="0" (complete)="loadCategories()"></app-category>
+        }
 
-        <div class="flex gap-2 justify-end">
-            <button class="btn btn-primary" (click)="addCategory()">Agregar</button>
-        </div>
 
-        <ul class="category-list" formArrayName="categories">
-            <li *ngFor="let category of categoriesControls; let i = index" [formGroupName]="i"
-                class="flex gap-2 mb-2 items-center">
-                <label class="text-white">{{ category.value.type }}</label>
-                <button class="btn btn-destructive" (click)="deleteCategory(category.value.id, i)">Eliminar</button>
+        <ul class="category-list">
+            <li *ngFor="let category of categories; let i = index" class="flex gap-2 mb-2 items-center">
+                <label class="text-white">{{ category.type }}</label>
+                <button class="btn btn-destructive" (click)="deleteCategory(category.id, i)">Eliminar</button>
             </li>
         </ul>
+
+        <div class="mavi-bottom-actions">
+            <div class="mavi-bottom-actions-inner">
+                <button class="btn btn-secondary" (click)="showCategoryModal = true">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="size-4 me-2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    Nueva categoría
+                </button>
+            </div>
+        </div>
     </div>
 </div>
 

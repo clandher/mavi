@@ -13,6 +13,7 @@ import { ToastrService } from 'ngx-toastr';
 import { SubmitComponent } from '../submit/submit.component';
 import { BtnLoadingComponent } from '../btn-loading/btn-loading.component';
 import { AuthService } from '@app/core/auth.service';
+import { CategoryComponent } from '../category/category.component'; // Importar CategoryComponent
 
 
 interface Category {
@@ -22,7 +23,16 @@ interface Category {
 
 @Component({
     standalone: true,
-    imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, FormGroupComponent, SubmitComponent, BtnLoadingComponent],
+    imports: [
+        CommonModule,
+        RouterModule,
+        FormsModule,
+        ReactiveFormsModule,
+        FormGroupComponent,
+        SubmitComponent,
+        BtnLoadingComponent,
+        CategoryComponent // Agregado CategoryComponent a las importaciones
+    ],
     templateUrl: './develop.component.html',
     styleUrls: ['./develop.component.scss']
 })
@@ -31,12 +41,15 @@ export class DevelopComponent {
     schools: School[] = [];
     selectedSchoolTab: string = 'schools';
 
-    categories: Category[] = [];
-    categoryForm: FormGroup;
 
-    get categoriesControls() {
-        return (this.categoryForm.get('categories') as FormArray).controls;
-    }
+    showCategoryModal: boolean = false;
+
+    categories: Category[] = [];
+    
+    // categoryForm: FormGroup;
+    // get categoriesControls() {
+    //     return (this.categoryForm.get('categories') as FormArray).controls;
+    // }
 
     private categoryAPI: BaseHttp;
 
@@ -47,10 +60,10 @@ export class DevelopComponent {
         private toastr: ToastrService,
         public authService: AuthService,
     ) {
-        this.categoryForm = this.fb.group({
-            newCategory: ['', [MaviValidators.required()]],
-            categories: this.fb.array([])
-        });
+        // this.categoryForm = this.fb.group({
+        //     newCategory: ['', [MaviValidators.required()]],
+        //     categories: this.fb.array([])
+        // });
 
 
         this.categoryAPI = new BaseHttp('categories', this.http);
@@ -131,6 +144,8 @@ export class DevelopComponent {
     }
 
     loadCategories(): void {
+        this.showCategoryModal = false;
+
         this.categoryAPI.sub('with-activity-count').get<Category[]>().subscribe(
             (data) => {
                 this.categories = data;
@@ -138,7 +153,7 @@ export class DevelopComponent {
                     id: category.id,
                     type: category.type
                 }));
-                this.categoryForm.setControl('categories', this.fb.array(categoryControls));
+                // this.categoryForm.setControl('categories', this.fb.array(categoryControls));
             },
             (error) => {
                 console.error('Error loading categories:', error);
@@ -146,42 +161,42 @@ export class DevelopComponent {
         );
     }
 
-    addCategory(): void {
-        const newCategory = this.categoryForm.get('newCategory')?.value;
-        if (!newCategory || !newCategory.trim()) return;
+    // addCategory(): void {
+    //     const newCategory = this.categoryForm.get('newCategory')?.value;
+    //     if (!newCategory || !newCategory.trim()) return;
 
-        // Validar que la categoría no exista (ignorando mayúsculas/minúsculas y espacios)
-        const exists = this.categories.some(
-            cat => cat.type.trim().toLowerCase() === newCategory.trim().toLowerCase()
-        );
-        if (exists) {
-            this.categoryForm.get('newCategory')?.setErrors({ message: 'La categoría ya existe.' });
-            return;
-        }
+    //     // Validar que la categoría no exista (ignorando mayúsculas/minúsculas y espacios)
+    //     const exists = this.categories.some(
+    //         cat => cat.type.trim().toLowerCase() === newCategory.trim().toLowerCase()
+    //     );
+    //     if (exists) {
+    //         this.categoryForm.get('newCategory')?.setErrors({ message: 'La categoría ya existe.' });
+    //         return;
+    //     }
 
-        const category = { type: newCategory };
-        this.categoryAPI.post<typeof category, Category>(category).subscribe(
-            (createdCategory) => {
-                this.categories.push(createdCategory);
-                const categoriesArray = this.categoryForm.get('categories') as FormArray;
-                categoriesArray.push(this.fb.group({
-                    id: createdCategory.id,
-                    type: createdCategory.type
-                }));
-                this.categoryForm.get('newCategory')?.reset();
-            },
-            (error) => {
-                console.error('Error adding category:', error);
-            }
-        );
-    }
+    //     const category = { type: newCategory };
+    //     this.categoryAPI.post<typeof category, Category>(category).subscribe(
+    //         (createdCategory) => {
+    //             this.categories.push(createdCategory);
+    //             const categoriesArray = this.categoryForm.get('categories') as FormArray;
+    //             categoriesArray.push(this.fb.group({
+    //                 id: createdCategory.id,
+    //                 type: createdCategory.type
+    //             }));
+    //             this.categoryForm.get('newCategory')?.reset();
+    //         },
+    //         (error) => {
+    //             console.error('Error adding category:', error);
+    //         }
+    //     );
+    // }
 
     deleteCategory(categoryId: number, index: number): void {
         this.categoryAPI.delete<void>(categoryId).subscribe({
             next: () => {
                 this.categories = this.categories.filter((cat) => cat.id !== categoryId);
-                const categoriesArray = this.categoryForm.get('categories') as FormArray;
-                categoriesArray.removeAt(index);
+                // const categoriesArray = this.categoryForm.get('categories') as FormArray;
+                // categoriesArray.removeAt(index);
             },
             error: (error) => {
                 console.error('Error deleting category:', error);
