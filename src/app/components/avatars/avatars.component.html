@@ -23,6 +23,12 @@
 </div>
 <br>
 
+@if(selectedActivityId === 0){
+<div class="text-gray-500 text-center py-8">
+	Esta categoría no tiene actividades asociadas.
+</div>
+} @else {
+
 <div class="mavi-tabs">
 	<button class="mavi-tab" [ngClass]="{ selected: selectedActivityId === activity.id }" [title]="activity.details"
 		*ngFor="let activity of activitiesByCategory; let i = index" (click)="onActivityChange(activity.id, i)">
@@ -113,6 +119,11 @@
 	</div>
 </div>
 
+<div *ngIf="studentActivities.length === 0" class="text-gray-500 text-center py-8">
+  Presiona el círculo de '+' para agregar estudiantes a la actividad.
+</div>
+}
+
 <app-payment *ngIf="showPaymentModal" [studentId]="selectedStudentActivity?.student?.id!"
 	(complete)="onPaymentComplete($event)">
 </app-payment>
@@ -122,13 +133,6 @@
 
 <app-activity *ngIf="newEventModalVisible" [activityId]="newActivityId!" (complete)="onActivityComplete($event)">
 </app-activity>
-
-<!-- <div class="modal-overlay" *ngIf="newStudentModalVisible">
-	<div class="modal-content">
-		<app-student-edit (complete)="newStudentModalVisible = false">
-		</app-student-edit>
-	</div>
-</div> -->
 
 <app-observations *ngIf="showObservations" [studentId]="selectedStudentActivity?.studentId!"
 	(complete)="onObservationsComplete($event)">
@@ -155,16 +159,7 @@
 			Editar actividad
 		</button>
 
-		<!-- <button class="btn btn-secondary ms-2" (click)="newStudentModalVisible = true" [disabled]="!selectedActivityId">
-			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-				stroke="currentColor" class="size-4 me-2">
-				<path stroke-linecap="round" stroke-linejoin="round"
-					d="M16.862 4.487a2.1 2.1 0 1 1 2.97 2.97L7.5 19.789l-4 1 1-4 12.362-12.302Z" />
-			</svg>
-			Modal estudiante
-		</button> -->
-
-		<button class="btn btn-secondary ms-2" (click)="onNewActivity()" [disabled]="!selectedActivityId">
+		<button class="btn btn-secondary ms-2" (click)="onNewActivity()">
 			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
 				stroke="currentColor" class="size-4 me-2">
 				<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />

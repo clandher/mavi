@@ -1,0 +1,90 @@
+.schools-list {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    color: #fff;
+}
+
+.school-card {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 16px;
+    padding: 24px 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.school-header {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+}
+
+.logo-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.school-logo-large {
+    width: 96px;
+    height: 96px;
+    border-radius: 16px;
+    object-fit: cover;
+    background: #eee;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    transition: box-shadow 0.2s;
+}
+
+.school-logo-large:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+}
+
+.logo-placeholder-large {
+    width: 96px;
+    height: 96px;
+    border-radius: 16px;
+    background: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3em;
+    color: #bbb;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.school-name {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.school-name-input {
+    font-size: 1.5em;
+    font-weight: 600;
+    background: transparent;
+    color: #fff;
+    border: none;
+    resize: none;
+    width: 100%;
+    padding: 8px 0;
+    outline: none;
+}
+
+.school-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}

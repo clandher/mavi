@@ -1,0 +1,15 @@
+<div class="mavi-tabs">
+    <button routerLink="escuela" routerLinkActive="selected" class="mavi-tab">
+        Escuela
+    </button>
+    @if (authService.user?.developer) {
+    <button routerLink="desarrollo" routerLinkActive="selected" class="mavi-tab">
+        Desarrollo
+    </button>
+    }
+    <button routerLink="categorias" routerLinkActive="selected" class="mavi-tab">
+        Categorías
+    </button>
+</div>
+<br>
+<router-outlet></router-outlet>

@@ -39,7 +39,7 @@ export class AvatarsComponent {
 	public studentActivities: StudentActivity[] = [];
 
 	selectedCategoryId: number | null = null;
-	selectedActivityId: number | null = null;
+	selectedActivityId: number = 0;
 	constructor(
 		private router: Router,
 		private route: ActivatedRoute,
@@ -79,11 +79,6 @@ export class AvatarsComponent {
 
 	onCategoryChange() {
 
-		this.router.navigate([], {
-			relativeTo: this.route,
-			queryParams: { category: this.selectedCategoryId, activity: this.selectedActivityId },
-			queryParamsHandling: 'merge'
-		});
 
 
 		this._filterActivities();
@@ -95,13 +90,23 @@ export class AvatarsComponent {
 		this.activitiesByCategory = this.activities.filter(a => a.categoryId === this.selectedCategoryId);
 
 		if (this.activitiesByCategory.length) {
+			console.log('Activities for this category', this.activitiesByCategory);
 			if (this.selectedActivityId && this.activitiesByCategory.some(a => a.id === this.selectedActivityId)) {
 				this.onActivityChange(this.selectedActivityId, 0);
 			} else {
 				this.onActivityChange(this.activitiesByCategory[0].id, 0);
 			}
+		} else {
+			console.log('No activities for this category');
+			this.selectedActivityId = 0;
+			this.studentActivities = [];
 		}
 
+		this.router.navigate([], {
+			relativeTo: this.route,
+			queryParams: { category: this.selectedCategoryId, activity: this.selectedActivityId },
+			queryParamsHandling: 'merge'
+		});
 	}
 
 	onActivityChange(activityId: number, index: number): void {

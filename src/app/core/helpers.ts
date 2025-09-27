@@ -65,3 +65,13 @@ export function setFocus(elementId: string, select: boolean = true) {
     }
 }
 
+export function fetchImageWithToken(http: HttpClient, url: string, token: string, callback: (blobUrl: string) => void): void {
+    const headers = { Authorization: `Bearer ${token}` };
+    http.get(url, { headers, responseType: 'blob' }).subscribe(blob => {
+        const blobUrl = URL.createObjectURL(blob);
+        callback(blobUrl);
+    }, error => {
+        console.error('Error fetching image', error);
+    });
+}
+

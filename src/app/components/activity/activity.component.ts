@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 import { BaseHttp } from '@app/core/base-http';
 import { Activity, ActivityType, CreateActivityDto, Category } from '@app/core/dto';
 import { dateToDatetimeLocalString, setFocus } from '@app/core/helpers';
@@ -26,11 +27,23 @@ export class ActivityComponent {
     public activityTypes: ActivityType[] = [];
     public categories: Category[] = [];
     public activityForm: FormGroup;
+    private newCategoryId: number | null = null;
 
     constructor(
         private http: HttpClient,
         private fb: FormBuilder,
+        private route: ActivatedRoute
     ) {
+
+
+        this.route.queryParams.subscribe(params => {
+            const categoryId = params['category'];
+
+            if (categoryId) {
+                this.newCategoryId = +categoryId;
+            }
+        });
+
         this.activityForm = this.fb.group({
             description: ['Nueva actividad...', MaviValidators.required()],
             startDate: [
@@ -65,7 +78,11 @@ export class ActivityComponent {
         categoriesAPI.get<Category[]>().subscribe(result => {
             this.categories = result;
             if (this.activityId === 0 && this.categories.length > 0) {
-                this.activityForm.patchValue({ categoryId: this.categories[0].id });
+                if (this.newCategoryId && this.categories.some(c => c.id === this.newCategoryId)) {
+                    this.activityForm.patchValue({ categoryId: this.newCategoryId });
+                } else {
+                    this.activityForm.patchValue({ categoryId: this.categories[0].id });
+                }
                 this.activityForm.markAsDirty();
             }
         });

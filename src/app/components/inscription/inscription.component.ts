@@ -97,6 +97,11 @@ export class InscriptionComponent implements OnInit {
         });
 
         this.form.get('search')?.valueChanges.subscribe(value => {
+
+            if (!value) {
+                value = '';
+            }
+
             this.filteredStudents = this.students.filter(student =>
                 student.name.toLowerCase().includes(value.toLowerCase())
             );

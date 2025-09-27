@@ -6,6 +6,7 @@ import { BaseHttp } from '@app/core/base-http';
 import { Category } from '@app/core/dto';
 import { FormGroupComponent } from "../form-group/form-group.component";
 import { SubmitComponent } from '../submit/submit.component';
+import { setFocus } from '@app/core/helpers';
 
 @Component({
     selector: 'app-category',
@@ -40,7 +41,11 @@ export class CategoryComponent {
                 this.categoryForm.patchValue({
                     type: result.type
                 });
+
+                setFocus('type');
             });
+        } else {
+            setFocus('type');
         }
     }
 

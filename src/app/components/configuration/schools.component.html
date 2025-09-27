@@ -1,0 +1,21 @@
+<div *ngFor="let school of schools" class="school-card">
+    <div class="school-header">
+        <label for="logo{{school.id}}" class="logo-label">
+            <img *ngIf="school.logoUrl; else logoPlaceholder" [src]="school.logoUrl" class="school-logo-large"
+                alt="Logo">
+            <ng-template #logoPlaceholder>
+                <div class="logo-placeholder-large">+</div>
+            </ng-template>
+            <input id="logo{{school.id}}" type="file" accept="image/*" (change)="onLogoSelected($event, school)" hidden>
+        </label>
+        <div class="school-name">
+            <textarea class="form-control school-name-input" rows="2" [(ngModel)]="school.description"
+                name="school{{school.description}}"></textarea>
+        </div>
+    </div>
+    <div class="school-actions">
+        <button type="button" class="btn btn-primary btn-sm" (click)="saveSchool(school)">
+            <i class="fa fa-save"></i> Guardar
+        </button>
+    </div>
+</div>

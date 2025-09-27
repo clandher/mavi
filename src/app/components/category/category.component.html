@@ -3,7 +3,8 @@
         <h2 class="text-xl font-semibold mb-4">{{ categoryId !== 0 ? 'Editar categoría' : 'Nueva categoría' }}</h2>
         <form [formGroup]="categoryForm" (ngSubmit)="saveCategory()">
             <app-form-group [title]="'Nombre de la categoría'" [control]="categoryForm.get('type')" class="form-group">
-                <input id="type" type="text" formControlName="type" class="form-control" [readonly]="false">
+                <input id="type" type="text" formControlName="type" class="form-control" [readonly]="false"
+                    autocomplete="off">
             </app-form-group>
         </form>
         <app-submit [form]="categoryForm" [submit]="saveCategory.bind(this)" (discard)="closeModal()"></app-submit>

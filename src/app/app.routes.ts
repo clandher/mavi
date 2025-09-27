@@ -10,7 +10,7 @@ export const routes: Routes = [
     },
     {
         path: 'app',
-        loadComponent: () => import('./modules/dashboard/dashboard.component').then(m => m.DashboardComponent),
+        loadComponent: () => import('./modules/home/home.component').then(m => m.HomeComponent),
         canActivate: [authGuard],
         children: [
             {
@@ -25,8 +25,27 @@ export const routes: Routes = [
             },
             {
                 path: 'configuración',
-                loadComponent: () => import('./components/develop/develop.component').then(m => m.DevelopComponent),
-                title: 'Configuración'
+                loadComponent: () => import('./components/configuration/configuration.component').then(m => m.ConfigurationComponent),
+                title: 'Configuración',
+                children: [
+                    {
+                        path: '',
+                        redirectTo: 'escuela',
+                        pathMatch: 'full'
+                    },
+                    {
+                        path: 'escuela',
+                        loadComponent: () => import('./components/configuration/schools.component').then(m => m.SchoolsComponent)
+                    },
+                    {
+                        path: 'desarrollo',
+                        loadComponent: () => import('./components/configuration/development.component').then(m => m.DevelopmentComponent)
+                    },
+                    {
+                        path: 'categorias',
+                        loadComponent: () => import('./components/configuration/categories.component').then(m => m.CategoriesComponent)
+                    }
+                ]
             },
             {
                 path: 'estudiantes/nuevo',
