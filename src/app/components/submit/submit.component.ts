@@ -24,6 +24,7 @@ export class SubmitComponent {
 	ngOnInit() {
 		this.form?.events.pipe(filter(event => event instanceof ValueChangeEvent), take(1)).subscribe((event) => {
 			this._originalValue = event.value;
+			console.log(this._originalValue);
 			this.form?.markAsPristine();
 		});
 	}

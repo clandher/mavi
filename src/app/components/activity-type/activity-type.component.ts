@@ -7,11 +7,12 @@ import { FormGroupComponent } from "../form-group/form-group.component";
 import { SubmitComponent } from '../submit/submit.component';
 import { setFocus } from '@app/core/helpers';
 import { MaviValidators } from '@app/core/mavi-validators';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
     selector: 'app-activity-type',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormGroupComponent, SubmitComponent],
+    imports: [CommonModule, ReactiveFormsModule, FormGroupComponent, SubmitComponent, NgxMaskDirective],
     templateUrl: './activity-type.component.html',
     styleUrls: ['./activity-type.component.scss']
 })
@@ -26,9 +27,9 @@ export class ActivityTypeComponent {
         private fb: FormBuilder,
     ) {
         this.activityTypeForm = this.fb.group({
-            key: ['', []],
+            key: [null, []],
             recurrent: [false, []],
-            rule: ['', []]
+            rule: [null, []]
         });
 
         this.activityTypeForm.get('recurrent')?.valueChanges.subscribe((recurrent: boolean) => {

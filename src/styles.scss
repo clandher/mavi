@@ -479,6 +479,18 @@ select.form-control {
     }
 }
 
+.hover-link-external {
+    color: oklch(0.985 0 0);
+    text-decoration: underline;
+    font-size: 12px;
+    cursor: pointer;
+
+    &:hover {
+        color: oklch(0.8 0 0);
+        text-decoration: underline;
+    }
+ }
+
 .hover-link {
     color: oklch(0.985 0 0);
     text-decoration: none;
