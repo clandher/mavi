@@ -19,18 +19,24 @@
         width: 100%;
         position: relative;
 
+        .logo-label {
+            cursor: pointer;
+        }
+
+       
         .logo {
-            position: absolute;
+            // position: absolute;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 66px;
-            height: 66px;
-            background-color: #3498db;
+
             border-radius: 50%;
             font-weight: bold;
-            top: 2px;
+            // top: 2px;
             left: 10px;
+            width: 66px;
+            height: 66px;
+            object-fit: cover;
         }
 
         .header-left {

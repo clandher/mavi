@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { School } from './dto';
 import { buildUrl } from './base-http';
+import { ImageHttpClient } from './image-http-client';
 
 @Injectable({ providedIn: 'root' })
 export class SchoolService {
@@ -11,7 +12,9 @@ export class SchoolService {
     private _schoolSubject = new BehaviorSubject<School | null>(null);
     public changes: Observable<School> = this._schoolSubject.asObservable().pipe(filter((school): school is School => !!school));
 
-    constructor(private http: HttpClient) {
+    constructor(
+        private http: HttpClient,
+        private imageHttp: ImageHttpClient) {
         this.fetch();
     }
 
@@ -20,10 +23,14 @@ export class SchoolService {
             next: (schools) => {
                 const school = schools && schools.length ? schools[0] : { id: 0, description: 'Sorensic' };
                 if (school.logo) {
-                    school.logoUrl = buildUrl(`schools/${school.id}/logo`) + `?t=${new Date().getTime()}`;
+                    this.imageHttp.fetch(buildUrl(`schools/${school.id}/logo`) + `?t=${new Date().getTime()}`).subscribe(blobUrl => {
+                        school.logoUrl = blobUrl;
+                        this._schoolSubject.next(school);
+                    });
+                } else {
+                    this._schoolSubject.next(school);
                 }
 
-                this._schoolSubject.next(school);
             },
             error: (err) => {
                 console.error('Error loading schools', err);

@@ -6,13 +6,8 @@
 }
 
 .school-card {
-    background: rgba(0, 0, 0, 0.15);
-    border-radius: 16px;
-    padding: 24px 16px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
     display: flex;
     flex-direction: column;
-    gap: 12px;
 }
 
 .school-header {
@@ -31,7 +26,7 @@
 .school-logo-large {
     width: 96px;
     height: 96px;
-    border-radius: 16px;
+    border-radius: 50%;
     object-fit: cover;
     background: #eee;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
@@ -45,14 +40,9 @@
 .logo-placeholder-large {
     width: 96px;
     height: 96px;
-    border-radius: 16px;
-    background: #eee;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3em;
-    color: #bbb;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+   
+    font-size: 2em;
 }
 
 .school-name {
@@ -61,17 +51,17 @@
     align-items: center;
 }
 
-.school-name-input {
-    font-size: 1.5em;
-    font-weight: 600;
-    background: transparent;
-    color: #fff;
-    border: none;
-    resize: none;
-    width: 100%;
-    padding: 8px 0;
-    outline: none;
-}
+// .school-name-input {
+//     font-size: 1.5em;
+//     font-weight: 600;
+//     background: transparent;
+//     color: #fff;
+//     border: none;
+//     resize: none;
+//     width: 100%;
+//     padding: 8px 0;
+//     outline: none;
+// }
 
 .school-actions {
     display: flex;

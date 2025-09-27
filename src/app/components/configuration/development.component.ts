@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BaseHttp } from '@app/core/base-http';
 import { ToastrService } from 'ngx-toastr';
 import { BtnLoadingComponent } from '../btn-loading/btn-loading.component';
+import { SchoolService } from '@app/core/school.service';
 
 @Component({
 	selector: 'app-development',
@@ -15,12 +16,17 @@ import { BtnLoadingComponent } from '../btn-loading/btn-loading.component';
 	styleUrls: []
 })
 export class DevelopmentComponent {
-	constructor(private http: HttpClient, private toastr: ToastrService) { }
+	constructor(
+		private http: HttpClient,
+		private toastr: ToastrService,
+		private schoolService: SchoolService,
+	) { }
 
 	onRestart(): Promise<void> {
 		const seederAPI = new BaseHttp('seeder', this.http);
 		return seederAPI.post({}).toPromise().then(() => {
 			this.toastr.success('La base de datos ha sido reiniciada y poblada con datos de ejemplo.', 'Operación Exitosa');
+			this.schoolService.fetch();
 		}).catch(() => {
 			console.error('Error reiniciando la base de datos');
 		});

@@ -384,6 +384,11 @@ select.form-control {
             color: oklch(0.985 0 0);
         }
 
+        &:hover {
+            background-color: #1a1a1a;
+            color: oklch(0.8 0 0);
+        }
+
     }
 }
 
@@ -574,5 +579,18 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 @keyframes spinner-border {
     to {
         transform: rotate(360deg);
+    }
+}
+
+.logo-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #bbb;
+    border: 1px dashed #262626;
+    border-radius: 50%;
+
+    &:hover {
+        background-color: #1a1a1a;
     }
 }

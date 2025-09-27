@@ -4,39 +4,70 @@ import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { SchoolService } from '@app/core/school.service';
 import { School } from '@app/core/dto';
 import { NgIf, NgFor } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, FormBuilder, FormGroup, FormArray, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { SubmitComponent } from '../submit/submit.component';
+import { FormGroupComponent } from '../form-group/form-group.component';
+import { MaviValidators } from '@app/core/mavi-validators';
+import { Subject, forkJoin, of } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-schools',
 	templateUrl: './schools.component.html',
 	styleUrls: ['./schools.component.scss'],
-	imports: [NgIf, NgFor, FormsModule]
+	imports: [NgIf, NgFor, FormsModule, ReactiveFormsModule, SubmitComponent, FormGroupComponent]
 })
 export class SchoolsComponent {
-	schools: School[] = [];
+	schoolsForm: FormGroup;
 
 	constructor(
 		private imageHttp: ImageHttpClient,
 		private http: HttpClient,
 		private schoolService: SchoolService,
-	) { }
+		private fb: FormBuilder
+	) {
+		this.schoolsForm = this.fb.group({
+			schools: this.fb.array([])
+		});
+	}
 
 	ngOnInit() {
-		this.getSchools();
+
+		this.schoolService.changes.subscribe(school => {
+			this.getSchools();
+		});
+	}
+
+	get schoolsArray(): FormArray {
+		return this.schoolsForm.get('schools') as FormArray;
 	}
 
 	getSchools() {
 		const schoolsAPI = new BaseHttp('schools', this.http);
 		schoolsAPI.get().subscribe({
 			next: (data: any) => {
-				this.schools = data.map((school: any) => {
+				const fetchLogoObservables = data.map((school: any) => {
 					if (school.logo) {
-						this.imageHttp.fetch(buildUrl(`schools/${school.id}/logo`) + `?t=${new Date().getTime()}`).subscribe(blobUrl => {
-							school.logoUrl = blobUrl;
-						});
+						return this.imageHttp.fetch(`${buildUrl(`schools/${school.id}/logo`)}?t=${Date.now()}`).pipe(
+							map(blobUrl => ({ ...school, blobUrl }))
+						);
+					} else {
+						return of({ ...school, blobUrl: null });
 					}
-					return school;
+				});
+
+				forkJoin<any[]>(fetchLogoObservables).subscribe((schoolsWithLogos) => {
+					const schoolControls = schoolsWithLogos.map((school: any) => {
+						return this.fb.group({
+							id: [school.id],
+							description: [school.description, [MaviValidators.required()]],
+							logoUrl: this.fb.control<string | null>(school.blobUrl),
+							pendingLogoFile: this.fb.control<File | null>(null)
+						});
+					});
+
+					this.schoolsForm.setControl('schools', this.fb.array(schoolControls));
 				});
 			},
 			error: () => {
@@ -45,43 +76,58 @@ export class SchoolsComponent {
 		});
 	}
 
-	saveSchool(school: School) {
-		const schoolsAPI = new BaseHttp(`schools`, this.http);
-		schoolsAPI.patch(school.id!, {
-			description: school.description,
-		}).subscribe({
-			next: () => {
-				console.log('School saved successfully');
-			},
-			error: () => {
-				console.error('Error saving school');
+	saveSchools(): Promise<any> {
+		const schoolsAPI = new BaseHttp('schools', this.http);
+		const updates = this.schoolsArray.value.map((school: any) => {
+			return schoolsAPI.patch(school.id, {
+				description: school.description
+			}).toPromise();
+		});
+
+		return Promise.all(updates).then(() => {
+			this.uploadPendingLogos();
+		}).catch((error) => {
+			throw error;
+		});
+	}
+
+	uploadPendingLogos() {
+		this.schoolsArray.controls.forEach((control: AbstractControl) => {
+			const school = control.value;
+			if (school.pendingLogoFile) {
+				this.uploadLogo(school.id, school.pendingLogoFile);
 			}
 		});
 	}
 
-	onLogoSelected(event: Event, school: School) {
+	onLogoSelected(event: Event, index: number) {
 		const file = (event.target as HTMLInputElement).files?.[0];
-		if (!file || !school.id) return;
+		if (!file) return;
 
+		const reader = new FileReader();
+		reader.onload = () => {
+			this.schoolsArray.at(index).patchValue({
+				logoUrl: reader.result as string,
+				pendingLogoFile: file
+			});
+			this.schoolsArray.markAsDirty();
+		};
+		reader.readAsDataURL(file);
+	}
+
+	uploadLogo(schoolId: number, file: File) {
 		const formData = new FormData();
 		formData.append('file', file);
 
-		const schoolsAPI = new BaseHttp(`schools/${school.id}/logo`, this.http);
+		const schoolsAPI = new BaseHttp(`schools/${schoolId}/logo`, this.http);
 		schoolsAPI.post<FormData, any>(formData).subscribe({
 			next: () => {
-				const timestamp = new Date().getTime();
-				school.logoUrl = buildUrl(`schools/${school.id}/logo`) + `?t=${timestamp}`;
 				this.schoolService.fetch();
+				console.log(`Logo for school ${schoolId} uploaded successfully`);
 			},
 			error: (err) => {
 				console.error('Error uploading logo', err);
 			}
 		});
-
-		const reader = new FileReader();
-		reader.onload = () => {
-			school.logo = reader.result as string;
-		};
-		reader.readAsDataURL(file);
 	}
 }
