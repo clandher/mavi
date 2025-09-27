@@ -139,8 +139,8 @@ export class StudentListComponent implements OnInit {
 
     removeCategory(studentCategoryId: number): void {
         if (confirm('¿Estás seguro de quitar esta categoría al estudiante?')) {
-            const studentCategoriesAPI = new BaseHttp(`student-categories/${studentCategoryId}`, this.http);;
-            studentCategoriesAPI.delete().subscribe({
+            const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http);;
+            studentCategoriesAPI.delete(studentCategoryId).subscribe({
                 next: () => {
                     this.loadStudents(); // Recargar la lista
                 },

@@ -27,7 +27,9 @@ export const appConfig: ApplicationConfig = {
     ),
     { provide: LOCALE_ID, useValue: 'es-MX' },
     provideAnimations(),
-    provideToastr(),
+    provideToastr({
+      progressBar: true,
+    }),
     provideNgxMask(),
   ]
 };

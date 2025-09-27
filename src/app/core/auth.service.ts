@@ -8,6 +8,7 @@ interface User {
     id: string;
     name: string;
     email: string;
+    developer: boolean;
 }
 
 @Injectable({
@@ -38,13 +39,11 @@ export class AuthService {
         this._currentUser.set(null);
     }
 
-    get currentUser(): User | null {
+    get user(): User | null {
         return this._currentUser();
     }
 
-    // Ejemplo de login tipado
     login(credentials: { email: string; password: string }): Observable<any> {
-
         const authLogin = new BaseHttp('auth/login', this.http);
         return authLogin.post(credentials).pipe(
             tap((response: any) => {
@@ -69,5 +68,4 @@ export class AuthService {
         // Implementación segura que retorna string o null
         return localStorage.getItem('auth_token');
     }
-
 }

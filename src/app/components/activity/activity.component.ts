@@ -116,15 +116,16 @@ export class ActivityComponent {
     saveActivity(): Promise<void> {
         return new Promise((resolve, reject) => {
             const formValue = this.activityForm.value;
+            const activitiesAPI = new BaseHttp(`activities`, this.http);
 
             if (this.activityId !== 0) {
                 const activityToSave = {
                     ...formValue,
+                    details: '',
                 };
 
-                const activitiesAPI = new BaseHttp(`activities/${this.activityId}`, this.http);
-                activitiesAPI.patch<CreateActivityDto, Activity>(activityToSave).subscribe({
-                    next: () => { this.complete.emit(false); resolve(); },
+                activitiesAPI.patch<CreateActivityDto, Activity>(this.activityId, activityToSave).subscribe({
+                    next: () => { this.complete.emit(true); resolve(); },
                     error: (err) => { console.error('Error al actualizar la actividad:', err); reject(err); }
                 });
             } else {
@@ -132,12 +133,12 @@ export class ActivityComponent {
                 const activityToSave = {
                     ...formValue,
                     typeId: Number(formValue.typeId),
-                    categoryId: Number(formValue.categoryId)
+                    categoryId: Number(formValue.categoryId),
+                    details: '',
                 };
 
-                const activitiesAPI = new BaseHttp('activities', this.http);
                 activitiesAPI.post<CreateActivityDto, Activity>(activityToSave).subscribe({
-                    next: () => { this.complete.emit(false); resolve(); },
+                    next: () => { this.complete.emit(true); resolve(); },
                     error: (err) => { console.error('Error al crear la actividad:', err); reject(err); }
                 });
             }

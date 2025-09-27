@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -9,12 +9,11 @@ import { setFocus, uploadStudentPhoto } from '@app/core/helpers';
 import { FormGroupComponent } from '../form-group/form-group.component';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { SubmitComponent } from '../submit/submit.component';
-import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
     standalone: true,
     selector: 'app-student-edit',
-    imports: [CommonModule, FormsModule, RouterModule, FormGroupComponent, NgxMaskDirective, ReactiveFormsModule, SubmitComponent],
+    imports: [CommonModule, FormsModule, RouterModule, FormGroupComponent, ReactiveFormsModule, SubmitComponent],
     templateUrl: './student-edit.component.html',
     styleUrls: ['./student-edit.component.scss']
 })
@@ -80,7 +79,8 @@ export class StudentEditComponent {
     }
 
     public async saveStudent(): Promise<void> {
-        if (this.studentForm.value.id === 0) {
+        const studentId = this.route.snapshot.paramMap.get('id') ?? 0;
+        if (studentId === 0) {
             await this._createStudent();
         } else {
             await this._updateStudent();
@@ -88,7 +88,8 @@ export class StudentEditComponent {
     }
 
     private async _updateStudent(): Promise<void> {
-        const studentsAPI = new BaseHttp(`students/${this.studentForm.value.id}`, this.http);
+        const studentId = this.route.snapshot.paramMap.get('id') ?? 0;
+        const studentsAPI = new BaseHttp(`students`, this.http);
         const updateStudentDto: UpdateStudentDto = {
             name: this.studentForm.value.name,
             birthdate: new Date(this.studentForm.value.birthdate),
@@ -98,7 +99,7 @@ export class StudentEditComponent {
             nick: this.studentForm.value.nick
         };
 
-        await studentsAPI.patch(updateStudentDto).toPromise();
+        await studentsAPI.patch(studentId, updateStudentDto).toPromise();
     }
 
     private async _createStudent(): Promise<void> {
@@ -130,7 +131,8 @@ export class StudentEditComponent {
 
 
     onPhotoSelected(event: Event) {
-        if (this.studentForm.value.id > 0) {
+        const studentId = Number(this.route.snapshot.paramMap.get('id') ?? 0);
+        if (studentId > 0) {
             uploadStudentPhoto(event, this.studentForm.value, this.http);
             return;
         }

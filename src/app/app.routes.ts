@@ -79,6 +79,8 @@ export const routes: Routes = [
     },
     {
         path: '**',
-        loadComponent: () => import('./modules/not-found/not-found.component').then(m => m.NotFoundComponent)
+        redirectTo: 'app',
+        pathMatch: 'full'
+        // loadComponent: () => import('./modules/not-found/not-found.component').then(m => m.NotFoundComponent)
     }
 ];

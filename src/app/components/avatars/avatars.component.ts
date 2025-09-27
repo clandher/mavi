@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
-import { Activity, ActivityType, ApiRes, Category, CreateActivityDto, Student, StudentActivity } from '@app/core/dto';
+import { Activity, Category, Student, StudentActivity } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { PaymentComponent } from "../payment/payment.component";
 import { InscriptionComponent } from '../inscription';
@@ -12,11 +12,10 @@ import { ActivityComponent } from "../activity/activity.component";
 import { uploadStudentPhoto } from '@app/core/helpers';
 import { ObservationsComponent } from "../observations";
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
-import { StudentEditComponent } from '../students/student-edit.component';
 
 @Component({
 	standalone: true,
-	imports: [CommonModule, FormsModule, PaymentComponent, InscriptionComponent, ActivityComponent, ObservationsComponent, CurrencyMXPipe, StudentEditComponent],
+	imports: [CommonModule, FormsModule, PaymentComponent, InscriptionComponent, ActivityComponent, ObservationsComponent, CurrencyMXPipe],
 	templateUrl: './avatars.component.html',
 	styleUrl: './avatars.component.scss'
 })

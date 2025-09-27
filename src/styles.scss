@@ -328,29 +328,26 @@ select.form-control {
 
 
 .toast-container {
-    font-size: 12px;
+    font-size: 11px;
 
     .ngx-toastr {
         padding: 10px 10px 10px 50px;
         box-shadow: 0 0 12px #000000;
         border-radius: 0;
+        border: 1px solid #262626;
+        color: #a1a1a1;
 
     }
 
     .toast-success {
-        background-color: #149714;
+        background-color: #091d11;
+        border-color: #057331;
     }
 
     .toast-error {
         background-color: #861b0f;
     }
 }
-
-
-// .mavi-section {
-//     border: 1px solid #262626;
-//     padding: 24px;
-// }
 
 
 .mavi-tabs {
@@ -557,5 +554,25 @@ select.form-control {
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(1); /* Cambia los colores al negativo */
+    filter: invert(1);
+    /* Cambia los colores al negativo */
+}
+
+
+
+.spinner-border {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    vertical-align: text-bottom;
+    border: 0.15em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-border .75s linear infinite;
+}
+
+@keyframes spinner-border {
+    to {
+        transform: rotate(360deg);
+    }
 }

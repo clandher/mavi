@@ -86,8 +86,8 @@ export class StudentInfoComponent {
   removeCategory(studentCategoryId: number): void {
     if (confirm('¿Estás seguro de quitar esta categoría al estudiante?')) {
       this.isSaving = true;
-      const studentCategoriesAPI = new BaseHttp(`student-categories/${studentCategoryId}`, this.http);;
-      studentCategoriesAPI.delete().subscribe({
+      const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http);;
+      studentCategoriesAPI.delete(studentCategoryId).subscribe({
         next: () => {
           this.studentCategories = this.studentCategories.filter(sc => sc.id !== studentCategoryId);
           this.availableCategories = this.categories.filter(category =>

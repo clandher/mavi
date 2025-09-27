@@ -9,6 +9,11 @@ import { CreateSchoolDto, School } from '@app/core/dto';
 import { SchoolService } from '@app/core/school.service';
 import { FormGroupComponent } from "../form-group/form-group.component";
 import { MaviValidators } from '@app/core/mavi-validators';
+import { ToastrService } from 'ngx-toastr';
+import { SubmitComponent } from '../submit/submit.component';
+import { BtnLoadingComponent } from '../btn-loading/btn-loading.component';
+import { AuthService } from '@app/core/auth.service';
+
 
 interface Category {
     id: number;
@@ -17,12 +22,11 @@ interface Category {
 
 @Component({
     standalone: true,
-    imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, FormGroupComponent],
+    imports: [CommonModule, RouterModule, FormsModule, ReactiveFormsModule, FormGroupComponent, SubmitComponent, BtnLoadingComponent],
     templateUrl: './develop.component.html',
     styleUrls: ['./develop.component.scss']
 })
 export class DevelopComponent {
-    isLoading = false; // Variable para controlar el loading
 
     schools: School[] = [];
     selectedSchoolTab: string = 'schools';
@@ -34,18 +38,22 @@ export class DevelopComponent {
         return (this.categoryForm.get('categories') as FormArray).controls;
     }
 
-    private categoryHttp: BaseHttp;
+    private categoryAPI: BaseHttp;
 
     constructor(
         private fb: FormBuilder,
         private http: HttpClient,
-        private schoolService: SchoolService
+        private schoolService: SchoolService,
+        private toastr: ToastrService,
+        public authService: AuthService,
     ) {
         this.categoryForm = this.fb.group({
             newCategory: ['', [MaviValidators.required()]],
             categories: this.fb.array([])
         });
-        this.categoryHttp = new BaseHttp('categories', this.http);
+
+
+        this.categoryAPI = new BaseHttp('categories', this.http);
     }
 
     ngOnInit() {
@@ -71,12 +79,12 @@ export class DevelopComponent {
     }
 
     saveSchool(school: School) {
-        const schoolsAPI = new BaseHttp(`schools/${school.id}`, this.http);
-        schoolsAPI.patch({
+        const schoolsAPI = new BaseHttp(`schools`, this.http);
+        schoolsAPI.patch(school.id!, {
             description: school.description,
         }).subscribe({
             next: () => {
-                // Actualización exitosa
+                this
             },
             error: () => {
                 // Manejo de error si lo deseas
@@ -113,25 +121,17 @@ export class DevelopComponent {
 
 
 
-    onRestart() {
-        this.isLoading = true;
-        const seederAPI = new BaseHttp('seeder', this.http,)
-        seederAPI.post({}).subscribe({
-            next: () => {
-                console.log('Seeding completed');
-            },
-            error: () => {
-                // Manejo de error si lo deseas
-            },
-            complete: () => {
-                this.isLoading = false;
-            }
+    onRestart(): Promise<void> {
+        const seederAPI = new BaseHttp('seeder', this.http);
+        return seederAPI.post({}).toPromise().then(() => {
+            this.toastr.success('La base de datos ha sido reiniciada y poblada con datos de ejemplo.', 'Operación Exitosa');
+        }).catch(() => {
+        }).finally(() => {
         });
     }
 
     loadCategories(): void {
-        this.isLoading = true;
-        this.categoryHttp.get<Category[]>().subscribe(
+        this.categoryAPI.sub('with-activity-count').get<Category[]>().subscribe(
             (data) => {
                 this.categories = data;
                 const categoryControls = data.map(category => this.fb.group({
@@ -139,11 +139,9 @@ export class DevelopComponent {
                     type: category.type
                 }));
                 this.categoryForm.setControl('categories', this.fb.array(categoryControls));
-                this.isLoading = false;
             },
             (error) => {
                 console.error('Error loading categories:', error);
-                this.isLoading = false;
             }
         );
     }
@@ -162,7 +160,7 @@ export class DevelopComponent {
         }
 
         const category = { type: newCategory };
-        this.categoryHttp.post<typeof category, Category>(category).subscribe(
+        this.categoryAPI.post<typeof category, Category>(category).subscribe(
             (createdCategory) => {
                 this.categories.push(createdCategory);
                 const categoriesArray = this.categoryForm.get('categories') as FormArray;
@@ -179,15 +177,15 @@ export class DevelopComponent {
     }
 
     deleteCategory(categoryId: number, index: number): void {
-        this.http.delete<void>(buildUrl(`categories/${categoryId}`)).subscribe(
-            () => {
+        this.categoryAPI.delete<void>(categoryId).subscribe({
+            next: () => {
                 this.categories = this.categories.filter((cat) => cat.id !== categoryId);
                 const categoriesArray = this.categoryForm.get('categories') as FormArray;
                 categoriesArray.removeAt(index);
             },
-            (error) => {
+            error: (error) => {
                 console.error('Error deleting category:', error);
             }
-        );
+        });
     }
 }

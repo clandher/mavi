@@ -4,7 +4,7 @@
 	</button>
 	<button type="button" class="btn btn-primary flex items-center justify-center"
 		[disabled]="loading || disabled || form?.pristine || form?.invalid" (click)="onSubmit()">
-		<span *ngIf="loading" class="spinner-border spinner-border-sm mr-2" role="status" aria-hidden="true"></span>
+		<span *ngIf="loading" class="spinner-border spinner-border-sm mr-2"></span>
 		{{ submitText }}
 	</button>
 </div>

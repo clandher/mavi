@@ -15,10 +15,10 @@
             </nav>
         </div>
 
-        <div class="user-menu" *ngIf="authService.currentUser">
+        <div class="user-menu" *ngIf="authService.user">
             <button class="user-menu-toggle" (click)="toggleMenu()">
-                <span class="user-avatar">{{ getInitials(authService.currentUser.name) }}</span>
-                <span class="user-name">{{ authService.currentUser.name }}</span>
+                <span class="user-avatar">{{ getInitials(authService.user.name) }}</span>
+                <span class="user-name">{{ authService.user.name }}</span>
                 <span class="menu-icon">▼</span>
             </button>
 

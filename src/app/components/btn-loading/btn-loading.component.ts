@@ -1,0 +1,29 @@
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+@Component({
+    selector: 'btn-loading',
+    template: `
+    <button [disabled]="loading || disabled" class="btn btn-primary flex items-center justify-center" (click)="onClick()">
+      	<span *ngIf="loading" class="spinner-border spinner-border-sm mr-2"></span>
+		{{ text }}
+    </button>
+  `,
+    standalone: true,
+    imports: [CommonModule]
+})
+export class BtnLoadingComponent {
+    @Input() disabled: boolean = false;
+    @Input() text: string = 'Enviar';
+    @Input() action!: () => Promise<void>;
+
+    public loading: boolean = false;
+
+    async onClick() {
+        if (!this.loading && !this.disabled && this.action) {
+            this.loading = true;
+            await this.action();
+            this.loading = false;
+        }
+    }
+}

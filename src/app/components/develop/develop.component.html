@@ -3,10 +3,12 @@
         [ngClass]="{'selected': selectedSchoolTab === 'schools'}">
         Escuela
     </button>
+    @if (authService.user?.developer) {
     <button class="mavi-tab" (click)="selectedSchoolTab='development'"
         [ngClass]="{'selected': selectedSchoolTab === 'development'}">
         Desarrollo
     </button>
+    }
     <button class="mavi-tab" (click)="selectedSchoolTab='categories'"
         [ngClass]="{'selected': selectedSchoolTab === 'categories'}">
         Categorías
@@ -15,13 +17,9 @@
 <br>
 <div [ngSwitch]="selectedSchoolTab" class="mavi-border">
     <div *ngSwitchCase="'development'" class="schools-list">
-        <button class="btn btn-primary" (click)="onRestart()" [disabled]="isLoading">
-            Reiniciar
-            <span *ngIf="isLoading" style="margin-left:8px;">
-                <span class="spinner"
-                    style="display:inline-block;width:16px;height:16px;border:2px solid #ccc;border-top:2px solid #333;border-radius:50%;animation:spin 0.8s linear infinite;"></span>
-            </span>
-        </button>
+        <!-- <app-submit [form]="restartForm" [submit]="onRestart.bind(this)" submitText="Reiniciar">
+        </app-submit> -->
+        <btn-loading [action]="onRestart.bind(this)" text="Reiniciar" />
     </div>
     <div *ngSwitchCase="'schools'">
         <div *ngFor="let school of schools" class="school-card">
