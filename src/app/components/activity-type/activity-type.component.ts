@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp } from '@app/core/base-http';
 import { FormGroupComponent } from "../form-group/form-group.component";
 import { SubmitComponent } from '../submit/submit.component';
 import { setFocus } from '@app/core/helpers';
+import { MaviValidators } from '@app/core/mavi-validators';
 
 @Component({
     selector: 'app-activity-type',
@@ -28,6 +29,16 @@ export class ActivityTypeComponent {
             key: ['', []],
             recurrent: [false, []],
             rule: ['', []]
+        });
+
+        this.activityTypeForm.get('recurrent')?.valueChanges.subscribe((recurrent: boolean) => {
+            const ruleControl = this.activityTypeForm.get('rule');
+            if (recurrent) {
+                ruleControl?.setValidators([MaviValidators.required()]);
+            } else {
+                ruleControl?.clearValidators();
+            }
+            ruleControl?.updateValueAndValidity();
         });
     }
 
