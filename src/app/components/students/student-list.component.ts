@@ -1,5 +1,5 @@
 // student-list.component.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -10,6 +10,7 @@ import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { PaymentComponent } from "../payment/payment.component";
 import { setFocus } from '@app/core/helpers';
+import { ImageHttpClient } from '@app/core/image-http-client';
 
 @Component({
     standalone: true,
@@ -17,7 +18,7 @@ import { setFocus } from '@app/core/helpers';
     templateUrl: './student-list.component.html',
     styleUrls: ['./student-list.component.scss']
 })
-export class StudentListComponent implements OnInit {
+export class StudentListComponent implements OnInit, AfterViewInit {
     openPaymentModal(student: Student) {
         this.selectedStudent = student;
         this.showPaymentModal = true;
@@ -43,7 +44,14 @@ export class StudentListComponent implements OnInit {
 
     private categoriesAPI: BaseHttp;
 
-    constructor(private http: HttpClient) {
+    @ViewChild('studentListContainer', { static: false }) studentListContainer!: ElementRef;
+
+    private observer: IntersectionObserver | null = null;
+
+    constructor(
+        private http: HttpClient,
+        private imageHttp: ImageHttpClient,
+    ) {
         this.categoriesAPI = new BaseHttp('categories', this.http);
     }
 
@@ -53,9 +61,12 @@ export class StudentListComponent implements OnInit {
         setFocus('search');
     }
 
+    ngAfterViewInit(): void {
+        this.initializeObserver();
+    }
+
     loadStudents(): void {
         this.isLoading = true;
-
 
         const queryString = RequestQueryBuilder.create({
             // search: { id: 1 }
@@ -68,15 +79,14 @@ export class StudentListComponent implements OnInit {
         this.http.get<Student[]>(buildUrl(`students`)).subscribe({
             next: (students) => {
                 this.students = students.map(student => {
-
-                    if (student.photo) {
-                        student.photoUrl = buildUrl(`students/${student.id}/photo`);
-                    }
-
+                    // Remove initial image loading
                     return student;
                 });
                 this.filteredStudents = [...students];
                 this.isLoading = false;
+
+                // Initialize observer after students are loaded
+                setTimeout(() => this.initializeObserver(), 0);
             },
             error: (err) => {
                 console.error('Error loading students', err);
@@ -156,5 +166,50 @@ export class StudentListComponent implements OnInit {
             return false;
         }
         return student.activities.some((act: any) => act.activity && act.activity.categoryId === categoryId);
+    }
+
+    private initializeObserver(): void {
+        if (!this.studentListContainer) {
+            console.error('Student list container not found');
+            return;
+        }
+
+        this.observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const studentId = entry.target.getAttribute('data-student-id');
+                    if (studentId) {
+                        this.loadStudentPhoto(parseInt(studentId, 10));
+                        this.observer?.unobserve(entry.target); // Stop observing once loaded
+                    }
+                }
+            });
+        }, {
+            root: null, // Use the viewport as the root
+            rootMargin: '0px',
+            threshold: 0.1
+        });
+
+        const studentElements = this.studentListContainer.nativeElement.querySelectorAll('.student-item');
+        if (studentElements.length === 0) {
+            console.warn('No student items found to observe');
+        }
+
+        studentElements.forEach((element: HTMLElement) => {
+            this.observer?.observe(element);
+        });
+    }
+
+    private loadStudentPhoto(studentId: number): void {
+        const student = this.students.find(s => s.id === studentId);
+        if (student && student.photo) {
+            this.imageHttp.fetch(buildUrl(`students/${student.id}/photo`) + `?t=${new Date().getTime()}`).subscribe(blobUrl => {
+                student.photoUrl = blobUrl;
+            });
+        }
+    }
+
+    ngOnDestroy(): void {
+        this.observer?.disconnect();
     }
 }

@@ -36,14 +36,14 @@
         No se encontraron estudiantes que coincidan con los criterios de búsqueda.
     </div>
 
-    <div class="mavi-grid">
-        <div *ngFor="let student of filteredStudents" class="mavi-card">
+    <div class="mavi-grid" #studentListContainer>
+        <div *ngFor="let student of filteredStudents" class="mavi-card student-item"
+            [attr.data-student-id]="student.id">
             <div class="student-card-header">
                 <div class="flex items-center">
-                    <img *ngIf="student.photo" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
-                    <ng-template #placeholder>
-                        <div class="photo-placeholder">+</div>
-                    </ng-template>
+                    <img *ngIf="student.photoUrl" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
+                    <div *ngIf="student.photo && !student.photoUrl" class="student-photo-sm-placeholder">
+                    </div>
                     <div class="hover-link" [routerLink]="['/app/estudiantes', student.id, 'editar']">{{
                         student.nick ? student.nick
                         :

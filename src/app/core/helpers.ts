@@ -42,12 +42,8 @@ export function uploadStudentPhoto(event: Event, student: Student, http: HttpCli
     console.log('Uploading photo for existing student');
     studentsAPI.post<FormData, any>(formData).subscribe({
         next: (res) => {
-            // const timestamp = new Date().getTime();
-            // student.photoUrl = buildUrl(`students/${student.id}/photo`) + `?t=${timestamp}`;
             httpImage.fetch(buildUrl(`students/${student.id}/photo`) + `?t=${new Date().getTime()}`).subscribe(blobUrl => {
-                // this.studentForm.patchValue({ photoUrl: blobUrl });
                 student.photoUrl = blobUrl;
-
             });
         },
         error: (err) => {

@@ -274,6 +274,35 @@ select.form-control {
 
 
 
+.student-photo-sm-placeholder {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 1rem;
+    position: relative;
+    background: #18181b;
+
+    &::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        border: 1px solid transparent;
+        border-top-color: #ffffff;
+        animation: spin-photo-sm .8s linear infinite;
+        pointer-events: none;
+    }
+}
+
+@keyframes spin-photo-sm {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .student-photo-sm {
     width: 50px;
     height: 50px;
