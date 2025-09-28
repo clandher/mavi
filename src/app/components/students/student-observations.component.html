@@ -13,12 +13,14 @@
 			</div>
 
 			<div class="flex gap-2 mt-2 justify-end">
-				<button type="button" class="btn btn-outline btn-sm" (click)="deleteObservation(obs)">
+				<button type="button" class="btn btn-destructive" (click)="deleteObservation(obs)">
 					<i class="fa fa-trash"></i> Eliminar
 				</button>
-				<button type="button" class="btn btn-primary btn-sm" (click)="saveObservation(obs)">
-					<i class="fa fa-save"></i> Guardar
-				</button>
+
+				<app-submit [submit]="saveObservation.bind(this, obs)"
+					[disabled]="obs.observation === obs.originalObservation" [isModal]="false"
+					(discard)="resetObservation(obs)">
+				</app-submit>
 			</div>
 		</div>
 	</div>

@@ -170,6 +170,7 @@ export class StudentObservation {
     id!: number;
     studentId!: number
     observation!: string;
+    originalObservation?: string;
     activity!: Activity
     createdAt!: string;
     activityId!: number;

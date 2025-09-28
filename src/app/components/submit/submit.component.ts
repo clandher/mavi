@@ -48,6 +48,7 @@ export class SubmitComponent {
 				await this.submit();
 				this.toastr.success('Cambios guardados correctamente', 'Éxito');
 			} catch (error) {
+				console.error(error);
 				this.toastr.error('Ocurrió un error al guardar los cambios', 'Error');
 			}
 			

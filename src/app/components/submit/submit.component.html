@@ -1,5 +1,6 @@
-<div class="flex justify-end space-x-2 mt-4">
-	<button type="button" (click)="onDiscard()" class="btn btn-outline" [disabled]="form?.pristine && !isModal">
+<div class="flex justify-end space-x-2">
+	<button type="button" (click)="onDiscard()" class="btn btn-outline"
+		[disabled]="disabled || (!isModal && form?.pristine)">
 		Cancelar
 	</button>
 	<!-- {{loading}} || {{disabled}} || {{form?.pristine}} || {{form?.invalid}} -->

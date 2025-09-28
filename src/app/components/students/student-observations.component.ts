@@ -36,24 +36,27 @@ export class StudentObservationsComponent implements OnInit {
 
 
 		this.studentObservationsAPI = new BaseHttp(`student-observations?${queryString}`, this.http);
-		
+
 	}
 
 	ngOnInit() {
 		this.studentObservationsAPI.get<StudentObservation[]>().subscribe((data: StudentObservation[]) => {
-			this.timeObservations = data;
+			this.timeObservations = data.map(obs => ({ ...obs, originalObservation: obs.observation }));
 		});
 	}
-
-	saveObservation(obs: StudentObservation) {
-		this.http.patch(buildUrl(`student-observations/${obs.id}`), { observation: obs.observation }).subscribe({
-			next: () => {
-				// Puedes mostrar un mensaje de éxito
-			},
-			error: (err) => {
+	saveObservation(obs: StudentObservation): Promise<void> {
+		return this.http.patch(buildUrl(`student-observations/${obs.id}`), { observation: obs.observation })
+			.toPromise()
+			.then(() => {
+				obs.originalObservation = obs.observation;
+			})
+			.catch((err) => {
 				// Manejo de errores
-			}
-		});
+			});
+	}
+
+	resetObservation(obs: StudentObservation) {
+		obs.observation = obs.originalObservation || '';
 	}
 
 	deleteObservation(obs: StudentObservation) {
@@ -70,7 +73,7 @@ export class StudentObservationsComponent implements OnInit {
 	onObservationsComplete($event: boolean) {
 		if ($event) {
 			this.studentObservationsAPI.get<StudentObservation[]>().subscribe((data: StudentObservation[]) => {
-				this.timeObservations = data;
+				this.timeObservations = data.map(obs => ({ ...obs, originalObservation: obs.observation }));
 			});
 		}
 		this.showObservations = false;
