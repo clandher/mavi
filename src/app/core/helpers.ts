@@ -42,7 +42,7 @@ export function uploadStudentPhoto(event: Event, student: Student, http: HttpCli
     console.log('Uploading photo for existing student');
     studentsAPI.post<FormData, any>(formData).subscribe({
         next: (res) => {
-            httpImage.student(student);
+            // httpImage.student(student);
         },
         error: (err) => {
             console.error('Error uploading photo', err);
@@ -51,7 +51,7 @@ export function uploadStudentPhoto(event: Event, student: Student, http: HttpCli
 
     const reader = new FileReader();
     reader.onload = () => {
-        student.photo = reader.result as string;
+        student.photoUrl = reader.result as string;
     };
     reader.readAsDataURL(file);
 }
