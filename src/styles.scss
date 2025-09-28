@@ -489,7 +489,7 @@ select.form-control {
         color: oklch(0.8 0 0);
         text-decoration: underline;
     }
- }
+}
 
 .hover-link {
     color: oklch(0.985 0 0);
@@ -604,5 +604,36 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
     &:hover {
         background-color: #1a1a1a;
+    }
+}
+
+
+
+
+.menu-context {
+    border-radius: 10px;
+    background: #151515;
+    color: #e5e7eb;
+    position: absolute;
+    border: 1px solid #262626;
+    padding: 8px;
+    z-index: 30;
+    margin-top: 8px;
+
+    li {
+        padding: 8px 16px;
+        cursor: pointer;
+    }
+
+    ul ul li {
+        &:hover {
+            border-radius: 4px;
+            background: #201f1f; // Cambia este color al que prefieras
+        }
+    }
+
+    li:hover {
+        border-radius: 4px;
+        background: #101010;
     }
 }

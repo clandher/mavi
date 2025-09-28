@@ -24,11 +24,12 @@
                 <span class="menu-icon">▼</span>
             </button>
 
-            <div class="menu-dropdown" [class.show]="menuOpen">
-                <div class="menu-item" (click)="logout()">
-                    <span class="menu-icon">🚪</span>
-                    <span>Cerrar sesión</span>
-                </div>
+            <div *ngIf="menuOpen" class="menu-context">
+                <ul>
+                    <li (click)="logout()">
+                        <span>Cerrar sesión</span>
+                    </li>
+                </ul>
             </div>
         </div>
     </header>

@@ -305,6 +305,7 @@ export class AvatarsComponent {
 		this.showSubmenu[option] = !this.showSubmenu[option];
 
 		if ('inscribir' === option) {
+			studentActivity.student.activities = [];
 			const queryString = RequestQueryBuilder.create({
 				search: { studentId: studentActivity.student.id },
 			}).query();
