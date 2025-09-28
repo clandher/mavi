@@ -2,56 +2,45 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { StudentObservation } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
-import { ObservationsComponent } from "../observations";
+import { SubmitComponent } from '../submit/submit.component';
+import { MaviValidators } from '@app/core/mavi-validators';
+import { FormGroupComponent } from '../form-group/form-group.component';
 
 @Component({
 	standalone: true,
-	imports: [CommonModule, FormsModule, RouterModule, ObservationsComponent],
+	imports: [CommonModule, ReactiveFormsModule, FormsModule, RouterModule, SubmitComponent, FormGroupComponent],
 	templateUrl: './student-technical.component.html',
 	providers: []
 })
 
-export class StudentTechnicalComponent implements OnInit {
+export class StudentTechnicalComponent {
 
 	studentId: number | null = null;
-
-	technicalForm = {
-		foot: '',
-		position: '',
-		height: null,
-		weight: null,
-		number: null,
-		observations: '',
-		strengths: '',
-		weaknesses: ''
-	};
-	selectedTab: 'observations' | 'timeObservations' = 'observations';
-	studentObservationsAPI: BaseHttp;
-	timeObservations: StudentObservation[] = [];
+	technicalForm: FormGroup;
 	showObservations: any;
 
 	constructor(
 		private http: HttpClient,
 		private route: ActivatedRoute,
+		private fb: FormBuilder
 	) {
 		this.studentId = Number(this.route.parent!.snapshot.paramMap.get('id'));
-		const queryString = RequestQueryBuilder.create({
-			search: { studentId: this.studentId },
-		}).query();
-		this.studentObservationsAPI = new BaseHttp(`student-observations?${queryString}`, this.http);
-		this.getStudent();
-	}
 
-	ngOnInit() {
-
-
-		this.studentObservationsAPI.get<StudentObservation[]>().subscribe((data: StudentObservation[]) => {
-			this.timeObservations = data;
+		this.technicalForm = this.fb.group({
+			foot: [''],
+			position: [''],
+			height: [''],
+			weight: [''],
+			number: [''],
+			observations: [''],
+			strengths: [''],
+			weaknesses: ['']
 		});
+		this.getStudent();
 	}
 
 	getStudent() {
@@ -59,7 +48,7 @@ export class StudentTechnicalComponent implements OnInit {
 		this.http.get<any>(buildUrl(`students/${this.studentId}`)).subscribe({
 			next: (student) => {
 				if (student.technical) {
-					this.technicalForm = { ...this.technicalForm, ...student.technical };
+					this.technicalForm.patchValue(student.technical);
 				}
 			},
 			error: (err) => {
@@ -68,50 +57,9 @@ export class StudentTechnicalComponent implements OnInit {
 		});
 	}
 
-	onSubmit() {
-		if (!this.studentId) return;
-		const body = { technical: { ...this.technicalForm } };
-		this.http.patch(buildUrl(`students/${this.studentId}`), body).subscribe({
-			next: () => {
-				// Puedes mostrar un mensaje de éxito o redirigir
-			},
-			error: (err) => {
-
-			}
-		});
-	}
-
-	saveObservation(obs: StudentObservation) {
-		this.http.patch(buildUrl(`student-observations/${obs.id}`), { observation: obs.observation }).subscribe({
-			next: () => {
-				// Puedes mostrar un mensaje de éxito
-			},
-			error: (err) => {
-
-			}
-		});
-	}
-
-	deleteObservation(obs: StudentObservation) {
-		// Eliminar la observación individual
-		this.http.delete(buildUrl(`student-observations/${obs.id}`)).subscribe({
-			next: () => {
-				// Elimina la observación del arreglo local
-				this.timeObservations = this.timeObservations.filter(o => o.id !== obs.id);
-			},
-			error: (err) => {
-				console.error('Error al eliminar observación', err);
-			}
-		});
-	}
-
-	onObservationsComplete($event: boolean) {
-		if ($event) {
-			this.studentObservationsAPI.get<StudentObservation[]>().subscribe((data: StudentObservation[]) => {
-				this.timeObservations = data;
-			});
-		}
-		this.showObservations = false;
+	onSubmit(): Promise<any> {
+		if (!this.studentId) return Promise.resolve();
+		const body = { technical: { ...this.technicalForm.value } };
+		return this.http.patch(buildUrl(`students/${this.studentId}`), body).toPromise();
 	}
 }
-

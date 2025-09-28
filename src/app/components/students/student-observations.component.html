@@ -1,0 +1,28 @@
+<div class="flex flex-col gap-4 text-white">
+	<div *ngFor="let obs of timeObservations">
+
+		<textarea class="form-control" rows="2" [(ngModel)]="obs.observation" name="observation{{obs.id}}"></textarea>
+		<div class="flex justify-between mb-2">
+			<div class=" text-gray-500">
+				<small class="hover-link" [routerLink]="['/app/actividades']"
+					[queryParams]="{ category: obs.activity.categoryId, activity: obs.activity.id }">
+					{{ obs.activity.description }}
+					-
+					{{ obs.createdAt | date:'mediumDate' }}
+				</small>
+			</div>
+
+			<div class="flex gap-2 mt-2 justify-end">
+				<button type="button" class="btn btn-outline btn-sm" (click)="deleteObservation(obs)">
+					<i class="fa fa-trash"></i> Eliminar
+				</button>
+				<button type="button" class="btn btn-primary btn-sm" (click)="saveObservation(obs)">
+					<i class="fa fa-save"></i> Guardar
+				</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<app-observations *ngIf="showObservations" [studentId]="studentId!" (complete)="onObservationsComplete($event)">
+</app-observations>

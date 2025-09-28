@@ -2,6 +2,7 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, ValueChangeEvent } from '@angular/forms';
 import { filter, take } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
 	selector: 'app-submit',
@@ -21,6 +22,12 @@ export class SubmitComponent {
 	public loading = false;
 	private _originalValue: any;
 
+	constructor(
+		private toastr: ToastrService
+	) {
+
+	}
+
 	ngOnInit() {
 		this.form?.events.pipe(filter(event => event instanceof ValueChangeEvent), take(1)).subscribe((event) => {
 			this._originalValue = event.value;
@@ -37,9 +44,16 @@ export class SubmitComponent {
 	async onSubmit() {
 		this.loading = true;
 		try {
-			await this.submit();
+			try {
+				await this.submit();
+				this.toastr.success('Cambios guardados correctamente', 'Éxito');
+			} catch (error) {
+				this.toastr.error('Ocurrió un error al guardar los cambios', 'Error');
+			}
+			
 			this._originalValue = this.form?.getRawValue();
 			this.form?.markAsPristine();
+
 		} finally {
 			this.loading = false;
 		}

@@ -1,124 +1,53 @@
-<form class="mavi-border" (ngSubmit)="onSubmit()" #form="ngForm">
+<form [formGroup]="technicalForm" class="mavi-border">
 	<div class="flex gap-4">
-		<div class="form-group flex-1">
-			<label for="foot" class="form-label">Pierna hábil</label>
-			<select id="foot" class="form-control" [(ngModel)]="technicalForm.foot" name="foot">
+		<app-form-group class="flex-1" [title]="'Pierna hábil'" [control]="technicalForm.get('foot')">
+			<select id="foot" class="form-control" formControlName="foot">
 				<option value="">Selecciona pierna hábil</option>
 				<option value="Derecha">Derecha</option>
 				<option value="Izquierda">Izquierda</option>
 				<option value="Ambas">Ambas</option>
 			</select>
-		</div>
+		</app-form-group>
 
-		<div class="form-group flex-1">
-			<label for="position" class="form-label">Posición</label>
-			<select id="position" class="form-control" [(ngModel)]="technicalForm.position" name="position">
+		<app-form-group class="flex-1" [title]="'Posición'" [control]="technicalForm.get('position')">
+			<select id="position" class="form-control" formControlName="position">
 				<option value="">Selecciona posición</option>
 				<option value="Portero">Portero</option>
 				<option value="Defensa">Defensa</option>
 				<option value="Medio">Medio</option>
 				<option value="Delantero">Delantero</option>
 			</select>
-		</div>
+		</app-form-group>
 	</div>
 
 	<br>
 	<div class="flex gap-4">
-		<div class="form-group flex-1">
-			<label for="height" class="form-label">Altura (cm)</label>
-			<input id="height" type="number" class="form-control" min="100" max="250" placeholder="Ej. 175"
-				[(ngModel)]="technicalForm.height" name="height">
-		</div>
-		<div class="form-group flex-1">
-			<label for="weight" class="form-label">Peso (kg)</label>
-			<input id="weight" type="number" class="form-control" min="30" max="150" placeholder="Ej. 70"
-				[(ngModel)]="technicalForm.weight" name="weight">
-		</div>
-		<div class="form-group flex-1">
-			<label for="number" class="form-label">Número</label>
-			<input id="number" type="number" class="form-control" min="1" max="99" placeholder="Número"
-				[(ngModel)]="technicalForm.number" name="number">
-		</div>
+		<app-form-group [title]="'Altura (cm)'" [control]="technicalForm.get('height')">
+			<input id="height" type="number" class="form-control" placeholder="Ej. 175" formControlName="height">
+		</app-form-group>
+		<app-form-group [title]="'Peso (kg)'" [control]="technicalForm.get('weight')">
+			<input id="weight" type="number" class="form-control" placeholder="Ej. 70" formControlName="weight">
+		</app-form-group>
+		<app-form-group [title]="'Número (Camisa)'" [control]="technicalForm.get('number')">
+			<input id="number" type="number" class="form-control" placeholder="Número" formControlName="number">
+		</app-form-group>
 	</div>
 	<br>
-	<br>
-	<div class="mavi-tabs">
-		<button class="mavi-tab" (click)="selectedTab='observations'"
-			[ngClass]="{'selected': selectedTab === 'observations'}">
-			Observaciones
-		</button>
-		<button class="mavi-tab" (click)="selectedTab='timeObservations'"
-			[ngClass]="{'selected': selectedTab === 'timeObservations'}">
-			Observaciones al tiempo
-		</button>
-	</div>
-	<br>
-	<div [ngSwitch]="selectedTab" class="mavi-border">
-		<div *ngSwitchCase="'observations'">
-			<div class="form-group">
-				<label for="observations" class="form-label">Observaciones</label>
-				<textarea id="observations" class="form-control" rows="3"
-					placeholder="Observaciones técnicas, físicas, etc." [(ngModel)]="technicalForm.observations"
-					name="observations"></textarea>
-			</div>
-			<br>
-			<div class="form-group">
-				<label for="strengths" class="form-label">Fortalezas</label>
-				<textarea id="strengths" class="form-control" rows="3" placeholder="Fortalezas técnicas, físicas, etc."
-					[(ngModel)]="technicalForm.strengths" name="strengths"></textarea>
-			</div>
-			<br>
-			<div class="form-group">
-				<label for="weaknesses" class="form-label">Debilidades</label>
-				<textarea id="weaknesses" class="form-control" rows="3"
-					placeholder="Debilidades técnicas, físicas, etc." [(ngModel)]="technicalForm.weaknesses"
-					name="weaknesses"></textarea>
-			</div>
-			<div class="mavi-bottom-actions">
-				<div class="mavi-bottom-actions-inner">
-					<button type="submit" class="btn btn-primary">Guardar ficha técnica</button>
-					<button type="button" class="btn btn-primary" (click)="showObservations = true">Agregar
-						observación</button>
-				</div>
-			</div>
-		</div>
-		<div *ngSwitchCase="'timeObservations'">
-			<div class="flex flex-col gap-4 text-white">
-				<div *ngFor="let obs of timeObservations">
 
-					<textarea class="form-control" rows="2" [(ngModel)]="obs.observation"
-						name="observation{{obs.id}}"></textarea>
-					<div class="flex justify-between mb-2">
-						<div class=" text-gray-500">
-							<small class="hover-link" [routerLink]="['/app/actividades']"
-								[queryParams]="{ category: obs.activity.categoryId, activity: obs.activity.id }">
-								{{ obs.activity.description }}
-								-
-								{{ obs.createdAt | date:'mediumDate' }}
-							</small>
-						</div>
+	<app-form-group [title]="'Observaciones'" [control]="technicalForm.get('observations')">
+		<textarea id="observations" class="form-control" rows="3" placeholder="Observaciones técnicas, físicas, etc."
+			formControlName="observations"></textarea>
+	</app-form-group>
+	<br>
+	<app-form-group [title]="'Fortalezas'" [control]="technicalForm.get('strengths')">
+		<textarea id="strengths" class="form-control" rows="3" placeholder="Fortalezas técnicas, físicas, etc."
+			formControlName="strengths"></textarea>
+	</app-form-group>
+	<br>
+	<app-form-group [title]="'Debilidades'" [control]="technicalForm.get('weaknesses')">
+		<textarea id="weaknesses" class="form-control" rows="3" placeholder="Debilidades técnicas, físicas, etc."
+			formControlName="weaknesses"></textarea>
+	</app-form-group>
 
-						<div class="flex gap-2 mt-2 justify-end">
-							<button type="button" class="btn btn-outline btn-sm" (click)="deleteObservation(obs)">
-								<i class="fa fa-trash"></i> Eliminar
-							</button>
-							<button type="button" class="btn btn-primary btn-sm" (click)="saveObservation(obs)">
-								<i class="fa fa-save"></i> Guardar
-							</button>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="mavi-bottom-actions">
-				<div class="mavi-bottom-actions-inner">
-					<button type="submit" class="btn btn-primary">Guardar ficha técnica</button>
-					<button type="button" class="btn btn-primary" (click)="showObservations = true">Agregar
-						observación</button>
-				</div>
-			</div>
-		</div>
-	</div>
+	<app-submit [form]="technicalForm" [submit]="onSubmit.bind(this)" [isModal]="false"></app-submit>
 </form>
-
-<app-observations *ngIf="showObservations" [studentId]="studentId!" (complete)="onObservationsComplete($event)">
-</app-observations>
