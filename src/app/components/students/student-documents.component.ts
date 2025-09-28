@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { buildUrl } from '@app/core/base-http';
+import { ImageHttpClient } from '@app/core/image-http-client';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 
 @Component({
@@ -25,6 +26,7 @@ export class StudentDocumentsComponent {
 		private http: HttpClient,
 		private route: ActivatedRoute,
 		private router: Router,
+		private imageHttpClient: ImageHttpClient // Added ImageHttpClient
 	) {
 
 		this.studentId = this.route.parent!.snapshot.paramMap.get('id');
@@ -66,6 +68,24 @@ export class StudentDocumentsComponent {
 		this.uploadFiles(files);
 	}
 
+	getStudentDocuments(studentId: string) {
+		const qb = RequestQueryBuilder.create({
+			search: { studentId: Number(studentId) },
+		}).query();
+
+		this.http.get<StudentDocument[]>(buildUrl(`student-documents?${qb}`))
+			.subscribe(result => {
+				this.documents = result.map(doc => {
+					const updatedDoc = { ...doc };
+					if (this.isImage(doc)) {
+						this.imageHttpClient.fetch(`student-documents/${this.studentId}/document/${doc.id}`)
+							.subscribe(previewUrl => updatedDoc.previewUrl = previewUrl);
+					}
+					return updatedDoc;
+				});
+			});
+	}
+
 	uploadFiles(files: FileList) {
 		const formData = new FormData();
 		Array.from(files).forEach(file => {
@@ -75,12 +95,14 @@ export class StudentDocumentsComponent {
 		this.http.post(buildUrl(`student-documents/${this.studentId}/uploads`), formData)
 			.subscribe((res: any) => {
 				if (res.documents) {
-					const mappedNewDocs = res.documents.map((doc: StudentDocument) => ({
-						...doc,
-						previewUrl: this.isImage(doc)
-							? buildUrl(`student-documents/${this.studentId}/document/${doc.id}`)
-							: undefined
-					}));
+					const mappedNewDocs = res.documents.map((doc: StudentDocument) => {
+						const updatedDoc = { ...doc };
+						if (this.isImage(doc)) {
+							this.imageHttpClient.fetch(`student-documents/${this.studentId}/document/${doc.id}`)
+								.subscribe(previewUrl => updatedDoc.previewUrl = previewUrl);
+						}
+						return updatedDoc;
+					});
 					this.documents = [...this.documents, ...mappedNewDocs];
 				}
 			});
@@ -99,22 +121,6 @@ export class StudentDocumentsComponent {
 					this.documents.splice(index, 1);
 				});
 		}
-	}
-
-	getStudentDocuments(studentId: string) {
-		const qb = RequestQueryBuilder.create({
-			search: { studentId: Number(studentId) },
-		}).query();
-
-		this.http.get<StudentDocument[]>(buildUrl(`student-documents?${qb}`))
-			.subscribe(result => {
-				this.documents = result.map(doc => ({
-					...doc,
-					previewUrl: this.isImage(doc)
-						? buildUrl(`student-documents/${this.studentId}/document/${doc.id}`)
-						: undefined
-				}));
-			});
 	}
 
 	downloadDocument(event: MouseEvent, doc: StudentDocument) {

@@ -13,7 +13,7 @@
 			draggable="true" (click)="downloadDocument($event, document)">
 
 			<div class="w-12 h-14 flex items-center justify-center mb-2">
-				<ng-container *ngIf="isImage(document); else fileIcon">
+				<ng-container *ngIf="isImage(document) && document.previewUrl; else fileIcon">
 					<img [src]="document.previewUrl" alt="preview" class="w-10 h-12 object-contain rounded shadow" />
 				</ng-container>
 				<ng-template #fileIcon>
