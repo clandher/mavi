@@ -19,7 +19,6 @@ import { ObservationsComponent } from '../observations';
 export class StudentObservationsComponent implements OnInit {
 
 	studentId: number | null = null;
-	technicalForm: FormGroup;
 	selectedTab: 'observations' | 'timeObservations' = 'observations';
 	studentObservationsAPI: BaseHttp;
 	timeObservations: StudentObservation[] = [];
@@ -37,43 +36,13 @@ export class StudentObservationsComponent implements OnInit {
 
 
 		this.studentObservationsAPI = new BaseHttp(`student-observations?${queryString}`, this.http);
-		this.technicalForm = this.fb.group({
-			foot: ['', Validators.required],
-			position: ['', Validators.required],
-			height: [null, [Validators.required, Validators.min(100), Validators.max(250)]],
-			weight: [null, [Validators.required, Validators.min(30), Validators.max(150)]],
-			number: [null, [Validators.required, Validators.min(1), Validators.max(99)]],
-			observations: [''],
-			strengths: [''],
-			weaknesses: ['']
-		});
-		this.getStudent();
+		
 	}
 
 	ngOnInit() {
 		this.studentObservationsAPI.get<StudentObservation[]>().subscribe((data: StudentObservation[]) => {
 			this.timeObservations = data;
 		});
-	}
-
-	getStudent() {
-		if (!this.studentId) return;
-		this.http.get<any>(buildUrl(`students/${this.studentId}`)).subscribe({
-			next: (student) => {
-				if (student.technical) {
-					this.technicalForm.patchValue(student.technical);
-				}
-			},
-			error: (err) => {
-				console.error('Error al obtener datos del estudiante', err);
-			}
-		});
-	}
-
-	onSubmit(): Promise<any> {
-		if (!this.studentId) return Promise.resolve();
-		const body = { technical: { ...this.technicalForm.value } };
-		return this.http.patch(buildUrl(`students/${this.studentId}`), body).toPromise();
 	}
 
 	saveObservation(obs: StudentObservation) {

@@ -65,20 +65,38 @@
 	</div>
 </div>
 
-<div *ngIf="paymentsWithChargers.length === 0" class="text-gray-500 text-center py-8">
+
+@if(paymentsWithChargers.length === 0){
+<div class="text-gray-500 text-center py-8">
 	No hay pagos realizados.
 </div>
 
-<app-payment *ngIf="showPaymentModal" [studentId]="+studentId!" (complete)="onPaymentComplete($event)"></app-payment>
+
+<div class="flex justify-center py-4">
+	<button class="btn btn-secondary" (click)="showPaymentModal = true">
+		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+			class="size-4 me-2">
+			<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+		</svg>
+		Nuevo pago
+	</button>
+</div>
+} @else {
+
 
 <div class="mavi-bottom-actions">
 	<div class="mavi-bottom-actions-inner">
 		<button class="btn btn-secondary" (click)="showPaymentModal = true">
 			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-				stroke="currentColor" class="size-4">
+				stroke="currentColor" class="size-4 me-2">
 				<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
 			</svg>
 			Nuevo pago
 		</button>
 	</div>
 </div>
+}
+
+
+
+<app-payment *ngIf="showPaymentModal" [studentId]="+studentId!" (complete)="onPaymentComplete($event)"></app-payment>
