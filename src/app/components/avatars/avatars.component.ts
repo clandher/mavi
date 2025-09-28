@@ -12,6 +12,7 @@ import { ActivityComponent } from "../activity/activity.component";
 import { uploadStudentPhoto } from '@app/core/helpers';
 import { ObservationsComponent } from "../observations";
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
+import { ImageHttpClient } from '@app/core/image-http-client';
 
 @Component({
 	standalone: true,
@@ -44,6 +45,7 @@ export class AvatarsComponent {
 		private router: Router,
 		private route: ActivatedRoute,
 		private http: HttpClient,
+		private imageHttp: ImageHttpClient
 	) {
 
 		this.route.queryParams.subscribe(params => {
@@ -284,7 +286,7 @@ export class AvatarsComponent {
 
 	onPhotoSelected($event: Event) {
 		if (this.selectedStudentActivity?.student) {
-			uploadStudentPhoto($event, this.selectedStudentActivity?.student, this.http);
+			uploadStudentPhoto($event, this.selectedStudentActivity?.student, this.http, this.imageHttp);
 		}
 	}
 

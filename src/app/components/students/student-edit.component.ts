@@ -9,6 +9,7 @@ import { setFocus, uploadStudentPhoto } from '@app/core/helpers';
 import { FormGroupComponent } from '../form-group/form-group.component';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { SubmitComponent } from '../submit/submit.component';
+import { ImageHttpClient } from '@app/core/image-http-client';
 
 @Component({
     standalone: true,
@@ -28,9 +29,11 @@ export class StudentEditComponent {
         private route: ActivatedRoute,
         private router: Router,
         private http: HttpClient,
+        private imageHttp: ImageHttpClient,
         private fb: FormBuilder
     ) {
         this.studentForm = this.fb.group({
+            id: [''],
             name: [''],
             birthdate: [''],
             nick: [''],
@@ -60,6 +63,7 @@ export class StudentEditComponent {
         studentsAPI.get<Student>().subscribe({
             next: (student) => {
                 this.studentForm.patchValue({
+                    id: student.id,
                     name: student.name,
                     birthdate: new Date(student.birthdate).toISOString().slice(0, 10),
                     curp: student.curp,
@@ -67,8 +71,14 @@ export class StudentEditComponent {
                     placeOfBirth: student.placeOfBirth,
                     nick: student.nick,
                     photo: student.photo,
-                    photoUrl: buildUrl(`students/${studentId}/photo`),
+                    photoUrl: null,
                 });
+
+                if (student.photo) {
+                    this.imageHttp.fetch(buildUrl(`students/${student.id}/photo`) + `?t=${new Date().getTime()}`).subscribe(blobUrl => {
+                        this.studentForm.patchValue({ photoUrl: blobUrl });
+                    });
+                }
                 setFocus('name', false);
             },
             error: (err) => {
@@ -122,8 +132,15 @@ export class StudentEditComponent {
         this.studentForm.patchValue({
             id: student.id,
             photo: student.photo,
-            photoUrl: student.photoUrl
+            // photoUrl: student.photoUrl
         });
+
+        if (student.photo) {
+            this.imageHttp.fetch(buildUrl(`students/${student.id}/photo`) + `?t=${new Date().getTime()}`).subscribe(blobUrl => {
+                this.studentForm.patchValue({ photoUrl: blobUrl });
+            });
+        }
+
         this._uploadPendingPhotoIfAny();
         this.router.navigate(['/app/estudiantes', student.id, 'editar']);
     }
@@ -133,7 +150,7 @@ export class StudentEditComponent {
     onPhotoSelected(event: Event) {
         const studentId = Number(this.route.snapshot.paramMap.get('id') ?? 0);
         if (studentId > 0) {
-            uploadStudentPhoto(event, this.studentForm.value, this.http);
+            uploadStudentPhoto(event, this.studentForm.value, this.http, this.imageHttp);
             return;
         }
 
@@ -165,7 +182,7 @@ export class StudentEditComponent {
         fakeInput.type = 'file';
         fakeInput.files = dataTransfer.files;
         const event = { target: fakeInput } as unknown as Event;
-        uploadStudentPhoto(event, this.studentForm.value, this.http);
+        uploadStudentPhoto(event, this.studentForm.value, this.http, this.imageHttp);
         this.pendingPhotoFile = null;
     }
 

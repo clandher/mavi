@@ -1,6 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { Student, School } from "./dto";
 import { BaseHttp, buildUrl } from "./base-http";
+import { ImageHttpClient } from "./image-http-client";
 
 export function formatDateForDisplay(date: Date): string {
     if (!date) return '';
@@ -28,7 +29,7 @@ export function datetimeLocalStringToDate(value: string): Date {
     return value ? new Date(value) : new Date;
 }
 
-export function uploadStudentPhoto(event: Event, student: Student, http: HttpClient): void {
+export function uploadStudentPhoto(event: Event, student: Student, http: HttpClient, httpImage: ImageHttpClient): void {
     const file = (event.target as HTMLInputElement).files?.[0];
 
     if (!file || !student.id) return;
@@ -37,11 +38,17 @@ export function uploadStudentPhoto(event: Event, student: Student, http: HttpCli
     formData.append('file', file);
 
     const studentsAPI = new BaseHttp(`students/${student.id}/upload`, http);
+
+    console.log('Uploading photo for existing student');
     studentsAPI.post<FormData, any>(formData).subscribe({
         next: (res) => {
-            const timestamp = new Date().getTime();
+            // const timestamp = new Date().getTime();
+            // student.photoUrl = buildUrl(`students/${student.id}/photo`) + `?t=${timestamp}`;
+            httpImage.fetch(buildUrl(`students/${student.id}/photo`) + `?t=${new Date().getTime()}`).subscribe(blobUrl => {
+                // this.studentForm.patchValue({ photoUrl: blobUrl });
+                student.photoUrl = blobUrl;
 
-            student.photoUrl = buildUrl(`students/${student.id}/photo`) + `?t=${timestamp}`;
+            });
         },
         error: (err) => {
             console.error('Error uploading photo', err);

@@ -1,7 +1,7 @@
 <form [formGroup]="studentForm">
     <div class="flex gap-3 items-center">
         <label for="photo" class="photo-label">
-            <img *ngIf="studentForm.value.photo; else placeholder" [src]="studentForm.value.photoUrl"
+            <img *ngIf="studentForm.value.photoUrl; else placeholder" [src]="studentForm.value.photoUrl"
                 class="student-photo" alt="Foto">
             <ng-template #placeholder>
                 <div class="photo-placeholder">+</div>
