@@ -7,11 +7,12 @@ import { Activity, Category, Student, StudentActivity } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { ActivatedRoute } from '@angular/router';
 import { ImageHttpClient } from '@app/core/image-http-client';
+import { SubmitComponent } from '../submit/submit.component';
 
 @Component({
     selector: 'app-observations',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, SubmitComponent],
     templateUrl: './observations.component.html',
     styleUrls: ['./observations.component.scss']
 })

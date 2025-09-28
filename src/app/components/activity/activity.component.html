@@ -1,7 +1,7 @@
 <div class="modal-overlay">
 	<div class="modal-content">
 		<h2 class="text-xl font-semibold mb-4">{{ activityId !== 0 ? 'Editar actividad' : 'Nueva actividad' }}</h2>
-		<form [formGroup]="activityForm" (ngSubmit)="saveActivity()">
+		<form [formGroup]="activityForm">
 			<app-form-group [title]="'Descripción'" [control]="activityForm.get('description')" class="form-group">
 				<input id="description" type="text" formControlName="description" class="form-control"
 					[readonly]="false">

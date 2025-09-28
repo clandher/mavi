@@ -74,10 +74,10 @@
 		</div>
 		<div class="modal-footer">
 			<div class="flex justify-end space-x-2 mt-4">
-				<button (click)="onCancel()" class="btn btn-outline">Cancelar</button>
-				<button (click)="onAssignObservations()"
-					[disabled]="selectedExistingStudents.length === 0 || selectedObservations.length === 0"
-					class="btn btn-primary">Asignar observaciones</button>
+				<app-submit [disabled]="selectedExistingStudents.length === 0 || selectedObservations.length === 0"
+					submitText="Asignar observaciones" [submit]="onAssignObservations.bind(this)"
+					(discard)="onCancel()">
+				</app-submit>
 			</div>
 		</div>
 	</div>

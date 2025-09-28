@@ -3,7 +3,7 @@
         <h2 class="text-xl font-semibold mb-4">
             {{ activityTypeId !== 0 ? 'Editar tipo de actividad' : 'Nuevo tipo de actividad' }}
         </h2>
-        <form [formGroup]="activityTypeForm" (ngSubmit)="saveActivityType()">
+        <form [formGroup]="activityTypeForm">
             <app-form-group [title]="'Descripción'" [control]="activityTypeForm.get('key')">
                 <input id="key" type="text" formControlName="key" class="form-control" autocomplete="off" />
             </app-form-group>
