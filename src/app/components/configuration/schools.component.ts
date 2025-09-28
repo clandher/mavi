@@ -9,8 +9,6 @@ import { HttpClient } from '@angular/common/http';
 import { SubmitComponent } from '../submit/submit.component';
 import { FormGroupComponent } from '../form-group/form-group.component';
 import { MaviValidators } from '@app/core/mavi-validators';
-import { Subject, forkJoin, of } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-schools',
@@ -19,7 +17,9 @@ import { map } from 'rxjs/operators';
 	imports: [NgIf, NgFor, FormsModule, ReactiveFormsModule, SubmitComponent, FormGroupComponent]
 })
 export class SchoolsComponent {
+
 	schoolsForm: FormGroup;
+	private originalLogoUrl = '';
 
 	constructor(
 		private imageHttp: ImageHttpClient,
@@ -35,6 +35,9 @@ export class SchoolsComponent {
 	ngOnInit() {
 
 		this.schoolService.changes.subscribe(school => {
+
+			this.originalLogoUrl = school.logoUrl ?? '';
+
 			const schoolControls = [school].map((school: any) => {
 				return this.fb.group({
 					id: [school.id],
@@ -105,5 +108,15 @@ export class SchoolsComponent {
 				console.error('Error uploading logo', err);
 			}
 		});
+	}
+
+	onDiscard() {
+		this.schoolsArray.controls.forEach((control: AbstractControl) => {
+			control.patchValue({
+				logoUrl: this.originalLogoUrl,
+				pendingLogoFile: null
+			});
+		});
+		this.schoolsForm.markAsPristine();
 	}
 }

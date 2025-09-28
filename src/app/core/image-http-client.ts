@@ -44,7 +44,6 @@ export class ImageHttpClient {
                     return student.photoUrl;
                 })
             );
-            // Ejecuta el fetch automáticamente
             fetcher.subscribe();
             return fetcher;
         }

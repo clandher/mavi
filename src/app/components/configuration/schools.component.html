@@ -21,6 +21,5 @@
         </div>
     </div>
 
-    <app-submit [form]="schoolsForm" [submit]="saveSchools.bind(this)" [isModal]="false">
-    </app-submit>
+    <app-submit [form]="schoolsForm" [submit]="saveSchools.bind(this)" [isModal]="false" (discard)="onDiscard()" />
 </div>
