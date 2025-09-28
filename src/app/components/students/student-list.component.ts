@@ -202,10 +202,8 @@ export class StudentListComponent implements OnInit, AfterViewInit {
 
     private loadStudentPhoto(studentId: number): void {
         const student = this.students.find(s => s.id === studentId);
-        if (student && student.photo) {
-            this.imageHttp.fetch(buildUrl(`students/${student.id}/photo`) + `?t=${new Date().getTime()}`).subscribe(blobUrl => {
-                student.photoUrl = blobUrl;
-            });
+        if (student) {
+            this.imageHttp.student(student);
         }
     }
 

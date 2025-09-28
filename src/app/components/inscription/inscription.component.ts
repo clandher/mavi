@@ -10,6 +10,7 @@ import { ActivatedRoute } from '@angular/router';
 import { SubmitComponent } from "../submit/submit.component";
 import { MaviValidators } from '@app/core/mavi-validators';
 import { FormGroupComponent } from "../form-group/form-group.component";
+import { ImageHttpClient } from '@app/core/image-http-client';
 
 @Component({
     selector: 'app-inscription',
@@ -70,7 +71,8 @@ export class InscriptionComponent implements OnInit {
     constructor(
         private http: HttpClient,
         private route: ActivatedRoute,
-        private fb: FormBuilder
+        private fb: FormBuilder,
+        private imageHttp: ImageHttpClient,
     ) {
         this.form = this.fb.group({
             categoryId: [null, MaviValidators.required()],
@@ -137,10 +139,7 @@ export class InscriptionComponent implements OnInit {
                 return studentCategory;
             });
 
-            if (student.photo) {
-                student.photoUrl = buildUrl(`students/${student.id}/photo`);
-            }
-
+            this.imageHttp.student(student);
             return student;
         });
 

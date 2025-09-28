@@ -74,11 +74,10 @@ export class StudentEditComponent {
                     photoUrl: null,
                 });
 
-                if (student.photo) {
-                    this.imageHttp.fetch(buildUrl(`students/${student.id}/photo`) + `?t=${new Date().getTime()}`).subscribe(blobUrl => {
-                        this.studentForm.patchValue({ photoUrl: blobUrl });
-                    });
-                }
+                this.imageHttp.student(student).subscribe(photoUrl => {
+                    this.studentForm.patchValue({ photoUrl });
+                });
+
                 setFocus('name', false);
             },
             error: (err) => {
@@ -135,11 +134,9 @@ export class StudentEditComponent {
             // photoUrl: student.photoUrl
         });
 
-        if (student.photo) {
-            this.imageHttp.fetch(buildUrl(`students/${student.id}/photo`) + `?t=${new Date().getTime()}`).subscribe(blobUrl => {
-                this.studentForm.patchValue({ photoUrl: blobUrl });
-            });
-        }
+        this.imageHttp.student(student).subscribe(photoUrl => {
+            this.studentForm.patchValue({ photoUrl });
+        });
 
         this._uploadPendingPhotoIfAny();
         this.router.navigate(['/app/estudiantes', student.id, 'editar']);

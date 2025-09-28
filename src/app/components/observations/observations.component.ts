@@ -6,6 +6,7 @@ import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { Activity, Category, Student, StudentActivity } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { ActivatedRoute } from '@angular/router';
+import { ImageHttpClient } from '@app/core/image-http-client';
 
 @Component({
     selector: 'app-observations',
@@ -90,6 +91,7 @@ export class ObservationsComponent implements OnInit {
     constructor(
         private http: HttpClient,
         private route: ActivatedRoute,
+        private imageHttp: ImageHttpClient,
     ) {
 
         this.route.queryParams.subscribe(params => {
@@ -117,10 +119,7 @@ export class ObservationsComponent implements OnInit {
                 return studentCategory;
             });
 
-            if (student.photo) {
-                student.photoUrl = buildUrl(`students/${student.id}/photo`);
-            }
-
+            this.imageHttp.student(student);
             return student;
         });
 

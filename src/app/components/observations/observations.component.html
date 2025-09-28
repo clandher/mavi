@@ -35,7 +35,10 @@
 						[class.bg-green-600]="isStudentSelected(student)"
 						class="mavi-border p-1 flex flex-col cursor-pointer">
 						<div class="flex items-center gap-2">
-							<img *ngIf="student.photo" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
+
+							<img *ngIf="student.photoUrl" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
+							<div *ngIf="student.photo && !student.photoUrl" class="student-photo-sm-placeholder"></div>
+
 							<div>
 								<div>{{ student.nick ? student.nick : student.name }}</div>
 								<span *ngFor="let category of student.categories" class="mavi-tag me-2">{{

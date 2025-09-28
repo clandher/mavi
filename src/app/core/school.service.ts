@@ -22,14 +22,11 @@ export class SchoolService {
         this.http.get<School[]>(buildUrl('schools')).subscribe({
             next: (schools) => {
                 const school = schools && schools.length ? schools[0] : { id: 0, description: 'Sorensic' };
-                if (school.logo) {
-                    this.imageHttp.fetch(buildUrl(`schools/${school.id}/logo`) + `?t=${new Date().getTime()}`).subscribe(blobUrl => {
-                        school.logoUrl = blobUrl;
-                        this._schoolSubject.next(school);
-                    });
-                } else {
+
+                this.imageHttp.school(school).subscribe(blobUrl => {
+                    school.logoUrl = blobUrl;
                     this._schoolSubject.next(school);
-                }
+                });
 
             },
             error: (err) => {

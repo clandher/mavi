@@ -42,8 +42,7 @@
             <div class="student-card-header">
                 <div class="flex items-center">
                     <img *ngIf="student.photoUrl" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
-                    <div *ngIf="student.photo && !student.photoUrl" class="student-photo-sm-placeholder">
-                    </div>
+                    <div *ngIf="student.photo && !student.photoUrl" class="student-photo-sm-placeholder"></div>
                     <div class="hover-link" [routerLink]="['/app/estudiantes', student.id, 'editar']">{{
                         student.nick ? student.nick
                         :

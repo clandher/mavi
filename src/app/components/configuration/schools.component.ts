@@ -35,45 +35,21 @@ export class SchoolsComponent {
 	ngOnInit() {
 
 		this.schoolService.changes.subscribe(school => {
-			this.getSchools();
+			const schoolControls = [school].map((school: any) => {
+				return this.fb.group({
+					id: [school.id],
+					description: [school.description, [MaviValidators.required()]],
+					logoUrl: [school.logoUrl],
+					pendingLogoFile: this.fb.control<File | null>(null)
+				});
+			});
+
+			this.schoolsForm.setControl('schools', this.fb.array(schoolControls));
 		});
 	}
 
 	get schoolsArray(): FormArray {
 		return this.schoolsForm.get('schools') as FormArray;
-	}
-
-	getSchools() {
-		const schoolsAPI = new BaseHttp('schools', this.http);
-		schoolsAPI.get().subscribe({
-			next: (data: any) => {
-				const fetchLogoObservables = data.map((school: any) => {
-					if (school.logo) {
-						return this.imageHttp.fetch(`${buildUrl(`schools/${school.id}/logo`)}?t=${Date.now()}`).pipe(
-							map(blobUrl => ({ ...school, blobUrl }))
-						);
-					} else {
-						return of({ ...school, blobUrl: null });
-					}
-				});
-
-				forkJoin<any[]>(fetchLogoObservables).subscribe((schoolsWithLogos) => {
-					const schoolControls = schoolsWithLogos.map((school: any) => {
-						return this.fb.group({
-							id: [school.id],
-							description: [school.description, [MaviValidators.required()]],
-							logoUrl: this.fb.control<string | null>(school.blobUrl),
-							pendingLogoFile: this.fb.control<File | null>(null)
-						});
-					});
-
-					this.schoolsForm.setControl('schools', this.fb.array(schoolControls));
-				});
-			},
-			error: () => {
-				console.error('Error fetching schools');
-			}
-		});
 	}
 
 	saveSchools(): Promise<any> {
