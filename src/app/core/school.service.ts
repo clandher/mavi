@@ -23,11 +23,16 @@ export class SchoolService {
             next: (schools) => {
                 const school = schools && schools.length ? schools[0] : { id: 0, description: 'Sorensic' };
 
-                this.imageHttp.school(school).subscribe(blobUrl => {
-                    school.logoUrl = blobUrl;
-                    this._schoolSubject.next(school);
+                this.imageHttp.school(school).subscribe({
+                    next: (blobUrl) => {
+                        school.logoUrl = blobUrl;
+                        this._schoolSubject.next(school);
+                    },
+                    error: (err) => {
+                        console.error('Error loading school logo', err);
+                        this._schoolSubject.next(school);
+                    }
                 });
-
             },
             error: (err) => {
                 console.error('Error loading schools', err);

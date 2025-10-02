@@ -9,10 +9,11 @@ import { ImageHttpClient } from '../../core/image-http-client';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BaseHttp } from '../../core/base-http'; // Add this import
 import { HttpClient } from '@angular/common/http';
+import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
 
 @Component({
     standalone: true,
-    imports: [CommonModule, RouterModule],
+    imports: [CommonModule, RouterModule, BreadcrumbsComponent],
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss']
 })

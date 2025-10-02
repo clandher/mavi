@@ -16,17 +16,17 @@ export const routes: Routes = [
             {
                 path: 'actividades',
                 loadComponent: () => import('./components/avatars/avatars.component').then(m => m.AvatarsComponent),
-                title: 'Avatars'
+                data: { breadcrumb: 'Avatars' }
             },
             {
                 path: 'estudiantes',
                 loadComponent: () => import('./components/students/student-list.component').then(m => m.StudentListComponent),
-                title: 'Estudiantes'
+                data: { breadcrumb: 'Estudiantes' }
             },
             {
                 path: 'configuración',
                 loadComponent: () => import('./components/configuration/configuration.component').then(m => m.ConfigurationComponent),
-                title: 'Configuración',
+                data: { breadcrumb: 'Configuración' },
                 children: [
                     {
                         path: '',
@@ -35,31 +35,35 @@ export const routes: Routes = [
                     },
                     {
                         path: 'escuela',
-                        loadComponent: () => import('./components/configuration/schools.component').then(m => m.SchoolsComponent)
+                        loadComponent: () => import('./components/configuration/schools.component').then(m => m.SchoolsComponent),
+                        data: { breadcrumb: 'Escuela' }
                     },
                     {
                         path: 'desarrollo',
-                        loadComponent: () => import('./components/configuration/development.component').then(m => m.DevelopmentComponent)
+                        loadComponent: () => import('./components/configuration/development.component').then(m => m.DevelopmentComponent),
+                        data: { breadcrumb: 'Desarrollo' }
                     },
                     {
                         path: 'categorias',
-                        loadComponent: () => import('./components/configuration/categories.component').then(m => m.CategoriesComponent)
+                        loadComponent: () => import('./components/configuration/categories.component').then(m => m.CategoriesComponent),
+                        data: { breadcrumb: 'Categorías' }
                     },
                     {
                         path: 'tipos-de-actividad',
-                        loadComponent: () => import('./components/activity-types/activity-types.component').then(m => m.ActivityTypesComponent)
+                        loadComponent: () => import('./components/activity-types/activity-types.component').then(m => m.ActivityTypesComponent),
+                        data: { breadcrumb: 'Tipos de Actividad' }
                     }
                 ]
             },
             {
                 path: 'estudiantes/nuevo',
                 loadComponent: () => import('./components/students/student-edit.component').then(m => m.StudentEditComponent),
-                title: 'Nuevo Estudiante',
+                data: { breadcrumb: 'Nuevo Estudiante' }
             },
             {
                 path: 'estudiantes/:id/editar',
                 loadComponent: () => import('./components/students/student-edit.component').then(m => m.StudentEditComponent),
-                title: 'Editar Estudiante',
+                data: { breadcrumb: 'Editar Estudiante' },
                 children: [
                     {
                         path: '',
@@ -68,27 +72,33 @@ export const routes: Routes = [
                     },
                     {
                         path: 'info',
-                        loadComponent: () => import('./components/students/student-info.component').then(m => m.StudentInfoComponent)
+                        loadComponent: () => import('./components/students/student-info.component').then(m => m.StudentInfoComponent),
+                        data: { breadcrumb: 'Información' }
                     },
                     {
                         path: 'actividades',
-                        loadComponent: () => import('./components/students/student-activities.component').then(m => m.StudentActivitiesComponent)
+                        loadComponent: () => import('./components/students/student-activities.component').then(m => m.StudentActivitiesComponent),
+                        data: { breadcrumb: 'Actividades' }
                     },
                     {
                         path: 'pagos',
-                        loadComponent: () => import('./components/students/student-payments.component').then(m => m.StudentPaymentsComponent)
+                        loadComponent: () => import('./components/students/student-payments.component').then(m => m.StudentPaymentsComponent),
+                        data: { breadcrumb: 'Pagos' }
                     },
                     {
                         path: 'ficha-tecnica',
-                        loadComponent: () => import('./components/students/student-technical.component').then(m => m.StudentTechnicalComponent)
+                        loadComponent: () => import('./components/students/student-technical.component').then(m => m.StudentTechnicalComponent),
+                        data: { breadcrumb: 'Ficha Técnica' }
                     },
                     {
                         path: 'observaciones',
-                        loadComponent: () => import('./components/students/student-observations.component').then(m => m.StudentObservationsComponent)
+                        loadComponent: () => import('./components/students/student-observations.component').then(m => m.StudentObservationsComponent),
+                        data: { breadcrumb: 'Observaciones' }
                     },
                     {
                         path: 'documentos',
-                        loadComponent: () => import('./components/students/student-documents.component').then(m => m.StudentDocumentsComponent)
+                        loadComponent: () => import('./components/students/student-documents.component').then(m => m.StudentDocumentsComponent),
+                        data: { breadcrumb: 'Documentos' }
                     }
                 ]
             },
