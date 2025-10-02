@@ -10,10 +10,11 @@ import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 import { PaymentComponent } from "../payment/payment.component";
 import { setFocus } from '@app/core/helpers';
 import { ImageHttpClient } from '@app/core/image-http-client';
+import { FormGroupComponent } from "../form-group/form-group.component";
 
 @Component({
     standalone: true,
-    imports: [CommonModule, RouterModule, FormsModule, CurrencyMXPipe, PaymentComponent],
+    imports: [CommonModule, RouterModule, FormsModule, CurrencyMXPipe, PaymentComponent, FormGroupComponent],
     templateUrl: './student-list.component.html',
     styleUrls: ['./student-list.component.scss']
 })
@@ -24,10 +25,10 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     categories: Category[] = [];
 
     filteredStudents: Student[] = [];
-    searchTerm: string = '';
-    selectedCategory: number | null = null;
+
+    public filters: { name: string, categoryId: number | null, debt: 'desc' | 'asc' } = { name: '', categoryId: null, debt: 'desc' };
+
     isLoading = true;
-    sortDebt: 'desc' | 'asc' = 'desc';
 
     selectedStudent: Student | null = null;
     showPaymentModal: boolean = false;
@@ -49,13 +50,15 @@ export class StudentListComponent implements OnInit, AfterViewInit {
 
     ngOnInit(): void {
         this.route.queryParams.subscribe(params => {
-            this.searchTerm = params['searchTerm'] || '';
-            this.selectedCategory = params['selectedCategory'] ? +params['selectedCategory'] : null;
-            this.sortDebt = params['sortDebt'] || 'desc';
+            this.filters.name = params['name'] || '';
+            this.filters.categoryId = params['categoryId'] ? +params['categoryId'] : null;
+            this.filters.debt = params['debt'] || localStorage.getItem('filter.debt') || 'desc';
 
+            // Guardar el filtro de deuda en el localStorage
+            localStorage.setItem('filter.debt', this.filters.debt);
         });
         this.fetchData();
-        setFocus('search');
+        setFocus('name');
     }
 
     ngAfterViewInit(): void {
@@ -73,6 +76,12 @@ export class StudentListComponent implements OnInit, AfterViewInit {
             this._fetchStudents();
         }
     }
+
+    onRestartFilters() {
+        this.filters = { name: '', categoryId: null, debt: 'desc' };
+        this.applyFilters();
+    }
+
 
     private fetchData(): void {
         this.isLoading = true;
@@ -100,8 +109,7 @@ export class StudentListComponent implements OnInit, AfterViewInit {
                         });
                         return student;
                     });
-                    // this.filteredStudents = [...this.students];
-                    this.filterStudents();
+                    this.applyFilters();
                     setTimeout(() => this.initializeObserver(), 0);
                     resolve();
                 },
@@ -128,29 +136,35 @@ export class StudentListComponent implements OnInit, AfterViewInit {
         });
     }
 
-    filterStudents(): void {
+    applyFilters(): void {
         this.filteredStudents = this.students.filter(student => {
-            const matchesSearch = student.name.toLowerCase().includes(this.searchTerm.toLowerCase());
-            const matchesCategory = this.selectedCategory === null ||
-                student.categories?.some(c => c.categoryId === this.selectedCategory);
+            const matchesSearch = student.name.toLowerCase().includes(this.filters.name.toLowerCase());
+            const matchesCategory = this.filters.categoryId === null ||
+                student.categories?.some(c => c.categoryId === this.filters.categoryId);
 
             return matchesSearch && matchesCategory;
         });
         this.sortByDebt();
 
+        console.log('Filtered name:', this.filters.name);
+        console.log('Filtered debt:', this.filters.debt);
+
+        // Guardar el filtro de deuda en el localStorage
+        localStorage.setItem('filter.debt', this.filters.debt);
+
         this.router.navigate([], {
             relativeTo: this.route,
             queryParams: {
-                searchTerm: this.searchTerm || null,
-                selectedCategory: this.selectedCategory || null,
-                sortDebt: this.sortDebt || null
+                name: this.filters.name || null,
+                categoryId: this.filters.categoryId || null,
+                debt: this.filters.debt || null
             },
             queryParamsHandling: 'merge'
         });
     }
 
     sortByDebt(): void {
-        if (this.sortDebt === 'desc') {
+        if (this.filters.debt === 'desc') {
             this.filteredStudents.sort((a, b) => b.debt - a.debt);
         } else {
             this.filteredStudents.sort((a, b) => a.debt - b.debt);

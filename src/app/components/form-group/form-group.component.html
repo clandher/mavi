@@ -1,9 +1,9 @@
 <div class="form-group">
-  <label class="form-label">{{ title }} <span *ngIf="required" >*</span></label>
-  <ng-content></ng-content>
-  <div class="form-control-error">
-    <div *ngIf="control?.invalid && (control?.touched || control?.dirty)">
-      {{control?.errors?.['message'] ?? 'Campo inválido.'}}
-    </div>
-  </div>
+	<label [for]="for" class="form-label">{{ title }} <span *ngIf="required">*</span></label>
+	<ng-content></ng-content>
+	<div class="form-control-error">
+		<div *ngIf="control?.invalid && (control?.touched || control?.dirty)">
+			{{control?.errors?.['message'] ?? 'Campo inválido.'}}
+		</div>
+	</div>
 </div>

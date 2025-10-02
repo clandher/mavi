@@ -11,6 +11,7 @@ import { AbstractControl, Validators } from '@angular/forms';
 })
 export class FormGroupComponent {
 	@Input() title!: string;
+	@Input() for: string | undefined;
 	@Input() control!: AbstractControl | null;
 
 	public required = false
