@@ -1,7 +1,7 @@
 // student-list.component.ts
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Student, Category } from '@app/core/dto';
 import { HttpClient } from '@angular/common/http';
@@ -41,11 +41,19 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     constructor(
         private http: HttpClient,
         private imageHttp: ImageHttpClient,
+        private route: ActivatedRoute,
+        private router: Router
     ) {
         this.categoriesAPI = new BaseHttp('categories', this.http);
     }
 
     ngOnInit(): void {
+        this.route.queryParams.subscribe(params => {
+            this.searchTerm = params['searchTerm'] || '';
+            this.selectedCategory = params['selectedCategory'] ? +params['selectedCategory'] : null;
+            this.sortDebt = params['sortDebt'] || 'desc';
+
+        });
         this.fetchData();
         setFocus('search');
     }
@@ -92,7 +100,8 @@ export class StudentListComponent implements OnInit, AfterViewInit {
                         });
                         return student;
                     });
-                    this.filteredStudents = [...this.students];
+                    // this.filteredStudents = [...this.students];
+                    this.filterStudents();
                     setTimeout(() => this.initializeObserver(), 0);
                     resolve();
                 },
@@ -128,6 +137,16 @@ export class StudentListComponent implements OnInit, AfterViewInit {
             return matchesSearch && matchesCategory;
         });
         this.sortByDebt();
+
+        this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: {
+                searchTerm: this.searchTerm || null,
+                selectedCategory: this.selectedCategory || null,
+                sortDebt: this.sortDebt || null
+            },
+            queryParamsHandling: 'merge'
+        });
     }
 
     sortByDebt(): void {
