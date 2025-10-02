@@ -11,7 +11,7 @@
             <label for="category" class="form-label">Categoría:</label>
             <select id="category" class="form-control" [(ngModel)]="selectedCategory" (change)="filterStudents()">
                 <option [ngValue]="null">Todas las categorías</option>
-                <option *ngFor="let category of allCategories" [ngValue]="category.id">
+                <option *ngFor="let category of categories" [ngValue]="category.id">
                     {{ category.type }}
                 </option>
             </select>

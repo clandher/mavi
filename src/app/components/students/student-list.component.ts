@@ -7,7 +7,6 @@ import { Student, Category } from '@app/core/dto';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
-import { RequestQueryBuilder } from '@dataui/crud-request';
 import { PaymentComponent } from "../payment/payment.component";
 import { setFocus } from '@app/core/helpers';
 import { ImageHttpClient } from '@app/core/image-http-client';
@@ -19,21 +18,12 @@ import { ImageHttpClient } from '@app/core/image-http-client';
     styleUrls: ['./student-list.component.scss']
 })
 export class StudentListComponent implements OnInit, AfterViewInit {
-    openPaymentModal(student: Student) {
-        this.selectedStudent = student;
-        this.showPaymentModal = true;
-    }
 
-    onPaymentComplete($event: boolean) {
-        this.showPaymentModal = false;
-        if ($event) {
-            this.loadStudents();
-        }
-    }
 
     students: Student[] = [];
+    categories: Category[] = [];
+
     filteredStudents: Student[] = [];
-    allCategories: Category[] = [];
     searchTerm: string = '';
     selectedCategory: number | null = null;
     isLoading = true;
@@ -56,8 +46,7 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
-        this.loadStudents();
-        this.loadCategories();
+        this.fetchData();
         setFocus('search');
     }
 
@@ -65,63 +54,60 @@ export class StudentListComponent implements OnInit, AfterViewInit {
         this.initializeObserver();
     }
 
-    loadStudents(): void {
+    openPaymentModal(student: Student) {
+        this.selectedStudent = student;
+        this.showPaymentModal = true;
+    }
+
+    onPaymentComplete($event: boolean) {
+        this.showPaymentModal = false;
+        if ($event) {
+            this._fetchStudents();
+        }
+    }
+
+    private fetchData(): void {
         this.isLoading = true;
 
-        const queryString = RequestQueryBuilder.create({
-            // search: { id: 1 }
-        })
-            .setJoin([
-                { field: 'activities' }
-            ])
-            .query();
-
-        this.http.get<Student[]>(buildUrl(`students`)).subscribe({
-            next: (students) => {
-                this.students = students.map(student => {
-                    // Remove initial image loading
-                    return student;
-                });
-                this.filteredStudents = [...students];
-                this.isLoading = false;
-
-                // Initialize observer after students are loaded
-                setTimeout(() => this.initializeObserver(), 0);
-            },
-            error: (err) => {
-                console.error('Error loading students', err);
-                this.isLoading = false;
-            }
+        Promise.all([this._fetchStudents(), this._fetchCategories()]).then(() => {
+            this.isLoading = false;
+        }).catch((err) => {
+            console.error('Error loading data', err);
+            this.isLoading = false;
         });
     }
 
-    calculateAge(birthdate: string): number {
-        if (!birthdate) return 0;
-
-        const today = new Date();
-        const birthDate = new Date(birthdate);
-        let age = today.getFullYear() - birthDate.getFullYear();
-        const monthDiff = today.getMonth() - birthDate.getMonth();
-
-        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
-
-        return age;
-    }
-
-    loadCategories(): void {
-        this.categoriesAPI.get<Category[]>().subscribe({
-            next: (categories) => {
-                this.allCategories = categories;
-            },
-            error: (err) => {
-                console.error('Error loading categories', err);
-            }
+    private _fetchStudents(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.http.get<Student[]>(buildUrl(`students`)).subscribe({
+                next: (students) => {
+                    this.students = students;
+                    this.filteredStudents = [...students];
+                    setTimeout(() => this.initializeObserver(), 0);
+                    resolve();
+                },
+                error: (err) => {
+                    console.error('Error loading students', err);
+                    reject(err);
+                }
+            });
         });
     }
 
-
+    private _fetchCategories(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.categoriesAPI.get<Category[]>().subscribe({
+                next: (categories) => {
+                    this.categories = categories;
+                    resolve();
+                },
+                error: (err) => {
+                    console.error('Error loading categories', err);
+                    reject(err);
+                }
+            });
+        });
+    }
 
     filterStudents(): void {
         this.filteredStudents = this.students.filter(student => {
@@ -143,30 +129,11 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     }
 
     getCategoryName(categoryId: number): string {
-        const category = this.allCategories.find(c => c.id === categoryId);
+        const category = this.categories.find(c => c.id === categoryId);
         return category ? category.type : 'Desconocida';
     }
 
-    removeCategory(studentCategoryId: number): void {
-        if (confirm('¿Estás seguro de quitar esta categoría al estudiante?')) {
-            const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http);;
-            studentCategoriesAPI.delete(studentCategoryId).subscribe({
-                next: () => {
-                    this.loadStudents(); // Recargar la lista
-                },
-                error: (err) => {
-                    console.error('Error removing category', err);
-                }
-            });
-        }
-    }
 
-    hasActivitiesForCategory(student: any, categoryId: any): boolean {
-        if (!student.activities || !Array.isArray(student.activities)) {
-            return false;
-        }
-        return student.activities.some((act: any) => act.activity && act.activity.categoryId === categoryId);
-    }
 
     private initializeObserver(): void {
         if (!this.studentListContainer) {
@@ -206,6 +173,7 @@ export class StudentListComponent implements OnInit, AfterViewInit {
             this.imageHttp.student(student);
         }
     }
+
 
     ngOnDestroy(): void {
         this.observer?.disconnect();
