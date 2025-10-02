@@ -27,40 +27,6 @@
     }
 }
 
-
-.input-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-
-    input {
-        padding-left: 40px;
-    }
-
-    svg {
-        position: absolute;
-        left: 12px;
-        color: #71717a;
-    }
-}
-
-.toggle-password {
-    position: absolute;
-    right: 45px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #71717a;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    &:hover {
-        color: #a1a1aa;
-    }
-}
-
 .error-message {
     margin-top: 20px;
     padding: 12px;

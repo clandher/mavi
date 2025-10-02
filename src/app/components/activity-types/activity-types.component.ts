@@ -4,13 +4,9 @@ import { FormBuilder } from '@angular/forms';
 import { BaseHttp } from '@app/core/base-http';
 import { NgIf, NgFor } from '@angular/common';
 import { ActivityTypeComponent } from '../activity-type/activity-type.component';
+import { ActivityType } from '@app/core/dto';
 
-interface ActivityType {
-	id: number;
-	key: string;
-	recurrent: boolean;
-	rule?: string;
-}
+
 
 @Component({
 	selector: 'app-activity-types',

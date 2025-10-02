@@ -3,13 +3,8 @@ import { Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { BaseHttp } from './base-http';
+import { User } from './dto';
 
-interface User {
-    id: string;
-    name: string;
-    email: string;
-    developer: boolean;
-}
 
 @Injectable({
     providedIn: 'root'
@@ -33,6 +28,12 @@ export class AuthService {
         }
     }
 
+    public setUserData(user: User): void {
+        localStorage.setItem('user_data', JSON.stringify(user));
+        this._loadUserFromStorage();
+
+    }
+
     private _clearAuthData(): void {
         localStorage.removeItem('auth_token');
         localStorage.removeItem('user_data');
@@ -48,8 +49,7 @@ export class AuthService {
         return authLogin.post(credentials).pipe(
             tap((response: any) => {
                 localStorage.setItem('auth_token', response.token);
-                localStorage.setItem('user_data', JSON.stringify(response.user));
-                this._loadUserFromStorage();
+                this.setUserData(response.user);
                 this.router.navigate(['/app']);
             })
         );

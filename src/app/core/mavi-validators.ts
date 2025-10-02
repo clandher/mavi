@@ -1,5 +1,5 @@
 
-import { AbstractControl, ValidationErrors } from "@angular/forms";
+import { AbstractControl, ValidationErrors, Validators } from "@angular/forms";
 
 export class MaviValidators {
     static maxDate(compareToKey: string, message: string): (control: AbstractControl) => ValidationErrors | null {
@@ -59,6 +59,28 @@ export class MaviValidators {
                 return {
                     message
                 };
+            }
+            return null;
+        };
+    }
+    static email(message: string = 'Email inválido'): (control: AbstractControl) => ValidationErrors | null {
+        // Usa la lógica de Angular Validators.email
+        // Importa Validators de @angular/forms
+        // Si el valor no es válido, retorna el mensaje personalizado
+        // Si es válido, retorna null
+        // Si el valor está vacío, no valida (igual que Validators.email)
+        // No retorna el error 'email', solo el mensaje personalizado
+
+        // Asegúrate de importar Validators arriba:
+        // import { AbstractControl, ValidationErrors, Validators } from "@angular/forms";
+
+        return (control: AbstractControl) => {
+            if (control.value === null || control.value === undefined || control.value === '') {
+                return null;
+            }
+            const error = Validators.email(control);
+            if (error) {
+                return { message };
             }
             return null;
         };

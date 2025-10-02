@@ -77,9 +77,8 @@
                             <div class="flex gap-1 flex-wrap">
 
                                 <ng-container *ngFor="let act of student.activities">
-                                    <span *ngIf="act.activity.categoryId === sc.categoryId" class="mavi-tag"
-                                        [title]="act.activity.details">
-                                        {{ act.activity.description }}
+                                    <span *ngIf="act.activity.categoryId === sc.categoryId" class="mavi-tag">
+                                        {{ act.activity.description }} {{act.activity.startDate | date:act.activity.type.format}}
                                     </span>
                                 </ng-container>
 

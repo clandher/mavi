@@ -41,9 +41,9 @@
 } @else {
 
 <div class="mavi-tabs">
-	<button class="mavi-tab" [ngClass]="{ selected: selectedActivityId === activity.id }" [title]="activity.details"
+	<button class="mavi-tab" [ngClass]="{ selected: selectedActivityId === activity.id }"
 		*ngFor="let activity of activitiesByCategory; let i = index" (click)="onActivityChange(activity.id, i)">
-		{{ activity.description }}
+		{{ activity.description }} {{activity.startDate | date:activity.type.format}}
 	</button>
 </div>
 <br>

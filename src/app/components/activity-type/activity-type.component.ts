@@ -29,7 +29,8 @@ export class ActivityTypeComponent {
         this.activityTypeForm = this.fb.group({
             key: [null, []],
             recurrent: [false, []],
-            rule: [null, []]
+            rule: [null, []],
+            format: [null, []],
         });
 
         this.activityTypeForm.get('recurrent')?.valueChanges.subscribe((recurrent: boolean) => {
@@ -54,7 +55,8 @@ export class ActivityTypeComponent {
                 this.activityTypeForm.patchValue({
                     key: result.key,
                     recurrent: result.recurrent,
-                    rule: result.rule
+                    rule: result.rule,
+                    format: result.format,
                 });
 
                 setFocus('key');

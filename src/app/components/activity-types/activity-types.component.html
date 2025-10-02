@@ -22,12 +22,20 @@
                 {{ activityType.rule }}
             </div>
         </div>
+        
+        <br>
+        <div class="detail-row" *ngIf="activityType.format">
+            <div class="detail-label">Formato</div>
+            <div class="detail-value">
+                {{ activityType.format }}
+            </div>
+        </div>
 
         <div class="mavi-card-actions mt-4">
             <button class="btn btn-sm btn-outline" (click)="editActivityType(activityType.id)">
                 Editar
             </button>
-            <button class="btn btn-sm btn-destructive" (click)="deleteActivityType(activityType.id)" [disabled]="activityType.id <= 2">
+            <button class="btn btn-sm btn-destructive" (click)="deleteActivityType(activityType.id)" [disabled]="activityType.lock">
                 Eliminar
             </button>
         </div>

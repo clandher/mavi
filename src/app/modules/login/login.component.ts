@@ -3,7 +3,6 @@ import {
     ReactiveFormsModule,
     FormBuilder,
     FormGroup,
-    Validators,
     FormsModule
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -56,9 +55,5 @@ export class LoginComponent {
         Object.values(this.loginForm.controls).forEach(control => {
             control.markAsTouched();
         });
-    }
-
-    togglePasswordVisibility(): void {
-        this.showPassword = !this.showPassword;
     }
 }

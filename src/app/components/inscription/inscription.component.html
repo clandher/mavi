@@ -19,9 +19,8 @@
 					<app-form-group title="Actividad" [control]="form.get('activityId')">
 						<select id="activityId" formControlName="activityId" class="form-control"
 							(change)="onNewActivityChange()">
-							<option *ngFor="let act of activities" [value]="act.id">{{ act.description }} - {{
-								act.details
-								}}
+							<option *ngFor="let act of activities" [value]="act.id">{{ act.description }}
+								{{act.startDate | date:act.type.format}}
 							</option>
 						</select>
 					</app-form-group>

@@ -52,6 +52,11 @@ export const routes: Routes = [
                         path: 'tipos-de-actividad',
                         loadComponent: () => import('./components/activity-types/activity-types.component').then(m => m.ActivityTypesComponent),
                         data: { breadcrumb: 'Tipos de Actividad' }
+                    },
+                    {
+                        path: 'usuarios',
+                        loadComponent: () => import('./components/users/users.component').then(m => m.UsersComponent),
+                        data: { breadcrumb: 'Usuarios' }
                     }
                 ]
             },

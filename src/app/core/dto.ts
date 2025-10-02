@@ -2,7 +2,6 @@ export class ApiRes<T> {
     data!: T[];
 }
 
-
 export class Category {
     id!: number;
     type!: string;
@@ -93,7 +92,6 @@ export class Activity {
     typeId!: number;
 
     description!: string;
-    details!: string;
 
     startDate!: string;
 
@@ -105,12 +103,11 @@ export class Activity {
 
 export class ActivityType {
     id!: number;
-
     key!: string;
-
     recurrent!: boolean;
-
-    recurrentDate!: boolean;
+    rule?: string;
+    format?: string;
+    lock!: boolean;
 }
 
 
@@ -215,4 +212,13 @@ export interface StudentPayment {
     voucher: string;
     student: Student;
     paymentCharges: PaymentCharge[];
+}
+
+export interface User {
+    id: number;
+    name: string;
+    email: string;
+    password: string;
+    developer: boolean;
+    lock: boolean;
 }

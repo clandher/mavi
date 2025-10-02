@@ -34,6 +34,10 @@
                 </a>
             </div>
             }
+
+            <app-form-group [title]="'Formato'" [control]="activityTypeForm.get('format')">
+                <input id="format" type="text" formControlName="format" class="form-control" autocomplete="off" />
+            </app-form-group>
         </form>
         <app-submit [form]="activityTypeForm" [submit]="saveActivityType.bind(this)"
             (discard)="closeModal()"></app-submit>

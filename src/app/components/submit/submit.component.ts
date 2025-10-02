@@ -47,13 +47,14 @@ export class SubmitComponent {
 			try {
 				await this.submit();
 				this.toastr.success('Cambios guardados correctamente', 'Éxito');
+				this._originalValue = this.form?.getRawValue();
+				this.form?.markAsPristine();
 			} catch (error) {
 				console.error(error);
 				this.toastr.error('Ocurrió un error al guardar los cambios', 'Error');
 			}
-			
-			this._originalValue = this.form?.getRawValue();
-			this.form?.markAsPristine();
+
+
 
 		} finally {
 			this.loading = false;

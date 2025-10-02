@@ -3,7 +3,7 @@ import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angula
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Student, Category } from '@app/core/dto';
+import { Student, Category, Activity, ActivityType } from '@app/core/dto';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
@@ -34,6 +34,10 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     showPaymentModal: boolean = false;
 
     private categoriesAPI: BaseHttp;
+    private activityTypesAPI: BaseHttp; // API for activity types
+
+    activities: Activity[] = []; // Store all activities
+    activityTypes: ActivityType[] = []; // Store all activity types
 
     @ViewChild('studentListContainer', { static: false }) studentListContainer!: ElementRef;
 
@@ -46,6 +50,7 @@ export class StudentListComponent implements OnInit, AfterViewInit {
         private router: Router
     ) {
         this.categoriesAPI = new BaseHttp('categories', this.http);
+        this.activityTypesAPI = new BaseHttp('activity-types', this.http); // Initialize activity types API
     }
 
     ngOnInit(): void {
@@ -87,6 +92,7 @@ export class StudentListComponent implements OnInit, AfterViewInit {
         this.isLoading = true;
 
         this._fetchCategories()
+            .then(() => this._fetchActivityTypes()) // Fetch activity types
             .then(() => this._fetchStudents())
             .then(() => {
                 this.isLoading = false;
@@ -95,6 +101,21 @@ export class StudentListComponent implements OnInit, AfterViewInit {
                 console.error('Error loading data', err);
                 this.isLoading = false;
             });
+    }
+
+    private _fetchActivityTypes(): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.activityTypesAPI.get<ActivityType[]>().subscribe({
+                next: (activityTypes) => {
+                    this.activityTypes = activityTypes;
+                    resolve();
+                },
+                error: (err) => {
+                    console.error('Error loading activity types', err);
+                    reject(err);
+                }
+            });
+        });
     }
 
     private _fetchStudents(): Promise<void> {
@@ -107,6 +128,21 @@ export class StudentListComponent implements OnInit, AfterViewInit {
                             sc.category = category!;
                             return sc;
                         });
+
+                        student.activities = student.activities.map(sa => {
+                            const activityType = this.activityTypes.find(at => at.id === sa.activity.typeId);
+                            if (activityType) {
+                                sa.activity = {
+                                    ...sa.activity,
+                                    type: {
+                                        ...activityType,
+                                        format: activityType.format
+                                    }
+                                };
+                            }
+                            return sa;
+                        });
+
                         return student;
                     });
                     this.applyFilters();

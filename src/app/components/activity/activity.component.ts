@@ -138,7 +138,6 @@ export class ActivityComponent {
             if (this.activityId !== 0) {
                 const activityToSave = {
                     ...formValue,
-                    details: '',
                 };
 
                 activitiesAPI.patch<CreateActivityDto, Activity>(this.activityId, activityToSave).subscribe({
@@ -151,7 +150,6 @@ export class ActivityComponent {
                     ...formValue,
                     typeId: Number(formValue.typeId),
                     categoryId: Number(formValue.categoryId),
-                    details: '',
                 };
 
                 activitiesAPI.post<CreateActivityDto, Activity>(activityToSave).subscribe({

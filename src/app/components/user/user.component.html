@@ -1,0 +1,38 @@
+<div class="modal-overlay">
+    <div class="modal-content">
+        <h2 class="text-xl font-semibold mb-4">{{ userId !== 0 ? 'Editar usuario' : 'Nuevo usuario' }}</h2>
+        <form [formGroup]="userForm">
+            <app-form-group [title]="'Nombre'" [control]="userForm.get('name')" class="form-group">
+                <input id="name" type="text" formControlName="name" class="form-control" [readonly]="false"
+                    autocomplete="off">
+            </app-form-group>
+
+            <app-form-group [title]="'Correo electrónico'" [control]="userForm.get('email')" class="form-group">
+                <input id="email" type="email" formControlName="email" class="form-control" [readonly]="false"
+                    autocomplete="off">
+            </app-form-group>
+
+            @if (userId === 0) {
+            <app-form-group title="Contraseña" for="password" [control]="userForm.get('password')">
+                <div class="input-container">
+                    <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
+                        placeholder="••••••••" class="form-control">
+                    <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </div>
+            </app-form-group>
+            }
+
+            <app-form-group [title]="'Desarrollador'" [control]="userForm.get('developer')" class="form-group">
+                <input id="developer" type="checkbox" formControlName="developer">
+            </app-form-group>
+        </form>
+        <br>
+        <app-submit [form]="userForm" [submit]="saveUser.bind(this)" (discard)="closeModal()"></app-submit>
+    </div>
+</div>
