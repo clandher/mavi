@@ -9,11 +9,14 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../core/auth.service';
+import { FormGroupComponent } from "@app/components/form-group/form-group.component";
+import { MaviValidators } from '@app/core/mavi-validators';
+import { BtnLoadingComponent } from '@app/components/btn-loading/btn-loading.component';
 
 @Component({
     selector: 'app-login',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, RouterModule, FormsModule],
+    imports: [CommonModule, ReactiveFormsModule, RouterModule, FormsModule, FormGroupComponent, BtnLoadingComponent],
     templateUrl: './login.component.html',
     styleUrls: ['./login.component.scss']
 })
@@ -24,39 +27,29 @@ export class LoginComponent {
 
     loginForm: FormGroup;
     errorMessage: string | null = null;
-    loading = false;
     showPassword = false;
 
     constructor() {
         this.loginForm = this.fb.group({
-            email: ['tsubasa@nankatsu.jp', [Validators.required]],
-            password: ['SoraWoKakeru11', [Validators.required, Validators.minLength(6)]]
+            email: ['tsubasa@nankatsu.jp', [MaviValidators.required()]],
+            password: ['SoraWoKakeru11', [MaviValidators.required(), MaviValidators.minLength(6)]]
         });
     }
 
-    onSubmit(): void {
+    async onSubmit(): Promise<void> {
         if (this.loginForm.invalid) {
             this.markFormAsTouched();
             return;
         }
 
-        this.loading = true;
         this.errorMessage = null;
-
         const { email, password } = this.loginForm.value;
-
-        this.authService.login({ email, password }).subscribe({
-            next: () => {
-                this.router.navigate(['/app']);
-            },
-            error: (err) => {
-                this.errorMessage = err.error?.message || 'Error al iniciar sesión. Por favor, verifica tus credenciales.';
-                this.loading = false;
-            },
-            complete: () => {
-                this.loading = false;
-            }
-        });
+        try {
+            await this.authService.login({ email, password }).toPromise();
+            this.router.navigate(['/app']);
+        } catch (err: any) {
+            this.errorMessage = err.error?.message || 'Error al iniciar sesión. Por favor, verifica tus credenciales.';
+        }
     }
 
     private markFormAsTouched(): void {

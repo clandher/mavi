@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 @Component({
     selector: 'btn-loading',
     template: `
-    <button [disabled]="loading || disabled" class="btn btn-primary flex items-center justify-center" (click)="onClick()">
+    <button [disabled]="loading || disabled" class="btn btn-primary flex items-center justify-center" [ngClass]="class" (click)="onClick()">
       	<span *ngIf="loading" class="spinner-border spinner-border-sm mr-2"></span>
 		{{ text }}
     </button>
@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common';
 export class BtnLoadingComponent {
     @Input() disabled: boolean = false;
     @Input() text: string = 'Enviar';
+    @Input() class: string | undefined;
     @Input() action!: () => Promise<void>;
 
     public loading: boolean = false;

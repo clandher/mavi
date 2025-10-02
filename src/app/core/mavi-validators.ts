@@ -52,4 +52,15 @@ export class MaviValidators {
             return null;
         };
     }
+
+    static minLength(minLength: number, message: string = `La longitud mínima es ${minLength}`): (control: AbstractControl) => ValidationErrors | null {
+        return (control: AbstractControl) => {
+            if (control.value !== null && control.value !== undefined && control.value.length < minLength) {
+                return {
+                    message
+                };
+            }
+            return null;
+        };
+    }
 }

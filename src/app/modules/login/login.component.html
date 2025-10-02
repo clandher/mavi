@@ -1,19 +1,11 @@
 <div class="login-wrapper">
     <div class="login-card">
-        <div class="logo-container">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-            </svg>
-        </div>
 
         <h1 class="title">Iniciar Sesión</h1>
-        <p class="subtitle">Ingresa tus credenciales para continuar</p>
+        <br>
+        <form [formGroup]="loginForm" class="form">
 
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form">
-            <!-- Email -->
-            <div class="form-group">
-                <label for="email">Correo Electrónico</label>
+            <app-form-group title="Correo electrónico" for="email" [control]="loginForm.get('email')">
                 <div class="input-container">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -21,19 +13,10 @@
                         <polyline points="22,6 12,13 2,6"></polyline>
                     </svg>
                     <input id="email" type="email" formControlName="email" placeholder="tu@email.com"
-                        [class.invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+                        class="form-control">
                 </div>
-                @if (loginForm.get('email')?.hasError('required') && loginForm.get('email')?.touched) {
-                <span class="error">El email es requerido</span>
-                }
-                @if (loginForm.get('email')?.hasError('email') && loginForm.get('email')?.touched) {
-                <span class="error">Ingresa un email válido</span>
-                }
-            </div>
-
-            <!-- Password -->
-            <div class="form-group">
-                <label for="password">Contraseña</label>
+            </app-form-group>
+            <app-form-group title="Contraseña" for="password" [control]="loginForm.get('password')">
                 <div class="input-container">
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -41,8 +24,7 @@
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                     </svg>
                     <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
-                        placeholder="••••••••"
-                        [class.invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+                        placeholder="••••••••" class="form-control">
                     <button type="button" class="toggle-password" (click)="togglePasswordVisibility()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -51,27 +33,14 @@
                         </svg>
                     </button>
                 </div>
-                @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
-                <span class="error">La contraseña es requerida</span>
-                }
-                @if (loginForm.get('password')?.hasError('minlength') && loginForm.get('password')?.touched) {
-                <span class="error">Mínimo 6 caracteres</span>
-                }
-            </div>
+            </app-form-group>
 
-            <div class="form-footer">
-                <button type="submit" class="login-button" [disabled]="loading">
-                    @if (loading) {
-                    <span class="spinner"></span>
-                    } @else {
-                    <span>Ingresar</span>
-                    }
-                </button>
 
-                <a href="#" class="forgot-password">¿Olvidaste tu contraseña?</a>
-            </div>
+            <br>
 
-            <!-- Error Message -->
+            <btn-loading [action]="onSubmit.bind(this)" text="Ingresar" class="w-full"></btn-loading>
+
+            <br>
             @if (errorMessage) {
             <div class="error-message">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
