@@ -69,20 +69,30 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     private fetchData(): void {
         this.isLoading = true;
 
-        Promise.all([this._fetchStudents(), this._fetchCategories()]).then(() => {
-            this.isLoading = false;
-        }).catch((err) => {
-            console.error('Error loading data', err);
-            this.isLoading = false;
-        });
+        this._fetchCategories()
+            .then(() => this._fetchStudents())
+            .then(() => {
+                this.isLoading = false;
+            })
+            .catch((err) => {
+                console.error('Error loading data', err);
+                this.isLoading = false;
+            });
     }
 
     private _fetchStudents(): Promise<void> {
         return new Promise((resolve, reject) => {
             this.http.get<Student[]>(buildUrl(`students`)).subscribe({
                 next: (students) => {
-                    this.students = students;
-                    this.filteredStudents = [...students];
+                    this.students = students.map(student => {
+                        student.categories = student.categories.map(sc => {
+                            const category = this.categories.find(c => c.id === sc.categoryId);
+                            sc.category = category!;
+                            return sc;
+                        });
+                        return student;
+                    });
+                    this.filteredStudents = [...this.students];
                     setTimeout(() => this.initializeObserver(), 0);
                     resolve();
                 },
@@ -127,12 +137,6 @@ export class StudentListComponent implements OnInit, AfterViewInit {
             this.filteredStudents.sort((a, b) => a.debt - b.debt);
         }
     }
-
-    getCategoryName(categoryId: number): string {
-        const category = this.categories.find(c => c.id === categoryId);
-        return category ? category.type : 'Desconocida';
-    }
-
 
 
     private initializeObserver(): void {
