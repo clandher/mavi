@@ -76,7 +76,9 @@
                             <div class="flex gap-1 flex-wrap w-full">
 
                                 <ng-container *ngFor="let act of sc.activitiesCurrent">
-                                    <span *ngIf="act.activity.categoryId === sc.categoryId" class="mavi-tag"
+                                    <span *ngIf="act.activity.categoryId === sc.categoryId"
+                                        class="mavi-tag hover-link" [routerLink]="['/app/actividades']"
+                                        [queryParams]="{ category: act.activity.categoryId, activity: act.activity.id }"
                                         [title]="(act.activity.startDate | date:'dd/MM/yy HH:mm') + ' - ' + (act.activity.endDate | date:'dd/MM/yy HH:mm')">
                                         {{ act.activity.description }} {{act.activity.startDate |
                                         date:act.activity.type.format}}
@@ -86,7 +88,8 @@
 
                                 @if (sc.activitiesPast.length > 0) {
 
-                                <div class="collapser-divisor" (click)="sc.showPastActivities = !sc.showPastActivities">
+                                <div class="collapser-divisor "
+                                    (click)="sc.showPastActivities = !sc.showPastActivities">
                                     {{ sc.showPastActivities ? 'Ocultar pasadas' : 'Mostrar pasadas' }} ({{
                                     sc.activitiesPast.length }})
                                 </div>
@@ -95,7 +98,9 @@
                                 <div class="max-h-80 overflow-y-auto flex gap-1 flex-wrap w-full">
                                     <ng-container *ngFor="let act of sc.activitiesPast">
                                         <span *ngIf="act.activity.categoryId === sc.categoryId"
-                                            class="mavi-tag text-old">
+                                            class="mavi-tag text-old hover-link " [routerLink]="['/app/actividades']"
+                                            [queryParams]="{ category: act.activity.categoryId, activity: act.activity.id }"
+                                            [title]="(act.activity.startDate | date:'dd/MM/yy HH:mm') + ' - ' + (act.activity.endDate | date:'dd/MM/yy HH:mm')">
                                             {{ act.activity.description }} {{act.activity.startDate |
                                             date:act.activity.type.format}}
                                         </span>
