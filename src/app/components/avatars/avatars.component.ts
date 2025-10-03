@@ -43,6 +43,8 @@ export class AvatarsComponent {
 	selectedCategoryId: number | null = null;
 	selectedActivityId: number = 0;
 	showActivitieByCategoryPast: boolean = false;
+	selectedActivityIsPast: boolean = false;
+
 	constructor(
 		private router: Router,
 		private route: ActivatedRoute,
@@ -96,12 +98,17 @@ export class AvatarsComponent {
 
 		if (this.activities.length) {
 			if (this.selectedActivityId && this.activities.some(a => a.id === this.selectedActivityId && a.categoryId === this.selectedCategoryId)) {
+
+				const selectedActivity = this.activities.find(a => a.id === this.selectedActivityId && a.categoryId === this.selectedCategoryId);
+				this.selectedActivityIsPast = selectedActivity ? new Date(selectedActivity.endDate) < new Date() : false;
+
 				this.onActivityChange(this.selectedActivityId);
 			} else {
 				if (this.activitiesByCategoryCurrent.length) {
 					this.onActivityChange(this.activitiesByCategoryCurrent[0].id);
 					return;
 				} else {
+					this.selectedActivityIsPast = new Date(this.activities[0].endDate) < new Date();
 					this.onActivityChange(this.activities[0].id);
 				}
 			}
