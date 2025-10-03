@@ -71,16 +71,35 @@
                         <div class="flex gap-2 ">
                             <div class="mavi-tag" style="min-width: 45px; text-align: center    ;">
                                 {{ sc.category.type }}
-                                <!-- <button class="remove-category" (click)="removeCategory(sc.id)">×</button> -->
                             </div>
 
                             <div class="flex gap-1 flex-wrap">
 
-                                <ng-container *ngFor="let act of student.activities">
-                                    <span *ngIf="act.activity.categoryId === sc.categoryId" class="mavi-tag">
-                                        {{ act.activity.description }} {{act.activity.startDate | date:act.activity.type.format}}
+                                <!-- las actuales -->
+                                <ng-container *ngFor="let act of student.activitiesCurrent">
+                                    <span *ngIf="act.activity.categoryId === sc.categoryId" class="mavi-tag"
+                                        [title]="(act.activity.startDate | date:'dd/MM/yy HH:mm') + ' - ' + (act.activity.endDate | date:'dd/MM/yy HH:mm')">
+                                        {{ act.activity.description }} {{act.activity.startDate |
+                                        date:act.activity.type.format}}
                                     </span>
                                 </ng-container>
+
+                                <div class="btn btn-sm btn-outline"
+                                    (click)="sc.showPastActivities = !sc.showPastActivities">
+                                    {{ sc.showPastActivities ? 'Ocultar pasadas' : 'Mostrar pasadas' }}
+                                </div>
+
+                                <!-- las anteriores -->
+                                @if (sc.showPastActivities) {
+                                <ng-container *ngFor="let act of student.activitiesPast">
+                                    <span *ngIf="act.activity.categoryId === sc.categoryId" class="mavi-tag">
+                                        {{ act.activity.description }} {{act.activity.startDate |
+                                        date:act.activity.type.format}}
+                                    </span>
+                                </ng-container>
+                                }
+
+
 
                             </div>
 
@@ -98,6 +117,7 @@
                     {{ student.debt | currencyMX }}
                 </div>
             </div>
+
 
             <div class="mavi-card-actions mt-4">
                 <button class="btn btn-sm btn-outline w-full justify-center"
@@ -123,6 +143,12 @@
             </div>
         </div>
     </div>
+
+    <!-- <div class="flex justify-end mb-4">
+        <button class="btn btn-sm btn-outline" (click)="showPastActivities = !showPastActivities; applyFilters()">
+            {{ showPastActivities ? 'Ocultar actividades pasadas' : 'Mostrar actividades pasadas' }}
+        </button>
+    </div> -->
 
     <div class="mavi-bottom-actions">
         <div class="mavi-bottom-actions-inner">

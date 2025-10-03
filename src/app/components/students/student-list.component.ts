@@ -3,7 +3,7 @@ import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angula
 import { CommonModule } from '@angular/common';
 import { RouterModule, ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { Student, Category, Activity, ActivityType } from '@app/core/dto';
+import { Student, Category, Activity, ActivityType, StudentActivity, StudentCategory } from '@app/core/dto';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
@@ -12,6 +12,19 @@ import { setFocus } from '@app/core/helpers';
 import { ImageHttpClient } from '@app/core/image-http-client';
 import { FormGroupComponent } from "../form-group/form-group.component";
 
+
+
+export interface StudentCategoryView extends StudentCategory {
+    showPastActivities: boolean;
+}
+
+
+export interface StudentView extends Student {
+    activitiesCurrent: StudentActivity[];
+    activitiesPast: StudentActivity[];
+    categories: StudentCategoryView[];
+}
+
 @Component({
     standalone: true,
     imports: [CommonModule, RouterModule, FormsModule, CurrencyMXPipe, PaymentComponent, FormGroupComponent],
@@ -19,12 +32,15 @@ import { FormGroupComponent } from "../form-group/form-group.component";
     styleUrls: ['./student-list.component.scss']
 })
 export class StudentListComponent implements OnInit, AfterViewInit {
+    togglePastActivities(_t53: StudentView) {
+        throw new Error('Method not implemented.');
+    }
 
 
-    students: Student[] = [];
+    students: StudentView[] = [];
     categories: Category[] = [];
 
-    filteredStudents: Student[] = [];
+    filteredStudents: StudentView[] = [];
 
     public filters: { name: string, categoryId: number | null, debt: 'desc' | 'asc' } = { name: '', categoryId: null, debt: 'desc' };
 
@@ -120,7 +136,7 @@ export class StudentListComponent implements OnInit, AfterViewInit {
 
     private _fetchStudents(): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.http.get<Student[]>(buildUrl(`students`)).subscribe({
+            this.http.get<StudentView[]>(buildUrl(`students`)).subscribe({
                 next: (students) => {
                     this.students = students.map(student => {
                         student.categories = student.categories.map(sc => {
@@ -132,16 +148,16 @@ export class StudentListComponent implements OnInit, AfterViewInit {
                         student.activities = student.activities.map(sa => {
                             const activityType = this.activityTypes.find(at => at.id === sa.activity.typeId);
                             if (activityType) {
-                                sa.activity = {
-                                    ...sa.activity,
-                                    type: {
-                                        ...activityType,
-                                        format: activityType.format
-                                    }
-                                };
+                                sa.activity.type = activityType;
                             }
                             return sa;
                         });
+
+                        student.activities.sort((a, b) => new Date(b.activity.startDate).getTime() - new Date(a.activity.startDate).getTime());
+
+                        const today = new Date();
+                        student.activitiesCurrent = student.activities.filter(act => new Date(act.activity.endDate) >= today);
+                        student.activitiesPast = student.activities.filter(act => new Date(act.activity.endDate) < today);
 
                         return student;
                     });
