@@ -40,7 +40,7 @@
 
 } @else {
 
-<div class="mavi-tabs">
+<div class="mavi-tabs" (mousedown)="onMouseDown($event)" (mousemove)="onMouseMove($event)" (mouseup)="onMouseUp()">
 	@if (activitiesByCategoryPast.length > 0) {
 	<button class="mavi-tab" (click)="showActivitieByCategoryPast = !showActivitieByCategoryPast"
 		[ngClass]="{ selected: selectedActivityIsPast }">
@@ -56,9 +56,10 @@
 		}
 	</button>
 	}
-	<button class="mavi-tab" [ngClass]="{ selected: selectedActivityId === activity.id }"
-		*ngFor="let activity of activitiesByCategoryCurrent; let i = index"
-		(click)="selectedActivityIsPast = false; onActivityChange(activity.id)">
+	<button class="mavi-tab" *ngFor="let activity of activitiesByCategoryCurrent; let i = index"
+		(click)="centerTab($event)"
+		[ngClass]="{ selected: selectedActivityId === activity.id }"
+		(click)="onActivityChange(activity.id)">
 		{{ activity.description }} {{activity.startDate | date:activity.type.format}}
 	</button>
 

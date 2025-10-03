@@ -88,6 +88,14 @@ export class AvatarsComponent {
 
 
 		this._filterActivities();
+
+		setTimeout(() => {
+			const selectedTab = document.querySelector('.mavi-tab.selected') as HTMLElement;
+			if (selectedTab) {
+				const event = new MouseEvent('click', { bubbles: true });
+				selectedTab.dispatchEvent(event);
+			}
+		}, 100);
 	}
 
 
@@ -342,7 +350,54 @@ export class AvatarsComponent {
 
 	ngAfterViewInit() {
 		// setTimeout(() => {
-		// 	this.onNewActivity();
-		// }, 0);
+		// 	const selectedTab = document.querySelector('.mavi-tab.selected') as HTMLElement;
+		// 	if (selectedTab) {
+		// 		const event = new MouseEvent('click', { bubbles: true });
+		// 		selectedTab.dispatchEvent(event);
+		// 	}
+		// }, 500);
+	}
+
+	private isDragging = false;
+	private startX = 0;
+	private scrollLeft = 0;
+
+	onMouseDown(event: MouseEvent): void {
+		const tabs = event.target as HTMLElement;
+		if (!tabs.classList.contains('mavi-tabs')) return;
+
+		this.isDragging = true;
+		this.startX = event.pageX - tabs.offsetLeft;
+		this.scrollLeft = tabs.scrollLeft;
+		tabs.classList.add('dragging');
+	}
+
+	onMouseMove(event: MouseEvent): void {
+		if (!this.isDragging) return;
+
+		const tabs = document.querySelector('.mavi-tabs') as HTMLElement;
+		if (!tabs) return;
+
+		const x = event.pageX - tabs.offsetLeft;
+		const walk = (x - this.startX) * 2; // Scroll speed multiplier
+		tabs.scrollLeft = this.scrollLeft - walk;
+	}
+
+	onMouseUp(): void {
+		this.isDragging = false;
+		const tabs = document.querySelector('.mavi-tabs');
+		tabs?.classList.remove('dragging');
+	}
+
+	centerTab(event: MouseEvent): void {
+		const tab = event.target as HTMLElement;
+		const tabsContainer = tab.closest('.mavi-tabs') as HTMLElement;
+		if (!tabsContainer) return;
+
+		const tabRect = tab.getBoundingClientRect();
+		const containerRect = tabsContainer.getBoundingClientRect();
+
+		const offset = tabRect.left - containerRect.left - (containerRect.width / 2) + (tabRect.width / 2);
+		tabsContainer.scrollBy({ left: offset, behavior: 'smooth' });
 	}
 }

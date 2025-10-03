@@ -88,3 +88,14 @@
 
 	// w-25 h-25 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-300
 }
+
+.mavi-tabs {
+    overflow-x: auto;
+    cursor: grab;
+	user-select: none;
+	scroll-behavior: smooth;
+
+    &.dragging {
+        cursor: grabbing;
+    }
+}
