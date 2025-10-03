@@ -73,10 +73,9 @@
                                 {{ sc.category.type }}
                             </div>
 
-                            <div class="flex gap-1 flex-wrap">
+                            <div class="flex gap-1 flex-wrap w-full">
 
-                                <!-- las actuales -->
-                                <ng-container *ngFor="let act of student.activitiesCurrent">
+                                <ng-container *ngFor="let act of sc.activitiesCurrent">
                                     <span *ngIf="act.activity.categoryId === sc.categoryId" class="mavi-tag"
                                         [title]="(act.activity.startDate | date:'dd/MM/yy HH:mm') + ' - ' + (act.activity.endDate | date:'dd/MM/yy HH:mm')">
                                         {{ act.activity.description }} {{act.activity.startDate |
@@ -84,22 +83,26 @@
                                     </span>
                                 </ng-container>
 
-                                <div class="btn btn-sm btn-outline"
-                                    (click)="sc.showPastActivities = !sc.showPastActivities">
-                                    {{ sc.showPastActivities ? 'Ocultar pasadas' : 'Mostrar pasadas' }}
+
+                                @if (sc.activitiesPast.length > 0) {
+
+                                <div class="collapser-divisor" (click)="sc.showPastActivities = !sc.showPastActivities">
+                                    {{ sc.showPastActivities ? 'Ocultar pasadas' : 'Mostrar pasadas' }} ({{
+                                    sc.activitiesPast.length }})
                                 </div>
 
-                                <!-- las anteriores -->
                                 @if (sc.showPastActivities) {
-                                <ng-container *ngFor="let act of student.activitiesPast">
-                                    <span *ngIf="act.activity.categoryId === sc.categoryId" class="mavi-tag">
-                                        {{ act.activity.description }} {{act.activity.startDate |
-                                        date:act.activity.type.format}}
-                                    </span>
-                                </ng-container>
+                                <div class="max-h-80 overflow-y-auto flex gap-1 flex-wrap w-full">
+                                    <ng-container *ngFor="let act of sc.activitiesPast">
+                                        <span *ngIf="act.activity.categoryId === sc.categoryId"
+                                            class="mavi-tag text-old">
+                                            {{ act.activity.description }} {{act.activity.startDate |
+                                            date:act.activity.type.format}}
+                                        </span>
+                                    </ng-container>
+                                </div>
                                 }
-
-
+                                }
 
                             </div>
 

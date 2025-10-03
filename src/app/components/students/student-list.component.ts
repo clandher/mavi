@@ -16,12 +16,11 @@ import { FormGroupComponent } from "../form-group/form-group.component";
 
 export interface StudentCategoryView extends StudentCategory {
     showPastActivities: boolean;
-}
-
-
-export interface StudentView extends Student {
     activitiesCurrent: StudentActivity[];
     activitiesPast: StudentActivity[];
+}
+
+export interface StudentView extends Student {
     categories: StudentCategoryView[];
 }
 
@@ -139,11 +138,7 @@ export class StudentListComponent implements OnInit, AfterViewInit {
             this.http.get<StudentView[]>(buildUrl(`students`)).subscribe({
                 next: (students) => {
                     this.students = students.map(student => {
-                        student.categories = student.categories.map(sc => {
-                            const category = this.categories.find(c => c.id === sc.categoryId);
-                            sc.category = category!;
-                            return sc;
-                        });
+
 
                         student.activities = student.activities.map(sa => {
                             const activityType = this.activityTypes.find(at => at.id === sa.activity.typeId);
@@ -156,8 +151,14 @@ export class StudentListComponent implements OnInit, AfterViewInit {
                         student.activities.sort((a, b) => new Date(b.activity.startDate).getTime() - new Date(a.activity.startDate).getTime());
 
                         const today = new Date();
-                        student.activitiesCurrent = student.activities.filter(act => new Date(act.activity.endDate) >= today);
-                        student.activitiesPast = student.activities.filter(act => new Date(act.activity.endDate) < today);
+                        student.categories = student.categories.map(sc => {
+                            const category = this.categories.find(c => c.id === sc.categoryId);
+
+                            sc.activitiesCurrent = student.activities.filter(act => new Date(act.activity.endDate) >= today && act.activity.categoryId === sc.categoryId);
+                            sc.activitiesPast = student.activities.filter(act => new Date(act.activity.endDate) < today && act.activity.categoryId === sc.categoryId);
+                            sc.category = category!;
+                            return sc;
+                        });
 
                         return student;
                     });
