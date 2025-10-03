@@ -33,7 +33,8 @@ export class AvatarsComponent {
 
 	public categories: Category[] = [];
 
-	public activitiesByCategory: Activity[] = [];
+	public activitiesByCategoryCurrent: Activity[] = [];
+	public activitiesByCategoryPast: Activity[] = [];
 	public activities: Activity[] = [];
 	newActivityId: number | null = null;
 
@@ -41,6 +42,7 @@ export class AvatarsComponent {
 
 	selectedCategoryId: number | null = null;
 	selectedActivityId: number = 0;
+	showActivitieByCategoryPast: boolean = false;
 	constructor(
 		private router: Router,
 		private route: ActivatedRoute,
@@ -89,14 +91,19 @@ export class AvatarsComponent {
 
 	private _filterActivities() {
 
-		this.activitiesByCategory = this.activities.filter(a => a.categoryId === this.selectedCategoryId);
+		this.activitiesByCategoryCurrent = this.activities.filter(a => a.categoryId === this.selectedCategoryId && new Date(a.endDate) >= new Date());
+		this.activitiesByCategoryPast = this.activities.filter(a => a.categoryId === this.selectedCategoryId && new Date(a.endDate) < new Date());
 
-		if (this.activitiesByCategory.length) {
-			console.log('Activities for this category', this.activitiesByCategory);
-			if (this.selectedActivityId && this.activitiesByCategory.some(a => a.id === this.selectedActivityId)) {
-				this.onActivityChange(this.selectedActivityId, 0);
+		if (this.activities.length) {
+			if (this.selectedActivityId && this.activities.some(a => a.id === this.selectedActivityId && a.categoryId === this.selectedCategoryId)) {
+				this.onActivityChange(this.selectedActivityId);
 			} else {
-				this.onActivityChange(this.activitiesByCategory[0].id, 0);
+				if (this.activitiesByCategoryCurrent.length) {
+					this.onActivityChange(this.activitiesByCategoryCurrent[0].id);
+					return;
+				} else {
+					this.onActivityChange(this.activities[0].id);
+				}
 			}
 		} else {
 			console.log('No activities for this category');
@@ -111,7 +118,7 @@ export class AvatarsComponent {
 		});
 	}
 
-	onActivityChange(activityId: number, index: number): void {
+	onActivityChange(activityId: number): void {
 
 		this.selectedActivityId = activityId;
 		this.selectedStudentActivity = null;
@@ -122,17 +129,6 @@ export class AvatarsComponent {
 			queryParams: { category: this.selectedCategoryId, activity: this.selectedActivityId },
 			queryParamsHandling: 'merge'
 		});
-
-		setTimeout(() => {
-			const buttons = document.querySelectorAll('button');
-			const selectedButton = buttons[index] as HTMLElement;
-
-			if (selectedButton) {
-				this.highlightWidth = selectedButton.offsetWidth + 12;
-				this.highlightPosition = selectedButton.offsetLeft - 6;
-			}
-		}, 50);
-
 
 		this._loadStudentActivities();
 	}

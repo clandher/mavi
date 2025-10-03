@@ -652,10 +652,33 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     padding: 8px;
     z-index: 30;
     margin-top: 8px;
+    max-height: 300px;
+    overflow-y: auto;
 
     li {
         padding: 8px 16px;
         cursor: pointer;
+        border-radius: 4px;
+
+        &.selected {
+            background-color: #161616;
+            border: 1px solid #262626;
+            color: oklch(0.985 0 0);
+        }
+
+    }
+
+    // .selected {
+    //     background: #262626;
+    // }
+
+
+
+    li:hover {
+        // border-radius: 4px;
+        // background: #101010;
+        background-color: #1a1a1a;
+        color: oklch(0.8 0 0);
     }
 
     ul ul li {
@@ -665,10 +688,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
         }
     }
 
-    li:hover {
-        border-radius: 4px;
-        background: #101010;
-    }
+
 }
 
 
