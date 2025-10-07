@@ -838,3 +838,9 @@ a {
 .text-sm {
     font-size: 12px;
 }
+
+
+.selected {
+    background-color: #16a34a; // Tailwind's green-600
+    color: white;
+}

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
-import { Activity, Category, Student, StudentActivity } from '@app/core/dto';
+import { Activity, Category, Student, StudentActivity, StudentCategory } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { PaymentComponent } from "../payment/payment.component";
 import { InscriptionComponent } from '../inscription';
@@ -302,9 +302,9 @@ export class AvatarsComponent {
 			search: { studentId: studentActivity.studentId },
 		}).query();
 
-		const studentCategories = await new BaseHttp(`student-categories?${queryString}`, this.http).get<Category[]>().toPromise() ?? [];
+		const studentCategories = await new BaseHttp(`student-categories?${queryString}`, this.http).get<StudentCategory[]>().toPromise() ?? [];
 
-		const hasCategory = studentCategories.some(sc => sc.id === activity.categoryId);
+		const hasCategory = studentCategories.some(sc => sc.categoryId === activity.categoryId);
 		if (!hasCategory) {
 			const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http);
 			await studentCategoriesAPI.post({ studentId: studentActivity.studentId, categoryId: activity.categoryId }).toPromise();

@@ -4,8 +4,8 @@
 		<form [formGroup]="form">
 
 			<h5 class="text-xl font-semibold mb-4">Inscribir alumnos</h5>
-			<div class="d-flex gap-4 justify-content-between">
-				<div class="form-group flex-grow-1">
+			<div class="row">
+				<div class="col form-group">
 
 					<app-form-group title="Categoría" [control]="form.get('categoryId')">
 						<select id="categoryId" formControlName="categoryId" class="form-control"
@@ -15,7 +15,7 @@
 						</select>
 					</app-form-group>
 				</div>
-				<div class="form-group flex-grow-1">
+				<div class="col form-group">
 					<app-form-group title="Actividad" [control]="form.get('activityId')">
 						<select id="activityId" formControlName="activityId" class="form-control"
 							(change)="onNewActivityChange()">
@@ -28,12 +28,12 @@
 			</div>
 			<br />
 			<div class="mavi-tabs">
-				<button (click)="form.get('tab')?.setValue('existing')"
+				<a (click)="form.get('tab')?.setValue('existing')"
 					[class]="form.get('tab')?.value === 'existing' ? 'selected' : ''" class="mavi-tab">Seleccionar
-					existentes</button>
-				<button (click)="form.get('tab')?.setValue('new')"
+					existentes</a>
+				<a (click)="form.get('tab')?.setValue('new')"
 					[class]="form.get('tab')?.value === 'new' ? 'selected' : ''" class="mavi-tab">Crear
-					nuevo</button>
+					nuevo</a>
 			</div>
 			<br />
 			<div class="mavi-border" *ngIf="form.get('tab')?.value === 'existing'">
@@ -46,29 +46,31 @@
 				<div class="d-flex items-center mb-2">
 					<span class="font-semibold">Seleccionados: {{ selectedExistingStudents.length }}</span>
 				</div>
-				<div class="grid grid-cols-3 gap-3 mb-4 max-h-60 overflow-y-scroll">
+				<div class="row gx-3 gy-3">
 					<div *ngFor="let student of filteredStudents"
 						(click)="!hasActivityAssigned(student) && onSelectStudent(student)"
-						[class.bg-green-600]="isStudentSelected(student)"
 						[class.opacity-50]="hasActivityAssigned(student)"
 						[class.cursor-pointer]="!hasActivityAssigned(student)"
-						[class.cursor-not-allowed]="hasActivityAssigned(student)"
-						class="mavi-border p-2 d-flex flex-column ">
+						[class.cursor-not-allowed]="hasActivityAssigned(student)" class=" col-3 ">
 
-						<div class="d-flex items-center gap-2">
+						<div class="d-flex flex-column items-center mavi-border"
+							[class.selected]="isStudentSelected(student)">
 							<img *ngIf="student.photo" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
 							<ng-template #placeholder>
 								<div class="photo-placeholder">+</div>
 							</ng-template>
 
-							<div>
-								<div>{{ student.nick ? student.nick : student.name }}</div>
-								{{student.activities.length}} actividades
-								<span *ngIf="hasActivityAssigned(student)"
-									class="mavi-tag me-2 mavi-tag--primary">Inscrito</span>
-								<span *ngFor="let category of student.categories" class="mavi-tag me-2">
-									{{ category.category.type }}
-								</span>
+							<div class="d-flex flex-column ">
+								<div style="max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+									{{ student.nick ? student.nick : student.name }}</div>
+								<div class="text-sm">{{student.activities.length}} actividades</div>
+								<div class="d-flex pt-2">
+									<span *ngIf="hasActivityAssigned(student)"
+										class="mavi-tag me-2 mavi-tag--primary">Inscrito</span>
+									<span *ngFor="let category of student.categories" class="mavi-tag me-2">
+										{{ category.category.type }}
+									</span>
+								</div>
 							</div>
 
 						</div>
