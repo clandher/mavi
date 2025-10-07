@@ -1,21 +1,21 @@
 <div class="mavi-tabs">
-    <button routerLink="escuela" routerLinkActive="selected" class="mavi-tab">
+    <a routerLink="escuela" routerLinkActive="selected" class="mavi-tab">
         Escuela
-    </button>
+    </a>
     @if (authService.user?.developer) {
-    <button routerLink="desarrollo" routerLinkActive="selected" class="mavi-tab">
+    <a routerLink="desarrollo" routerLinkActive="selected" class="mavi-tab">
         Desarrollo
-    </button>
+    </a>
     }
-    <button routerLink="categorias" routerLinkActive="selected" class="mavi-tab">
+    <a routerLink="categorias" routerLinkActive="selected" class="mavi-tab">
         Categorías
-    </button>
-    <button routerLink="tipos-de-actividad" routerLinkActive="selected" class="mavi-tab">
+    </a>
+    <a routerLink="tipos-de-actividad" routerLinkActive="selected" class="mavi-tab">
         Tipos de actividad
-    </button>
-    <button routerLink="usuarios" routerLinkActive="selected" class="mavi-tab">
+    </a>
+    <a routerLink="usuarios" routerLinkActive="selected" class="mavi-tab">
         Usuarios
-    </button>
+    </a>
 </div>
 <br>
 <router-outlet></router-outlet>

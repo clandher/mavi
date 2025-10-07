@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { filter, map } from 'rxjs/operators';
+import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { filter } from 'rxjs/operators';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -12,7 +12,7 @@ import { RouterModule } from '@angular/router';
     <nav class="breadcrumbs">
       <ul>
         <li *ngFor="let breadcrumb of breadcrumbs">
-          <a *ngIf="breadcrumb.url" [routerLink]="breadcrumb.url">{{ breadcrumb.label }} </a>
+          <a *ngIf="breadcrumb.url" [routerLink]="breadcrumb.url" [queryParams]="breadcrumb.queryParams">{{ breadcrumb.label }} </a>
           <span *ngIf="!breadcrumb.url">{{ breadcrumb.label }} </span>
         </li>
       </ul>
@@ -21,48 +21,37 @@ import { RouterModule } from '@angular/router';
     styleUrls: [`./breadcrumbs.component.scss`]
 })
 export class BreadcrumbsComponent implements OnInit {
-    breadcrumbs: Array<{ label: string; url?: string }> = [];
+    breadcrumbs: Array<{ label: string; url?: string; queryParams?: any }> = [];
 
-    constructor(private router: Router, private activatedRoute: ActivatedRoute) { }
+    constructor(private router: Router, private route: ActivatedRoute) { }
 
     ngOnInit(): void {
         this.router.events
-            .pipe(
-                filter(event => event instanceof NavigationEnd),
-                map(() => this.buildBreadcrumbs(this.activatedRoute.root))
-            )
-            .subscribe(breadcrumbs => {
-                this.breadcrumbs = breadcrumbs;
-                console.log('Generated breadcrumbs:', breadcrumbs); // Debugging breadcrumbs
+            .pipe(filter(event => event instanceof NavigationEnd))
+            .subscribe((event: NavigationEnd) => {
+                const currentUrl = event.urlAfterRedirects;
+                const label = this.getLabelFromUrl(currentUrl);
+
+                // Get the origin query param
+                const origin = this.route.snapshot.queryParams['origin'];
+
+                this.breadcrumbs = [{ label, url: currentUrl, queryParams: { origin } }];
+                console.log('Updated breadcrumbs:', this.breadcrumbs); // Debugging breadcrumbs
             });
     }
 
-    private buildBreadcrumbs(route: ActivatedRoute, url: string = '', breadcrumbs: Array<{ label: string; url?: string }> = []): Array<{ label: string; url?: string }> {
-        const children: ActivatedRoute[] = route.children;
+    private getLabelFromUrl(url: string): string {
+        // Extract a label from the URL (e.g., last segment or a custom mapping)
+        const segments = url.split('/').filter(segment => segment);
+        const lastSegment = segments.length > 0 ? decodeURIComponent(segments[segments.length - 1]) : 'Home';
 
-        for (const child of children) {
-            const routeURL: string = child.snapshot.url.map(segment => segment.path).join('/');
-            console.log('Processing route:', {
-                routeURL,
-                breadcrumb: child.snapshot.data['breadcrumb'],
-                fullURL: url + `/${routeURL}`
-            });
-
-            if (routeURL) {
-                url += `/${routeURL}`;
-            }
-
-            const label = child.snapshot.data['breadcrumb'] || routeURL;
-            if (label) {
-                breadcrumbs.push({
-                    label,
-                    url: child.snapshot.data['breadcrumb'] ? url : undefined
-                });
-            }
-
-            this.buildBreadcrumbs(child, url, breadcrumbs);
+        // Custom mapping for specific routes
+        if (lastSegment === 'avatars') {
+            return 'Avatars';
+        } else if (lastSegment === 'student-list') {
+            return 'Student List';
         }
 
-        return breadcrumbs;
+        return lastSegment;
     }
 }

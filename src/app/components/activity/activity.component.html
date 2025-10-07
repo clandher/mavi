@@ -1,40 +1,40 @@
 <div class="modal-overlay">
 	<div class="modal-content">
-		<h2 class="text-xl font-semibold mb-4">{{ activityId !== 0 ? 'Editar actividad' : 'Nueva actividad' }}</h2>
+		<h5 class="text-xl font-semibold mb-4">{{ activityId !== 0 ? 'Editar actividad' : 'Nueva actividad' }}</h5>
 		<form [formGroup]="activityForm">
 			<app-form-group [title]="'Descripción'" [control]="activityForm.get('description')" class="form-group">
 				<input id="description" type="text" formControlName="description" class="form-control"
 					[readonly]="false">
 			</app-form-group>
-			<div class="flex gap-4 justify-between">
-				<app-form-group [title]="'Categoría'" [control]="activityForm.get('categoryId')" class="flex-1">
+			<div class="d-flex gap-4 justify-content-between">
+				<app-form-group [title]="'Categoría'" [control]="activityForm.get('categoryId')" class="flex-grow-1">
 					<select id="newActivityCategoryId" formControlName="categoryId" class="form-control">
 						<option *ngFor="let category of categories" [value]="category.id">{{ category.type }}</option>
 					</select>
 				</app-form-group>
-				<app-form-group [title]="'Tipo de Actividad'" [control]="activityForm.get('typeId')" class="flex-1">
+				<app-form-group [title]="'Tipo de Actividad'" [control]="activityForm.get('typeId')" class="flex-grow-1">
 					<select id="newActivityTypeId" formControlName="typeId" class="form-control">
 						<option *ngFor="let type of activityTypes" [value]="type.id">{{ type.key }}</option>
 					</select>
 				</app-form-group>
 			</div>
-			<div class="flex gap-4 justify-between">
-				<app-form-group [title]="'Fecha de Inicio'" [control]="activityForm.get('startDate')" class="flex-1">
+			<div class="d-flex gap-4 justify-content-between">
+				<app-form-group [title]="'Fecha de Inicio'" [control]="activityForm.get('startDate')" class="flex-grow-1">
 					<input id="newActivityStartDate" type="datetime-local" formControlName="startDate"
 						class="form-control" [min]="todayDatetimeLocal">
 				</app-form-group>
-				<app-form-group [title]="'Fecha de Fin'" [control]="activityForm.get('endDate')" class="flex-1">
+				<app-form-group [title]="'Fecha de Fin'" [control]="activityForm.get('endDate')" class="flex-grow-1">
 					<input id="newActivityEndDate" type="datetime-local" formControlName="endDate" class="form-control"
 						[min]="activityForm.get('startDate')?.value">
 				</app-form-group>
 			</div>
-			<div class="flex gap-4 justify-between">
+			<div class="d-flex gap-4 justify-content-between">
 				<app-form-group [title]="'Período de gracia (días)'" [control]="activityForm.get('gracePeriod')"
-					class="flex-1">
+					class="flex-grow-1">
 					<input id="newActivityGracePeriod" type="text" formControlName="gracePeriod" class="form-control"
 						mask="0*" [allowNegativeNumbers]="false" />
 				</app-form-group>
-				<app-form-group [title]="'Precio'" [control]="activityForm.get('price')" class="flex-1">
+				<app-form-group [title]="'Precio'" [control]="activityForm.get('price')" class="flex-grow-1">
 					<input id="newActivityPrice" type="text" formControlName="price" class="form-control"
 						positiveNumberOnly mask="separator.2" [thousandSeparator]="','" [decimalMarker]="'.'"
 						[allowNegativeNumbers]="false" />

@@ -4,11 +4,11 @@
 
 <div class="mavi-grid">
     <div *ngFor="let category of categories; let i = index" class="mavi-card">
-        <div class="flex justify-between items-center mb-2">
+        <div class="d-flex justify-content-between items-center mb-2">
             {{ category.type }}
         </div>
 
-        <div class="flex justify-between">
+        <div class="d-flex justify-content-between">
             <div class="detail-row">
                 <div class="detail-label">Actividades</div>
                 <div class="detail-value">
@@ -35,7 +35,8 @@
                 Editar
             </button>
             <button class="btn btn-sm btn-destructive" (click)="deleteCategory(category.id, i)"
-                [disabled]="category.activities > 0 || category.students > 0">
+                [disabled]="category.activities > 0 || category.students > 0"
+                [title]="category.activities > 0 || category.students > 0 ? 'No se puede eliminar una categoría con actividades o estudiantes relacionados.' : ''">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="size-4 me-2">
                     <path stroke-linecap="round" stroke-linejoin="round"

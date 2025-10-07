@@ -4,8 +4,8 @@ import { CommonModule } from '@angular/common';
 @Component({
     selector: 'btn-loading',
     template: `
-    <button [disabled]="loading || disabled" class="btn btn-primary flex items-center justify-center" [ngClass]="class" (click)="onClick()">
-      	<span *ngIf="loading" class="spinner-border spinner-border-sm mr-2"></span>
+    <button [disabled]="loading || disabled" class="btn btn-primary flex items-center justify-content-center" [ngClass]="class" (click)="onClick()">
+      	<span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
 		{{ text }}
     </button>
   `,

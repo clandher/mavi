@@ -10,20 +10,17 @@
     .modal-content {
         background: #111111;
         color: #e5e7eb;
-        // border-radius: 12px;
         border: 1px solid #262626;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         padding: 16px;
         min-width: 350px;
-        max-width: 90vw;
+        max-width: 60vw;
         max-height: 80vh;
         overflow-y: auto;
 
         .modal-body {
             max-height: 50vh;
             overflow-y: auto;
-            // margin-right: -16px;
-            // padding-right: 16px;
         }
 
         .modal-footer {
@@ -56,7 +53,6 @@
 
 /* WOW Animaciones variadas */
 
-@import "tailwindcss";
 @import 'ngx-toastr/toastr';
 
 /* Custom dark scrollbar for the whole app */
@@ -104,7 +100,7 @@ body {
     align-items: center;
     justify-content: center;
     text-wrap: nowrap;
-    // max-width: 200px;
+    border-radius: 0;
 
     &:disabled {
         opacity: 0.6;
@@ -132,6 +128,13 @@ body {
 
     &:hover {
         background: #e6e6e6;
+    }
+
+    //disabled
+    &:disabled {
+        background: #fafafa;
+        color: #aaa;
+        border: 1px solid #fafafa;
     }
 
 }
@@ -174,6 +177,24 @@ body {
     &:hover {
         background: #a32a2a;
     }
+
+    //disabled
+    &:disabled {
+        background: #3e1a1a;
+        color: #aaa;
+        border: 1px solid #3e1a1a;
+    }
+}
+
+.btn-attend {
+    background: #fb2c36;
+    color: #fff;
+    border: 1px solid #fb2c36;
+
+    &:hover {
+        color: #fff;
+        background: #d81f1f;
+    }
 }
 
 .btn-back {
@@ -205,6 +226,7 @@ body {
     border: 1px solid oklch(0.269 0 0);
     background-color: #18181b;
     color: #fafafa;
+    border-radius: 0;
 
     &[disabled] {
         background: #121212;
@@ -212,6 +234,20 @@ body {
         cursor: not-allowed;
     }
 
+    //placeholder
+    &::placeholder {
+        color: #71717a;
+    }
+
+
+
+    &:focus {
+        outline: none;
+        color: #fafafa;
+        border-color: oklch(62.341% 0.00007 271.152);
+        background-color: #222;
+        box-shadow: none;
+    }
 
 
     &[type="checkbox"] {
@@ -379,15 +415,45 @@ select.form-control {
 }
 
 
+.mavi-fixed-tab {
+    background-color: #101010;
+    padding: 6px;
+    padding-right: 3px;
+    display: flex;
+    font-size: 14px;
+    gap: 4px;
+    font-weight: 500;
+
+    .mavi-tab {
+        white-space: nowrap;
+        padding: 4px 15px;
+        cursor: pointer;
+        border: 1px solid transparent;
+        color: #a1a1a1;
+
+        &.selected {
+            background-color: #161616;
+            border: 1px solid #262626;
+            color: oklch(0.985 0 0);
+        }
+
+        &:hover {
+            background-color: #1a1a1a;
+            color: oklch(0.8 0 0);
+        }
+
+    }
+}
+
 .mavi-tabs {
     background-color: #101010;
     padding: 6px;
     display: flex;
-    overflow-x: auto;
     font-size: 14px;
     gap: 4px;
     font-weight: 500;
-    // height: 43px;
+    overflow-x: auto;
+    min-height: 43px;
 
     /* Oculta el scroll visual pero mantiene la funcionalidad */
     scrollbar-width: none;
@@ -428,6 +494,7 @@ select.form-control {
     padding: 2px 8px;
     font-weight: 500;
     border: 1px solid oklch(0.269 0 0);
+    position: relative;
 }
 
 
@@ -627,6 +694,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     }
 }
 
+
 .logo-placeholder {
     display: flex;
     align-items: center;
@@ -641,9 +709,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 
+.logo-placeholder-large {
+    width: 100px;
+    height: 100px;
+    display: flex;
+    font-size: 2em;
+}
 
 
-.menu-context {
+.dropdown-menu {
     border-radius: 10px;
     background: #151515;
     color: #e5e7eb;
@@ -652,13 +726,15 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     padding: 8px;
     z-index: 30;
     margin-top: 8px;
-    max-height: 300px;
+    max-height: 350px;
     overflow-y: auto;
 
-    li {
-        padding: 8px 16px;
+    .dropdown-item {
+        padding: 6px 12px;
         cursor: pointer;
         border-radius: 4px;
+        color: #e5e7eb;
+        margin-bottom: 2px;
 
         &.selected {
             background-color: #161616;
@@ -666,31 +742,37 @@ input[type="date"]::-webkit-calendar-picker-indicator {
             color: oklch(0.985 0 0);
         }
 
-    }
+        .dropdown-sub-menu {
+            margin-top: 4px;
+            margin-left: 12px;
+            border-left: 1px solid #333;
+            padding-left: 8px;
+            list-style: none;
+            font-size: 11px;
 
-    // .selected {
-    //     background: #262626;
-    // }
+            .dropdown-sub-item {
+                padding: 6px 12px;
+                cursor: pointer;
+                border-radius: 4px;
+                color: #e5e7eb;
 
-
-
-    li:hover {
-        // border-radius: 4px;
-        // background: #101010;
-        background-color: #1a1a1a;
-        color: oklch(0.8 0 0);
-    }
-
-    ul ul li {
-        &:hover {
-            border-radius: 4px;
-            background: #201f1f; // Cambia este color al que prefieras
+                &:hover {
+                    background-color: #161616;
+                    color: oklch(0.8 0 0);
+                }
+            }
         }
     }
 
-
+    .dropdown-item:hover {
+        background-color: #1a1a1a;
+        color: oklch(0.8 0 0);
+    }
 }
 
+.cursor-pointer {
+    cursor: pointer;
+}
 
 .input-container {
     position: relative;
@@ -719,4 +801,40 @@ input[type="date"]::-webkit-calendar-picker-indicator {
     &:hover {
         color: #a1a1aa;
     }
+}
+
+
+.page-back {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: oklch(0.985 0 0);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+
+    &:hover {
+        color: oklch(0.8 0 0);
+        text-decoration: underline;
+    }
+}
+
+.size-4 {
+    width: 1rem;
+    height: 1rem;
+}
+
+.size-2 {
+    width: .5rem;
+    height: .5rem;
+}
+
+a {
+    text-decoration: none;
+    color: #fff;
+}
+
+.text-sm {
+    font-size: 12px;
 }

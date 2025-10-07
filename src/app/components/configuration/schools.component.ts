@@ -55,31 +55,7 @@ export class SchoolsComponent {
 		return this.schoolsForm.get('schools') as FormArray;
 	}
 
-	saveSchools(): Promise<any> {
-		const schoolsAPI = new BaseHttp('schools', this.http);
-		const updates = this.schoolsArray.value.map((school: any) => {
-			return schoolsAPI.patch(school.id, {
-				description: school.description
-			}).toPromise();
-		});
-
-		return Promise.all(updates).then(() => {
-			this.uploadPendingLogos();
-		}).catch((error) => {
-			throw error;
-		});
-	}
-
-	uploadPendingLogos() {
-		this.schoolsArray.controls.forEach((control: AbstractControl) => {
-			const school = control.value;
-			if (school.pendingLogoFile) {
-				this.uploadLogo(school.id, school.pendingLogoFile);
-			}
-		});
-	}
-
-	onLogoSelected(event: Event, index: number) {
+	public onLogoSelected(event: Event, index: number) {
 		const file = (event.target as HTMLInputElement).files?.[0];
 		if (!file) return;
 
@@ -94,7 +70,31 @@ export class SchoolsComponent {
 		reader.readAsDataURL(file);
 	}
 
-	uploadLogo(schoolId: number, file: File) {
+	public onSaveSchools(): Promise<any> {
+		const schoolsAPI = new BaseHttp('schools', this.http);
+		const updates = this.schoolsArray.value.map((school: any) => {
+			return schoolsAPI.patch(school.id, {
+				description: school.description
+			}).toPromise();
+		});
+
+		return Promise.all(updates).then(() => {
+			this._uploadPendingLogos();
+		}).catch((error) => {
+			throw error;
+		});
+	}
+
+	_uploadPendingLogos() {
+		this.schoolsArray.controls.forEach((control: AbstractControl) => {
+			const school = control.value;
+			if (school.pendingLogoFile) {
+				this._uploadLogo(school.id, school.pendingLogoFile);
+			}
+		});
+	}
+
+	_uploadLogo(schoolId: number, file: File) {
 		const formData = new FormData();
 		formData.append('file', file);
 

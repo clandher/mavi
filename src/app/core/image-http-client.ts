@@ -20,7 +20,7 @@ export class ImageHttpClient {
 
     school(school: School): Observable<string> {
         if (school.logo) {
-            const fetcher = this.fetch(`schools/${school.id}/logo`).pipe(
+            const fetcher = this.fetch(`schools/${school.id}/logo?id=${school.logo}`).pipe(
                 map(photoUrl => {
                     school.logoUrl = photoUrl ?? '';
                     return school.logoUrl;
@@ -38,7 +38,7 @@ export class ImageHttpClient {
 
     student(student: Student): Observable<string> {
         if (student.photo) {
-            const fetcher = this.fetch(`students/${student.id}/photo`).pipe(
+            const fetcher = this.fetch(`students/${student.id}/photo?id=${student.photo}`).pipe(
                 map(photoUrl => {
                     student.photoUrl = photoUrl ?? '';
                     return student.photoUrl;

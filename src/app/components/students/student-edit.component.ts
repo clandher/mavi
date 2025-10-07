@@ -10,27 +10,35 @@ import { FormGroupComponent } from '../form-group/form-group.component';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { SubmitComponent } from '../submit/submit.component';
 import { ImageHttpClient } from '@app/core/image-http-client';
+import { PaymentComponent } from '../payment/payment.component';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     standalone: true,
     selector: 'app-student-edit',
-    imports: [CommonModule, FormsModule, RouterModule, FormGroupComponent, ReactiveFormsModule, SubmitComponent],
+    imports: [CommonModule, FormsModule, RouterModule, FormGroupComponent, ReactiveFormsModule, SubmitComponent, PaymentComponent],
     templateUrl: './student-edit.component.html',
     styleUrls: ['./student-edit.component.scss']
 })
 export class StudentEditComponent {
+
     @Output() complete = new EventEmitter<boolean>();
 
     private pendingPhotoFile: File | null = null;
 
     public studentForm: FormGroup;
+    public student: Student | null = null;
+    public showPaymentModal = false;
+
+    private _origin: string | null = null;
 
     constructor(
         private route: ActivatedRoute,
         private router: Router,
         private http: HttpClient,
         private imageHttp: ImageHttpClient,
-        private fb: FormBuilder
+        private fb: FormBuilder,
+        private toastr: ToastrService,
     ) {
         this.studentForm = this.fb.group({
             id: [''],
@@ -43,6 +51,11 @@ export class StudentEditComponent {
             phone: [''],
             placeOfBirth: [''],
         });
+
+
+        const navigation = this.router.getCurrentNavigation();
+        this._origin = navigation?.extras.state ? navigation.extras.state['origin'] : null;
+        console.log('Origin:', this._origin);
     }
 
     ngAfterViewInit(): void {
@@ -58,10 +71,19 @@ export class StudentEditComponent {
         }
     }
 
+    onBack() {
+        if (this._origin) {
+            this.router.navigateByUrl(this._origin);
+        } else {
+            this.router.navigate(['/app/estudiantes']);
+        }
+    }
+
     private _loadStudent(studentId: number): void {
         const studentsAPI = new BaseHttp(`students/${studentId}`, this.http);
         studentsAPI.get<Student>().subscribe({
             next: (student) => {
+                this.student = student;
                 this.studentForm.patchValue({
                     id: student.id,
                     name: student.name,
@@ -147,7 +169,7 @@ export class StudentEditComponent {
     onPhotoSelected(event: Event) {
         const studentId = Number(this.route.snapshot.paramMap.get('id') ?? 0);
         if (studentId > 0) {
-            uploadStudentPhoto(event, this.studentForm.value, this.http, this.imageHttp);
+            uploadStudentPhoto(event, this.studentForm.value, this.http, this.toastr);
             return;
         }
 
@@ -179,11 +201,28 @@ export class StudentEditComponent {
         fakeInput.type = 'file';
         fakeInput.files = dataTransfer.files;
         const event = { target: fakeInput } as unknown as Event;
-        uploadStudentPhoto(event, this.studentForm.value, this.http, this.imageHttp);
+        uploadStudentPhoto(event, this.studentForm.value, this.http, this.toastr);
         this.pendingPhotoFile = null;
     }
 
     closeModal(): void {
         this.complete.emit(false);
+    }
+
+    public onPaymentComplete(value: boolean) {
+        console.log('Payment complete:', value);
+        this.showPaymentModal = false;
+        if (value) {
+            const studentsAPI = new BaseHttp(`students/${this.student?.id}`, this.http);
+            studentsAPI.get<Student>().subscribe({
+                next: (student) => {
+                    this.student = student;
+                },
+                error: (err) => {
+                    console.error('Error loading student', err);
+                    this.router.navigate(['/app/estudiantes']);
+                }
+            });
+        }
     }
 }

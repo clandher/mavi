@@ -1,17 +1,18 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { ActivatedRoute, RouterModule } from '@angular/router';
+import { FormBuilder, FormsModule } from '@angular/forms';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { StudentObservation } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { SubmitComponent } from "../submit/submit.component";
 import { ObservationsComponent } from '../observations';
+import { ModalComponent } from '../modal/modal.component';
 
 @Component({
 	standalone: true,
-	imports: [CommonModule, FormsModule, RouterModule, SubmitComponent, ObservationsComponent],
+	imports: [CommonModule, FormsModule, RouterModule, SubmitComponent, ObservationsComponent, ModalComponent],
 	templateUrl: './student-observations.component.html',
 	providers: []
 })

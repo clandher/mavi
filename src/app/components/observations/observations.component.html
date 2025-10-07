@@ -1,40 +1,40 @@
 <div class="modal-overlay">
 	<div class="modal-content">
-		<h2 class="text-xl font-semibold mb-4">Asignar observaciones de entrenamiento</h2>
-		<div class="flex gap-4 justify-between">
-			<div class="form-group flex-1">
+		<h5 class="text-xl font-semibold mb-4">Asignar observaciones de entrenamiento</h5>
+		<div class="row">
+			<div class="col form-group">
 				<label for="newCategoryId" class="form-label">Categoría</label>
 				<select id="newCategoryId" [(ngModel)]="newCategoryId" name="newCategory" class="form-control"
 					(change)="onNewCategoryChange()">
 					<option *ngFor="let cat of categories" [value]="cat.id">{{ cat.type }}</option>
 				</select>
 			</div>
-			<div class="form-group flex-1">
+			<div class="col form-group">
 				<label for="newActivityId" class="form-label">Actividad</label>
 				<select id="newActivityId" [(ngModel)]="newActivityId" name="newActivityId" class="form-control"
 					(change)="onNewActivityChange()">
-					<option *ngFor="let act of activities" [value]="act.id">{{ act.description }} {{act.startDate | date:act.type.format}}
+					<option *ngFor="let act of activities" [value]="act.id">{{ act.description }} {{act.startDate |
+						date:act.type.format}}
 					</option>
 				</select>
 			</div>
 		</div>
 		<br />
-		<div class="flex gap-6">
-			<div class="flex-1 mavi-border p-2">
+		<div class="row">
+			<div class="col mavi-border">
 				<div class="form-group">
-					<label for="searchTerm" class="form-label">Buscar estudiante</label>
+					<label for="searchTerm" class="form-label">Estudiantes</label>
 					<input id="searchTerm" type="text" [(ngModel)]="searchTerm" (input)="onSearch()"
-						placeholder="Buscar por nombre..." class="form-control">
+						placeholder="Buscar estudiantes..." class="form-control">
 				</div>
 				<br />
 				<div class="mb-2">
-					<span class="font-semibold">Seleccionados: {{ selectedExistingStudents.length }}</span>
+					<span class="font-semibold">Seleccionados: {{ selectedStudents }}</span>
 				</div>
-				<div class="grid grid-cols-1 gap-2 mb-4 max-h-100 overflow-y-scroll">
+				<div class="d-grid gap-2" style="max-height: 40vh; overflow-y: auto;">
 					<div *ngFor="let student of filteredStudents" (click)=" onSelectStudent(student)"
-						[class.bg-green-600]="isStudentSelected(student)"
-						class="mavi-border p-1 flex flex-col cursor-pointer">
-						<div class="flex items-center gap-2">
+						[class.selected]="student.selected" class="mavi-border p-3 d-flex flex-column cursor-pointer">
+						<div class="d-flex items-center gap-2">
 
 							<img *ngIf="student.photoUrl" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
 							<div *ngIf="student.photo && !student.photoUrl" class="student-photo-sm-placeholder"></div>
@@ -50,20 +50,20 @@
 						encontraron estudiantes</div>
 				</div>
 			</div>
-			<div class="flex-1 mavi-border p-2">
+			<div class="col mavi-border">
 				<div class="form-group">
 					<label class="form-label">Observaciones</label>
 					<input type="text" [(ngModel)]="observationSearchTerm" (input)="onObservationSearch()"
-						placeholder="Buscar observación..." class="form-control mt-1" />
+						placeholder="Buscar observaciones..." class="form-control" />
 				</div>
 				<br />
 				<div class="mb-2">
 					<span class="font-semibold">Seleccionadas: {{ selectedObservations.length }}</span>
 				</div>
-				<div class="grid grid-cols-1 gap-2 max-h-100 overflow-y-scroll">
+				<div class="d-grid gap-2" style="max-height: 40vh; overflow-y: auto;">
 					<div *ngFor="let obs of filteredObservations" (click)="toggleObservation(obs)"
-						[class.bg-green-600]="isObservationSelected(obs)" [class.cursor-pointer]="true"
-						class="mavi-border p-2 flex items-center">
+						[class.selected]="isObservationSelected(obs)" [class.cursor-pointer]="true"
+						class="mavi-border p-3 d-flex items-center">
 						<span>{{ obs }}</span>
 					</div>
 					<div *ngIf="filteredObservations.length === 0" class="text-center py-4 text-gray-500">No se
@@ -73,11 +73,13 @@
 			</div>
 		</div>
 		<div class="modal-footer">
-			<div class="flex justify-end space-x-2 mt-4">
-				<app-submit [disabled]="selectedExistingStudents.length === 0 || selectedObservations.length === 0"
-					submitText="Asignar observaciones" [submit]="onAssignObservations.bind(this)"
-					(discard)="onCancel()">
+			<div class="d-flex justify-content-end gap-2 mt-4">
+				<app-submit [disabled]="selectedStudents === 0 || selectedObservations.length === 0"
+					submitText="Guardar" [submit]="onAssignObservations.bind(this)" (discard)="onCancel()">
 				</app-submit>
+
+				<btn-loading [action]="onAssignObservations.bind(this, true)" text="Guardar y ver"
+					[disabled]="selectedStudents > 1 || selectedStudents === 0 || selectedObservations.length === 0"></btn-loading>
 			</div>
 		</div>
 	</div>

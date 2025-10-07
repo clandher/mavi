@@ -2,6 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Student, School } from "./dto";
 import { BaseHttp, buildUrl } from "./base-http";
 import { ImageHttpClient } from "./image-http-client";
+import { ToastrService } from "ngx-toastr";
 
 export function formatDateForDisplay(date: Date): string {
     if (!date) return '';
@@ -29,7 +30,7 @@ export function datetimeLocalStringToDate(value: string): Date {
     return value ? new Date(value) : new Date;
 }
 
-export function uploadStudentPhoto(event: Event, student: Student, http: HttpClient, httpImage: ImageHttpClient): void {
+export function uploadStudentPhoto(event: Event, student: Student, http: HttpClient, toastr: ToastrService): void {
     const file = (event.target as HTMLInputElement).files?.[0];
 
     if (!file || !student.id) return;
@@ -43,9 +44,10 @@ export function uploadStudentPhoto(event: Event, student: Student, http: HttpCli
     studentsAPI.post<FormData, any>(formData).subscribe({
         next: (res) => {
             // httpImage.student(student);
+            toastr.success('Foto subida correctamente', 'Éxito');
         },
         error: (err) => {
-            console.error('Error uploading photo', err);
+            toastr.error('Error al subir la foto', 'Error');
         }
     });
 

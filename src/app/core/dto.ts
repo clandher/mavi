@@ -70,6 +70,7 @@ export class StudentActivity {
     activity!: Activity;
     activityId!: number;
     price!: number;
+    debt!: number;
 
     inscriptionDate!: Date;
     debtActivityAmount!: number;

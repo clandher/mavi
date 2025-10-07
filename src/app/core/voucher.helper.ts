@@ -35,7 +35,7 @@ export class VoucherHelper {
         ctx.fillStyle = '#111';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Marca de agua: logo centrado, proporcional y translúcido
+        // Marca de agua: logo centrado, proporcional y translúcido
         if (school.logoUrl) {
             await new Promise<void>((resolve) => {
                 const img = new window.Image();
@@ -72,7 +72,7 @@ export class VoucherHelper {
                     ctx.save();
                     ctx.globalAlpha = 0.06;
                     ctx.fillStyle = '#fff';
-                    ctx.fillRect(canvas.width/2-140, canvas.height/2-70, 280, 140);
+                    ctx.fillRect(canvas.width / 2 - 140, canvas.height / 2 - 70, 280, 140);
                     ctx.restore();
                     // Logo normal en header
                     ctx.fillStyle = '#fff';
@@ -80,24 +80,14 @@ export class VoucherHelper {
                     resolve();
                 };
             });
-        } else {
-            // Marca de agua cuadrada por defecto
-            ctx.save();
-            ctx.globalAlpha = 0.08;
-            ctx.fillStyle = '#fff';
-            ctx.fillRect(canvas.width/2-140, canvas.height/2-70, 280, 140);
-            ctx.restore();
-            // Logo normal en header
-            ctx.fillStyle = '#fff';
-            ctx.fillRect(30, 30, 40, 40);
         }
 
-    // Borde blanco profesional alrededor del voucher
-    ctx.save();
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 2;
-    ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
-    ctx.restore();
+        // Borde blanco profesional alrededor del voucher
+        ctx.save();
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(5, 5, canvas.width - 10, canvas.height - 10);
+        ctx.restore();
 
         ctx.fillStyle = '#111';
         ctx.font = 'bold 20px "Segoe UI", Arial, sans-serif';
@@ -120,7 +110,7 @@ export class VoucherHelper {
         ctx.font = 'bold 15px "Segoe UI", Arial, sans-serif';
         ctx.fillStyle = '#aaa';
         ctx.fillText('Estudiante:', 30, 110);
-        
+
         ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
         ctx.fillStyle = '#fff';
         ctx.fillText(`${studentPayment.student.name} `, 130, 110);

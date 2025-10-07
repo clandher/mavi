@@ -5,14 +5,19 @@ import { HttpClient } from '@angular/common/http';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { Activity, Category, Student, StudentActivity } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Route, Router } from '@angular/router';
 import { ImageHttpClient } from '@app/core/image-http-client';
 import { SubmitComponent } from '../submit/submit.component';
+import { BtnLoadingComponent } from "../btn-loading/btn-loading.component";
+
+interface StudentView extends Student {
+    selected: boolean;
+}
 
 @Component({
     selector: 'app-observations',
     standalone: true,
-    imports: [CommonModule, FormsModule, SubmitComponent],
+    imports: [CommonModule, FormsModule, SubmitComponent, BtnLoadingComponent],
     templateUrl: './observations.component.html',
     styleUrls: ['./observations.component.scss']
 })
@@ -21,10 +26,34 @@ export class ObservationsComponent implements OnInit {
     // @Input() studentActivity!: StudentActivity;
     @Output() complete = new EventEmitter<boolean>();
 
-
-
     observationSearchTerm: string = '';
     filteredObservations: string[] = [];
+
+    public selectedStudents = 0;
+
+
+    constructor(
+        private http: HttpClient,
+        private route: ActivatedRoute,
+        private imageHttp: ImageHttpClient,
+        private router: Router,
+    ) {
+
+        this.route.queryParams.subscribe(params => {
+            const categoryId = params['category'];
+            const activityId = params['activity'];
+
+            if (categoryId) {
+                this.newCategoryId = +categoryId;
+            }
+            if (activityId) {
+                this.newActivityId = +activityId;
+            }
+        });
+    }
+
+
+
     onObservationSearch() {
         const term = this.observationSearchTerm.toLowerCase();
         this.filteredObservations = this.trainingObservations.filter(obs =>
@@ -32,22 +61,16 @@ export class ObservationsComponent implements OnInit {
         );
     }
 
-    isStudentSelected(student: Student): boolean {
-        return this.selectedExistingStudents.some(s => s.id === student.id);
-    }
-
-
     onCancel() {
-        this.selectedExistingStudents = [];
         this.complete.emit(false);
     }
 
 
     categories: Category[] = [];
     activities: Activity[] = [];
-    students: Student[] = [];
-    filteredStudents: Student[] = [];
-    selectedExistingStudents: Student[] = [];
+    students: StudentView[] = [];
+    filteredStudents: StudentView[] = [];
+
     searchTerm: string = '';
     newCategoryId: number | null = null;
     newActivityId: number | null = null;
@@ -89,24 +112,6 @@ export class ObservationsComponent implements OnInit {
 
 
 
-    constructor(
-        private http: HttpClient,
-        private route: ActivatedRoute,
-        private imageHttp: ImageHttpClient,
-    ) {
-
-        this.route.queryParams.subscribe(params => {
-            const categoryId = params['category'];
-            const activityId = params['activity'];
-
-            if (categoryId) {
-                this.newCategoryId = +categoryId;
-            }
-            if (activityId) {
-                this.newActivityId = +activityId;
-            }
-        });
-    }
 
     async ngOnInit() {
         await Promise.all([
@@ -121,13 +126,30 @@ export class ObservationsComponent implements OnInit {
             });
 
             this.imageHttp.student(student);
+            student.selected = false;
             return student;
         });
+
+
+        const studentToSelect = this.filteredStudents.find(s => s.id === this.studentId);
+        if (studentToSelect) {
+            this.onSelectStudent(studentToSelect);
+        }
+
+        this.sort();
 
         this.filteredObservations = [...this.trainingObservations];
     }
 
 
+
+    private sort() {
+        this.filteredStudents.sort((a, b) => {
+            if (a.selected && !b.selected) return -1;
+            if (!a.selected && b.selected) return 1;
+            return 0;
+        });
+    }
 
     onNewCategoryChange() {
         const queryString = RequestQueryBuilder.create({
@@ -151,22 +173,15 @@ export class ObservationsComponent implements OnInit {
         this.filteredStudents = this.students.filter(student =>
             student.name.toLowerCase().includes(term)
         );
+        this.sort();
     }
 
     _loadStudents(): Promise<void> {
         const studentsAPI = new BaseHttp('students', this.http);
         return new Promise(resolve => {
-            studentsAPI.get<Student[]>().subscribe(students => {
+            studentsAPI.get<StudentView[]>().subscribe(students => {
                 this.students = students;
-
-                const studentToSelect = this.students.find(s => s.id === this.studentId);
-                if (studentToSelect) {
-                    this.selectedExistingStudents = [studentToSelect];
-
-                }
-
                 resolve();
-
             });
         });
     }
@@ -187,23 +202,23 @@ export class ObservationsComponent implements OnInit {
 
 
 
-    onSelectStudent(student: Student) {
-        const idx = this.selectedExistingStudents.findIndex(s => s.id === student.id);
-        if (idx > -1) {
-            this.selectedExistingStudents.splice(idx, 1);
+    onSelectStudent(student: StudentView) {
+        student.selected = !student.selected;
+        if (student.selected) {
+            this.selectedStudents++;
         } else {
-            this.selectedExistingStudents.push(student);
+            this.selectedStudents--;
         }
     }
 
 
 
 
-    async onAssignObservations() {
+    async onAssignObservations(navigate: boolean = false) {
         const studentObservationsAPI = new BaseHttp(`student-observations`, this.http);
         const activityId = Number(this.newActivityId);
         const requests: Promise<boolean>[] = [];
-        for (const student of this.selectedExistingStudents) {
+        for (const student of this.students.filter(s => s.selected)) {
             for (const observation of this.selectedObservations) {
                 const payload = {
                     studentId: student.id,
@@ -222,9 +237,12 @@ export class ObservationsComponent implements OnInit {
         const allSucceeded = results.every(r => r);
         if (allSucceeded) {
             this.complete.emit(true);
-            this.selectedExistingStudents = [];
             this.selectedObservations = [];
+
+            const selectedStudent = this.students.find(s => s.selected);
+            if (navigate && this.selectedStudents === 1 && selectedStudent) {
+                this.router.navigate(['/app/estudiantes', selectedStudent.id, 'editar', 'observaciones']);
+            }
         }
-        // Si alguno falla, no se cierra ni limpia
     }
 }

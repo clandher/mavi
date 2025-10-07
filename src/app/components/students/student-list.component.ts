@@ -14,13 +14,13 @@ import { FormGroupComponent } from "../form-group/form-group.component";
 
 
 
-export interface StudentCategoryView extends StudentCategory {
+interface StudentCategoryView extends StudentCategory {
     showPastActivities: boolean;
     activitiesCurrent: StudentActivity[];
     activitiesPast: StudentActivity[];
 }
 
-export interface StudentView extends Student {
+interface StudentView extends Student {
     categories: StudentCategoryView[];
 }
 
@@ -62,7 +62,7 @@ export class StudentListComponent implements OnInit, AfterViewInit {
         private http: HttpClient,
         private imageHttp: ImageHttpClient,
         private route: ActivatedRoute,
-        private router: Router
+        public router: Router
     ) {
         this.categoriesAPI = new BaseHttp('categories', this.http);
         this.activityTypesAPI = new BaseHttp('activity-types', this.http); // Initialize activity types API
@@ -199,10 +199,6 @@ export class StudentListComponent implements OnInit, AfterViewInit {
         });
         this.sortByDebt();
 
-        console.log('Filtered name:', this.filters.name);
-        console.log('Filtered debt:', this.filters.debt);
-
-        // Guardar el filtro de deuda en el localStorage
         localStorage.setItem('filter.debt', this.filters.debt);
 
         this.router.navigate([], {
@@ -263,7 +259,6 @@ export class StudentListComponent implements OnInit, AfterViewInit {
             this.imageHttp.student(student);
         }
     }
-
 
     ngOnDestroy(): void {
         this.observer?.disconnect();

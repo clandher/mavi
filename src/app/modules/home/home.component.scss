@@ -23,7 +23,7 @@
             cursor: pointer;
         }
 
-       
+
         .logo {
             // position: absolute;
             display: inline-flex;
@@ -95,23 +95,20 @@
     }
 }
 
-.user-menu {
-    position: relative;
 
-    .user-menu-toggle {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        background: none;
-        border: none;
-        color: white;
-        cursor: pointer;
-        padding: 0.5rem 1rem;
-        border-radius: 4px;
+.user-menu-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
 
-        &:hover {
-            background-color: #34495e;
-        }
+    &:hover {
+        background-color: #1a1a1b;
     }
 }
 

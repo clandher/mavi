@@ -4,7 +4,7 @@
 
 <div class="mavi-grid">
     <div *ngFor="let activityType of activityTypes" class="mavi-card">
-        <div class="flex justify-between items-center mb-2">
+        <div class="d-flex justify-content-between items-center mb-2">
             {{ activityType.key }}
         </div>
 
@@ -22,7 +22,7 @@
                 {{ activityType.rule }}
             </div>
         </div>
-        
+
         <br>
         <div class="detail-row" *ngIf="activityType.format">
             <div class="detail-label">Formato</div>
@@ -35,7 +35,9 @@
             <button class="btn btn-sm btn-outline" (click)="editActivityType(activityType.id)">
                 Editar
             </button>
-            <button class="btn btn-sm btn-destructive" (click)="deleteActivityType(activityType.id)" [disabled]="activityType.lock">
+            <button class="btn btn-sm btn-destructive" (click)="deleteActivityType(activityType.id)"
+                [disabled]="activityType.lock"
+                [title]="activityType.lock ? 'Este tipo de actividad no se puede eliminar porque es base del sistema.' : ''">
                 Eliminar
             </button>
         </div>

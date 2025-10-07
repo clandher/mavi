@@ -18,24 +18,23 @@
             </nav>
         </div>
 
-        <div class="user-menu" *ngIf="authService.user">
-            <button class="user-menu-toggle" (click)="toggleMenu()">
-                <span class="user-name">{{ authService.user.name }}</span>
-                <span class="menu-icon">▼</span>
-            </button>
+        <!-- <button *ngIf="authService.user" type="button" aria-expanded="false">
+            {{ authService.user.name }}
+        </button> -->
 
-            <div *ngIf="menuOpen" class="menu-context">
-                <ul>
-                    <li (click)="logout()">
-                        <span>Cerrar sesión</span>
-                    </li>
-                </ul>
-            </div>
+        @if (authService.user) {
+        <button class="user-menu-toggle" data-bs-toggle="dropdown">
+            <span class="user-name">{{ authService.user.name }}</span>
+            <span class="menu-icon">▼</span>
+        </button>
+
+        <div class="dropdown">
+            <ul class="dropdown-menu">
+                <li><button class="dropdown-item" (click)="logout()">Cerrar sesión</button></li>
+            </ul>
         </div>
+        }
     </header>
-
-    <!-- <app-breadcrumbs></app-breadcrumbs> -->
-
     <br>
     <main class="dashboard-content">
         <router-outlet></router-outlet>

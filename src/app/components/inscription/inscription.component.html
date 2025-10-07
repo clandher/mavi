@@ -3,9 +3,9 @@
 
 		<form [formGroup]="form">
 
-			<h2 class="text-xl font-semibold mb-4">Inscribir alumnos</h2>
-			<div class="flex gap-4 justify-between">
-				<div class="form-group flex-1">
+			<h5 class="text-xl font-semibold mb-4">Inscribir alumnos</h5>
+			<div class="d-flex gap-4 justify-content-between">
+				<div class="form-group flex-grow-1">
 
 					<app-form-group title="Categoría" [control]="form.get('categoryId')">
 						<select id="categoryId" formControlName="categoryId" class="form-control"
@@ -15,7 +15,7 @@
 						</select>
 					</app-form-group>
 				</div>
-				<div class="form-group flex-1">
+				<div class="form-group flex-grow-1">
 					<app-form-group title="Actividad" [control]="form.get('activityId')">
 						<select id="activityId" formControlName="activityId" class="form-control"
 							(change)="onNewActivityChange()">
@@ -43,7 +43,7 @@
 						class="form-control">
 				</div>
 				<br />
-				<div class="flex items-center mb-2">
+				<div class="d-flex items-center mb-2">
 					<span class="font-semibold">Seleccionados: {{ selectedExistingStudents.length }}</span>
 				</div>
 				<div class="grid grid-cols-3 gap-3 mb-4 max-h-60 overflow-y-scroll">
@@ -53,9 +53,9 @@
 						[class.opacity-50]="hasActivityAssigned(student)"
 						[class.cursor-pointer]="!hasActivityAssigned(student)"
 						[class.cursor-not-allowed]="hasActivityAssigned(student)"
-						class="mavi-border p-1 flex flex-col ">
+						class="mavi-border p-2 d-flex flex-column ">
 
-						<div class="flex items-center gap-2">
+						<div class="d-flex items-center gap-2">
 							<img *ngIf="student.photo" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
 							<ng-template #placeholder>
 								<div class="photo-placeholder">+</div>
@@ -78,15 +78,15 @@
 						encontraron estudiantes</div>
 				</div>
 			</div>
-			<div class="mavi-border flex gap-3" *ngIf="form.get('tab')?.value === 'new'">
-				<div [formGroup]="studentForm" class="flex flex-1 gap-3">
-					<div class="form-group flex-1">
+			<div class="mavi-border d-flex gap-3" *ngIf="form.get('tab')?.value === 'new'">
+				<div [formGroup]="studentForm" class="d-flex flex-grow-1 gap-3">
+					<div class="form-group flex-grow-1">
 						<app-form-group title="Nombre" [control]="studentForm.get('name')">
 							<input id="name" type="text" formControlName="name" class="form-control"
 								placeholder="Nombre completo del estudiante">
 						</app-form-group>
 					</div>
-					<div class="form-group flex-1">
+					<div class="form-group flex-grow-1">
 						<app-form-group title="Fecha de nacimiento" [control]="studentForm.get('birthdate')">
 							<input id="birthdate" type="date" [max]="maxBirthdate" formControlName="birthdate"
 								class="form-control">

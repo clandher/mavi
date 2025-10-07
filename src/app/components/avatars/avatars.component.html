@@ -28,7 +28,7 @@
 	Esta categoría no tiene actividades asociadas.
 </div>
 
-<div class="flex justify-center py-4">
+<div class="d-flex justify-content-center py-4">
 	<button class="btn btn-primary" (click)="onNewActivity()">
 		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
 			class="size-4 me-2">
@@ -40,53 +40,56 @@
 
 } @else {
 
-<div class="mavi-tabs" (mousedown)="onMouseDown($event)" (mousemove)="onMouseMove($event)" (mouseup)="onMouseUp()">
+<div class="d-flex align-items-center">
 	@if (activitiesByCategoryPast.length > 0) {
-	<button class="mavi-tab" (click)="showActivitieByCategoryPast = !showActivitieByCategoryPast"
-		[ngClass]="{ selected: selectedActivityIsPast }">
-		{{activitiesByCategoryPast.length}} pasadas
-		@if (showActivitieByCategoryPast){
-		<ul class="menu-context">
-			<li *ngFor="let activity of activitiesByCategoryPast"
-				[ngClass]="{ selected: selectedActivityId === activity.id }"
-				(click)="selectedActivityIsPast = true; onActivityChange(activity.id)">
-				{{ activity.description }} - {{ activity.startDate | date:activity.type.format }}
-			</li>
-		</ul>
-		}
-	</button>
+	<div class="mavi-fixed-tab">
+		<a class="mavi-tab" (click)="showActivitieByCategoryPast = !showActivitieByCategoryPast"
+			[ngClass]="{ selected: selectedActivityIsPast }" data-bs-toggle="dropdown">
+			{{activitiesByCategoryPast.length}} pasadas
+			<!-- @if (showActivitieByCategoryPast){ -->
+			<div class="dropdown">
+				<ul class="dropdown-menu">
+					<li class="dropdown-item" *ngFor="let activity of activitiesByCategoryPast"
+						[ngClass]="{ selected: selectedActivityId === activity.id }"
+						(click)="selectedActivityIsPast = true; onActivityChange(activity.id)">
+						{{ activity.description }} - {{ activity.startDate | date:activity.type.format }}
+					</li>
+				</ul>
+			</div>
+			<!-- } -->
+		</a>
+	</div>
 	}
-	<button class="mavi-tab" *ngFor="let activity of activitiesByCategoryCurrent; let i = index"
-		(click)="centerTab($event)"
-		[ngClass]="{ selected: selectedActivityId === activity.id }"
-		(click)="onActivityChange(activity.id)">
-		{{ activity.description }} {{activity.startDate | date:activity.type.format}}
-	</button>
 
+	<div class="mavi-tabs w-100" (mousedown)="onMouseDown($event)" (mousemove)="onMouseMove($event)"
+		(mouseup)="onMouseUp()">
+		<a class="mavi-tab" *ngFor="let activity of activitiesByCategoryCurrent; let i = index" (click)="centerTab($event)"
+			[ngClass]="{ selected: selectedActivityId === activity.id }" (click)="onActivityChange(activity.id)">
+			{{ activity.description }} {{activity.startDate | date:activity.type.format}}
+		</a>
+	</div>
 </div>
+
 <br>
 
 <input id="photo" type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden>
 
-<div class="grid grid-cols-6 gap-4">
+<div class="row g-4">
 
-	<div *ngFor="let studentActivity of studentActivities" class="relative">
-		<div (click)="selectAvatar(studentActivity)" (dblclick)="openEditModal(studentActivity)" [ngClass]="{
-              'border-2 border-white shadow-lg': selectedStudentActivity === studentActivity,
+	<div *ngFor="let studentActivity of studentActivities" class="col-2 position-relative">
+		<div (click)="onSelectStudentActivity(studentActivity)" [ngClass]="{
+              'border-1 border-white shadow-lg': selectedStudentActivity === studentActivity,
               'opacity-20 ': studentActivity.unsubscribed
-              }" class="avatar-circle" [class.no-image]="!studentActivity.student.photoUrl">
+              }" class="avatar-circle" [class.no-image]="!studentActivity.student.photoUrl" data-bs-toggle="dropdown">
 			@if (studentActivity.student.photoUrl) {
-			<img [src]="studentActivity.student.photoUrl" class="w-full h-full object-cover" />
+			<img [src]="studentActivity.student.photoUrl" class="w-100 h-100 object-fit-cover" />
 			}
 
-			<span *ngIf="studentActivity.debtActivityAmount > 0" (click)="showPaymentModal = true"
-				class="absolute top-0 right-0 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-bl-lg z-20">
+			<span *ngIf="studentActivity.debtActivityAmount > 0" (click)="showPaymentModal = true" class="tag-debt">
 				{{showDebt ? '¡Debe!' : (studentActivity.debtActivityAmount | currencyMX)}}
 			</span>
 
-			<span [title]="studentActivity.student.name"
-				class="absolute bottom-0 left-0 bg-black text-white text-xs font-bold px-1 py-0 rounded-tr-lg z-20 overflow-hidden whitespace-nowrap text-ellipsis"
-				style="text-overflow: ellipsis;">
+			<span [title]="studentActivity.student.name" class="tag-name">
 				<span style="max-width: 60px; display: inline-block; overflow: hidden; text-overflow: ellipsis;">
 					{{ studentActivity.student.nick ? studentActivity.student.nick :
 					studentActivity.student.name
@@ -96,48 +99,51 @@
 		</div>
 
 
-		<div *ngIf="selectedStudentActivity === studentActivity" class="menu-context">
-			<ul>
-				<li (click)="openEditModal(studentActivity)">
-					Editar...
+		<div class="dropdown">
+			<ul class="dropdown-menu">
+				<li class="dropdown-item">
+					<a [routerLink]="['/app/estudiantes', studentActivity.student.id, 'editar', 'info']"
+						[state]="{ origin: this.router.url }">Ver detalle...</a>
 				</li>
 
 				@if(studentActivity.debtActivityAmount > 0){
-				<li class="whitespace-nowrap" (click)="showPaymentModal = true">
+				<li class="dropdown-item" (click)="selectedStudentActivity = studentActivity; showPaymentModal = true">
 					Registrar pago...
 				</li>
 				}
 
-				<li *ngIf="!studentActivity.student.photoUrl">
-					<label for="photo">
-						Subir imagen...
+				<li class="dropdown-item" *ngIf="!studentActivity.student.photoUrl"
+					(click)="selectedStudentActivity = studentActivity">
+					<label for="photo" class="cursor-pointer">
+						Subir foto...
 					</label>
 				</li>
 
-				<li class="whitespace-nowrap" (click)="toggleSubmenu('inscribir', studentActivity)">
-					Inscribir a...
-					<ul *ngIf="showSubmenu['inscribir']" class="pl-4">
-						<li *ngFor="let activity of getNonRecurrentActivitiesForStudent(selectedStudentActivity)"
-							class="whitespace-nowrap overflow-hidden text-ellipsis"
-							(click)="onInscribir(studentActivity.student, activity)">
+				<li class="dropdown-item" (click)="selectedStudentActivity = studentActivity; onObservations()">
+					Observaciones...
+				</li>
+
+				<li class="dropdown-item">
+					Inscribir a
+					<ul class="dropdown-sub-menu">
+						<li *ngFor="let activity of studentActivity.unenrolledActivities" class="dropdown-sub-item"
+							(click)="onInscription(studentActivity, activity)">
 							{{ activity.description }}
 						</li>
-						<li *ngIf="getNonRecurrentActivitiesForStudent(selectedStudentActivity).length === 0"
-							class="px-4 py-2 text-gray-400">No hay actividades disponibles</li>
+						<li class="dropdown-sub-item" *ngIf="studentActivity.unenrolledActivities?.length === 0">
+							No hay actividades disponibles</li>
 					</ul>
 				</li>
 
-				<li (click)="onObservations()">
-					Observaciones...
-				</li>
+
 			</ul>
 		</div>
+
 	</div>
 
-	<div class="relative">
-		<div (click)="addNewAvatar()"
-			class="w-25 h-25 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden cursor-pointer transition-all duration-300 hover:bg-gray-300">
-			<span class="text-3xl font-bold text-gray-600">+</span>
+	<div class="col-2 position-relative">
+		<div (click)="addNewAvatar()" class="logo-placeholder logo-placeholder-large">
+			+
 		</div>
 	</div>
 </div>
@@ -173,7 +179,8 @@
 			{{ showDebt ? 'Mostrar total' : 'Mostrar deuda' }}
 		</button>
 
-		<button class="btn btn-secondary ms-2" (click)="onEditActivity()" [disabled]="!selectedActivityId">
+		<button class="btn btn-secondary ms-2" (click)="onEditActivity()" [disabled]="!selectedActivityId"
+			[title]="!selectedActivityId ? 'Selecciona una actividad para editarla.' : ''">
 			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
 				stroke="currentColor" class="size-4 me-2">
 				<path stroke-linecap="round" stroke-linejoin="round"

@@ -7,16 +7,22 @@ import { Activity, Category, Student, StudentActivity } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { PaymentComponent } from "../payment/payment.component";
 import { InscriptionComponent } from '../inscription';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { ActivityComponent } from "../activity/activity.component";
 import { uploadStudentPhoto } from '@app/core/helpers';
 import { ObservationsComponent } from "../observations";
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 import { ImageHttpClient } from '@app/core/image-http-client';
+import { ToastrService } from 'ngx-toastr';
+
+
+interface StudentActivityView extends StudentActivity {
+	unenrolledActivities?: Activity[];
+}
 
 @Component({
 	standalone: true,
-	imports: [CommonModule, FormsModule, PaymentComponent, InscriptionComponent, ActivityComponent, ObservationsComponent, CurrencyMXPipe],
+	imports: [CommonModule, RouterModule, FormsModule, PaymentComponent, InscriptionComponent, ActivityComponent, ObservationsComponent, CurrencyMXPipe],
 	templateUrl: './avatars.component.html',
 	styleUrl: './avatars.component.scss'
 })
@@ -26,8 +32,7 @@ export class AvatarsComponent {
 
 	public showDebt: boolean = true;
 
-	public selectedStudentActivity: StudentActivity | null = null;
-	public showSubmenu: { [key: string]: boolean } = {};
+	public selectedStudentActivity: StudentActivityView | null = null;
 	public showModal: boolean = false;
 
 
@@ -38,18 +43,21 @@ export class AvatarsComponent {
 	public activities: Activity[] = [];
 	newActivityId: number | null = null;
 
-	public studentActivities: StudentActivity[] = [];
+	public studentActivities: StudentActivityView[] = [];
 
 	selectedCategoryId: number | null = null;
 	selectedActivityId: number = 0;
 	showActivitieByCategoryPast: boolean = false;
 	selectedActivityIsPast: boolean = false;
 
+	private menuContextVisible: boolean = false;
+
 	constructor(
-		private router: Router,
+		public router: Router,
 		private route: ActivatedRoute,
 		private http: HttpClient,
-		private imageHttp: ImageHttpClient
+		private imageHttp: ImageHttpClient,
+		private toastr: ToastrService,
 	) {
 
 		this.route.queryParams.subscribe(params => {
@@ -164,30 +172,16 @@ export class AvatarsComponent {
 		});
 	}
 
+
+
 	addNewAvatar() {
 		this.selectedStudentActivity = new StudentActivity();
 		this.showModal = true;
 	}
 
-	// Método para seleccionar un avatar
-	selectAvatar(avatar: any | null): void {
-		this.selectedStudentActivity = this.selectedStudentActivity === avatar ? null : avatar;
-		this.showSubmenu['inscribir'] = false;
-		this.showSubmenu['Observaciones'] = false;
-	}
-
-
-
-	// Método para abrir el modal de edición
-	openEditModal(studentActivity: StudentActivity): void {
-		this.router.navigate([`/app/estudiantes/${studentActivity.student.id}/editar/info`]);
-		this.selectedStudentActivity = { ...studentActivity }; // Clonamos para no modificar directamente
-	}
-
 	closeModal(): void {
 		this.showModal = false;
 	}
-
 
 
 	highlightWidth = 0;
@@ -203,8 +197,6 @@ export class AvatarsComponent {
 		}
 	}
 
-
-
 	onInscriptionComplete(value: boolean): void {
 		this.showModal = false;
 
@@ -219,15 +211,9 @@ export class AvatarsComponent {
 	}
 
 
-
-
-
 	public newStudentModalVisible: boolean = false;
 	public newEventModalVisible: boolean = false;
 	public showObservations: boolean = false;
-
-
-
 
 	selectPreviousCategory(): void {
 		const idx = this.categories.findIndex(c => c.id === this.selectedCategoryId);
@@ -290,44 +276,30 @@ export class AvatarsComponent {
 
 	onPhotoSelected($event: Event) {
 		if (this.selectedStudentActivity?.student) {
-			uploadStudentPhoto($event, this.selectedStudentActivity?.student, this.http, this.imageHttp);
+			uploadStudentPhoto($event, this.selectedStudentActivity?.student, this.http, this.toastr);
 		}
 	}
 
-	getNonRecurrentActivitiesForStudent(studentActivity: StudentActivity): Activity[] {
-		// if (!studentActivity.student || !this.activities) return [];
-		const enrolledActivityIds = (studentActivity.student.activities || [])
-			.filter(sa => sa.student.id === studentActivity.student.id)
-			.map(sa => sa.activity.id);
+	public onSelectStudentActivity(studentActivity: StudentActivityView): void {
 
-		return this.activities.filter(activity => !activity.type.recurrent &&
-			!enrolledActivityIds.includes(activity.id)
-		);
-	}
-
-
-	// Método para alternar la visibilidad de un submenú
-	toggleSubmenu(option: string, studentActivity: StudentActivity): void {
-		this.showSubmenu[option] = !this.showSubmenu[option];
-
-		if ('inscribir' === option) {
-			studentActivity.student.activities = [];
+		if (!studentActivity.unenrolledActivities) {
 			const queryString = RequestQueryBuilder.create({
 				search: { studentId: studentActivity.student.id },
 			}).query();
 
-			new BaseHttp(`student-activities?${queryString}`, this.http).get<StudentActivity[]>().subscribe(activities => {
-				studentActivity.student.activities = activities;
+			new BaseHttp(`student-activities?${queryString}`, this.http).get<StudentActivity[]>().subscribe(enrolledActivities => {
+				studentActivity.unenrolledActivities = this.activities.filter(activity => !activity.type.recurrent &&
+					!enrolledActivities.some(ea => ea.activity.id === activity.id)
+				);
 			});
 		}
 	}
 
 
-	async onInscribir(student: Student, activity: Activity): Promise<void> {
-		console.log('student.categories', student.categories);
+	async onInscription(studentActivity: StudentActivityView, activity: Activity): Promise<void> {
 
 		const queryString = RequestQueryBuilder.create({
-			search: { studentId: student.id },
+			search: { studentId: studentActivity.studentId },
 		}).query();
 
 		const studentCategories = await new BaseHttp(`student-categories?${queryString}`, this.http).get<Category[]>().toPromise() ?? [];
@@ -335,27 +307,23 @@ export class AvatarsComponent {
 		const hasCategory = studentCategories.some(sc => sc.id === activity.categoryId);
 		if (!hasCategory) {
 			const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http);
-			await studentCategoriesAPI.post({ studentId: student.id, categoryId: activity.categoryId }).toPromise();
+			await studentCategoriesAPI.post({ studentId: studentActivity.studentId, categoryId: activity.categoryId }).toPromise();
 		}
 
 		const body = {
-			studentId: student.id,
+			studentId: studentActivity.studentId,
 			activityId: activity.id,
 		};
 
 		await new BaseHttp('student-activities', this.http)
 			.post<typeof body, StudentActivity>(body)
 			.toPromise();
-	}
 
-	ngAfterViewInit() {
-		// setTimeout(() => {
-		// 	const selectedTab = document.querySelector('.mavi-tab.selected') as HTMLElement;
-		// 	if (selectedTab) {
-		// 		const event = new MouseEvent('click', { bubbles: true });
-		// 		selectedTab.dispatchEvent(event);
-		// 	}
-		// }, 500);
+		if (studentActivity.unenrolledActivities) {
+			studentActivity.unenrolledActivities = studentActivity.unenrolledActivities?.filter(a => a.id !== activity.id);
+		}
+
+		this.toastr.success('Inscripción realizada correctamente');
 	}
 
 	private isDragging = false;

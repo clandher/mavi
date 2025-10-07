@@ -5,6 +5,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { buildUrl } from '@app/core/base-http';
 import { ImageHttpClient } from '@app/core/image-http-client';
 import { RequestQueryBuilder } from '@dataui/crud-request';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
 	standalone: true,
@@ -26,7 +27,8 @@ export class StudentDocumentsComponent {
 		private http: HttpClient,
 		private route: ActivatedRoute,
 		private router: Router,
-		private imageHttpClient: ImageHttpClient // Added ImageHttpClient
+		private imageHttpClient: ImageHttpClient,
+		private toastr: ToastrService,
 	) {
 
 		this.studentId = this.route.parent!.snapshot.paramMap.get('id');
@@ -104,6 +106,12 @@ export class StudentDocumentsComponent {
 						return updatedDoc;
 					});
 					this.documents = [...this.documents, ...mappedNewDocs];
+
+					if (res.documents.length === 1) {
+						this.toastr.success('Documento subido correctamente', 'Éxito');
+					} else {
+						this.toastr.success('Documentos subidos correctamente', 'Éxito');
+					}
 				}
 			});
 	}
@@ -119,6 +127,7 @@ export class StudentDocumentsComponent {
 			this.http.post(buildUrl(`student-documents/${this.studentId}/document/${doc.id}/delete`), {})
 				.subscribe(() => {
 					this.documents.splice(index, 1);
+					this.toastr.success('Documento eliminado correctamente', 'Éxito');
 				});
 		}
 	}

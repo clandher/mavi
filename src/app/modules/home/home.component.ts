@@ -5,11 +5,10 @@ import { SchoolService } from '../../core/school.service';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { School } from '@app/core/dto';
-import { ImageHttpClient } from '../../core/image-http-client';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BaseHttp } from '../../core/base-http'; // Add this import
 import { HttpClient } from '@angular/common/http';
-import { BreadcrumbsComponent } from '../../components/breadcrumbs/breadcrumbs.component';
+import { BreadcrumbsComponent } from '@app/components/breadcrumbs/breadcrumbs.component';
 
 @Component({
     standalone: true,

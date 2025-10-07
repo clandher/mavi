@@ -1,5 +1,15 @@
+<div class="page-back" (click)="onBack()">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+        class="size-4">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+    </svg>
+
+    Regresar
+</div>
+<br>
+
 <form [formGroup]="studentForm">
-    <div class="flex gap-3 items-center">
+    <div class="d-flex gap-3 items-center">
         <label for="photo" class="photo-label">
             <img *ngIf="studentForm.value.photoUrl; else placeholder" [src]="studentForm.value.photoUrl"
                 class="student-photo" alt="Foto">
@@ -9,35 +19,35 @@
             <input id="photo" type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden>
         </label>
 
-        <app-form-group class="flex-2" title="Nombre" [control]="studentForm.get('name')" name="name" required
+        <app-form-group class="d-flex-2" title="Nombre" [control]="studentForm.get('name')" name="name" required
             placeholder="Nombre">
             <input id="name" type="text" class="form-control" formControlName="name" placeholder="Nombre">
         </app-form-group>
 
-        <app-form-group class="flex-2" title="Apodo" [control]="studentForm.get('nick')" name="nick"
+        <app-form-group class="d-flex-2" title="Apodo" [control]="studentForm.get('nick')" name="nick"
             placeholder="Apodo">
             <input id="nick" type="text" class="form-control" formControlName="nick" placeholder="Apodo">
         </app-form-group>
 
     </div>
 
-    <div class="flex gap-3 items-center">
-        <app-form-group class="flex-2" title="CURP" [control]="studentForm.get('curp')" name="curp" placeholder="CURP">
+    <div class="d-flex gap-3 items-center">
+        <app-form-group class="d-flex-2" title="CURP" [control]="studentForm.get('curp')" name="curp" placeholder="CURP">
             <input id="curp" type="text" class="form-control" formControlName="curp" placeholder="CURP">
         </app-form-group>
 
-        <app-form-group class="flex-2" title="Teléfono" [control]="studentForm.get('phone')" name="phone"
+        <app-form-group class="d-flex-2" title="Teléfono" [control]="studentForm.get('phone')" name="phone"
             placeholder="Teléfono">
             <input id="phone" type="text" class="form-control" formControlName="phone" placeholder="Teléfono">
         </app-form-group>
 
-        <app-form-group class="flex-2" title="Lugar de nacimiento" [control]="studentForm.get('placeOfBirth')"
+        <app-form-group class="d-flex-2" title="Lugar de nacimiento" [control]="studentForm.get('placeOfBirth')"
             name="placeOfBirth" placeholder="Lugar de nacimiento">
             <input id="placeOfBirth" type="text" class="form-control" formControlName="placeOfBirth"
                 placeholder="Lugar de nacimiento">
         </app-form-group>
 
-        <app-form-group class="flex-2" title="Fecha de nacimiento" [control]="studentForm.get('birthdate')"
+        <app-form-group class="d-flex-2" title="Fecha de nacimiento" [control]="studentForm.get('birthdate')"
             name="birthdate" required type="date">
             <input id="birthdate" type="date" class="form-control" formControlName="birthdate">
         </app-form-group>
@@ -45,30 +55,42 @@
 
 </form>
 
-<app-submit [form]="studentForm" [submit]="saveStudent.bind(this)" (discard)="closeModal()" [isModal]="false">
-</app-submit>
+<app-payment *ngIf="showPaymentModal" [studentId]="student!.id!" (complete)="onPaymentComplete($event)"></app-payment>
+
+<div class="d-flex justify-content-end mt-4">
+
+    <span *ngIf="student && student.debt > 0" (click)="showPaymentModal = true" class="btn btn-attend me-2">
+        Debe {{ student.debt | currency:'MXN' }}
+    </span>
+
+    <app-submit [form]="studentForm" [submit]="saveStudent.bind(this)" (discard)="closeModal()" [isModal]="false">
+    </app-submit>
+
+</div>
+
+
 <br>
 
 @if (studentForm.value.id !== 0){
 <div class="mavi-tabs">
-    <button routerLink="info" routerLinkActive="selected" [routerLinkActiveOptions]="{ exact: true }" class="mavi-tab">
+    <a routerLink="info" routerLinkActive="selected" [routerLinkActiveOptions]="{ exact: true }" class="mavi-tab">
         General
-    </button>
-    <button routerLink="actividades" routerLinkActive="selected" class="mavi-tab">
+    </a>
+    <a routerLink="actividades" routerLinkActive="selected" class="mavi-tab">
         Actividades
-    </button>
-    <button routerLink="pagos" routerLinkActive="selected" class="mavi-tab">
+    </a>
+    <a routerLink="pagos" routerLinkActive="selected" class="mavi-tab">
         Pagos
-    </button>
-    <button routerLink="ficha-tecnica" routerLinkActive="selected" class="mavi-tab">
+    </a>
+    <a routerLink="ficha-tecnica" routerLinkActive="selected" class="mavi-tab">
         Ficha técnica
-    </button>
-    <button routerLink="observaciones" routerLinkActive="selected" class="mavi-tab">
+    </a>
+    <a routerLink="observaciones" routerLinkActive="selected" class="mavi-tab">
         Observaciones
-    </button>
-    <button routerLink="documentos" routerLinkActive="selected" class="mavi-tab">
+    </a>
+    <a routerLink="documentos" routerLinkActive="selected" class="mavi-tab">
         Documentos
-    </button>
+    </a>
 </div>
 <br>
 <router-outlet></router-outlet>

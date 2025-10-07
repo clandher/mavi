@@ -1,6 +1,6 @@
 <div class="mavi-grid">
 	<div *ngFor="let pago of paymentsWithChargers" class="mavi-card">
-		<div class="flex justify-between items-center mb-4">
+		<div class="d-flex justify-content-between items-center mb-4">
 			<div class="">Pago de {{ pago.amount | currencyMX }}</div>
 			<div class="text-sm text-gray-500" title="{{ pago.paymentDate | date:'medium' }}"> {{ pago.paymentDate |
 				date:'mediumDate' }}</div>
@@ -8,7 +8,7 @@
 
 
 		<div *ngFor="let cargo of pago.paymentCharges" class="mb-4">
-			<div class="flex justify-between items-center mb-1">
+			<div class="d-flex justify-content-between items-center mb-1">
 				<a class="hover-link"
 					[href]="'/app/actividades?category=' + cargo.activity.categoryId + '&activity=' + cargo.activity.id">
 					{{ cargo.activity.description }} ({{ cargo.collection.concept }})
@@ -17,8 +17,8 @@
 					{{ cargo.collection.amountToBePaid | currencyMX}}
 				</div>
 			</div>
-			<div class="w-full flex space-x-1">
-				<div class="flex-1 bg-gray-200 h-3 flex">
+			<div class="w-full d-flex space-x-1">
+				<div class="flex-grow-1 bg-gray-200 h-3 d-flex">
 					<div class="bg-yellow-500 h-3"
 						[style.width.%]="((cargo.collection.amountToBePaid - cargo.amountRemained) / cargo.collection.amountToBePaid) * 100">
 					</div>
@@ -51,9 +51,9 @@
 
 <div *ngIf="showVoucherModal" class="modal-overlay">
 	<div class="modal-content">
-		<div id="voucher-preview-canvas" class="flex justify-center items-center"></div>
+		<div id="voucher-preview-canvas" class="d-flex justify-content-center items-center"></div>
 		<div class="modal-footer">
-			<div class="flex justify-end space-x-2 mt-4">
+			<div class="d-flex justify-content-end gap-2 mt-4">
 				<button (click)="closeVoucherModal()" class="btn btn-outline">
 					Salir
 				</button>
@@ -72,7 +72,7 @@
 </div>
 
 
-<div class="flex justify-center py-4">
+<div class="d-flex justify-content-center py-4">
 	<button class="btn btn-secondary" (click)="showPaymentModal = true">
 		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
 			class="size-4 me-2">

@@ -1,14 +1,14 @@
 <div class="student-list-container">
 
-    <div class="flex gap-3">
-        <div class="flex-2">
+    <div class="d-flex gap-3">
+        <div class="d-flex-2">
             <app-form-group title="Nombre" for="name">
                 <input id="name" class="form-control" type="search" [(ngModel)]="filters.name" (input)="applyFilters()"
                     placeholder="Ingresa tu texto aqui...">
             </app-form-group>
         </div>
 
-        <div class="flex-1">
+        <div class="flex-grow-1">
             <app-form-group title="Categoría" for="categoryId">
                 <select id="categoryId" class="form-control" [(ngModel)]="filters.categoryId" (change)="applyFilters()">
                     <option [ngValue]="null">Todas las categorías</option>
@@ -19,7 +19,7 @@
             </app-form-group>
         </div>
 
-        <div class="flex-1">
+        <div class="flex-grow-1">
             <app-form-group title="Ordenar por" for="debt">
                 <select id="debt" class="form-control" [(ngModel)]="filters.debt" (change)="applyFilters()">
                     <option value="desc">Mayor adeudo</option>
@@ -38,7 +38,7 @@
     <div *ngIf="!isLoading && filteredStudents.length === 0" class="no-results">
         No se encontraron estudiantes que coincidan con la búsqueda.
 
-        <div class="flex justify-center py-4">
+        <div class="d-flex justify-content-center py-4">
             <button class="btn btn-secondary" (click)="onRestartFilters()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="size-4 me-2">
@@ -54,35 +54,35 @@
         <div *ngFor="let student of filteredStudents" class="mavi-card student-item"
             [attr.data-student-id]="student.id">
             <div class="student-card-header">
-                <div class="flex items-center">
+                <div class="d-flex items-center">
                     <img *ngIf="student.photoUrl" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
                     <div *ngIf="student.photo && !student.photoUrl" class="student-photo-sm-placeholder"></div>
-                    <div class="hover-link" [routerLink]="['/app/estudiantes', student.id, 'editar']">{{
-                        student.nick ? student.nick
-                        :
-                        student.name }}</div>
+                    <a class="hover-link" [routerLink]="['/app/estudiantes', student.id, 'editar']"
+                        [state]="{ origin: router.url}">
+                        {{ student.nick ? student.nick : student.name }}
+                    </a>
                 </div>
             </div>
 
             <div class="detail-row">
                 <span class="detail-label mb-1">Actividades</span>
-                <div class="flex flex-col gap-2">
+                <div class="d-flex flex-column gap-2">
                     <div *ngFor="let sc of student.categories">
-                        <div class="flex gap-2 ">
+                        <div class="d-flex gap-2 ">
                             <div class="mavi-tag" style="min-width: 45px; text-align: center    ;">
                                 {{ sc.category.type }}
                             </div>
 
-                            <div class="flex gap-1 flex-wrap w-full">
+                            <div class="d-flex gap-1 flex-wrap w-full">
 
                                 <ng-container *ngFor="let act of sc.activitiesCurrent">
-                                    <span *ngIf="act.activity.categoryId === sc.categoryId"
-                                        class="mavi-tag hover-link" [routerLink]="['/app/actividades']"
+                                    <a *ngIf="act.activity.categoryId === sc.categoryId" class="mavi-tag hover-link"
+                                        [routerLink]="['/app/actividades']"
                                         [queryParams]="{ category: act.activity.categoryId, activity: act.activity.id }"
                                         [title]="(act.activity.startDate | date:'dd/MM/yy HH:mm') + ' - ' + (act.activity.endDate | date:'dd/MM/yy HH:mm')">
                                         {{ act.activity.description }} {{act.activity.startDate |
                                         date:act.activity.type.format}}
-                                    </span>
+                                    </a>
                                 </ng-container>
 
 
@@ -95,15 +95,15 @@
                                 </div>
 
                                 @if (sc.showPastActivities) {
-                                <div class="max-h-80 overflow-y-auto flex gap-1 flex-wrap w-full">
+                                <div class="max-h-80 overflow-y-auto d-flex gap-1 flex-wrap w-full">
                                     <ng-container *ngFor="let act of sc.activitiesPast">
-                                        <span *ngIf="act.activity.categoryId === sc.categoryId"
+                                        <a *ngIf="act.activity.categoryId === sc.categoryId"
                                             class="mavi-tag text-old hover-link " [routerLink]="['/app/actividades']"
                                             [queryParams]="{ category: act.activity.categoryId, activity: act.activity.id }"
                                             [title]="(act.activity.startDate | date:'dd/MM/yy HH:mm') + ' - ' + (act.activity.endDate | date:'dd/MM/yy HH:mm')">
                                             {{ act.activity.description }} {{act.activity.startDate |
                                             date:act.activity.type.format}}
-                                        </span>
+                                        </a>
                                     </ng-container>
                                 </div>
                                 }
@@ -119,16 +119,8 @@
                 </div>
             </div>
 
-            <div class="detail-row mt-4">
-                <div class="detail-label">Pendiente</div>
-                <div class="detail-value" [class.high-debt]="student.debt > 0">
-                    {{ student.debt | currencyMX }}
-                </div>
-            </div>
-
-
             <div class="mavi-card-actions mt-4">
-                <button class="btn btn-sm btn-outline w-full justify-center"
+                <a class="btn btn-sm btn-outline w-full justify-content-center"
                     [routerLink]="['/app/estudiantes', student.id, 'editar']">
 
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -138,25 +130,16 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                     </svg>
                     Ver detalle
+                </a>
+
+                <button class="btn btn-sm btn-attend" (click)="openPaymentModal(student)" [disabled]="student.debt <= 0"
+                    [title]="student.debt <= 0 ? 'No hay deuda pendiente.' : ''">
+                    Debe {{ student.debt | currency:'MXN' }}
                 </button>
-                <button class="btn btn-sm btn-outline w-full " (click)="openPaymentModal(student)"
-                    [disabled]="student.debt <= 0">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-4 me-2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" />
-                    </svg>
-                    Registrar pago
-                </button>
+
             </div>
         </div>
     </div>
-
-    <!-- <div class="flex justify-end mb-4">
-        <button class="btn btn-sm btn-outline" (click)="showPastActivities = !showPastActivities; applyFilters()">
-            {{ showPastActivities ? 'Ocultar actividades pasadas' : 'Mostrar actividades pasadas' }}
-        </button>
-    </div> -->
 
     <div class="mavi-bottom-actions">
         <div class="mavi-bottom-actions-inner">

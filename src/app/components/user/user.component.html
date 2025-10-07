@@ -1,6 +1,6 @@
 <div class="modal-overlay">
     <div class="modal-content">
-        <h2 class="text-xl font-semibold mb-4">{{ userId !== 0 ? 'Editar usuario' : 'Nuevo usuario' }}</h2>
+        <h5 class="text-xl font-semibold mb-4">{{ userId !== 0 ? 'Editar usuario' : 'Nuevo usuario' }}</h5>
         <form [formGroup]="userForm">
             <app-form-group [title]="'Nombre'" [control]="userForm.get('name')" class="form-group">
                 <input id="name" type="text" formControlName="name" class="form-control" [readonly]="false"

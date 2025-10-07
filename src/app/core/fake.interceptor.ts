@@ -16,9 +16,6 @@ export function fakeBackendInterceptor(
 ): Observable<HttpEvent<unknown>> {
     const authService = inject(AuthService);
 
-    console.log(request.url);
-
-
     // 1. Endpoint de login - interceptamos y simulamos respuesta
     if (request.url.endsWith('/api/auth/login') && request.method === 'POST') {
         return handleLogin(request);
@@ -68,8 +65,6 @@ function handleLogin(request: HttpRequest<any>): Observable<HttpResponse<any>> {
         token,
         user: userData
     };
-
-    console.log(body);
 
     return of(new HttpResponse({
         status: 200,

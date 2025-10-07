@@ -1,6 +1,6 @@
 <form [formGroup]="technicalForm" class="mavi-border">
-	<div class="flex gap-4">
-		<app-form-group class="flex-1" [title]="'Pierna hábil'" [control]="technicalForm.get('foot')">
+	<div class="d-flex gap-4">
+		<app-form-group class="flex-grow-1" [title]="'Pierna hábil'" [control]="technicalForm.get('foot')">
 			<select id="foot" class="form-control" formControlName="foot">
 				<option value="">Selecciona pierna hábil</option>
 				<option value="Derecha">Derecha</option>
@@ -9,7 +9,7 @@
 			</select>
 		</app-form-group>
 
-		<app-form-group class="flex-1" [title]="'Posición'" [control]="technicalForm.get('position')">
+		<app-form-group class="flex-grow-1" [title]="'Posición'" [control]="technicalForm.get('position')">
 			<select id="position" class="form-control" formControlName="position">
 				<option value="">Selecciona posición</option>
 				<option value="Portero">Portero</option>
@@ -21,7 +21,7 @@
 	</div>
 
 	<br>
-	<div class="flex gap-4">
+	<div class="d-flex gap-4">
 		<app-form-group [title]="'Altura (cm)'" [control]="technicalForm.get('height')">
 			<input id="height" type="number" class="form-control" placeholder="Ej. 175" formControlName="height">
 		</app-form-group>

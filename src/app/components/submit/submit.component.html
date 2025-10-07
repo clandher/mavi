@@ -1,12 +1,12 @@
-<div class="flex justify-end space-x-2">
+<div class="d-flex justify-content-end gap-2">
 	<button type="button" (click)="onDiscard()" class="btn btn-outline"
 		[disabled]="(disabled && !isModal) || (!isModal && form?.pristine)">
 		Cancelar
 	</button>
 	<!-- {{loading}} || {{disabled}} || {{form?.pristine}} || {{form?.invalid}} -->
-	<button type="button" class="btn btn-primary flex items-center justify-center"
+	<button type="button" class="btn btn-primary d-flex items-center justify-content-center"
 		[disabled]="loading || disabled || form?.pristine || form?.invalid" (click)="onSubmit()">
-		<span *ngIf="loading" class="spinner-border spinner-border-sm mr-2"></span>
+		<span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
 		{{ submitText }}
 	</button>
 </div>

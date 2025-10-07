@@ -1,6 +1,6 @@
 <div class="modal-overlay">
 	<div class="modal-content">
-		<h2 class="text-xl font-semibold mb-4">Nuevo cobro</h2>
+		<h5 class="text-xl font-semibold mb-4">Nuevo cobro</h5>
 
 		<form [formGroup]="formGroup">
 			<app-form-group title="Monto a cobrar" [control]="formGroup.get('amountToBePaid')">
@@ -13,7 +13,7 @@
 			</app-form-group>
 		</form>
 
-		<div class="flex justify-end space-x-2 mt-4">
+		<div class="d-flex justify-content-end gap-2 mt-4">
 			<app-submit [form]="formGroup" [submit]="saveCharge.bind(this)" (discard)="closeModal()">
 			</app-submit>
 		</div>

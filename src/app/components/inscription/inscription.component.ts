@@ -226,7 +226,7 @@ export class InscriptionComponent implements OnInit {
         }
     }
 
-    private async _addStudentToActivityAsync(student: Student) {
+    private async _addStudentToActivityAsync(student: Student): Promise<void> {
         const body = {
             studentId: student.id,
             activityId: Number(this.form.get('activityId')?.value),
@@ -248,8 +248,8 @@ export class InscriptionComponent implements OnInit {
         const studentsAPI = new BaseHttp('students', this.http);
         studentsAPI.post<typeof newStudentData, Student>(newStudentData).subscribe(createdStudent => {
             const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http);
-            studentCategoriesAPI.post({ studentId: createdStudent.id, categoryId: Number(categoryId) }).subscribe(() => {
-                this._addStudentToActivityAsync(createdStudent);
+            studentCategoriesAPI.post({ studentId: createdStudent.id, categoryId: Number(categoryId) }).subscribe(async () => {
+                await this._addStudentToActivityAsync(createdStudent);
                 this.complete.emit(true);
             });
         });

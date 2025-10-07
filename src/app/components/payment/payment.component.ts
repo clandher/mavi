@@ -17,6 +17,7 @@ import { setFocus } from '@app/core/helpers';
 @Component({
     selector: 'app-payment',
     templateUrl: './payment.component.html',
+    styleUrls: ['./payment.component.scss'],
     imports: [CommonModule, FormsModule, ReactiveFormsModule, CurrencyMXPipe, SubmitComponent, NgxMaskDirective],
     standalone: true
 })

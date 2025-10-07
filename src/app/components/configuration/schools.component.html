@@ -11,7 +11,7 @@
                     <input id="logo{{i}}" type="file" accept="image/*" (change)="onLogoSelected($event, i)" hidden>
                 </label>
                 <div class="school-name">
-                    <app-form-group class="flex-2" title="Nombre de la escuela" [control]="school.get('description')"
+                    <app-form-group class="d-flex-2" title="Nombre de la escuela" [control]="school.get('description')"
                         name="description">
                         <input id="description{{i}}" class="form-control school-name-input"
                             formControlName="description">
@@ -21,5 +21,5 @@
         </div>
     </div>
 
-    <app-submit [form]="schoolsForm" [submit]="saveSchools.bind(this)" [isModal]="false" (discard)="onDiscard()" />
+    <app-submit [form]="schoolsForm" [submit]="onSaveSchools.bind(this)" [isModal]="false" (discard)="onDiscard()" />
 </div>
