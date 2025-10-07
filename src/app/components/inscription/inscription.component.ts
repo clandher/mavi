@@ -208,16 +208,15 @@ export class InscriptionComponent implements OnInit {
         const categoryId = this.form.get('categoryId')?.value;
 
         if (this.form.get('tab')?.value === 'existing' && this.selectedExistingStudents.length > 0) {
-            const promises = this.selectedExistingStudents.map(async student => {
+            for (const student of this.selectedExistingStudents) {
                 const hasCategory = student.categories.some(sc => sc.categoryId === Number(categoryId));
                 if (!hasCategory) {
                     const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http);
                     await studentCategoriesAPI.post({ studentId: student.id, categoryId: Number(categoryId) }).toPromise();
                 }
                 await this._addStudentToActivityAsync(student);
-            });
+            }
 
-            await Promise.all(promises);
             this.complete.emit(true);
             this.selectedExistingStudents = [];
         } else if (this.form.get('tab')?.value === 'new') {
