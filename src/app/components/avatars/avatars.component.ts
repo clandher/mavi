@@ -112,7 +112,8 @@ export class AvatarsComponent {
 		this.activitiesByCategoryCurrent = this.activities.filter(a => a.categoryId === this.selectedCategoryId && new Date(a.endDate) >= new Date());
 		this.activitiesByCategoryPast = this.activities.filter(a => a.categoryId === this.selectedCategoryId && new Date(a.endDate) < new Date());
 
-		if (this.activities.length) {
+
+		if (this.activitiesByCategoryCurrent.length || this.activitiesByCategoryPast.length) {
 			if (this.selectedActivityId && this.activities.some(a => a.id === this.selectedActivityId && a.categoryId === this.selectedCategoryId)) {
 
 				const selectedActivity = this.activities.find(a => a.id === this.selectedActivityId && a.categoryId === this.selectedCategoryId);
