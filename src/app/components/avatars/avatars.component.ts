@@ -91,10 +91,10 @@ export class AvatarsComponent {
 	}
 
 
-	onCategoryChange() {
+	async onCategoryChange() {
 
 
-
+		this.activities = (await new BaseHttp(`activities`, this.http).get<Activity[]>().toPromise()) || [];
 		this._filterActivities();
 
 		setTimeout(() => {

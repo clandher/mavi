@@ -10,6 +10,8 @@ import { FormGroupComponent } from "../form-group/form-group.component";
 import { SubmitComponent } from '../submit/submit.component';
 import { NgxMaskDirective } from 'ngx-mask';
 import { MaviValidators } from '@app/core/mavi-validators';
+import { faker } from '@faker-js/faker';
+
 
 @Component({
     selector: 'app-activity',
@@ -64,6 +66,7 @@ export class ActivityComponent {
             price: [200, [MaviValidators.required(), MaviValidators.min(0.01)]],
             categoryId: [0, [MaviValidators.required()]],
             typeId: [2, [MaviValidators.required()]],
+            code: [faker.string.alphanumeric(10).toUpperCase(), [MaviValidators.required()]],
         });
     }
 
@@ -107,7 +110,8 @@ export class ActivityComponent {
                     gracePeriod: result.gracePeriod,
                     price: result.price,
                     categoryId: result.categoryId,
-                    typeId: result.typeId
+                    typeId: result.typeId,
+                    code: result.code,
                 });
 
                 setFocus('description');

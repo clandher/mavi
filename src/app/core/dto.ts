@@ -92,6 +92,7 @@ export class Activity {
     type!: ActivityType;
     typeId!: number;
 
+    code!: string;
     description!: string;
 
     startDate!: string;
