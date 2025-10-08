@@ -12,6 +12,7 @@ import { SubmitComponent } from '../submit/submit.component';
 import { ImageHttpClient } from '@app/core/image-http-client';
 import { PaymentComponent } from '../payment/payment.component';
 import { ToastrService } from 'ngx-toastr';
+import { StudentService } from '@app/core/student.service';
 
 @Component({
     standalone: true,
@@ -39,6 +40,7 @@ export class StudentEditComponent {
         private imageHttp: ImageHttpClient,
         private fb: FormBuilder,
         private toastr: ToastrService,
+        private studentService: StudentService
     ) {
         this.studentForm = this.fb.group({
             id: [''],
@@ -56,6 +58,10 @@ export class StudentEditComponent {
         const navigation = this.router.getCurrentNavigation();
         this._origin = navigation?.extras.state ? navigation.extras.state['origin'] : null;
         console.log('Origin:', this._origin);
+
+        this.studentService.refreshNotifier.subscribe(() => {
+            this.refreshStudentData();
+        });
     }
 
     ngAfterViewInit(): void {
@@ -213,16 +219,22 @@ export class StudentEditComponent {
         console.log('Payment complete:', value);
         this.showPaymentModal = false;
         if (value) {
-            const studentsAPI = new BaseHttp(`students/${this.student?.id}`, this.http);
-            studentsAPI.get<Student>().subscribe({
-                next: (student) => {
-                    this.student = student;
-                },
-                error: (err) => {
-                    console.error('Error loading student', err);
-                    this.router.navigate(['/app/estudiantes']);
-                }
-            });
+            this.refreshStudentData();
         }
+    }
+
+    refreshStudentData(): void {
+        const studentsAPI = new BaseHttp(`students/${this.student?.id}`, this.http);
+        studentsAPI.get<Student>().subscribe({
+            next: (student) => {
+                this.student = student;
+
+            },
+            error: (err) => {
+                console.error('Error loading student', err);
+                this.router.navigate(['/app/estudiantes']);
+            }
+        });
+
     }
 }

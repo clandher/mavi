@@ -8,6 +8,7 @@ import { PaymentComponent } from "../payment/payment.component";
 import { VoucherHelper } from '@app/core/voucher.helper';
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 import { SchoolService } from '@app/core/school.service';
+import { StudentService } from '@app/core/student.service';
 
 @Component({
 	standalone: true,
@@ -26,7 +27,8 @@ export class StudentPaymentsComponent implements OnInit {
 		private http: HttpClient,
 		private route: ActivatedRoute,
 		private router: Router,
-		private schoolService: SchoolService
+		private schoolService: SchoolService,
+		private studentService: StudentService,
 	) {
 
 		this.studentId = this.route.parent!.snapshot.paramMap.get('id');
@@ -53,6 +55,7 @@ export class StudentPaymentsComponent implements OnInit {
 
 		if (value) {
 			this._loadPayments();
+			this.studentService.notifyRefresh();
 		}
 	}
 
