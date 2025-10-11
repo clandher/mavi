@@ -18,16 +18,9 @@ import { RequestQueryBuilder } from '@dataui/crud-request';
 	imports: [CommonModule, FormsModule, ActivityComponent]
 })
 export class ActivitySelectorComponent {
-
-
-	onShowDebt() {
-		this.showDebt = !this.showDebt;
-		this.debt.emit(this.showDebt);
-	}
-
-
 	@Output() select = new EventEmitter<Activity | null>();
 	@Output() debt = new EventEmitter<boolean>();
+
 
 	selectedCategory: Category | null = null;
 	selectedActivity: Activity | null = null;
@@ -44,6 +37,8 @@ export class ActivitySelectorComponent {
 
 	public showActivityModal: boolean = false;
 	public activityId: number | null = null;
+
+	public loadingActivities: boolean = false;
 
 
 	public showDebt = true;
@@ -126,7 +121,9 @@ export class ActivitySelectorComponent {
 			search: { categoryId: Number(this.selectedCategory.id) },
 		}).query();
 
+		this.loadingActivities = true;
 		this.activities = (await this.http.get<Activity[]>(buildUrl(`activities?${queryString}`)).toPromise()) || [];
+		this.loadingActivities = false;
 		this.activitiesByCategoryCurrent = this.activities.filter(a => new Date(a.endDate) >= new Date());
 		this.activitiesByCategoryPast = this.activities.filter(a => new Date(a.endDate) < new Date());
 	}
@@ -140,8 +137,6 @@ export class ActivitySelectorComponent {
 
 
 		await this._fetchActivities();
-
-		console.log('Filtering activities for category', this.selectedCategory);
 
 		if (this.activities.length > 0) {
 			const activityFound = this.route.snapshot.queryParams['activity'] ? this.activities.find(c => c.id === +this.route.snapshot.queryParams['activity']) : null;
@@ -158,7 +153,6 @@ export class ActivitySelectorComponent {
 				}
 			}
 		} else {
-			console.log('No activities for this category');
 			this.selectedActivity = null;
 			this.select.emit(null);
 		}
@@ -180,7 +174,6 @@ export class ActivitySelectorComponent {
 
 
 	onActivityChange(activity: Activity | null): void {
-		console.log('Activity changed:', activity);
 		this.selectedActivity = activity;
 		this.router.navigate([], {
 			relativeTo: this.route,
@@ -188,8 +181,15 @@ export class ActivitySelectorComponent {
 			queryParamsHandling: 'merge'
 		});
 		this.select.emit(activity);
+
+		this.selectedActivityIsPast = activity ? new Date(activity.endDate) < new Date() : false;
 	}
 
+
+	onShowDebt() {
+		this.showDebt = !this.showDebt;
+		this.debt.emit(this.showDebt);
+	}
 
 	private isDragging = false;
 	private startX = 0;

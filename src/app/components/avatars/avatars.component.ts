@@ -2,16 +2,14 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { BaseHttp, buildUrl } from '@app/core/base-http';
-import { Activity, Category, Student, StudentActivity, StudentCategory } from '@app/core/dto';
+import { BaseHttp } from '@app/core/base-http';
+import { Activity, StudentActivity } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { PaymentComponent } from "../payment/payment.component";
 import { InscriptionComponent } from '../inscription';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { ActivityComponent } from "../activity/activity.component";
+import { Router, RouterModule } from '@angular/router';
 import { uploadStudentPhoto } from '@app/core/helpers';
 import { ObservationsComponent } from "../observations";
-import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 import { ImageHttpClient } from '@app/core/image-http-client';
 import { ToastrService } from 'ngx-toastr';
 import { AvatarStudentActivityComponent, StudentActivityEvent, StudentActivityView } from "./avatar-student-activity/avatar-student-activity.component";
@@ -19,14 +17,11 @@ import { ActivitySelectorComponent } from "../activity-selector/activity-selecto
 
 @Component({
 	standalone: true,
-	imports: [CommonModule, RouterModule, FormsModule, PaymentComponent, InscriptionComponent, ActivityComponent, ObservationsComponent, CurrencyMXPipe, AvatarStudentActivityComponent, ActivitySelectorComponent],
+	imports: [CommonModule, RouterModule, FormsModule, PaymentComponent, InscriptionComponent, ObservationsComponent, AvatarStudentActivityComponent, ActivitySelectorComponent],
 	templateUrl: './avatars.component.html',
 	styleUrl: './avatars.component.scss'
 })
 export class AvatarsComponent {
-	onDebt($event: boolean) {
-		this.showDebt = $event
-	}
 
 	public showDebt: boolean = true;
 
@@ -37,18 +32,16 @@ export class AvatarsComponent {
 	public showObservationsModal: boolean = false;
 
 	public studentActivities: StudentActivityView[] = [];
+	public loadingStudentActivities: boolean = false;
+
 	public selectedActivity: Activity | null = null;
 
 	constructor(
 		public router: Router,
-		private route: ActivatedRoute,
 		private http: HttpClient,
 		private imageHttp: ImageHttpClient,
 		private toastr: ToastrService,
-	) {
-
-
-	}
+	) { }
 
 	public onActivitySelect(activity: Activity | null): void {
 		this.selectedActivity = activity;
@@ -61,7 +54,6 @@ export class AvatarsComponent {
 	}
 
 	public showInscription() {
-		this.selectedStudentActivity = new StudentActivity();
 		this.showInscriptionModal = true;
 	}
 
@@ -103,6 +95,10 @@ export class AvatarsComponent {
 		}
 	}
 
+	public onDebt($event: boolean) {
+		this.showDebt = $event
+	}
+
 	private _loadStudentActivities() {
 		if (this.selectedActivity) {
 			const queryString = RequestQueryBuilder.create({
@@ -110,12 +106,14 @@ export class AvatarsComponent {
 			}).query();
 
 			const studentActivitiesAPI = new BaseHttp(`student-activities?${queryString}`, this.http);
+			this.loadingStudentActivities = true;
 			studentActivitiesAPI.get<StudentActivity[]>().subscribe(studentActivities => {
 				this.studentActivities = studentActivities.map(studentActivity => {
 					studentActivity.debtActivityAmount = studentActivity.charges?.reduce((acc, charge) => acc + charge.amountRemaining, 0) || 0;
 					this.imageHttp.student(studentActivity.student);
 					return studentActivity;
 				});
+				this.loadingStudentActivities = false;
 			});
 		}
 	}

@@ -8,11 +8,10 @@ import { School } from '@app/core/dto';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BaseHttp } from '../../core/base-http'; // Add this import
 import { HttpClient } from '@angular/common/http';
-import { BreadcrumbsComponent } from '@app/components/breadcrumbs/breadcrumbs.component';
 
 @Component({
     standalone: true,
-    imports: [CommonModule, RouterModule, BreadcrumbsComponent],
+    imports: [CommonModule, RouterModule],
     templateUrl: './home.component.html',
     styleUrls: ['./home.component.scss']
 })

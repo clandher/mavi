@@ -10,18 +10,21 @@
 		<app-avatar-student-activity [studentActivity]="studentActivity" [showDebt]="showDebt"
 			(select)="onStudentActivitySelect($event, studentActivity)"></app-avatar-student-activity>
 	</div>
+
+	@if (!loadingStudentActivities) {
 	<div class="col-2 position-relative">
 		<div (click)="showInscription()" class="logo-placeholder logo-placeholder-large cursor-pointer">
 			+
 		</div>
 	</div>
+	}
 </div>
 
-<div *ngIf="studentActivities.length === 0" class="text-gray-500 text-center py-8">
+<div *ngIf="selectedActivity && studentActivities.length === 0 && !loadingStudentActivities"
+	class="text-gray-500 text-center py-8">
 	Presiona el círculo de '+' para agregar estudiantes a la actividad.
 </div>
 }
-
 
 <app-payment *ngIf="showPaymentModal" [studentId]="selectedStudentActivity?.student?.id!"
 	(complete)="onPaymentComplete($event)">

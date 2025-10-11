@@ -135,7 +135,7 @@
 
                 <button class="btn btn-sm btn-attend" (click)="openPaymentModal(student)" [disabled]="student.debt <= 0"
                     [title]="student.debt <= 0 ? 'No hay deuda pendiente.' : ''">
-                    Debe {{ student.debt | currency:'MXN' }}
+                    Debe {{ student.debt | currencyMX }}
                 </button>
 
             </div>

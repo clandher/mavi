@@ -8,11 +8,10 @@ import { StudentObservation } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { SubmitComponent } from "../submit/submit.component";
 import { ObservationsComponent } from '../observations';
-import { ModalComponent } from '../modal/modal.component';
 
 @Component({
 	standalone: true,
-	imports: [CommonModule, FormsModule, RouterModule, SubmitComponent, ObservationsComponent, ModalComponent],
+	imports: [CommonModule, FormsModule, RouterModule, SubmitComponent, ObservationsComponent],
 	templateUrl: './student-observations.component.html',
 	providers: []
 })
