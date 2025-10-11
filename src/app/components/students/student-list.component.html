@@ -3,14 +3,14 @@
     <div class="d-flex gap-3">
         <div class="d-flex-2">
             <app-form-group title="Nombre" for="name">
-                <input id="name" class="form-control" type="search" [(ngModel)]="filters.name" (input)="applyFilters()"
+                <input id="name" class="form-control" type="search" [(ngModel)]="filters.name" (input)="onFilter()"
                     placeholder="Ingresa tu texto aqui...">
             </app-form-group>
         </div>
 
         <div class="flex-grow-1">
             <app-form-group title="Categoría" for="categoryId">
-                <select id="categoryId" class="form-control" [(ngModel)]="filters.categoryId" (change)="applyFilters()">
+                <select id="categoryId" class="form-control" [(ngModel)]="filters.categoryId" (change)="onFilter()">
                     <option [ngValue]="null">Todas las categorías</option>
                     <option *ngFor="let category of categories" [ngValue]="category.id">
                         {{ category.type }}
@@ -21,7 +21,7 @@
 
         <div class="flex-grow-1">
             <app-form-group title="Ordenar por" for="debt">
-                <select id="debt" class="form-control" [(ngModel)]="filters.debt" (change)="applyFilters()">
+                <select id="debt" class="form-control" [(ngModel)]="filters.debt" (change)="onFilter()">
                     <option value="desc">Mayor adeudo</option>
                     <option value="asc">Menor adeudo</option>
                 </select>

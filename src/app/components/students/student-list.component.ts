@@ -56,7 +56,7 @@ export class StudentListComponent implements OnInit, AfterViewInit {
 
     @ViewChild('studentListContainer', { static: false }) studentListContainer!: ElementRef;
 
-    private observer: IntersectionObserver | null = null;
+    private _observer: IntersectionObserver | null = null;
 
     constructor(
         private http: HttpClient,
@@ -74,40 +74,73 @@ export class StudentListComponent implements OnInit, AfterViewInit {
             this.filters.categoryId = params['categoryId'] ? +params['categoryId'] : null;
             this.filters.debt = params['debt'] || localStorage.getItem('filter.debt') || 'desc';
 
-            // Guardar el filtro de deuda en el localStorage
             localStorage.setItem('filter.debt', this.filters.debt);
         });
-        this.fetchData();
+        this._fetchData();
         setFocus('name');
     }
 
     ngAfterViewInit(): void {
-        this.initializeObserver();
+        this._initializeObserver();
     }
 
-    openPaymentModal(student: Student) {
+    public openPaymentModal(student: Student) {
         this.selectedStudent = student;
         this.showPaymentModal = true;
     }
 
-    onPaymentComplete($event: boolean) {
+    public onPaymentComplete($event: boolean) {
         this.showPaymentModal = false;
         if ($event) {
             this._fetchStudents();
         }
     }
 
-    onRestartFilters() {
+    public onRestartFilters() {
         this.filters = { name: '', categoryId: null, debt: 'desc' };
-        this.applyFilters();
+        this.onFilter();
     }
 
 
-    private fetchData(): void {
+    public onFilter(): void {
+        this.filteredStudents = this.students.filter(student => {
+            const matchesSearch = student.name.toLowerCase().includes(this.filters.name.toLowerCase());
+            const matchesCategory = this.filters.categoryId === null ||
+                student.categories?.some(c => c.categoryId === this.filters.categoryId);
+            return matchesSearch && matchesCategory;
+        });
+
+        this.onSortByDebt();
+
+        localStorage.setItem('filter.debt', this.filters.debt);
+
+        this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: {
+                name: this.filters.name || null,
+                categoryId: this.filters.categoryId || null,
+                debt: this.filters.debt || null
+            },
+            queryParamsHandling: 'merge'
+        });
+
+        setTimeout(() => this._initializeObserver(), 0);
+    }
+
+    public onSortByDebt(): void {
+        if (this.filters.debt === 'desc') {
+            this.filteredStudents.sort((a, b) => b.debt - a.debt);
+        } else {
+            this.filteredStudents.sort((a, b) => a.debt - b.debt);
+        }
+    }
+
+
+    private _fetchData(): void {
         this.isLoading = true;
 
         this._fetchCategories()
-            .then(() => this._fetchActivityTypes()) // Fetch activity types
+            .then(() => this._fetchActivityTypes())
             .then(() => this._fetchStudents())
             .then(() => {
                 this.isLoading = false;
@@ -162,8 +195,8 @@ export class StudentListComponent implements OnInit, AfterViewInit {
 
                         return student;
                     });
-                    this.applyFilters();
-                    setTimeout(() => this.initializeObserver(), 0);
+                    this.onFilter();
+                    setTimeout(() => this._initializeObserver(), 0);
                     resolve();
                 },
                 error: (err) => {
@@ -189,78 +222,38 @@ export class StudentListComponent implements OnInit, AfterViewInit {
         });
     }
 
-    applyFilters(): void {
-        this.filteredStudents = this.students.filter(student => {
-            const matchesSearch = student.name.toLowerCase().includes(this.filters.name.toLowerCase());
-            const matchesCategory = this.filters.categoryId === null ||
-                student.categories?.some(c => c.categoryId === this.filters.categoryId);
 
-            return matchesSearch && matchesCategory;
-        });
-        this.sortByDebt();
-
-        localStorage.setItem('filter.debt', this.filters.debt);
-
-        this.router.navigate([], {
-            relativeTo: this.route,
-            queryParams: {
-                name: this.filters.name || null,
-                categoryId: this.filters.categoryId || null,
-                debt: this.filters.debt || null
-            },
-            queryParamsHandling: 'merge'
-        });
-    }
-
-    sortByDebt(): void {
-        if (this.filters.debt === 'desc') {
-            this.filteredStudents.sort((a, b) => b.debt - a.debt);
-        } else {
-            this.filteredStudents.sort((a, b) => a.debt - b.debt);
-        }
-    }
-
-
-    private initializeObserver(): void {
+    private _initializeObserver(): void {
         if (!this.studentListContainer) {
-            console.error('Student list container not found');
             return;
         }
 
-        this.observer = new IntersectionObserver((entries) => {
+        this._observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const studentId = entry.target.getAttribute('data-student-id');
                     if (studentId) {
-                        this.loadStudentPhoto(parseInt(studentId, 10));
-                        this.observer?.unobserve(entry.target); // Stop observing once loaded
+                        const student = this.students.find(s => s.id === parseInt(studentId, 10));
+                        if (student) {
+                            this.imageHttp.student(student);
+                        }
+                        this._observer?.unobserve(entry.target);
                     }
                 }
             });
         }, {
-            root: null, // Use the viewport as the root
+            root: null,
             rootMargin: '0px',
             threshold: 0.1
         });
 
         const studentElements = this.studentListContainer.nativeElement.querySelectorAll('.student-item');
-        if (studentElements.length === 0) {
-            console.warn('No student items found to observe');
-        }
-
         studentElements.forEach((element: HTMLElement) => {
-            this.observer?.observe(element);
+            this._observer?.observe(element);
         });
     }
 
-    private loadStudentPhoto(studentId: number): void {
-        const student = this.students.find(s => s.id === studentId);
-        if (student) {
-            this.imageHttp.student(student);
-        }
-    }
-
     ngOnDestroy(): void {
-        this.observer?.disconnect();
+        this._observer?.disconnect();
     }
 }
