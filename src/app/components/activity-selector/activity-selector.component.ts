@@ -42,6 +42,7 @@ export class ActivitySelectorComponent {
 
 
 	public showDebt = true;
+	private _isSimulatedEvent = false;
 
 	private _procureValue(key: 'category' | 'activity'): number | null {
 		let value = this.route.snapshot.queryParams[key];
@@ -150,16 +151,23 @@ export class ActivitySelectorComponent {
 			}
 		}
 
-		// setTimeout(() => {
-		// 	const selectedTab = document.querySelector('.mavi-tab.selected') as HTMLElement;
-		// 	if (selectedTab) {
-		// 		const event = new MouseEvent('click', { bubbles: true });
-		// 		selectedTab.dispatchEvent(event);
-		// 	}
-		// }, 100);
+		setTimeout(() => {
+			const selectedTab = document.querySelector('.mavi-tab.selected') as HTMLElement;
+			if (selectedTab) {
+				this._isSimulatedEvent = true;
+				const event = new MouseEvent('click', { bubbles: true });
+				selectedTab.dispatchEvent(event);
+				this._isSimulatedEvent = false;
+			}
+		}, 100);
 	}
 
+
 	onActivityChange(activity: Activity | null): void {
+		if (this._isSimulatedEvent) {
+			return;
+		}
+
 		this.selectedActivity = activity;
 		this.router.navigate([], {
 			relativeTo: this.route,
