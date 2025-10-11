@@ -1,85 +1,17 @@
-<div class="category-selector">
-	<button (click)="selectPreviousCategory()" class="category-btn" aria-label="Anterior">
-		<svg class="category-btn-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-			<path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-		</svg>
-	</button>
-
-	<div class="category-select-wrapper">
-		<select id="categories" name="categories" [(ngModel)]="selectedCategoryId" (change)="onCategoryChange()"
-			class="category-select">
-			<option [value]="null" disabled>-- Selecciona una categoría --</option>
-			<option *ngFor="let category of categories" [value]="category.id">
-				{{ category.type }}
-			</option>
-		</select>
-	</div>
-
-	<button (click)="selectNextCategory()" class="category-btn" aria-label="Siguiente">
-		<svg class="category-btn-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-			<path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-		</svg>
-	</button>
-</div>
+<app-activity-selector (select)="onActivitySelect($event)" (debt)="onDebt($event)"></app-activity-selector>
 <br>
 
-@if(selectedActivityId === 0){
-<div class="text-gray-500 text-center py-8">
-	Esta categoría no tiene actividades asociadas.
-</div>
-
-<div class="d-flex justify-content-center py-4">
-	<button class="btn btn-primary" (click)="onNewActivity()">
-		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-			class="size-4 me-2">
-			<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-		</svg>
-		Nueva actividad
-	</button>
-</div>
-
-} @else {
-
-<div class="d-flex align-items-center">
-	@if (activitiesByCategoryPast.length > 0) {
-	<div class="mavi-fixed-tab">
-		<a class="mavi-tab" (click)="showActivitieByCategoryPast = !showActivitieByCategoryPast"
-			[ngClass]="{ selected: selectedActivityIsPast }" data-bs-toggle="dropdown">
-			{{activitiesByCategoryPast.length}} pasadas
-			<div class="dropdown">
-				<ul class="dropdown-menu">
-					<li class="dropdown-item" *ngFor="let activity of activitiesByCategoryPast"
-						[ngClass]="{ selected: selectedActivityId === activity.id }"
-						(click)="selectedActivityIsPast = true; onActivityChange(activity.id)">
-						{{ activity.description }} - {{ activity.startDate | date:activity.type.format }}
-					</li>
-				</ul>
-			</div>
-		</a>
-	</div>
-	}
-
-	<div class="mavi-tabs w-100" (mousedown)="onMouseDown($event)" (mousemove)="onMouseMove($event)"
-		(mouseup)="onMouseUp()">
-		<a class="mavi-tab" *ngFor="let activity of activitiesByCategoryCurrent; let i = index"
-			(click)="centerTab($event)" [ngClass]="{ selected: selectedActivityId === activity.id }"
-			(click)="onActivityChange(activity.id)">
-			{{ activity.description }} {{activity.startDate | date:activity.type.format}}
-		</a>
-	</div>
-</div>
-
-<br>
+@if (selectedActivity) {
 
 <input id="photo" type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden>
 
 <div class="row g-4">
 	<div *ngFor="let studentActivity of studentActivities" class="col-2 position-relative">
-		<app-avatar-student-activity [studentActivity]="studentActivity" [activities]="activities" [showDebt]="showDebt"
+		<app-avatar-student-activity [studentActivity]="studentActivity" [showDebt]="showDebt"
 			(select)="onStudentActivitySelect($event, studentActivity)"></app-avatar-student-activity>
 	</div>
 	<div class="col-2 position-relative">
-		<div (click)="addNewAvatar()" class="logo-placeholder logo-placeholder-large cursor-pointer">
+		<div (click)="showInscription()" class="logo-placeholder logo-placeholder-large cursor-pointer">
 			+
 		</div>
 	</div>
@@ -90,6 +22,7 @@
 </div>
 }
 
+
 <app-payment *ngIf="showPaymentModal" [studentId]="selectedStudentActivity?.student?.id!"
 	(complete)="onPaymentComplete($event)">
 </app-payment>
@@ -97,41 +30,6 @@
 <app-inscription *ngIf="showInscriptionModal" (complete)="onInscriptionComplete($event)">
 </app-inscription>
 
-<app-activity *ngIf="showActivityModal" [activityId]="newActivityId!" (complete)="onActivityComplete($event)">
-</app-activity>
-
 <app-observations *ngIf="showObservationsModal" [studentId]="selectedStudentActivity?.studentId!"
 	(complete)="showObservationsModal = false">
 </app-observations>
-
-<div class="mavi-bottom-actions">
-	<div class="mavi-bottom-actions-inner">
-		<button (click)="showDebt = !showDebt" class="btn btn-secondary"
-			[ngClass]="showDebt ? 'bg-blue-500' : 'bg-gray-400'">
-			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-				stroke="currentColor" class="size-4 me-2">
-				<path stroke-linecap="round" stroke-linejoin="round"
-					d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-			</svg>
-			{{ showDebt ? 'Mostrar total' : 'Mostrar deuda' }}
-		</button>
-
-		<button class="btn btn-secondary ms-2" (click)="onEditActivity()" [disabled]="!selectedActivityId"
-			[title]="!selectedActivityId ? 'Selecciona una actividad para editarla.' : ''">
-			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-				stroke="currentColor" class="size-4 me-2">
-				<path stroke-linecap="round" stroke-linejoin="round"
-					d="M16.862 4.487a2.1 2.1 0 1 1 2.97 2.97L7.5 19.789l-4 1 1-4 12.362-12.302Z" />
-			</svg>
-			Editar actividad
-		</button>
-
-		<button class="btn btn-secondary ms-2" (click)="onNewActivity()">
-			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-				stroke="currentColor" class="size-4 me-2">
-				<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-			</svg>
-			Nueva actividad
-		</button>
-	</div>
-</div>

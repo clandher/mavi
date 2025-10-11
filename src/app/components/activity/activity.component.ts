@@ -65,7 +65,7 @@ export class ActivityComponent {
             gracePeriod: [15, [MaviValidators.required(), MaviValidators.min(0)]],
             price: [200, [MaviValidators.required(), MaviValidators.min(0.01)]],
             categoryId: [0, [MaviValidators.required()]],
-            typeId: [2, [MaviValidators.required()]],
+            typeId: [0, [MaviValidators.required()]],
             code: [faker.string.alphanumeric(10).toUpperCase(), [MaviValidators.required()]],
         });
     }
@@ -95,6 +95,9 @@ export class ActivityComponent {
         const activityTypesAPI = new BaseHttp('activity-types', this.http);
         activityTypesAPI.get<ActivityType[]>().subscribe(result => {
             this.activityTypes = result;
+            if (this.activityTypes.length > 0) {
+                this.activityForm.patchValue({ typeId: this.activityTypes[0].id });
+            }
         });
     }
 

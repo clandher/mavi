@@ -10,12 +10,9 @@
     cursor: pointer;
     transition: all 0.3s;
 
-
     &.no-image {
         border: 1px dashed rgb(162, 162, 162);
     }
-
-    // w-25 h-25 rounded-full bg-gray-700 flex items-center justify-content-center overflow-hidden cursor-pointer transition-all duration-300
 }
 
 .tag-debt {

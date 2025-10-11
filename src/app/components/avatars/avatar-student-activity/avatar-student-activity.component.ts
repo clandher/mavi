@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
-import { BaseHttp } from '@app/core/base-http';
+import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { CurrencyMXPipe } from '@app/core/currency-mx.pipe';
 import { Activity, StudentActivity, StudentCategory } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
@@ -18,12 +18,12 @@ export type StudentActivityEvent = 'PAYMENT' | 'UPLOAD_PHOTO' | 'OBSERVATIONS';
 	selector: 'app-avatar-student-activity',
 	templateUrl: './avatar-student-activity.component.html',
 	styleUrls: ['./avatar-student-activity.component.scss'],
-	imports: [CommonModule, RouterModule, CurrencyMXPipe]
+	imports: [CommonModule, RouterModule, CurrencyMXPipe],
+	standalone: true,
 })
 export class AvatarStudentActivityComponent {
 	@Input() studentActivity!: StudentActivityView;
 	@Input() showDebt!: boolean;
-	@Input() activities: Activity[] = [];
 
 	@Output() select = new EventEmitter<{ event: StudentActivityEvent, value: any }>();
 
@@ -37,14 +37,8 @@ export class AvatarStudentActivityComponent {
 	public onSelectStudentActivity(studentActivity: StudentActivityView): void {
 
 		if (!studentActivity.unenrolledActivities) {
-			const queryString = RequestQueryBuilder.create({
-				search: { studentId: studentActivity.student.id },
-			}).query();
-
-			new BaseHttp(`student-activities?${queryString}`, this.http).get<StudentActivity[]>().subscribe(enrolledActivities => {
-				studentActivity.unenrolledActivities = this.activities.filter(activity => !activity.type.recurrent &&
-					!enrolledActivities.some(ea => ea.activity.id === activity.id)
-				);
+			this.http.get<Activity[]>(buildUrl(`students/${studentActivity.student.id}/unenrolled-activities`)).subscribe(unenrolledActivities => {
+				studentActivity.unenrolledActivities = unenrolledActivities;
 			});
 		}
 	}
