@@ -153,7 +153,7 @@ export class ActivitySelectorComponent {
 
 		setTimeout(() => {
 			const selectedTab = document.querySelector('.mavi-tab.selected') as HTMLElement;
-			if (selectedTab) {
+			if (selectedTab && !this.selectedActivityIsPast) {
 				this._isSimulatedEvent = true;
 				const event = new MouseEvent('click', { bubbles: true });
 				selectedTab.dispatchEvent(event);
