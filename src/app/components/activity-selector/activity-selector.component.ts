@@ -43,6 +43,20 @@ export class ActivitySelectorComponent {
 
 	public showDebt = true;
 
+	private _procureValue(key: 'category' | 'activity'): number | null {
+		let value = this.route.snapshot.queryParams[key];
+		if (value) {
+			return Number(value);
+		}
+
+		value = localStorage.getItem('activity-selector.' + key);
+		if (value) {
+			return Number(value);
+		}
+
+		return null;
+	}
+
 	constructor(
 		public router: Router,
 		private route: ActivatedRoute,
@@ -57,7 +71,7 @@ export class ActivitySelectorComponent {
 			this.categories = categories || [];
 
 			if (this.categories.length) {
-				const categoryFound = this.route.snapshot.queryParams['category'] ? this.categories.find(c => c.id === +this.route.snapshot.queryParams['category']) : null;
+				const categoryFound = this.categories.find(c => c.id === this._procureValue('category'));
 				if (categoryFound) {
 					this.selectedCategory = categoryFound;
 				} else {
@@ -109,9 +123,63 @@ export class ActivitySelectorComponent {
 		}
 	}
 
+	async onCategoryChange() {
 
-	public async _fetchActivities() {
+		if (!this.selectedCategory) {
+			this.onActivityChange(null);
+			return;
+		};
 
+		await this._fetchActivities();
+
+		if (this.activities.length === 0) {
+			this.onActivityChange(null);
+			return;
+		}
+
+		const activityFound = this.activities.find(c => c.id === this._procureValue('activity'));
+		if (activityFound) {
+			this.selectedActivityIsPast = activityFound ? new Date(activityFound.endDate) < new Date() : false;
+			this.onActivityChange(activityFound);
+		} else {
+			if (this.activitiesByCategoryCurrent.length) {
+				this.onActivityChange(this.activitiesByCategoryCurrent[0]);
+			} else {
+				this.selectedActivityIsPast = new Date(this.activities[0].endDate) < new Date();
+				this.onActivityChange(this.activities[0]);
+			}
+		}
+
+		// setTimeout(() => {
+		// 	const selectedTab = document.querySelector('.mavi-tab.selected') as HTMLElement;
+		// 	if (selectedTab) {
+		// 		const event = new MouseEvent('click', { bubbles: true });
+		// 		selectedTab.dispatchEvent(event);
+		// 	}
+		// }, 100);
+	}
+
+	onActivityChange(activity: Activity | null): void {
+		this.selectedActivity = activity;
+		this.router.navigate([], {
+			relativeTo: this.route,
+			queryParams: { category: this.selectedCategory?.id, activity: this.selectedActivity?.id },
+			queryParamsHandling: 'merge'
+		});
+
+		localStorage.setItem('activity-selector.category', this.selectedCategory?.id?.toString() || '');
+		localStorage.setItem('activity-selector.activity', this.selectedActivity?.id?.toString() || '');
+
+		this.select.emit(activity);
+		this.selectedActivityIsPast = activity ? new Date(activity.endDate) < new Date() : false;
+	}
+
+	onShowDebt() {
+		this.showDebt = !this.showDebt;
+		this.debt.emit(this.showDebt);
+	}
+
+	private async _fetchActivities() {
 		if (!this.selectedCategory) {
 			this.activities = [];
 			return;
@@ -126,69 +194,6 @@ export class ActivitySelectorComponent {
 		this.loadingActivities = false;
 		this.activitiesByCategoryCurrent = this.activities.filter(a => new Date(a.endDate) >= new Date());
 		this.activitiesByCategoryPast = this.activities.filter(a => new Date(a.endDate) < new Date());
-	}
-
-	async onCategoryChange() {
-
-		if (!this.selectedCategory) {
-			this.onActivityChange(null);
-			return;
-		};
-
-
-		await this._fetchActivities();
-
-		if (this.activities.length > 0) {
-			const activityFound = this.route.snapshot.queryParams['activity'] ? this.activities.find(c => c.id === +this.route.snapshot.queryParams['activity']) : null;
-
-			if (activityFound) {
-				this.selectedActivityIsPast = activityFound ? new Date(activityFound.endDate) < new Date() : false;
-				this.onActivityChange(activityFound);
-			} else {
-				if (this.activitiesByCategoryCurrent.length) {
-					this.onActivityChange(this.activitiesByCategoryCurrent[0]);
-				} else {
-					this.selectedActivityIsPast = new Date(this.activities[0].endDate) < new Date();
-					this.onActivityChange(this.activities[0]);
-				}
-			}
-		} else {
-			this.selectedActivity = null;
-			this.select.emit(null);
-		}
-
-		this.router.navigate([], {
-			relativeTo: this.route,
-			queryParams: { category: this.selectedCategory?.id, activity: this.selectedActivity?.id },
-			queryParamsHandling: 'merge'
-		});
-
-		// setTimeout(() => {
-		// 	const selectedTab = document.querySelector('.mavi-tab.selected') as HTMLElement;
-		// 	if (selectedTab) {
-		// 		const event = new MouseEvent('click', { bubbles: true });
-		// 		selectedTab.dispatchEvent(event);
-		// 	}
-		// }, 100);
-	}
-
-
-	onActivityChange(activity: Activity | null): void {
-		this.selectedActivity = activity;
-		this.router.navigate([], {
-			relativeTo: this.route,
-			queryParams: { category: this.selectedCategory?.id, activity: this.selectedActivity?.id },
-			queryParamsHandling: 'merge'
-		});
-		this.select.emit(activity);
-
-		this.selectedActivityIsPast = activity ? new Date(activity.endDate) < new Date() : false;
-	}
-
-
-	onShowDebt() {
-		this.showDebt = !this.showDebt;
-		this.debt.emit(this.showDebt);
 	}
 
 	private isDragging = false;
