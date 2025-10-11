@@ -57,7 +57,7 @@
                 <div class="d-flex items-center">
                     <img *ngIf="student.photoUrl" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
                     <div *ngIf="student.photo && !student.photoUrl" class="student-photo-sm-placeholder"></div>
-                    <a class="hover-link" [routerLink]="['/app/estudiantes', student.id, 'editar']"
+                    <a class="hover-link" [routerLink]="['/app/estudiantes', student.id]"
                         [state]="{ origin: router.url}">
                         {{ student.nick ? student.nick : student.name }}
                     </a>
@@ -77,7 +77,7 @@
 
                                 <ng-container *ngFor="let act of sc.activitiesCurrent">
                                     <a *ngIf="act.activity.categoryId === sc.categoryId" class="mavi-tag hover-link"
-                                        [routerLink]="['/app/actividades']"
+                                        [routerLink]="['/app/actividades']" [ngClass]="{'border-debt': act.debt > 0}"
                                         [queryParams]="{ category: act.activity.categoryId, activity: act.activity.id }"
                                         [title]="(act.activity.startDate | date:'dd/MM/yy HH:mm') + ' - ' + (act.activity.endDate | date:'dd/MM/yy HH:mm')">
                                         {{ act.activity.description }} {{act.activity.startDate |
@@ -98,7 +98,8 @@
                                 <div class="max-h-80 overflow-y-auto d-flex gap-1 flex-wrap w-full">
                                     <ng-container *ngFor="let act of sc.activitiesPast">
                                         <a *ngIf="act.activity.categoryId === sc.categoryId"
-                                            class="mavi-tag text-old hover-link " [routerLink]="['/app/actividades']"
+                                            class="mavi-tag text-old hover-link " [ngClass]="{'border-debt': act.debt > 0}"
+                                            [routerLink]="['/app/actividades']"
                                             [queryParams]="{ category: act.activity.categoryId, activity: act.activity.id }"
                                             [title]="(act.activity.startDate | date:'dd/MM/yy HH:mm') + ' - ' + (act.activity.endDate | date:'dd/MM/yy HH:mm')">
                                             {{ act.activity.description }} {{act.activity.startDate |
@@ -121,7 +122,7 @@
 
             <div class="mavi-card-actions mt-4">
                 <a class="btn btn-sm btn-outline w-full justify-content-center"
-                    [routerLink]="['/app/estudiantes', student.id, 'editar']">
+                    [routerLink]="['/app/estudiantes', student.id]">
 
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                         stroke="currentColor" width="20" height="20" class="size-4 me-2">

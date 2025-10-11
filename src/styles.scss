@@ -378,6 +378,9 @@ select.form-control {
     font-size: 1.5rem;
 }
 
+.border-debt {
+    border-color: oklch(.704 .191 22.216) !important;
+}
 
 .high-debt {
     color: #e74c3c;

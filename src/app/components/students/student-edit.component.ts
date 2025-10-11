@@ -167,7 +167,7 @@ export class StudentEditComponent {
         });
 
         this._uploadPendingPhotoIfAny();
-        this.router.navigate(['/app/estudiantes', student.id, 'editar']);
+        this.router.navigate(['/app/estudiantes', student.id]);
     }
 
 

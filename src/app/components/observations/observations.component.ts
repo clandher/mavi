@@ -241,7 +241,7 @@ export class ObservationsComponent implements OnInit {
 
             const selectedStudent = this.students.find(s => s.selected);
             if (navigate && this.selectedStudents === 1 && selectedStudent) {
-                this.router.navigate(['/app/estudiantes', selectedStudent.id, 'editar', 'observaciones']);
+                this.router.navigate(['/app/estudiantes', selectedStudent.id, 'observaciones']);
             }
         }
     }

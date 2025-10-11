@@ -66,9 +66,9 @@ export const routes: Routes = [
                 data: { breadcrumb: 'Nuevo Estudiante' }
             },
             {
-                path: 'estudiantes/:id/editar',
+                path: 'estudiantes/:id',
                 loadComponent: () => import('./components/students/student-edit.component').then(m => m.StudentEditComponent),
-                data: { breadcrumb: 'Editar Estudiante' },
+                data: { breadcrumb: 'Estudiante' },
                 children: [
                     {
                         path: '',

@@ -63,8 +63,9 @@
 
 	<div class="mavi-tabs w-100" (mousedown)="onMouseDown($event)" (mousemove)="onMouseMove($event)"
 		(mouseup)="onMouseUp()">
-		<a class="mavi-tab" *ngFor="let activity of activitiesByCategoryCurrent; let i = index" (click)="centerTab($event)"
-			[ngClass]="{ selected: selectedActivityId === activity.id }" (click)="onActivityChange(activity.id)">
+		<a class="mavi-tab" *ngFor="let activity of activitiesByCategoryCurrent; let i = index"
+			(click)="centerTab($event)" [ngClass]="{ selected: selectedActivityId === activity.id }"
+			(click)="onActivityChange(activity.id)">
 			{{ activity.description }} {{activity.startDate | date:activity.type.format}}
 		</a>
 	</div>
@@ -102,7 +103,7 @@
 		<div class="dropdown">
 			<ul class="dropdown-menu">
 				<li class="dropdown-item">
-					<a [routerLink]="['/app/estudiantes', studentActivity.student.id, 'editar', 'info']"
+					<a [routerLink]="['/app/estudiantes', studentActivity.student.id, 'info']"
 						[state]="{ origin: this.router.url }">Ver detalle...</a>
 				</li>
 
@@ -123,22 +124,17 @@
 					Observaciones...
 				</li>
 
-				<li class="dropdown-item">
+				<li class="dropdown-item" *ngIf="(studentActivity.unenrolledActivities?.length ?? 0) > 0">
 					Inscribir a
 					<ul class="dropdown-sub-menu">
 						<li *ngFor="let activity of studentActivity.unenrolledActivities" class="dropdown-sub-item"
 							(click)="onInscription(studentActivity, activity)">
 							{{ activity.description }}
 						</li>
-						<li class="dropdown-sub-item" *ngIf="studentActivity.unenrolledActivities?.length === 0">
-							No hay actividades disponibles</li>
 					</ul>
 				</li>
-
-
 			</ul>
 		</div>
-
 	</div>
 
 	<div class="col-2 position-relative">
