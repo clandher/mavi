@@ -46,7 +46,6 @@
 		<a class="mavi-tab" (click)="showActivitieByCategoryPast = !showActivitieByCategoryPast"
 			[ngClass]="{ selected: selectedActivityIsPast }" data-bs-toggle="dropdown">
 			{{activitiesByCategoryPast.length}} pasadas
-			<!-- @if (showActivitieByCategoryPast){ -->
 			<div class="dropdown">
 				<ul class="dropdown-menu">
 					<li class="dropdown-item" *ngFor="let activity of activitiesByCategoryPast"
@@ -56,7 +55,6 @@
 					</li>
 				</ul>
 			</div>
-			<!-- } -->
 		</a>
 	</div>
 	}
@@ -76,69 +74,12 @@
 <input id="photo" type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden>
 
 <div class="row g-4">
-
 	<div *ngFor="let studentActivity of studentActivities" class="col-2 position-relative">
-		<div (click)="onSelectStudentActivity(studentActivity)" [ngClass]="{
-              'border-1 border-white shadow-lg': selectedStudentActivity === studentActivity,
-              'opacity-20 ': studentActivity.unsubscribed
-              }" class="avatar-circle" [class.no-image]="!studentActivity.student.photoUrl" data-bs-toggle="dropdown">
-			@if (studentActivity.student.photoUrl) {
-			<img [src]="studentActivity.student.photoUrl" class="w-100 h-100 object-fit-cover" />
-			}
-
-			<span *ngIf="studentActivity.debtActivityAmount > 0" (click)="showPaymentModal = true" class="tag-debt">
-				{{showDebt ? '¡Debe!' : (studentActivity.debtActivityAmount | currencyMX)}}
-			</span>
-
-			<span [title]="studentActivity.student.name" class="tag-name">
-				<span style="max-width: 60px; display: inline-block; overflow: hidden; text-overflow: ellipsis;">
-					{{ studentActivity.student.nick ? studentActivity.student.nick :
-					studentActivity.student.name
-					}}
-				</span>
-			</span>
-		</div>
-
-
-		<div class="dropdown">
-			<ul class="dropdown-menu">
-				<li class="dropdown-item">
-					<a [routerLink]="['/app/estudiantes', studentActivity.student.id, 'info']"
-						[state]="{ origin: this.router.url }">Ver detalle...</a>
-				</li>
-
-				@if(studentActivity.debtActivityAmount > 0){
-				<li class="dropdown-item" (click)="selectedStudentActivity = studentActivity; showPaymentModal = true">
-					Registrar pago...
-				</li>
-				}
-
-				<li class="dropdown-item" *ngIf="!studentActivity.student.photoUrl"
-					(click)="selectedStudentActivity = studentActivity">
-					<label for="photo" class="cursor-pointer">
-						Subir foto...
-					</label>
-				</li>
-
-				<li class="dropdown-item" (click)="selectedStudentActivity = studentActivity; onObservations()">
-					Observaciones...
-				</li>
-
-				<li class="dropdown-item" *ngIf="(studentActivity.unenrolledActivities?.length ?? 0) > 0">
-					Inscribir a
-					<ul class="dropdown-sub-menu">
-						<li *ngFor="let activity of studentActivity.unenrolledActivities" class="dropdown-sub-item"
-							(click)="onInscription(studentActivity, activity)">
-							{{ activity.description }}
-						</li>
-					</ul>
-				</li>
-			</ul>
-		</div>
+		<app-avatar-student-activity [studentActivity]="studentActivity" [activities]="activities" [showDebt]="showDebt"
+			(select)="onStudentActivitySelect($event, studentActivity)"></app-avatar-student-activity>
 	</div>
-
 	<div class="col-2 position-relative">
-		<div (click)="addNewAvatar()" class="logo-placeholder logo-placeholder-large">
+		<div (click)="addNewAvatar()" class="logo-placeholder logo-placeholder-large cursor-pointer">
 			+
 		</div>
 	</div>
@@ -153,14 +94,14 @@
 	(complete)="onPaymentComplete($event)">
 </app-payment>
 
-<app-inscription *ngIf="showModal" (complete)="onInscriptionComplete($event)">
+<app-inscription *ngIf="showInscriptionModal" (complete)="onInscriptionComplete($event)">
 </app-inscription>
 
-<app-activity *ngIf="newEventModalVisible" [activityId]="newActivityId!" (complete)="onActivityComplete($event)">
+<app-activity *ngIf="showActivityModal" [activityId]="newActivityId!" (complete)="onActivityComplete($event)">
 </app-activity>
 
-<app-observations *ngIf="showObservations" [studentId]="selectedStudentActivity?.studentId!"
-	(complete)="onObservationsComplete($event)">
+<app-observations *ngIf="showObservationsModal" [studentId]="selectedStudentActivity?.studentId!"
+	(complete)="showObservationsModal = false">
 </app-observations>
 
 <div class="mavi-bottom-actions">

@@ -14,26 +14,24 @@ import { ObservationsComponent } from "../observations";
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 import { ImageHttpClient } from '@app/core/image-http-client';
 import { ToastrService } from 'ngx-toastr';
-
-
-interface StudentActivityView extends StudentActivity {
-	unenrolledActivities?: Activity[];
-}
+import { AvatarStudentActivityComponent, StudentActivityEvent, StudentActivityView } from "./avatar-student-activity/avatar-student-activity.component";
 
 @Component({
 	standalone: true,
-	imports: [CommonModule, RouterModule, FormsModule, PaymentComponent, InscriptionComponent, ActivityComponent, ObservationsComponent, CurrencyMXPipe],
+	imports: [CommonModule, RouterModule, FormsModule, PaymentComponent, InscriptionComponent, ActivityComponent, ObservationsComponent, CurrencyMXPipe, AvatarStudentActivityComponent],
 	templateUrl: './avatars.component.html',
 	styleUrl: './avatars.component.scss'
 })
 export class AvatarsComponent {
 
-
-
 	public showDebt: boolean = true;
 
 	public selectedStudentActivity: StudentActivityView | null = null;
-	public showModal: boolean = false;
+
+	public showInscriptionModal: boolean = false;
+	public showPaymentModal: boolean = false;
+	public showActivityModal: boolean = false;
+	public showObservationsModal: boolean = false;
 
 
 	public categories: Category[] = [];
@@ -50,7 +48,6 @@ export class AvatarsComponent {
 	showActivitieByCategoryPast: boolean = false;
 	selectedActivityIsPast: boolean = false;
 
-	private menuContextVisible: boolean = false;
 
 	constructor(
 		public router: Router,
@@ -173,22 +170,10 @@ export class AvatarsComponent {
 		});
 	}
 
-
-
 	addNewAvatar() {
 		this.selectedStudentActivity = new StudentActivity();
-		this.showModal = true;
+		this.showInscriptionModal = true;
 	}
-
-	closeModal(): void {
-		this.showModal = false;
-	}
-
-
-	highlightWidth = 0;
-	highlightPosition = 0;
-
-	public showPaymentModal: boolean = false;
 
 	onPaymentComplete(value: boolean): void {
 		this.showPaymentModal = false;
@@ -199,7 +184,7 @@ export class AvatarsComponent {
 	}
 
 	onInscriptionComplete(value: boolean): void {
-		this.showModal = false;
+		this.showInscriptionModal = false;
 
 		if (value) {
 			this._loadStudentActivities();
@@ -207,14 +192,16 @@ export class AvatarsComponent {
 
 	}
 
-	closePaymentModal() {
-		this.showPaymentModal = false;
+	onActivityComplete(value: boolean): void {
+		this.showActivityModal = false;
+		if (value) {
+			const activities = new BaseHttp(`activities`, this.http);
+			activities.get<Activity[]>().subscribe(result => {
+				this.activities = result;
+				this._filterActivities();
+			});
+		}
 	}
-
-
-	public newStudentModalVisible: boolean = false;
-	public newEventModalVisible: boolean = false;
-	public showObservations: boolean = false;
 
 	selectPreviousCategory(): void {
 		const idx = this.categories.findIndex(c => c.id === this.selectedCategoryId);
@@ -226,7 +213,6 @@ export class AvatarsComponent {
 		this.onCategoryChange();
 	}
 
-	// Selecciona la siguiente categoría, si es la última va a la primera
 	selectNextCategory(): void {
 		const idx = this.categories.findIndex(c => c.id === this.selectedCategoryId);
 		if (idx < this.categories.length - 1 && idx !== -1) {
@@ -239,92 +225,20 @@ export class AvatarsComponent {
 
 	onNewActivity(): void {
 		this.newActivityId = 0;
-		this.newEventModalVisible = true;
+		this.showActivityModal = true;
 	}
 
 	onEditActivity(): void {
 		if (this.selectedActivityId) {
 			this.newActivityId = this.selectedActivityId;
-			this.newEventModalVisible = true;
+			this.showActivityModal = true;
 		}
 	}
 
-	onActivityComplete(value: boolean): void {
-		this.newEventModalVisible = false;
-		if (value) {
-			const activities = new BaseHttp(`activities`, this.http);
-			activities.get<Activity[]>().subscribe(result => {
-				this.activities = result;
-				this._filterActivities();
-			});
-		}
-	}
-
-	onObservations(): void {
-		this.showObservations = true;
-	}
-
-	onObservationsComplete(value: boolean): void {
-		this.showObservations = false;
-		// if (value) {
-		// 	const activities = new BaseHttp(`activities`, this.http);
-		// 	activities.get<Activity[]>().subscribe(result => {
-		// 		this.activities = result;
-		// 	});
-		// }
-	}
-
-
-	onPhotoSelected($event: Event) {
+	public onPhotoSelected($event: Event) {
 		if (this.selectedStudentActivity?.student) {
 			uploadStudentPhoto($event, this.selectedStudentActivity?.student, this.http, this.toastr);
 		}
-	}
-
-	public onSelectStudentActivity(studentActivity: StudentActivityView): void {
-
-		if (!studentActivity.unenrolledActivities) {
-			const queryString = RequestQueryBuilder.create({
-				search: { studentId: studentActivity.student.id },
-			}).query();
-
-			new BaseHttp(`student-activities?${queryString}`, this.http).get<StudentActivity[]>().subscribe(enrolledActivities => {
-				studentActivity.unenrolledActivities = this.activities.filter(activity => !activity.type.recurrent &&
-					!enrolledActivities.some(ea => ea.activity.id === activity.id)
-				);
-			});
-		}
-	}
-
-
-	async onInscription(studentActivity: StudentActivityView, activity: Activity): Promise<void> {
-
-		const queryString = RequestQueryBuilder.create({
-			search: { studentId: studentActivity.studentId },
-		}).query();
-
-		const studentCategories = await new BaseHttp(`student-categories?${queryString}`, this.http).get<StudentCategory[]>().toPromise() ?? [];
-
-		const hasCategory = studentCategories.some(sc => sc.categoryId === activity.categoryId);
-		if (!hasCategory) {
-			const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http);
-			await studentCategoriesAPI.post({ studentId: studentActivity.studentId, categoryId: activity.categoryId }).toPromise();
-		}
-
-		const body = {
-			studentId: studentActivity.studentId,
-			activityId: activity.id,
-		};
-
-		await new BaseHttp('student-activities', this.http)
-			.post<typeof body, StudentActivity>(body)
-			.toPromise();
-
-		if (studentActivity.unenrolledActivities) {
-			studentActivity.unenrolledActivities = studentActivity.unenrolledActivities?.filter(a => a.id !== activity.id);
-		}
-
-		this.toastr.success('Inscripción realizada correctamente');
 	}
 
 	private isDragging = false;
@@ -368,5 +282,22 @@ export class AvatarsComponent {
 
 		const offset = tabRect.left - containerRect.left - (containerRect.width / 2) + (tabRect.width / 2);
 		tabsContainer.scrollBy({ left: offset, behavior: 'smooth' });
+	}
+
+
+	public onStudentActivitySelect(event: { event: StudentActivityEvent, value: any }, selectedStudentActivity: StudentActivityView): void {
+		this.selectedStudentActivity = selectedStudentActivity;
+
+		switch (event.event) {
+			case 'PAYMENT':
+				this.showPaymentModal = true;
+				break;
+			case 'UPLOAD_PHOTO':
+				document.getElementById('photo')?.click();
+				break;
+			case 'OBSERVATIONS':
+				this.showObservationsModal = true;
+				break;
+		}
 	}
 }
