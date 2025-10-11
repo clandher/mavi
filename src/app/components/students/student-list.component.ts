@@ -66,16 +66,19 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     ) {
         this.categoriesAPI = new BaseHttp('categories', this.http);
         this.activityTypesAPI = new BaseHttp('activity-types', this.http); // Initialize activity types API
+
+        const params = this.route.snapshot.queryParams;
+        this.filters.name = params['name'] || localStorage.getItem('filter.name') || '';
+        this.filters.categoryId = params['categoryId'] ? +params['categoryId'] : (localStorage.getItem('filter.categoryId') ? +localStorage.getItem('filter.categoryId')! : null);
+        this.filters.debt = params['debt'] || localStorage.getItem('filter.debt') || 'desc';
+
+        localStorage.setItem('filter.debt', this.filters.debt);
+        localStorage.setItem('filter.name', this.filters.name);
+        localStorage.setItem('filter.categoryId', this.filters.categoryId !== null ? this.filters.categoryId.toString() : '');
     }
 
     ngOnInit(): void {
-        this.route.queryParams.subscribe(params => {
-            this.filters.name = params['name'] || '';
-            this.filters.categoryId = params['categoryId'] ? +params['categoryId'] : null;
-            this.filters.debt = params['debt'] || localStorage.getItem('filter.debt') || 'desc';
-
-            localStorage.setItem('filter.debt', this.filters.debt);
-        });
+        
         this._fetchData();
         setFocus('name');
     }
@@ -113,6 +116,8 @@ export class StudentListComponent implements OnInit, AfterViewInit {
         this.onSortByDebt();
 
         localStorage.setItem('filter.debt', this.filters.debt);
+        localStorage.setItem('filter.name', this.filters.name);
+        localStorage.setItem('filter.categoryId', this.filters.categoryId !== null ? this.filters.categoryId.toString() : '');
 
         this.router.navigate([], {
             relativeTo: this.route,

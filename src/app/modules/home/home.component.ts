@@ -8,6 +8,7 @@ import { School } from '@app/core/dto';
 import { DomSanitizer } from '@angular/platform-browser';
 import { BaseHttp } from '../../core/base-http'; // Add this import
 import { HttpClient } from '@angular/common/http';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     standalone: true,
@@ -26,6 +27,7 @@ export class HomeComponent {
         public schoolService: SchoolService,
         private sanitizer: DomSanitizer,
         private http: HttpClient,
+        private toastr: ToastrService,
     ) {
         this.schoolService.changes.subscribe(school => {
             this.school = school;
@@ -67,10 +69,10 @@ export class HomeComponent {
         schoolsAPI.post<FormData, any>(formData).subscribe({
             next: () => {
                 this.schoolService.fetch();
-                console.log(`Logo for school ${this.schoolService.value.id} uploaded successfully`);
+                this.toastr.success('Logo subido correctamente');
             },
             error: (err) => {
-                console.error('Error uploading logo', err);
+                this.toastr.error('Error al subir el logo');
             }
         });
     }
