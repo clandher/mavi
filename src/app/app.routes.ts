@@ -29,11 +29,6 @@ export const routes: Routes = [
                 data: { breadcrumb: 'Configuración' },
                 children: [
                     {
-                        path: '',
-                        redirectTo: 'escuela',
-                        pathMatch: 'full'
-                    },
-                    {
                         path: 'escuela',
                         loadComponent: () => import('./components/configuration/schools.component').then(m => m.SchoolsComponent),
                         data: { breadcrumb: 'Escuela' }
