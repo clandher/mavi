@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { Activity, Category, Student, StudentActivity } from '@app/core/dto';
@@ -9,6 +9,9 @@ import { ActivatedRoute, Route, Router } from '@angular/router';
 import { ImageHttpClient } from '@app/core/image-http-client';
 import { SubmitComponent } from '../submit/submit.component';
 import { BtnLoadingComponent } from "../btn-loading/btn-loading.component";
+import { FormGroup } from '@angular/forms';
+import { ModalInjectable } from '@app/core/modal.service';
+import { T } from 'node_modules/@faker-js/faker/dist/airline-CHFQMWko';
 
 interface StudentView extends Student {
     selected: boolean;
@@ -17,26 +20,28 @@ interface StudentView extends Student {
 @Component({
     selector: 'app-observations',
     standalone: true,
-    imports: [CommonModule, FormsModule, SubmitComponent, BtnLoadingComponent],
+    imports: [CommonModule, FormsModule],
     templateUrl: './observations.component.html',
     styleUrls: ['./observations.component.scss']
 })
-export class ObservationsComponent implements OnInit {
+export class ObservationsComponent implements OnInit, ModalInjectable {
     @Input() studentId!: number;
-    // @Input() studentActivity!: StudentActivity;
     @Output() complete = new EventEmitter<boolean>();
-
     observationSearchTerm: string = '';
     filteredObservations: string[] = [];
 
     public selectedStudents = 0;
 
+    public form: FormGroup = new FormGroup({});
+
+    get disabled(): boolean {
+        return this.selectedStudents === 0 || this.selectedObservations.length === 0;
+    }
 
     constructor(
         private http: HttpClient,
         private route: ActivatedRoute,
         private imageHttp: ImageHttpClient,
-        private router: Router,
     ) {
 
         this.route.queryParams.subscribe(params => {
@@ -50,8 +55,9 @@ export class ObservationsComponent implements OnInit {
                 this.newActivityId = +activityId;
             }
         });
-    }
 
+        this.form.markAsDirty();
+    }
 
 
     onObservationSearch() {
@@ -59,10 +65,6 @@ export class ObservationsComponent implements OnInit {
         this.filteredObservations = this.trainingObservations.filter(obs =>
             obs.toLowerCase().includes(term)
         );
-    }
-
-    onCancel() {
-        this.complete.emit(false);
     }
 
 
@@ -75,7 +77,6 @@ export class ObservationsComponent implements OnInit {
     newCategoryId: number | null = null;
     newActivityId: number | null = null;
 
-    // Observaciones de entrenamiento de fútbol
     trainingObservations: string[] = [
         'Buena actitud en el entrenamiento',
         'Mejorar la precisión en los pases',
@@ -95,8 +96,6 @@ export class ObservationsComponent implements OnInit {
     ];
     selectedObservations: string[] = [];
 
-    showPaymentModal: boolean = false;
-    // Métodos para selección de observaciones
     toggleObservation(obs: string) {
         const idx = this.selectedObservations.indexOf(obs);
         if (idx > -1) {
@@ -109,9 +108,6 @@ export class ObservationsComponent implements OnInit {
     isObservationSelected(obs: string): boolean {
         return this.selectedObservations.includes(obs);
     }
-
-
-
 
     async ngOnInit() {
         await Promise.all([
@@ -214,7 +210,7 @@ export class ObservationsComponent implements OnInit {
 
 
 
-    async onAssignObservations(navigate: boolean = false) {
+    async onSubmit() {
         const studentObservationsAPI = new BaseHttp(`student-observations`, this.http);
         const activityId = Number(this.newActivityId);
         const requests: Promise<boolean>[] = [];
@@ -239,10 +235,10 @@ export class ObservationsComponent implements OnInit {
             this.complete.emit(true);
             this.selectedObservations = [];
 
-            const selectedStudent = this.students.find(s => s.selected);
-            if (navigate && this.selectedStudents === 1 && selectedStudent) {
-                this.router.navigate(['/app/estudiantes', selectedStudent.id, 'observaciones']);
-            }
+            // const selectedStudent = this.students.find(s => s.selected);
+            // if (navigate && this.selectedStudents === 1 && selectedStudent) {
+            //     this.router.navigate(['/app/estudiantes', selectedStudent.id, 'observaciones']);
+            // }
         }
     }
 }

@@ -2,16 +2,17 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterModule } from '@angular/router';
-import { FormBuilder, FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { StudentObservation } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { SubmitComponent } from "../submit/submit.component";
 import { ObservationsComponent } from '../observations';
+import { ModalService } from '@app/core/modal.service';
 
 @Component({
 	standalone: true,
-	imports: [CommonModule, FormsModule, RouterModule, SubmitComponent, ObservationsComponent],
+	imports: [CommonModule, FormsModule, RouterModule, SubmitComponent],
 	templateUrl: './student-observations.component.html',
 	providers: []
 })
@@ -22,12 +23,11 @@ export class StudentObservationsComponent implements OnInit {
 	selectedTab: 'observations' | 'timeObservations' = 'observations';
 	studentObservationsAPI: BaseHttp;
 	timeObservations: StudentObservation[] = [];
-	showObservations: any;
 
 	constructor(
 		private http: HttpClient,
 		private route: ActivatedRoute,
-		private fb: FormBuilder
+		private modalService: ModalService,
 	) {
 		this.studentId = Number(this.route.parent!.snapshot.paramMap.get('id'));
 		const queryString = RequestQueryBuilder.create({
@@ -70,13 +70,16 @@ export class StudentObservationsComponent implements OnInit {
 		});
 	}
 
-	onObservationsComplete($event: boolean) {
-		if ($event) {
-			this.studentObservationsAPI.get<StudentObservation[]>().subscribe((data: StudentObservation[]) => {
-				this.timeObservations = data.map(obs => ({ ...obs, originalObservation: obs.observation }));
-			});
-		}
-		this.showObservations = false;
+	public showObservations() {
+		this.modalService.open({
+			component: ObservationsComponent, title: 'Observaciones', size: 'xl',
+			inputs: { studentId: this.studentId }
+		}).subscribe((result: boolean) => {
+			if (result) {
+				this.studentObservationsAPI.get<StudentObservation[]>().subscribe((data: StudentObservation[]) => {
+					this.timeObservations = data.map(obs => ({ ...obs, originalObservation: obs.observation }));
+				});
+			}
+		});
 	}
 }
-

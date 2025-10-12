@@ -32,7 +32,7 @@
 </div>
 
 <div class="d-flex justify-content-center py-4">
-	<button class="btn btn-secondary" (click)="showObservations = true">
+	<button class="btn btn-secondary" (click)="showObservations()">
 		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
 			class="size-4 me-2">
 			<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -44,7 +44,7 @@
 } @else {
 <div class="mavi-bottom-actions">
 	<div class="mavi-bottom-actions-inner">
-		<button type="button" class="btn btn-secondary" (click)="showObservations = true">
+		<button type="button" class="btn btn-secondary" (click)="showObservations()">
 			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
 				stroke="currentColor" class="size-4 me-2">
 				<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -54,6 +54,3 @@
 	</div>
 </div>
 }
-
-<app-observations *ngIf="showObservations" [studentId]="studentId!"
-	(complete)="onObservationsComplete($event)"></app-observations>

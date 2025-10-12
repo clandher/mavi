@@ -1,86 +1,73 @@
-<div class="modal-overlay">
-	<div class="modal-content">
-		<h5 class="text-xl font-semibold mb-4">Asignar observaciones de entrenamiento</h5>
-		<div class="row">
-			<div class="col form-group">
-				<label for="newCategoryId" class="form-label">Categoría</label>
-				<select id="newCategoryId" [(ngModel)]="newCategoryId" name="newCategory" class="form-control"
-					(change)="onNewCategoryChange()">
-					<option *ngFor="let cat of categories" [value]="cat.id">{{ cat.type }}</option>
-				</select>
-			</div>
-			<div class="col form-group">
-				<label for="newActivityId" class="form-label">Actividad</label>
-				<select id="newActivityId" [(ngModel)]="newActivityId" name="newActivityId" class="form-control"
-					(change)="onNewActivityChange()">
-					<option *ngFor="let act of activities" [value]="act.id">{{ act.description }} {{act.startDate |
-						date:act.type.format}}
-					</option>
-				</select>
-			</div>
-		</div>
-		<br />
-		<div class="row">
-			<div class="col mavi-border">
-				<div class="form-group">
-					<label for="searchTerm" class="form-label">Estudiantes</label>
-					<input id="searchTerm" type="text" [(ngModel)]="searchTerm" (input)="onSearch()"
-						placeholder="Buscar estudiantes..." class="form-control">
-				</div>
-				<br />
-				<div class="mb-2">
-					<span class="font-semibold">Seleccionados: {{ selectedStudents }}</span>
-				</div>
-				<div class="d-grid gap-2" style="max-height: 40vh; overflow-y: auto;">
-					<div *ngFor="let student of filteredStudents" (click)=" onSelectStudent(student)"
-						[class.selected]="student.selected" class="mavi-border p-3 d-flex flex-column cursor-pointer">
-						<div class="d-flex items-center gap-2">
-
-							<img *ngIf="student.photoUrl" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
-							<div *ngIf="student.photo && !student.photoUrl" class="student-photo-sm-placeholder"></div>
-
-							<div>
-								<div>{{ student.nick ? student.nick : student.name }}</div>
-								<span *ngFor="let category of student.categories" class="mavi-tag me-2">{{
-									category.category.type }}</span>
-							</div>
-						</div>
-					</div>
-					<div *ngIf="filteredStudents.length === 0" class="col-span-2 text-center py-4 text-gray-500">No se
-						encontraron estudiantes</div>
-				</div>
-			</div>
-			<div class="col mavi-border">
-				<div class="form-group">
-					<label class="form-label">Observaciones</label>
-					<input type="text" [(ngModel)]="observationSearchTerm" (input)="onObservationSearch()"
-						placeholder="Buscar observaciones..." class="form-control" />
-				</div>
-				<br />
-				<div class="mb-2">
-					<span class="font-semibold">Seleccionadas: {{ selectedObservations.length }}</span>
-				</div>
-				<div class="d-grid gap-2" style="max-height: 40vh; overflow-y: auto;">
-					<div *ngFor="let obs of filteredObservations" (click)="toggleObservation(obs)"
-						[class.selected]="isObservationSelected(obs)" [class.cursor-pointer]="true"
-						class="mavi-border p-3 d-flex items-center">
-						<span>{{ obs }}</span>
-					</div>
-					<div *ngIf="filteredObservations.length === 0" class="text-center py-4 text-gray-500">No se
-						encontraron observaciones</div>
-				</div>
-
-			</div>
-		</div>
-		<div class="modal-footer">
-			<div class="d-flex justify-content-end gap-2 mt-4">
-				<app-submit [disabled]="selectedStudents === 0 || selectedObservations.length === 0"
-					submitText="Guardar" [submit]="onAssignObservations.bind(this)" (discard)="onCancel()">
-				</app-submit>
-
-				<btn-loading [action]="onAssignObservations.bind(this, true)" text="Guardar y ver"
-					[disabled]="selectedStudents > 1 || selectedStudents === 0 || selectedObservations.length === 0"></btn-loading>
-			</div>
-		</div>
+<div class="row">
+	<div class="col form-group">
+		<label for="newCategoryId" class="form-label">Categoría</label>
+		<select id="newCategoryId" [(ngModel)]="newCategoryId" name="newCategory" class="form-control"
+			(change)="onNewCategoryChange()">
+			<option *ngFor="let cat of categories" [value]="cat.id">{{ cat.type }}</option>
+		</select>
+	</div>
+	<div class="col form-group">
+		<label for="newActivityId" class="form-label">Actividad</label>
+		<select id="newActivityId" [(ngModel)]="newActivityId" name="newActivityId" class="form-control"
+			(change)="onNewActivityChange()">
+			<option *ngFor="let act of activities" [value]="act.id">{{ act.description }} {{act.startDate |
+				date:act.type.format}}
+			</option>
+		</select>
 	</div>
 </div>
+<br />
+<div class="row">
+	<div class="col mavi-border">
+		<div class="form-group">
+			<label for="searchTerm" class="form-label">Estudiantes</label>
+			<input id="searchTerm" type="text" [(ngModel)]="searchTerm" (input)="onSearch()"
+				placeholder="Buscar estudiantes..." class="form-control">
+		</div>
+		<br />
+		<div class="mb-2">
+			<span class="font-semibold">Seleccionados: {{ selectedStudents }}</span>
+		</div>
+		<div class="d-grid gap-2" style="max-height: 36vh; overflow-y: auto;">
+			<div *ngFor="let student of filteredStudents" (click)=" onSelectStudent(student)"
+				[class.selected]="student.selected" class="mavi-border p-3 d-flex flex-column cursor-pointer">
+				<div class="d-flex items-center gap-2">
+
+					<img *ngIf="student.photoUrl" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
+					<div *ngIf="student.photo && !student.photoUrl" class="student-photo-sm-placeholder"></div>
+
+					<div>
+						<div>{{ student.nick ? student.nick : student.name }}</div>
+						<span *ngFor="let category of student.categories" class="mavi-tag me-2">{{
+							category.category.type }}</span>
+					</div>
+				</div>
+			</div>
+			<div *ngIf="filteredStudents.length === 0" class="col-span-2 text-center py-4 text-gray-500">No se
+				encontraron estudiantes</div>
+		</div>
+	</div>
+	<div class="col mavi-border">
+		<div class="form-group">
+			<label class="form-label">Observaciones</label>
+			<input type="text" [(ngModel)]="observationSearchTerm" (input)="onObservationSearch()"
+				placeholder="Buscar observaciones..." class="form-control" />
+		</div>
+		<br />
+		<div class="mb-2">
+			<span class="font-semibold">Seleccionadas: {{ selectedObservations.length }}</span>
+		</div>
+		<div class="d-grid gap-2" style="max-height: 36vh; overflow-y: auto;">
+			<div *ngFor="let obs of filteredObservations" (click)="toggleObservation(obs)"
+				[class.selected]="isObservationSelected(obs)" [class.cursor-pointer]="true"
+				class="mavi-border p-3 d-flex items-center">
+				<span>{{ obs }}</span>
+			</div>
+			<div *ngIf="filteredObservations.length === 0" class="text-center py-4 text-gray-500">No se
+				encontraron observaciones</div>
+		</div>
+
+	</div>
+</div>
+<!-- <btn-loading [action]="onAssignObservations.bind(this, true)" text="Guardar y ver"
+	[disabled]="selectedStudents > 1 || selectedStudents === 0 || selectedObservations.length === 0"></btn-loading> -->

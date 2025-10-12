@@ -18,7 +18,7 @@ import { ModalService } from '@app/core/modal.service';
 
 @Component({
 	standalone: true,
-	imports: [CommonModule, RouterModule, FormsModule, ObservationsComponent, AvatarStudentActivityComponent, ActivitySelectorComponent],
+	imports: [CommonModule, RouterModule, FormsModule, AvatarStudentActivityComponent, ActivitySelectorComponent],
 	templateUrl: './avatars.component.html',
 	styleUrl: './avatars.component.scss'
 })
@@ -27,8 +27,6 @@ export class AvatarsComponent {
 	public showDebt: boolean = true;
 
 	public selectedStudentActivity: StudentActivityView | null = null;
-
-	public showObservationsModal: boolean = false;
 
 	public studentActivities: StudentActivityView[] = [];
 	public loadingStudentActivities: boolean = false;
@@ -81,6 +79,13 @@ export class AvatarsComponent {
 		}
 	}
 
+	public showObservations() {
+		this.modalService.open({
+			component: ObservationsComponent, title: 'Observaciones', size: 'xl',
+			inputs: { studentId: this.selectedStudentActivity?.studentId }
+		});
+	}
+
 	public onStudentActivitySelect(event: { event: StudentActivityEvent, value: any }, selectedStudentActivity: StudentActivityView): void {
 		this.selectedStudentActivity = selectedStudentActivity;
 
@@ -92,7 +97,7 @@ export class AvatarsComponent {
 				document.getElementById('photo')?.click();
 				break;
 			case 'OBSERVATIONS':
-				this.showObservationsModal = true;
+				this.showObservations();
 				break;
 		}
 	}
