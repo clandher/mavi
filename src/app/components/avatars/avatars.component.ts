@@ -25,12 +25,9 @@ import { ModalService } from '@app/core/modal.service';
 export class AvatarsComponent {
 
 	public showDebt: boolean = true;
-
-	public selectedStudentActivity: StudentActivityView | null = null;
-
 	public studentActivities: StudentActivityView[] = [];
 	public loadingStudentActivities: boolean = false;
-
+	public selectedStudentActivity: StudentActivityView | null = null;
 	public selectedActivity: Activity | null = null;
 
 	constructor(
@@ -40,7 +37,6 @@ export class AvatarsComponent {
 		private toastr: ToastrService,
 		private modalService: ModalService,
 	) {
-
 
 	}
 
@@ -62,10 +58,10 @@ export class AvatarsComponent {
 		});
 	}
 
-	public showPayment() {
+	public showPayment(studentActivity: StudentActivityView) {
 		this.modalService.open({
 			component: PaymentComponent, title: 'Realizar pago', size: 'md',
-			inputs: { studentId: this.selectedStudentActivity!.student.id }
+			inputs: { studentId: studentActivity.student.id }
 		}).subscribe((result: boolean) => {
 			if (result) {
 				this._loadStudentActivities();
@@ -79,25 +75,24 @@ export class AvatarsComponent {
 		}
 	}
 
-	public showObservations() {
+	public showObservations(studentActivity: StudentActivityView) {
 		this.modalService.open({
 			component: ObservationsComponent, title: 'Observaciones', size: 'xl',
-			inputs: { studentId: this.selectedStudentActivity?.studentId }
+			inputs: { studentId: studentActivity.student.id }
 		});
 	}
 
-	public onStudentActivitySelect(event: { event: StudentActivityEvent, value: any }, selectedStudentActivity: StudentActivityView): void {
-		this.selectedStudentActivity = selectedStudentActivity;
-
+	public onStudentActivitySelect(event: { event: StudentActivityEvent, value: any }, studentActivity: StudentActivityView): void {
+		this.selectedStudentActivity = studentActivity;
 		switch (event.event) {
 			case 'PAYMENT':
-				this.showPayment();
+				this.showPayment(studentActivity);
 				break;
 			case 'UPLOAD_PHOTO':
 				document.getElementById('photo')?.click();
 				break;
 			case 'OBSERVATIONS':
-				this.showObservations();
+				this.showObservations(studentActivity);
 				break;
 		}
 	}
