@@ -11,7 +11,7 @@ import { PaymentComponent } from "../payment/payment.component";
 import { setFocus } from '@app/core/helpers';
 import { ImageHttpClient } from '@app/core/image-http-client';
 import { FormGroupComponent } from "../form-group/form-group.component";
-
+import { ModalService } from '@app/core/modal.service';
 
 
 interface StudentCategoryView extends StudentCategory {
@@ -26,7 +26,7 @@ interface StudentView extends Student {
 
 @Component({
     standalone: true,
-    imports: [CommonModule, RouterModule, FormsModule, CurrencyMXPipe, PaymentComponent, FormGroupComponent],
+    imports: [CommonModule, RouterModule, FormsModule, CurrencyMXPipe, FormGroupComponent],
     templateUrl: './student-list.component.html',
     styleUrls: ['./student-list.component.scss']
 })
@@ -45,8 +45,6 @@ export class StudentListComponent implements OnInit, AfterViewInit {
 
     isLoading = true;
 
-    selectedStudent: Student | null = null;
-    showPaymentModal: boolean = false;
 
     private categoriesAPI: BaseHttp;
     private activityTypesAPI: BaseHttp; // API for activity types
@@ -62,7 +60,8 @@ export class StudentListComponent implements OnInit, AfterViewInit {
         private http: HttpClient,
         private imageHttp: ImageHttpClient,
         private route: ActivatedRoute,
-        public router: Router
+        public router: Router,
+        private modalService: ModalService,
     ) {
         this.categoriesAPI = new BaseHttp('categories', this.http);
         this.activityTypesAPI = new BaseHttp('activity-types', this.http); // Initialize activity types API
@@ -78,7 +77,7 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit(): void {
-        
+
         this._fetchData();
         setFocus('name');
     }
@@ -88,15 +87,14 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     }
 
     public openPaymentModal(student: Student) {
-        this.selectedStudent = student;
-        this.showPaymentModal = true;
-    }
-
-    public onPaymentComplete($event: boolean) {
-        this.showPaymentModal = false;
-        if ($event) {
-            this._fetchStudents();
-        }
+        this.modalService.open({
+            component: PaymentComponent, title: 'Realizar pago', size: 'md',
+            inputs: { studentId: student.id }
+        }).subscribe((result: boolean) => {
+            if (result) {
+                this._fetchStudents();
+            }
+        });
     }
 
     public onRestartFilters() {

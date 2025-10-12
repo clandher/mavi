@@ -1,12 +1,14 @@
 .btn-total-payment {
-
-    // btn btn-xs btn-primary position-absolute float-end
     font-size: 11px;
     position: absolute;
-    right: 0.5rem; // right-2 equivalent in Tailwind CSS
-    font-size: 0.75rem; // btn-xs equivalent in Tailwind CSS
-    // padding: 0.25rem 0.5rem; // Adjust padding for smaller button size
+    right: 0.5rem;
+    font-size: 0.75rem;
     border-radius: 0;
     background-color: #fff;
     border: none;
+}
+
+.payment-container {
+    max-height: 400px;
+    overflow-y: auto;
 }

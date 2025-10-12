@@ -18,7 +18,7 @@ import { ModalService } from '@app/core/modal.service';
 
 @Component({
 	standalone: true,
-	imports: [CommonModule, RouterModule, FormsModule, PaymentComponent, ObservationsComponent, AvatarStudentActivityComponent, ActivitySelectorComponent],
+	imports: [CommonModule, RouterModule, FormsModule, ObservationsComponent, AvatarStudentActivityComponent, ActivitySelectorComponent],
 	templateUrl: './avatars.component.html',
 	styleUrl: './avatars.component.scss'
 })
@@ -28,7 +28,6 @@ export class AvatarsComponent {
 
 	public selectedStudentActivity: StudentActivityView | null = null;
 
-	public showPaymentModal: boolean = false;
 	public showObservationsModal: boolean = false;
 
 	public studentActivities: StudentActivityView[] = [];
@@ -65,14 +64,16 @@ export class AvatarsComponent {
 		});
 	}
 
-	public onPaymentComplete(value: boolean): void {
-		this.showPaymentModal = false;
-
-		if (value) {
-			this._loadStudentActivities();
-		}
+	public showPayment() {
+		this.modalService.open({
+			component: PaymentComponent, title: 'Realizar pago', size: 'md',
+			inputs: { studentId: this.selectedStudentActivity!.student.id }
+		}).subscribe((result: boolean) => {
+			if (result) {
+				this._loadStudentActivities();
+			}
+		});
 	}
-
 
 	public onPhotoSelected($event: Event) {
 		if (this.selectedStudentActivity?.student) {
@@ -85,7 +86,7 @@ export class AvatarsComponent {
 
 		switch (event.event) {
 			case 'PAYMENT':
-				this.showPaymentModal = true;
+				this.showPayment();
 				break;
 			case 'UPLOAD_PHOTO':
 				document.getElementById('photo')?.click();

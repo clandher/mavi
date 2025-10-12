@@ -26,10 +26,6 @@
 </div>
 }
 
-<app-payment *ngIf="showPaymentModal" [studentId]="selectedStudentActivity?.student?.id!"
-	(complete)="onPaymentComplete($event)">
-</app-payment>
-
 <app-observations *ngIf="showObservationsModal" [studentId]="selectedStudentActivity?.studentId!"
 	(complete)="showObservationsModal = false">
 </app-observations>

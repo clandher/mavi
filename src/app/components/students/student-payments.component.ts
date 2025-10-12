@@ -9,17 +9,18 @@ import { VoucherHelper } from '@app/core/voucher.helper';
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 import { SchoolService } from '@app/core/school.service';
 import { StudentService } from '@app/core/student.service';
+import { ModalService } from '@app/core/modal.service';
 
 @Component({
 	standalone: true,
-	imports: [CommonModule, PaymentComponent, CurrencyMXPipe],
+	imports: [CommonModule, CurrencyMXPipe],
 	templateUrl: './student-payments.component.html',
 	providers: []
 })
 export class StudentPaymentsComponent implements OnInit {
 
 	paymentsWithChargers: StudentPayment[] = [];
-	studentId: string | null = null;
+	studentId: number | null = null;
 	public showVoucherModal: boolean = false;
 	public voucherPayment: StudentPayment | null = null;
 
@@ -29,18 +30,16 @@ export class StudentPaymentsComponent implements OnInit {
 		private router: Router,
 		private schoolService: SchoolService,
 		private studentService: StudentService,
+		private modalService: ModalService,
 	) {
 
-		this.studentId = this.route.parent!.snapshot.paramMap.get('id');
+		this.studentId = Number(this.route.parent!.snapshot.paramMap.get('id'));
 
 	}
 
 	ngOnInit(): void {
 		this._loadPayments();
 	}
-
-
-	public showPaymentModal: boolean = false;
 
 	private _loadPayments() {
 		const paymentHttp = new StudentPaymentHttp(this.http);
@@ -50,13 +49,17 @@ export class StudentPaymentsComponent implements OnInit {
 		});
 	}
 
-	onPaymentComplete(value: boolean) {
-		this.showPaymentModal = false;
 
-		if (value) {
-			this._loadPayments();
-			this.studentService.notifyRefresh();
-		}
+	public openPaymentModal() {
+		this.modalService.open({
+			component: PaymentComponent, title: 'Realizar pago', size: 'md',
+			inputs: { studentId: this.studentId }
+		}).subscribe((result: boolean) => {
+			if (result) {
+				this._loadPayments();
+				this.studentService.notifyRefresh();
+			}
+		});
 	}
 
 	async generateVoucher(studentPayment: StudentPayment) {

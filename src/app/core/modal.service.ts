@@ -1,6 +1,5 @@
 import { Injectable, Type } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
-// import { Modal } from 'bootstrap';
 import { FormGroup } from '@angular/forms';
 
 export interface ModalInjectable {
@@ -10,7 +9,8 @@ export interface ModalInjectable {
 }
 
 export interface ModalConfig {
-    options?: Partial<any>
+    inputs?: any;
+    // options?: Partial<any>
     component: Type<ModalInjectable> | null;
     title?: string;
     size?: 'sm' | 'md' | 'lg' | 'xl';

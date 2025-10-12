@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { LocalStorage } from '../../core/local-storage';
 import { HttpClient } from '@angular/common/http';
 import { Charge, CreatePaymentDto, StudentPayment } from '@app/core/dto';
@@ -9,44 +9,47 @@ import { RequestQueryBuilder } from '@dataui/crud-request';
 import { VoucherHelper } from '@app/core/voucher.helper';
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 import { SchoolService } from '@app/core/school.service';
-import { SubmitComponent } from '../submit/submit.component';
 import { firstValueFrom } from 'rxjs';
 import { NgxMaskDirective } from 'ngx-mask';
 import { setFocus } from '@app/core/helpers';
+import { ModalInjectable } from '@app/core/modal.service';
 
 @Component({
     selector: 'app-payment',
     templateUrl: './payment.component.html',
     styleUrls: ['./payment.component.scss'],
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, CurrencyMXPipe, SubmitComponent, NgxMaskDirective],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, CurrencyMXPipe, NgxMaskDirective],
     standalone: true
 })
-export class PaymentComponent implements OnChanges {
+export class PaymentComponent implements OnChanges, ModalInjectable {
     @Input() studentId!: number;
-    @Output() complete = new EventEmitter<boolean>();
 
     public charges: Charge[] = [];
     public downloadVoucher = new LocalStorage<boolean>('download.voucher', true);
-    public formGroup: FormGroup;
+    public form: FormGroup;
 
     private _paymentDistribution: number[] = [];
+
+    get disabled(): boolean {
+        return this.form.get('paymentAmount')?.value <= 0 || this.form.get('paymentAmount')?.value > this.getTotalDebt();
+    }
 
     constructor(
         private http: HttpClient,
         private schoolService: SchoolService
     ) {
-        this.formGroup = new FormGroup({
+        this.form = new FormGroup({
             paymentAmount: new FormControl('', [Validators.required, Validators.min(0)])
         });
 
-        this.formGroup.get('paymentAmount')?.valueChanges.subscribe(() => {
+        this.form.get('paymentAmount')?.valueChanges.subscribe(() => {
             this.updatePaymentDistribution();
         });
     }
 
     ngOnChanges(changes: SimpleChanges) {
         this._loadCharges();
-        this.formGroup.get('paymentAmount')?.setValue(0);
+        this.form.get('paymentAmount')?.setValue(0);
         this._paymentDistribution = [];
     }
 
@@ -64,8 +67,8 @@ export class PaymentComponent implements OnChanges {
         const chargersAPI = new BaseHttp(`chargers?${qb}`, this.http);
         chargersAPI.get<Charge[]>().subscribe(result => {
             this.charges = result.sort((a, b) => new Date(a.chargeDate).getTime() - new Date(b.chargeDate).getTime());
-            this.formGroup.patchValue({ paymentAmount: this.getTotalDebt() });
-            this.formGroup.markAsDirty();
+            this.form.patchValue({ paymentAmount: this.getTotalDebt() });
+            this.form.markAsDirty();
             setTimeout(() => setFocus('paymentAmount'), 50);
         });
     }
@@ -76,7 +79,7 @@ export class PaymentComponent implements OnChanges {
     }
 
     updatePaymentDistribution() {
-        let remainingPayment = this.formGroup.get('paymentAmount')?.value ?? 0;
+        let remainingPayment = this.form.get('paymentAmount')?.value ?? 0;
         this._paymentDistribution = [];
 
         for (let charge of this.charges) {
@@ -121,16 +124,13 @@ export class PaymentComponent implements OnChanges {
     }
 
     payFullAmount() {
-        this.formGroup.get('paymentAmount')?.setValue(this.getTotalDebt());
+        this.form.get('paymentAmount')?.setValue(this.getTotalDebt());
         this.updatePaymentDistribution();
     }
 
-    onDiscard() {
-        this.complete.emit(false);
-    }
 
     async onSubmit(): Promise<void> {
-        const paymentAmount = this.formGroup.get('paymentAmount')?.value ?? 0;
+        const paymentAmount = this.form.get('paymentAmount')?.value ?? 0;
         if (!(paymentAmount > 0 && paymentAmount <= this.getTotalDebt())) {
             return;
         }
@@ -141,8 +141,6 @@ export class PaymentComponent implements OnChanges {
         if (this.downloadVoucher.value) {
             await VoucherHelper.download(studentPayment, this.schoolService.value);
         }
-
-        this.complete.emit(true);
     }
 
     onAutoDownloadChange() {

@@ -30,6 +30,13 @@ export class ModalComponent {
             if (config.component) {
                 this.container.clear();
                 this._component = this.container.createComponent<ModalInjectable>(config.component);
+
+                // Use setInput to trigger Angular lifecycle hooks
+                if (config.inputs) {
+                    for (const [key, value] of Object.entries(config.inputs)) {
+                        this._component.setInput(key, value);
+                    }
+                }
             }
 
             const modalElement = document.getElementById('modal');

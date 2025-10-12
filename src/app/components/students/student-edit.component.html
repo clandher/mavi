@@ -32,7 +32,8 @@
     </div>
 
     <div class="d-flex gap-3 items-center">
-        <app-form-group class="d-flex-2" title="CURP" [control]="studentForm.get('curp')" name="curp" placeholder="CURP">
+        <app-form-group class="d-flex-2" title="CURP" [control]="studentForm.get('curp')" name="curp"
+            placeholder="CURP">
             <input id="curp" type="text" class="form-control" formControlName="curp" placeholder="CURP">
         </app-form-group>
 
@@ -55,17 +56,14 @@
 
 </form>
 
-<app-payment *ngIf="showPaymentModal" [studentId]="student!.id!" (complete)="onPaymentComplete($event)"></app-payment>
 
 <div class="d-flex justify-content-end mt-4">
-
-    <span *ngIf="student && student.debt > 0" (click)="showPaymentModal = true" class="btn btn-attend me-2">
+    <span *ngIf="student && student.debt > 0" (click)="openPaymentModal(student)" class="btn btn-attend me-2">
         Debe {{ student.debt | currency:'MXN' }}
     </span>
 
     <app-submit [form]="studentForm" [submit]="saveStudent.bind(this)" (discard)="closeModal()" [isModal]="false">
     </app-submit>
-
 </div>
 
 

@@ -1,103 +1,67 @@
-<div class="modal-overlay ">
-	<div class="modal-content  w-50" [formGroup]="formGroup">
+<form [formGroup]="form" class="d-flex flex-column">
+	<div class="mb-4">
+		<label class="form-label">Monto a pagar</label>
+		<div class="position-relative d-flex items-center">
 
-		<div class="d-flex flex-column">
-			<div class="mb-4">
-				<label class="form-label">Monto a pagar</label>
-				<div class="position-relative d-flex items-center">
-
-					<input id="paymentAmount" type="text" formControlName="paymentAmount" class="form-control"
-						[class.border-red-500]="formGroup.get('paymentAmount')?.value > getTotalDebt()"
-						mask="separator.2" [thousandSeparator]="','" [decimalMarker]="'.'"
-						[allowNegativeNumbers]="false" min="0" [max]="getTotalDebt()" />
+			<input id="paymentAmount" type="text" formControlName="paymentAmount" class="form-control"
+				[class.border-red-500]="form.get('paymentAmount')?.value > getTotalDebt()" mask="separator.2"
+				[thousandSeparator]="','" [decimalMarker]="'.'" [allowNegativeNumbers]="false" min="0"
+				[max]="getTotalDebt()" />
 
 
-					<button (click)="payFullAmount()" class="btn-total-payment" [style]="'margin-top: 1px'"
-						style="top:6px">
-						Pagar total
-					</button>
-				</div>
-				<p *ngIf="formGroup.get('paymentAmount')?.value > getTotalDebt()" class="form-control-error">
-					El monto excede el adeudo total
-				</p>
-				<p class="text-sm text-gray-500 mt-1"
-					*ngIf="getTotalDebt() - formGroup.get('paymentAmount')?.value > 0">
-					Monto total restante:
-					<span class="high-debt">
-						{{getTotalDebt() - formGroup.get('paymentAmount')?.value | currencyMX}}
-					</span>
-				</p>
-			</div>
-			<!-- Checkbox para preferencia de descarga automática del voucher -->
-
-			<h3 class="font-medium mb-2">Cargos pendientes</h3>
+			<button (click)="payFullAmount()" class="btn-total-payment" [style]="'margin-top: 1px'" style="top:6px">
+				Pagar total
+			</button>
 		</div>
-		<div class="modal-body">
-			<div class="space-y-2">
-				<!-- <div *ngFor="let charge of charges; let i = index" class="mavi-border">
-					<div class="d-flex justify-content-between">
-						<div>
-							<span class="font-medium">{{charge.concept}}</span>
-							<span class="text-sm text-gray-500 block">{{charge.chargeDate |
-								date:'dd/MM/yyyy'}}</span>
-						</div>
-						<div class="text-end">
-							<div class="font-medium">{{getCoveredAmount(i) | currencyMX}}</div>
-							<div class="text-sm " *ngIf="getRemainingAfterPayment(i) > 0">
-								<span class="high-debt">
-									{{getRemainingAfterPayment(i) | currencyMX}}
-								</span>
-							</div>
-						</div>
-					</div>
-				</div> -->
+		<p *ngIf="form.get('paymentAmount')?.value > getTotalDebt()" class="form-control-error">
+			El monto excede el adeudo total
+		</p>
+		<p class="text-sm text-gray-500 mt-1" *ngIf="getTotalDebt() - form.get('paymentAmount')?.value > 0">
+			Monto total restante:
+			<span class="high-debt">
+				{{getTotalDebt() - form.get('paymentAmount')?.value | currencyMX}}
+			</span>
+		</p>
+	</div>
+</form>
 
-				<div *ngFor="let cargo of charges; let i = index" class="mavi-border mb-2">
-					<div class="d-flex justify-content-between items-center mb-1">
-						<div>
-							{{ cargo.activity.description }} ({{ cargo.concept }})
-						</div>
+<div class="form-label">Cargos pendientes</div>
+<div class="payment-container">
+	<div *ngFor="let cargo of charges; let i = index" class="mavi-border mb-2">
+		<div class="d-flex justify-content-between items-center mb-1">
+			<div>
+				{{ cargo.activity.description }} ({{ cargo.concept }})
+			</div>
 
-						<div class="text-xs text-gray-500">
-							{{ cargo.chargeDate | date:'mediumDate' }}
-						</div>
-					</div>
-					<div class="d-flex justify-content-between">
-						<div *ngIf="getCoveredAmount(i); else empty" class="detail-row" class="detail-row">
-							<div class="detail-label">A pagar</div>
-							<div class="detail-value high-paid">
-								{{ getCoveredAmount(i) | currencyMX }}
-							</div>
-						</div>
-						<ng-template #empty>
-							<div>
-							</div>
-						</ng-template>
-
-						<div *ngIf="getRemainingAfterPayment(i) > 0" class="detail-row">
-							<div class="detail-label">Pendiente</div>
-							<div class="detail-value high-debt">
-								{{getRemainingAfterPayment(i) | currencyMX}}
-							</div>
-						</div>
-
-					</div>
-				</div>
+			<div class="text-xs text-gray-500">
+				{{ cargo.chargeDate | date:'mediumDate' }}
 			</div>
 		</div>
+		<div class="d-flex justify-content-between">
+			<div *ngIf="getCoveredAmount(i); else empty" class="detail-row" class="detail-row">
+				<div class="detail-label">A pagar</div>
+				<div class="detail-value high-paid">
+					{{ getCoveredAmount(i) | currencyMX }}
+				</div>
+			</div>
+			<ng-template #empty>
+				<div>
+				</div>
+			</ng-template>
 
-		<div class="modal-footer pt-4">
-			<br>
-			<div class="mb-4 d-flex items-center me-auto">
-				<input class="form-control" type="checkbox" id="autoDownloadVoucher" [checked]="downloadVoucher.value"
-					(change)="onAutoDownloadChange()" />
-				<label for="autoDownloadVoucher" class="ml-2">Descargar voucher automáticamente</label>
+			<div *ngIf="getRemainingAfterPayment(i) > 0" class="detail-row">
+				<div class="detail-label">Pendiente</div>
+				<div class="detail-value high-debt">
+					{{getRemainingAfterPayment(i) | currencyMX}}
+				</div>
 			</div>
 
-			<app-submit [form]="formGroup"
-				[disabled]="formGroup.get('paymentAmount')?.value <= 0 || formGroup.get('paymentAmount')?.value > getTotalDebt()"
-				[submit]="onSubmit.bind(this)" (discard)="onDiscard()">
-			</app-submit>
 		</div>
 	</div>
+</div>
+
+<div class="mt-4 d-flex items-center me-auto">
+	<input class="form-control" type="checkbox" id="autoDownloadVoucher" [checked]="downloadVoucher.value"
+		(change)="onAutoDownloadChange()" />
+	<label for="autoDownloadVoucher" class="ml-2">Descargar voucher</label>
 </div>

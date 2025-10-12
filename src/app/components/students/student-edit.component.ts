@@ -13,6 +13,7 @@ import { ImageHttpClient } from '@app/core/image-http-client';
 import { PaymentComponent } from '../payment/payment.component';
 import { ToastrService } from 'ngx-toastr';
 import { StudentService } from '@app/core/student.service';
+import { ModalService } from '@app/core/modal.service';
 
 @Component({
     standalone: true,
@@ -29,7 +30,6 @@ export class StudentEditComponent {
 
     public studentForm: FormGroup;
     public student: Student | null = null;
-    public showPaymentModal = false;
 
     private _origin: string | null = null;
 
@@ -40,7 +40,8 @@ export class StudentEditComponent {
         private imageHttp: ImageHttpClient,
         private fb: FormBuilder,
         private toastr: ToastrService,
-        private studentService: StudentService
+        private studentService: StudentService,
+        private modalService: ModalService,
     ) {
         this.studentForm = this.fb.group({
             id: [''],
@@ -57,7 +58,6 @@ export class StudentEditComponent {
 
         const navigation = this.router.getCurrentNavigation();
         this._origin = navigation?.extras.state ? navigation.extras.state['origin'] : null;
-        console.log('Origin:', this._origin);
 
         this.studentService.refreshNotifier.subscribe(() => {
             this.refreshStudentData();
@@ -215,12 +215,15 @@ export class StudentEditComponent {
         this.complete.emit(false);
     }
 
-    public onPaymentComplete(value: boolean) {
-        console.log('Payment complete:', value);
-        this.showPaymentModal = false;
-        if (value) {
-            this.refreshStudentData();
-        }
+    public openPaymentModal(student: Student) {
+        this.modalService.open({
+            component: PaymentComponent, title: 'Realizar pago', size: 'md',
+            inputs: { studentId: student.id }
+        }).subscribe((result: boolean) => {
+            if (result) {
+                this.refreshStudentData();
+            }
+        });
     }
 
     refreshStudentData(): void {
