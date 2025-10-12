@@ -1,3 +1,39 @@
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 50;
+
+    .modal-content {
+        background: #111111;
+        color: #e5e7eb;
+        border: 1px solid #262626;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        padding: 16px;
+        min-width: 350px;
+        max-width: 60vw;
+        max-height: 80vh;
+        overflow-y: auto;
+
+        .modal-body {
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        .modal-footer {
+            position: sticky;
+            bottom: 0;
+            background: inherit;
+            z-index: 1;
+        }
+    }
+}
+
+
+
 @keyframes wow-bounce-sutil {
     0% {
         transform: scale(0.98);
