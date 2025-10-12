@@ -5,6 +5,7 @@ import { BaseHttp } from '@app/core/base-http';
 import { NgIf, NgFor } from '@angular/common';
 import { ActivityTypeComponent } from '../activity-type/activity-type.component';
 import { ActivityType } from '@app/core/dto';
+import { ModalService } from '@app/core/modal.service';
 
 
 
@@ -12,17 +13,19 @@ import { ActivityType } from '@app/core/dto';
 	selector: 'app-activity-types',
 	templateUrl: './activity-types.component.html',
 	styleUrls: [],
-	imports: [NgIf, NgFor, ActivityTypeComponent]
+	imports: [NgIf, NgFor]
 })
 export class ActivityTypesComponent {
-	activityTypes: ActivityType[] = [];
-	showActivityTypeModal: boolean = false;
 
-	activityTypeId: number = 0;
+	activityTypes: ActivityType[] = [];
+
 
 	private activityTypeAPI: BaseHttp;
 
-	constructor(private fb: FormBuilder, private http: HttpClient) {
+	constructor(
+		private modalService: ModalService,
+		private http: HttpClient
+	) {
 		this.activityTypeAPI = new BaseHttp('activity-types', this.http);
 	}
 
@@ -31,7 +34,6 @@ export class ActivityTypesComponent {
 	}
 
 	loadActivityTypes(): void {
-		this.showActivityTypeModal = false;
 
 		this.activityTypeAPI.get<ActivityType[]>().subscribe(
 			(data) => {
@@ -54,8 +56,16 @@ export class ActivityTypesComponent {
 		});
 	}
 
-	editActivityType(activityTypeId: number): void {
-		this.activityTypeId = activityTypeId;
-		this.showActivityTypeModal = true;
+	showModal(activityTypeId: number, title: string) {
+		this.modalService.open({
+			component: ActivityTypeComponent, title: title, size: 'md',
+			inputs: { activityTypeId: activityTypeId },
+		}).subscribe((result) => {
+			if (result) {
+				this.loadActivityTypes();
+			}
+		});
 	}
+
+
 }

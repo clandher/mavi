@@ -1,7 +1,3 @@
-<div *ngIf="showCategoryModal">
-    <app-category [categoryId]="categoryId" (complete)="loadCategories()"></app-category>
-</div>
-
 <div class="mavi-grid">
     <div *ngFor="let category of categories; let i = index" class="mavi-card">
         <div class="d-flex justify-content-between items-center mb-2">
@@ -26,7 +22,7 @@
         </div>
 
         <div class="mavi-card-actions mt-4">
-            <button class="btn btn-sm btn-outline" (click)="editCategory(category.id)">
+            <button class="btn btn-sm btn-outline" (click)="showModal(category.id, 'Editar categoría')">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="size-4 me-2">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -54,7 +50,7 @@
 
 <div class="mavi-bottom-actions">
     <div class="mavi-bottom-actions-inner">
-        <button class="btn btn-secondary" (click)="showCategoryModal = true">
+        <button class="btn btn-secondary" (click)="showModal(0, 'Nueva categoría')">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="size-4 me-2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />

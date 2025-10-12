@@ -4,6 +4,8 @@ import { FormBuilder } from '@angular/forms';
 import { BaseHttp } from '@app/core/base-http';
 import { NgIf, NgFor } from '@angular/common';
 import { CategoryComponent } from '../category/category.component';
+import { ActivityTypeComponent } from '../activity-type/activity-type.component';
+import { ModalService } from '@app/core/modal.service';
 
 interface Category {
 	id: number;
@@ -20,13 +22,13 @@ interface Category {
 })
 export class CategoriesComponent {
 	categories: Category[] = [];
-	showCategoryModal: boolean = false;
-
-	categoryId: number = 0;
 
 	private categoryAPI: BaseHttp;
 
-	constructor(private fb: FormBuilder, private http: HttpClient) {
+	constructor(
+		private modalService: ModalService,
+		private http: HttpClient,
+	) {
 		this.categoryAPI = new BaseHttp('categories', this.http);
 	}
 
@@ -35,8 +37,6 @@ export class CategoriesComponent {
 	}
 
 	loadCategories(): void {
-		this.showCategoryModal = false;
-
 		this.categoryAPI.sub('with-counts').get<Category[]>().subscribe(
 			(data) => {
 				this.categories = data;
@@ -58,8 +58,14 @@ export class CategoriesComponent {
 		});
 	}
 
-	editCategory(categoryId: number): void {
-		this.categoryId = categoryId;
-		this.showCategoryModal = true;
+	showModal(categoryId: number, title: string) {
+		this.modalService.open({
+			component: CategoryComponent, title: title, size: 'md',
+			inputs: { categoryId: categoryId },
+		}).subscribe((result) => {
+			if (result) {
+				this.loadCategories();
+			}
+		});
 	}
 }

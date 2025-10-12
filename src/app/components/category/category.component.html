@@ -1,12 +1,5 @@
-<div class="modal-overlay">
-    <div class="modal-content">
-        <h5 class="text-xl font-semibold mb-4">{{ categoryId !== 0 ? 'Editar categoría' : 'Nueva categoría' }}</h5>
-        <form [formGroup]="categoryForm">
-            <app-form-group [title]="'Nombre de la categoría'" [control]="categoryForm.get('type')" class="form-group">
-                <input id="type" type="text" formControlName="type" class="form-control" [readonly]="false"
-                    autocomplete="off">
-            </app-form-group>
-        </form>
-        <app-submit [form]="categoryForm" [submit]="saveCategory.bind(this)" (discard)="closeModal()"></app-submit>
-    </div>
-</div>
+<form [formGroup]="form">
+    <app-form-group [title]="'Nombre de la categoría'" [control]="form.get('type')" class="form-group">
+        <input id="type" type="text" formControlName="type" class="form-control" [readonly]="false" autocomplete="off">
+    </app-form-group>
+</form>

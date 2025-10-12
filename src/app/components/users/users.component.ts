@@ -6,24 +6,24 @@ import { User } from '@app/core/dto';
 import { UserComponent } from '../user/user.component';
 import { UserPasswordComponent } from '../user-password/user-password.component';
 import { AuthService } from '@app/core/auth.service';
+import { ModalService } from '@app/core/modal.service';
 
 @Component({
     selector: 'app-users',
     templateUrl: './users.component.html',
     styleUrls: ['./users.component.scss'],
-    imports: [NgIf, NgFor, UserComponent, UserPasswordComponent]
+    imports: [NgIf, NgFor]
 })
 export class UsersComponent implements OnInit {
 
     users: User[] = [];
-    showUserModal: boolean = false;
-    showPasswordModal: boolean = false;
 
-    userId: number = 0;
+    userId: number = 0
 
     private userAPI: BaseHttp;
 
     constructor(
+        private modalService: ModalService,
         private http: HttpClient,
         private authService: AuthService,
     ) {
@@ -35,9 +35,6 @@ export class UsersComponent implements OnInit {
     }
 
     loadUsers(): void {
-
-
-        this.showUserModal = false;
 
         this.userAPI.get<User[]>().subscribe(
             (data) => {
@@ -68,23 +65,24 @@ export class UsersComponent implements OnInit {
         });
     }
 
-    onNewUser() {
-        this.userId = 0;
-        this.showUserModal = true;
+    showModalUser(userId: number, title: string): void {
+        this.modalService.open({
+            component: UserComponent, title: title, size: 'md',
+            inputs: { userId: userId },
+        }).subscribe((result) => {
+            if (result) {
+                this.loadUsers();
+            }
+        });
     }
 
-    editUser(userId: number): void {
-        this.userId = userId;
-        this.showUserModal = true;
+    showModalPassword(userId: number, title: string): void {
+        this.modalService.open({
+            component: UserPasswordComponent, title: title, size: 'md',
+            inputs: { userId: userId },
+        }).subscribe((result) => {
+            this.userId = 0;
+        });
     }
 
-    openPasswordModal(userId: number): void {
-        this.userId = userId;
-        this.showPasswordModal = true;
-    }
-
-    onPasswordModalComplete(success: boolean): void {
-        this.showPasswordModal = false;
-        this.userId = 0;
-    }
 }

@@ -7,26 +7,28 @@ import { FormGroupComponent } from "../form-group/form-group.component";
 import { SubmitComponent } from '../submit/submit.component';
 import { setFocus } from '@app/core/helpers';
 import { MaviValidators } from '@app/core/mavi-validators';
+import { ModalInjectable, ModalService } from '@app/core/modal.service';
 
 @Component({
     selector: 'app-user',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormGroupComponent, SubmitComponent],
+    imports: [CommonModule, ReactiveFormsModule, FormGroupComponent],
     templateUrl: './user.component.html',
     styleUrls: ['./user.component.scss']
 })
-export class UserComponent {
+export class UserComponent implements ModalInjectable {
     @Input() userId: number = 0;
     @Output() complete = new EventEmitter<boolean>();
 
-    public userForm: FormGroup;
+    disabled: boolean = false;
+    public form: FormGroup;
     showPassword = false;
 
     constructor(
         private http: HttpClient,
         private fb: FormBuilder,
     ) {
-        this.userForm = this.fb.group({
+        this.form = this.fb.group({
             name: ['', [MaviValidators.required()]],
             email: ['', [MaviValidators.required(), MaviValidators.email()]],
             password: ['', []],
@@ -43,32 +45,32 @@ export class UserComponent {
         if (this.userId > 0) {
             const userAPI = new BaseHttp(`users/${id}`, this.http);
             userAPI.get<any>().subscribe(result => {
-                this.userForm.patchValue({
+                this.form.patchValue({
                     name: result.name,
                     email: result.email,
                     developer: result.developer,
                     lock: result.lock,
                 });
 
-                this.userForm.get('password')?.clearValidators();
-                this.userForm.get('password')?.updateValueAndValidity();
+                this.form.get('password')?.clearValidators();
+                this.form.get('password')?.updateValueAndValidity();
 
                 if (result.lock) {
-                    this.userForm.get('developer')?.disable();
+                    this.form.get('developer')?.disable();
                 }
 
                 setFocus('name');
             });
         } else {
-            this.userForm.get('password')?.setValidators([MaviValidators.minLength(8), MaviValidators.required()]);
-            this.userForm.get('password')?.updateValueAndValidity();
+            this.form.get('password')?.setValidators([MaviValidators.minLength(8), MaviValidators.required()]);
+            this.form.get('password')?.updateValueAndValidity();
             setFocus('name');
         }
     }
 
-    saveUser(): Promise<void> {
+    onSubmit(): Promise<void> {
         return new Promise((resolve, reject) => {
-            const formValue = this.userForm.value;
+            const formValue = this.form.value;
             const usersAPI = new BaseHttp(`users`, this.http);
 
             if (this.userId !== 0) {
@@ -92,9 +94,5 @@ export class UserComponent {
                 });
             }
         });
-    }
-
-    closeModal(): void {
-        this.complete.emit(false);
     }
 }

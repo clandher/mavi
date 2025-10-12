@@ -1,7 +1,3 @@
-<div *ngIf="showUserModal">
-    <app-user [userId]="userId" (complete)="loadUsers()"></app-user>
-</div>
-
 <div class="mavi-grid">
     <div *ngFor="let user of users; let i = index" class="mavi-card">
         <div class="d-flex justify-content-between items-center mb-2">
@@ -26,7 +22,7 @@
 
         <div class="card-actions mt-4 d-flex flex-wrap gap-2">
 
-            <button class="btn btn-sm btn-outline flex-grow-1" (click)="editUser(user.id)">
+            <button class="btn btn-sm btn-outline flex-grow-1" (click)="showModalUser(user.id, 'Editar usuario')">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="me-2" style="width: 1rem; height: 1rem;">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -44,7 +40,8 @@
                 Eliminar
             </button>
 
-            <button class="btn btn-sm btn-outline flex-grow-1" (click)="openPasswordModal(user.id)">
+            <button class="btn btn-sm btn-outline flex-grow-1"
+                (click)="showModalPassword(user.id, 'Cambiar contraseña')">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="me-2" style="width: 1rem; height: 1rem;">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -62,7 +59,7 @@
 
 <div class="mavi-bottom-actions">
     <div class="mavi-bottom-actions-inner">
-        <button class="btn btn-secondary" (click)="onNewUser()">
+        <button class="btn btn-secondary" (click)="showModalUser(0, 'Nuevo usuario')">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="size-4 me-2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -70,8 +67,4 @@
             Nuevo usuario
         </button>
     </div>
-</div>
-
-<div *ngIf="showPasswordModal">
-    <app-user-password [userId]="userId" (complete)="onPasswordModalComplete($event)"></app-user-password>
 </div>

@@ -1,7 +1,3 @@
-<div *ngIf="showActivityTypeModal">
-    <app-activity-type [activityTypeId]="activityTypeId" (complete)="loadActivityTypes()"></app-activity-type>
-</div>
-
 <div class="mavi-grid">
     <div *ngFor="let activityType of activityTypes" class="mavi-card">
         <div class="d-flex justify-content-between items-center mb-2">
@@ -32,7 +28,7 @@
         </div>
 
         <div class="mavi-card-actions mt-4">
-            <button class="btn btn-sm btn-outline" (click)="editActivityType(activityType.id)">
+            <button class="btn btn-sm btn-outline" (click)="showModal(activityType.id, 'Editar tipo de actividad')">
                 Editar
             </button>
             <button class="btn btn-sm btn-destructive" (click)="deleteActivityType(activityType.id)"
@@ -50,7 +46,7 @@
 
 <div class="mavi-bottom-actions">
     <div class="mavi-bottom-actions-inner">
-        <button class="btn btn-secondary" (click)="showActivityTypeModal = true; activityTypeId = 0">
+        <button class="btn btn-secondary" (click)="showModal(0, 'Nuevo tipo de actividad')">
             Nuevo tipo de actividad
         </button>
     </div>

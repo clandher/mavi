@@ -5,27 +5,29 @@ import { HttpClient } from '@angular/common/http';
 import { BaseHttp } from '@app/core/base-http';
 import { Category } from '@app/core/dto';
 import { FormGroupComponent } from "../form-group/form-group.component";
-import { SubmitComponent } from '../submit/submit.component';
 import { setFocus } from '@app/core/helpers';
+import { ModalInjectable, ModalService } from '@app/core/modal.service';
 
 @Component({
     selector: 'app-category',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormGroupComponent, SubmitComponent],
+    imports: [CommonModule, ReactiveFormsModule, FormGroupComponent],
     templateUrl: './category.component.html',
     styleUrls: ['./category.component.scss']
 })
-export class CategoryComponent {
+export class CategoryComponent implements ModalInjectable {
+    disabled: boolean = false;
+
     @Input() categoryId: number = 0;
     @Output() complete = new EventEmitter<boolean>();
 
-    public categoryForm: FormGroup;
+    public form: FormGroup;
 
     constructor(
         private http: HttpClient,
         private fb: FormBuilder,
     ) {
-        this.categoryForm = this.fb.group({
+        this.form = this.fb.group({
             type: ['', []]
         });
     }
@@ -38,20 +40,22 @@ export class CategoryComponent {
         if (this.categoryId > 0) {
             const categoryAPI = new BaseHttp(`categories/${id}`, this.http);
             categoryAPI.get<Category>().subscribe(result => {
-                this.categoryForm.patchValue({
+                this.form.patchValue({
                     type: result.type
                 });
 
                 setFocus('type');
             });
         } else {
-            setFocus('type');
+            setTimeout(() => {
+                setFocus('type');
+            }, 100);
         }
     }
 
-    saveCategory(): Promise<void> {
+    onSubmit(): Promise<void> {
         return new Promise((resolve, reject) => {
-            const formValue = this.categoryForm.value;
+            const formValue = this.form.value;
             const categoriesAPI = new BaseHttp(`categories`, this.http);
 
             if (this.categoryId !== 0) {
@@ -66,9 +70,5 @@ export class CategoryComponent {
                 });
             }
         });
-    }
-
-    closeModal(): void {
-        this.complete.emit(false);
     }
 }

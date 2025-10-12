@@ -1,45 +1,18 @@
-<div class="modal-overlay">
-    <div class="modal-content">
-        <h5 class="text-xl font-semibold mb-4">
-            {{ activityTypeId !== 0 ? 'Editar tipo de actividad' : 'Nuevo tipo de actividad' }}
-        </h5>
-        <form [formGroup]="activityTypeForm">
-            <app-form-group [title]="'Descripción'" [control]="activityTypeForm.get('key')">
-                <input id="key" type="text" formControlName="key" class="form-control" autocomplete="off" />
-            </app-form-group>
+<form [formGroup]="form">
+    <app-form-group [title]="'Descripción'" [control]="form.get('key')">
+        <input id="key" type="text" formControlName="key" class="form-control" autocomplete="off" />
+    </app-form-group>
 
-            <app-form-group [title]="'Recurrente'" [control]="activityTypeForm.get('recurrent')">
-                <input id="recurrent" type="checkbox" formControlName="recurrent">
-            </app-form-group>
+    <app-form-group [title]="'Recurrente'" [control]="form.get('recurrent')">
+        <input id="recurrent" type="checkbox" formControlName="recurrent">
+    </app-form-group>
 
-            @if (activityTypeForm.get('recurrent')?.value) {
-            <app-form-group [title]="'Periodicidad'" [control]="activityTypeForm.get('rule')">
-                <input id="rule" type="text" formControlName="rule" class="form-control" [readonly]="false"
-                    autocomplete="off">
-            </app-form-group>
-            <div class="d-flex justify-content-end mb-4 items-center">
-                <a href="https://jkbrzt.github.io/rrule/" target="_blank"
-                    class="hover-link-external underline d-flex items-center">
+    <app-form-group *ngIf="form.get('recurrent')?.value" [title]="'Periodicidad'"
+        [control]="form.get('rule')">
+        <input id="rule" type="text" formControlName="rule" class="form-control" [readonly]="false" autocomplete="off">
+    </app-form-group>
 
-
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                        stroke="currentColor" class="size-4 me-2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
-                    </svg>
-
-
-                    Configuración de reglas
-
-                </a>
-            </div>
-            }
-
-            <app-form-group [title]="'Formato'" [control]="activityTypeForm.get('format')">
-                <input id="format" type="text" formControlName="format" class="form-control" autocomplete="off" />
-            </app-form-group>
-        </form>
-        <app-submit [form]="activityTypeForm" [submit]="saveActivityType.bind(this)"
-            (discard)="closeModal()"></app-submit>
-    </div>
-</div>
+    <app-form-group [title]="'Formato'" [control]="form.get('format')">
+        <input id="format" type="text" formControlName="format" class="form-control" autocomplete="off" />
+    </app-form-group>
+</form>

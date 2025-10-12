@@ -84,9 +84,3 @@
 <div *ngIf="activities.length === 0" class="text-gray-500 text-center py-8">
 	No hay actividades inscritas.
 </div>
-
-
-
-<app-charge *ngIf="showCharge && selectedStudentActivity" [studentActivityId]="selectedStudentActivity.id"
-	(complete)="onChargeComplete($event)">
-</app-charge>

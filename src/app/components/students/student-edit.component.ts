@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { BaseHttp, buildUrl } from '@app/core/base-http';
+import { BaseHttp } from '@app/core/base-http';
 import { CreateStudentDto, Student, UpdateStudentDto } from '@app/core/dto';
 import { setFocus, uploadStudentPhoto } from '@app/core/helpers';
 import { FormGroupComponent } from '../form-group/form-group.component';
@@ -18,7 +18,7 @@ import { ModalService } from '@app/core/modal.service';
 @Component({
     standalone: true,
     selector: 'app-student-edit',
-    imports: [CommonModule, FormsModule, RouterModule, FormGroupComponent, ReactiveFormsModule, SubmitComponent, PaymentComponent],
+    imports: [CommonModule, FormsModule, RouterModule, FormGroupComponent, ReactiveFormsModule, SubmitComponent],
     templateUrl: './student-edit.component.html',
     styleUrls: ['./student-edit.component.scss']
 })
