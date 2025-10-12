@@ -4,18 +4,17 @@ import { Component, EventEmitter, Output } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { Category, Activity } from '@app/core/dto';
-import { ImageHttpClient } from '@app/core/image-http-client';
-import { ToastrService } from 'ngx-toastr';
 import { ActivityComponent } from '../activity/activity.component';
 import { FormsModule } from '@angular/forms';
 import { RequestQueryBuilder } from '@dataui/crud-request';
+import { ModalService } from '@app/core/modal.service';
 
 @Component({
 	selector: 'app-activity-selector',
 	templateUrl: './activity-selector.component.html',
 	styleUrls: ['./activity-selector.component.scss'],
 	standalone: true,
-	imports: [CommonModule, FormsModule, ActivityComponent]
+	imports: [CommonModule, FormsModule]
 })
 export class ActivitySelectorComponent {
 	@Output() select = new EventEmitter<Activity | null>();
@@ -35,11 +34,7 @@ export class ActivitySelectorComponent {
 	public activitiesByCategoryPast: Activity[] = [];
 	public activities: Activity[] = [];
 
-	public showActivityModal: boolean = false;
-	public activityId: number | null = null;
-
 	public loadingActivities: boolean = false;
-
 
 	public showDebt = true;
 	private _isSimulatedEvent = false;
@@ -62,8 +57,7 @@ export class ActivitySelectorComponent {
 		public router: Router,
 		private route: ActivatedRoute,
 		private http: HttpClient,
-		private imageHttp: ImageHttpClient,
-		private toastr: ToastrService,
+		private modalService: ModalService,
 	) {
 
 		Promise.all([
@@ -104,24 +98,13 @@ export class ActivitySelectorComponent {
 		this.onCategoryChange();
 	}
 
-
-	async onActivityComplete(value: boolean): Promise<void> {
-		this.showActivityModal = false;
-		if (value) {
+	showModal(activityId: number, title: string): void {
+		this.modalService.open({
+			component: ActivityComponent, title, size: 'lg',
+			inputs: { activityId }
+		}).subscribe(async result => {
 			await this._fetchActivities();
-		}
-	}
-
-	onNewActivity(): void {
-		this.activityId = 0;
-		this.showActivityModal = true;
-	}
-
-	onEditActivity(): void {
-		if (this.selectedActivity) {
-			this.activityId = this.selectedActivity.id;
-			this.showActivityModal = true;
-		}
+		});
 	}
 
 	async onCategoryChange() {

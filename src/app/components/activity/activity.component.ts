@@ -7,20 +7,23 @@ import { BaseHttp } from '@app/core/base-http';
 import { Activity, ActivityType, CreateActivityDto, Category } from '@app/core/dto';
 import { dateToDatetimeLocalString, setFocus } from '@app/core/helpers';
 import { FormGroupComponent } from "../form-group/form-group.component";
-import { SubmitComponent } from '../submit/submit.component';
 import { NgxMaskDirective } from 'ngx-mask';
 import { MaviValidators } from '@app/core/mavi-validators';
 import { faker } from '@faker-js/faker';
+import { ModalInjectable } from '@app/core/modal.service';
 
 
 @Component({
     selector: 'app-activity',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormGroupComponent, NgxMaskDirective, SubmitComponent],
+    imports: [CommonModule, ReactiveFormsModule, FormGroupComponent, NgxMaskDirective],
     templateUrl: './activity.component.html',
     styleUrls: ['./activity.component.scss']
 })
-export class ActivityComponent {
+export class ActivityComponent implements ModalInjectable {
+    disabled: boolean = false;
+
+
     public todayDatetimeLocal: string = dateToDatetimeLocalString(new Date());
     @Input() activityId: number = 0;
 
@@ -28,8 +31,9 @@ export class ActivityComponent {
 
     public activityTypes: ActivityType[] = [];
     public categories: Category[] = [];
-    public activityForm: FormGroup;
+    public form: FormGroup;
     private newCategoryId: number | null = null;
+
 
     constructor(
         private http: HttpClient,
@@ -46,7 +50,7 @@ export class ActivityComponent {
             }
         });
 
-        this.activityForm = this.fb.group({
+        this.form = this.fb.group({
             description: ['Nueva actividad...', MaviValidators.required()],
             startDate: [
                 dateToDatetimeLocalString(new Date()),
@@ -82,11 +86,11 @@ export class ActivityComponent {
             this.categories = result;
             if (this.activityId === 0 && this.categories.length > 0) {
                 if (this.newCategoryId && this.categories.some(c => c.id === this.newCategoryId)) {
-                    this.activityForm.patchValue({ categoryId: this.newCategoryId });
+                    this.form.patchValue({ categoryId: this.newCategoryId });
                 } else {
-                    this.activityForm.patchValue({ categoryId: this.categories[0].id });
+                    this.form.patchValue({ categoryId: this.categories[0].id });
                 }
-                this.activityForm.markAsDirty();
+                this.form.markAsDirty();
             }
         });
     }
@@ -96,7 +100,7 @@ export class ActivityComponent {
         activityTypesAPI.get<ActivityType[]>().subscribe(result => {
             this.activityTypes = result;
             if (this.activityTypes.length > 0) {
-                this.activityForm.patchValue({ typeId: this.activityTypes[0].id });
+                this.form.patchValue({ typeId: this.activityTypes[0].id });
             }
         });
     }
@@ -106,7 +110,7 @@ export class ActivityComponent {
         if (this.activityId > 0) {
             const activityAPI = new BaseHttp(`activities/${id}`, this.http);
             activityAPI.get<Activity>().subscribe(result => {
-                this.activityForm.patchValue({
+                this.form.patchValue({
                     description: result.description,
                     startDate: dateToDatetimeLocalString(new Date(result.startDate)),
                     endDate: dateToDatetimeLocalString(new Date(result.endDate)),
@@ -121,25 +125,21 @@ export class ActivityComponent {
 
             });
 
-            this.activityForm.get('categoryId')?.disable({ emitEvent: false });
-            this.activityForm.get('typeId')?.disable({ emitEvent: false });
-            this.activityForm.get('startDate')?.disable({ emitEvent: false });
-            this.activityForm.get('endDate')?.disable({ emitEvent: false });
-            this.activityForm.get('gracePeriod')?.disable({ emitEvent: false });
-            this.activityForm.get('price')?.disable({ emitEvent: false });
+            this.form.get('categoryId')?.disable({ emitEvent: false });
+            this.form.get('typeId')?.disable({ emitEvent: false });
+            this.form.get('startDate')?.disable({ emitEvent: false });
+            this.form.get('endDate')?.disable({ emitEvent: false });
+            this.form.get('gracePeriod')?.disable({ emitEvent: false });
+            this.form.get('price')?.disable({ emitEvent: false });
 
         } else {
             setFocus('description');
         }
     }
 
-    closeModal(): void {
-        this.complete.emit(false);
-    }
-
-    saveActivity(): Promise<void> {
+    onSubmit(): Promise<void> {
         return new Promise((resolve, reject) => {
-            const formValue = this.activityForm.value;
+            const formValue = this.form.value;
             const activitiesAPI = new BaseHttp(`activities`, this.http);
 
             if (this.activityId !== 0) {

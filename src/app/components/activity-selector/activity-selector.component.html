@@ -31,7 +31,7 @@
 </div>
 
 <div class="d-flex justify-content-center py-4">
-    <button class="btn btn-primary" (click)="onNewActivity()">
+    <button class="btn btn-primary" (click)="showModal(0, 'Nueva actividad')">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
             class="size-4 me-2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -47,7 +47,9 @@
     <div class="mavi-fixed-tab">
         <a class="mavi-tab" (click)="showActivitieByCategoryPast = !showActivitieByCategoryPast"
             [ngClass]="{ selected: selectedActivityIsPast }" data-bs-toggle="dropdown">
-            ({{activitiesByCategoryPast.length}} pasadas) <span *ngIf="selectedActivityIsPast"> - {{selectedActivity?.description}} {{selectedActivity?.startDate | date:selectedActivity?.type?.format}} </span>
+            ({{activitiesByCategoryPast.length}} pasadas) <span *ngIf="selectedActivityIsPast"> -
+                {{selectedActivity?.description}} {{selectedActivity?.startDate | date:selectedActivity?.type?.format}}
+            </span>
             <div class="dropdown">
                 <ul class="dropdown-menu">
                     <li class="dropdown-item" *ngFor="let activity of activitiesByCategoryPast"
@@ -72,13 +74,9 @@
 </div>
 }
 
-<app-activity *ngIf="showActivityModal" [activityId]="activityId!" (complete)="onActivityComplete($event)">
-</app-activity>
-
 <div class="mavi-bottom-actions">
     <div class="mavi-bottom-actions-inner">
-        <button (click)="onShowDebt()" class="btn btn-secondary"
-            [ngClass]="showDebt ? 'bg-blue-500' : 'bg-gray-400'">
+        <button (click)="onShowDebt()" class="btn btn-secondary" [ngClass]="showDebt ? 'bg-blue-500' : 'bg-gray-400'">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="size-4 me-2">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -87,8 +85,8 @@
             {{ showDebt ? 'Mostrar total' : 'Mostrar deuda' }}
         </button>
 
-        <button class="btn btn-secondary ms-2" (click)="onEditActivity()" [disabled]="!selectedActivity"
-            [title]="!selectedActivity ? 'Selecciona una actividad para editarla.' : ''">
+        <button class="btn btn-secondary ms-2" (click)="showModal(selectedActivity!.id, 'Editar actividad')"
+            [disabled]="!selectedActivity" [title]="!selectedActivity ? 'Selecciona una actividad para editarla.' : ''">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="size-4 me-2">
                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -97,7 +95,7 @@
             Editar actividad
         </button>
 
-        <button class="btn btn-secondary ms-2" (click)="onNewActivity()">
+        <button class="btn btn-secondary ms-2" (click)="showModal(0, 'Nueva actividad')">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                 stroke="currentColor" class="size-4 me-2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
