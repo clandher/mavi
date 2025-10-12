@@ -1,109 +1,93 @@
-<div class="modal-overlay">
-	<div class="modal-content ">
+<form [formGroup]="form">
 
-		<form [formGroup]="form">
+	<div class="row">
+		<div class="col form-group">
 
-			<h5 class="text-xl font-semibold mb-4">Inscribir alumnos</h5>
-			<div class="row">
-				<div class="col form-group">
-
-					<app-form-group title="Categoría" [control]="form.get('categoryId')">
-						<select id="categoryId" formControlName="categoryId" class="form-control"
-							(change)="onNewCategoryChange()">
-							<option *ngFor="let category of categories" [value]="category.id">{{ category.type }}
-							</option>
-						</select>
-					</app-form-group>
-				</div>
-				<div class="col form-group">
-					<app-form-group title="Actividad" [control]="form.get('activityId')">
-						<select id="activityId" formControlName="activityId" class="form-control"
-							(change)="onNewActivityChange()">
-							<option *ngFor="let act of activities" [value]="act.id">{{ act.description }}
-								{{act.startDate | date:act.type.format}}
-							</option>
-						</select>
-					</app-form-group>
-				</div>
-			</div>
-			<br />
-			<div class="mavi-tabs">
-				<a (click)="form.get('tab')?.setValue('existing')"
-					[class]="form.get('tab')?.value === 'existing' ? 'selected' : ''" class="mavi-tab">Seleccionar
-					existentes</a>
-				<a (click)="form.get('tab')?.setValue('new')"
-					[class]="form.get('tab')?.value === 'new' ? 'selected' : ''" class="mavi-tab">Crear
-					nuevo</a>
-			</div>
-			<br />
-			<div class="mavi-border" *ngIf="form.get('tab')?.value === 'existing'">
-				<div class="form-group">
-					<label for="search" class="form-label">Buscar estudiante</label>
-					<input id="search" type="text" formControlName="search" placeholder="Buscar por nombre..."
-						class="form-control">
-				</div>
-				<br />
-				<div class="d-flex items-center mb-2">
-					<span class="font-semibold">Seleccionados: {{ selectedExistingStudents.length }}</span>
-				</div>
-				<div class="row gx-3 gy-3">
-					<div *ngFor="let student of filteredStudents"
-						(click)="!hasActivityAssigned(student) && onSelectStudent(student)"
-						[class.opacity-50]="hasActivityAssigned(student)"
-						[class.cursor-pointer]="!hasActivityAssigned(student)"
-						[class.cursor-not-allowed]="hasActivityAssigned(student)" class=" col-3 ">
-
-						<div class="d-flex flex-column items-center mavi-border"
-							[class.selected]="isStudentSelected(student)">
-							<img *ngIf="student.photo" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
-							<ng-template #placeholder>
-								<div class="photo-placeholder">+</div>
-							</ng-template>
-
-							<div class="d-flex flex-column ">
-								<div style="max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-									{{ student.nick ? student.nick : student.name }}</div>
-								<div class="text-sm">{{student.activities.length}} actividades</div>
-								<div class="d-flex pt-2">
-									<span *ngIf="hasActivityAssigned(student)"
-										class="mavi-tag me-2 mavi-tag--primary">Inscrito</span>
-									<span *ngFor="let category of student.categories" class="mavi-tag me-2">
-										{{ category.category.type }}
-									</span>
-								</div>
-							</div>
-
-						</div>
-
-					</div>
-					<div *ngIf="filteredStudents.length === 0" class="col-span-3 text-center py-4 text-gray-500">No se
-						encontraron estudiantes</div>
-				</div>
-			</div>
-			<div class="mavi-border d-flex gap-3" *ngIf="form.get('tab')?.value === 'new'">
-				<div [formGroup]="studentForm" class="d-flex flex-grow-1 gap-3">
-					<div class="form-group flex-grow-1">
-						<app-form-group title="Nombre" [control]="studentForm.get('name')">
-							<input id="name" type="text" formControlName="name" class="form-control"
-								placeholder="Nombre completo del estudiante">
-						</app-form-group>
-					</div>
-					<div class="form-group flex-grow-1">
-						<app-form-group title="Fecha de nacimiento" [control]="studentForm.get('birthdate')">
-							<input id="birthdate" type="date" [max]="maxBirthdate" formControlName="birthdate"
-								class="form-control">
-						</app-form-group>
-					</div>
-				</div>
-			</div>
-			<div class="modal-footer">
-				<app-submit [form]="form" [submit]="onInscription.bind(this)" (discard)="onCancel()"
-					[disabled]="(form.get('tab')?.value === 'existing' && selectedExistingStudents.length === 0)">
-				</app-submit>
-			</div>
-
-		</form>
-
-
+			<app-form-group title="Categoría" [control]="form.get('categoryId')">
+				<select id="categoryId" formControlName="categoryId" class="form-control"
+					(change)="onNewCategoryChange()">
+					<option *ngFor="let category of categories" [value]="category.id">{{ category.type }}
+					</option>
+				</select>
+			</app-form-group>
+		</div>
+		<div class="col form-group">
+			<app-form-group title="Actividad" [control]="form.get('activityId')">
+				<select id="activityId" formControlName="activityId" class="form-control"
+					(change)="onNewActivityChange()">
+					<option *ngFor="let act of activities" [value]="act.id">{{ act.description }}
+						{{act.startDate | date:act.type.format}}
+					</option>
+				</select>
+			</app-form-group>
+		</div>
 	</div>
-</div>
+	<br />
+	<div class="mavi-tabs">
+		<a (click)="form.get('tab')?.setValue('existing')"
+			[class]="form.get('tab')?.value === 'existing' ? 'selected' : ''" class="mavi-tab">Seleccionar
+			existentes</a>
+		<a (click)="form.get('tab')?.setValue('new')" [class]="form.get('tab')?.value === 'new' ? 'selected' : ''"
+			class="mavi-tab">Crear
+			nuevo</a>
+	</div>
+	<br />
+	<div class="mavi-border" *ngIf="form.get('tab')?.value === 'existing'">
+		<div class="form-group">
+			<label for="search" class="form-label">Buscar estudiante</label>
+			<input id="search" type="text" formControlName="search" placeholder="Buscar por nombre..."
+				class="form-control">
+		</div>
+		<br />
+		<div class="d-flex items-center mb-2">
+			<span class="font-semibold">Seleccionados: {{ selectedExistingStudents.length }}</span>
+		</div>
+		<div class="row gx-3 gy-3">
+			<div *ngFor="let student of filteredStudents"
+				(click)="!hasActivityAssigned(student) && onSelectStudent(student)"
+				[class.opacity-50]="hasActivityAssigned(student)" [class.cursor-pointer]="!hasActivityAssigned(student)"
+				[class.cursor-not-allowed]="hasActivityAssigned(student)" class=" col-3 ">
+
+				<div class="d-flex flex-column items-center mavi-border" [class.selected]="isStudentSelected(student)">
+					<img *ngIf="student.photo" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
+					<ng-template #placeholder>
+						<div class="photo-placeholder">+</div>
+					</ng-template>
+
+					<div class="d-flex flex-column ">
+						<div style="max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+							{{ student.nick ? student.nick : student.name }}</div>
+						<div class="text-sm">{{student.activities.length}} actividades</div>
+						<div class="d-flex pt-2">
+							<span *ngIf="hasActivityAssigned(student)"
+								class="mavi-tag me-2 mavi-tag--primary">Inscrito</span>
+							<span *ngFor="let category of student.categories" class="mavi-tag me-2">
+								{{ category.category.type }}
+							</span>
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+			<div *ngIf="filteredStudents.length === 0" class="col-span-3 text-center py-4 text-gray-500">No se
+				encontraron estudiantes</div>
+		</div>
+	</div>
+	<div class="mavi-border d-flex gap-3" *ngIf="form.get('tab')?.value === 'new'">
+		<div [formGroup]="studentForm" class="d-flex flex-grow-1 gap-3">
+			<div class="form-group flex-grow-1">
+				<app-form-group title="Nombre" [control]="studentForm.get('name')">
+					<input id="name" type="text" formControlName="name" class="form-control"
+						placeholder="Nombre completo del estudiante">
+				</app-form-group>
+			</div>
+			<div class="form-group flex-grow-1">
+				<app-form-group title="Fecha de nacimiento" [control]="studentForm.get('birthdate')">
+					<input id="birthdate" type="date" [max]="maxBirthdate" formControlName="birthdate"
+						class="form-control">
+				</app-form-group>
+			</div>
+		</div>
+	</div>
+</form>

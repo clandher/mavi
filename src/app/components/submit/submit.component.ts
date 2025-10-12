@@ -51,11 +51,7 @@ export class SubmitComponent {
 				this.form?.markAsPristine();
 			} catch (error) {
 				console.error(error);
-				this.toastr.error('Ocurrió un error al guardar los cambios', 'Error');
 			}
-
-
-
 		} finally {
 			this.loading = false;
 		}

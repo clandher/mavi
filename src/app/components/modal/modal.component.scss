@@ -1,4 +1,29 @@
-.modal-content {
-    max-height: 80vh;
-    overflow-y: auto;
+.modal {
+    color: #e5e7eb;
+
+    .btn-close {
+        filter: invert(1);
+    }
+
+    .modal-header {
+        background: #111111;
+        border-bottom: 1px solid #262626;
+        border-radius: unset;
+        color: #e5e7eb;
+    }
+
+    .modal-body {
+        overflow-y: scroll;
+        max-height: calc(80vh - 132px);
+        background: #111111;
+        color: #e5e7eb;
+    }
+
+    .modal-footer {
+        background: #111111;
+        border-top: 1px solid #262626;
+        border-radius: unset;
+        color: #e5e7eb;
+    }
+
 }

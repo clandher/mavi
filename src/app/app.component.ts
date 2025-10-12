@@ -2,6 +2,8 @@ import { Component, AfterViewInit } from '@angular/core';
 import { FormControlName } from '@angular/forms';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { ModalComponent } from "./components/modal/modal.component";
+// import { Dropdown } from 'bootstrap';
 
 
 const originFormControlNameNgOnChanges = FormControlName.prototype.ngOnChanges;
@@ -13,7 +15,7 @@ FormControlName.prototype.ngOnChanges = function () {
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, ModalComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

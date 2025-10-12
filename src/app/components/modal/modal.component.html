@@ -1,12 +1,19 @@
-<div class="modal-backdrop fade" [ngClass]="{'show': show}" *ngIf="show" (click)="show = false">
-</div>
-<div class="modal fade" tabindex="-1" [ngClass]="{'show': show}" [ngStyle]="{'display': show ? 'block' : 'none'}"
-    aria-modal="true" role="dialog"
-    style="z-index: 1050; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; overflow: auto;">
-    <div class="modal-dialog modal-lg modal-dialog-centered" (click)="$event.stopPropagation()">
-        <div class="modal-content bg-dark text-white">
+<div id="modal" class="modal " tabindex="-1">
+    <div class="modal-dialog modal-{{ config?.size || 'sm' }} modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ config?.title }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
             <div class="modal-body">
-                <ng-content></ng-content>
+                <ng-container #container></ng-container>
+            </div>
+            <div class="modal-footer">
+                @if (component) {
+                <app-submit [form]="component.form" [submit]="onSubmit.bind(this)" (discard)="onDiscard()"
+                    [disabled]="component.disabled">
+                </app-submit>
+                }
             </div>
         </div>
     </div>

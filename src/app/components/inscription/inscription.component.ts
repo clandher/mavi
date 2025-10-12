@@ -7,22 +7,27 @@ import { Activity, ActivityType, Category, Student, StudentActivity } from '@app
 import { formatDateForDisplay } from '@app/core/helpers';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { ActivatedRoute } from '@angular/router';
-import { SubmitComponent } from "../submit/submit.component";
 import { MaviValidators } from '@app/core/mavi-validators';
 import { FormGroupComponent } from "../form-group/form-group.component";
 import { ImageHttpClient } from '@app/core/image-http-client';
+import { ModalInjectable } from '@app/core/modal.service';
 
 @Component({
     selector: 'app-inscription',
     standalone: true,
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, SubmitComponent, FormGroupComponent],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, FormGroupComponent],
     templateUrl: './inscription.component.html',
     styleUrls: ['./inscription.component.scss']
 })
-export class InscriptionComponent implements OnInit {
+export class InscriptionComponent implements OnInit, ModalInjectable {
     form: FormGroup;
 
-    private sortStudents(): Student[] {
+    get disabled(): boolean {
+        return this.form.get('tab')?.value === 'existing' && this.selectedExistingStudents.length === 0;
+
+    }
+
+    private _sortStudents(): Student[] {
         return this.filteredStudents.slice().sort((a, b) => {
             const hasCategoryA = a.categories && a.categories.length > 0 && a.categories.some(sc => sc.categoryId && sc.categoryId !== 0);
             const hasCategoryB = b.categories && b.categories.length > 0 && b.categories.some(sc => sc.categoryId && sc.categoryId !== 0);
@@ -37,6 +42,7 @@ export class InscriptionComponent implements OnInit {
             return 0;
         });
     }
+
     isStudentSelected(student: Student): boolean {
         return this.selectedExistingStudents.some(s => s.id === student.id);
     }
@@ -46,11 +52,6 @@ export class InscriptionComponent implements OnInit {
         return student.activities.some(act => act.activityId === Number(this.form.get('activityId')?.value));
     }
 
-    onCancel() {
-        this.selectedExistingStudents = [];
-        this.form.get('student')?.reset();
-        this.complete.emit(false);
-    }
 
     @Output() complete = new EventEmitter<boolean>();
 
@@ -107,7 +108,7 @@ export class InscriptionComponent implements OnInit {
             this.filteredStudents = this.students.filter(student =>
                 student.name.toLowerCase().includes(value.toLowerCase())
             );
-            this.filteredStudents = this.sortStudents();
+            this.filteredStudents = this._sortStudents();
         });
 
         this.form.get('tab')?.valueChanges.subscribe(value => {
@@ -143,7 +144,7 @@ export class InscriptionComponent implements OnInit {
             return student;
         });
 
-        this.filteredStudents = this.sortStudents();
+        this.filteredStudents = this._sortStudents();
     }
 
 
@@ -160,12 +161,12 @@ export class InscriptionComponent implements OnInit {
             if (this.activities.length > 0 && !this.form.get('activityId')?.value) {
                 this.form.get('activityId')?.setValue(this.activities[0].id);
             }
-            this.filteredStudents = this.sortStudents();
+            this.filteredStudents = this._sortStudents();
         });
     }
 
     onNewActivityChange() {
-        this.filteredStudents = this.sortStudents();
+        this.filteredStudents = this._sortStudents();
     }
 
     _loadStudents(): Promise<void> {
@@ -203,7 +204,7 @@ export class InscriptionComponent implements OnInit {
         this.form.markAsDirty();
     }
 
-    async onInscription() {
+    async onSubmit() {
 
         const categoryId = this.form.get('categoryId')?.value;
 

@@ -14,10 +14,11 @@ import { ImageHttpClient } from '@app/core/image-http-client';
 import { ToastrService } from 'ngx-toastr';
 import { AvatarStudentActivityComponent, StudentActivityEvent, StudentActivityView } from "./avatar-student-activity/avatar-student-activity.component";
 import { ActivitySelectorComponent } from "../activity-selector/activity-selector.component";
+import { ModalService } from '@app/core/modal.service';
 
 @Component({
 	standalone: true,
-	imports: [CommonModule, RouterModule, FormsModule, PaymentComponent, InscriptionComponent, ObservationsComponent, AvatarStudentActivityComponent, ActivitySelectorComponent],
+	imports: [CommonModule, RouterModule, FormsModule, PaymentComponent, ObservationsComponent, AvatarStudentActivityComponent, ActivitySelectorComponent],
 	templateUrl: './avatars.component.html',
 	styleUrl: './avatars.component.scss'
 })
@@ -27,7 +28,6 @@ export class AvatarsComponent {
 
 	public selectedStudentActivity: StudentActivityView | null = null;
 
-	public showInscriptionModal: boolean = false;
 	public showPaymentModal: boolean = false;
 	public showObservationsModal: boolean = false;
 
@@ -41,7 +41,11 @@ export class AvatarsComponent {
 		private http: HttpClient,
 		private imageHttp: ImageHttpClient,
 		private toastr: ToastrService,
-	) { }
+		private modalService: ModalService,
+	) {
+
+
+	}
 
 	public onActivitySelect(activity: Activity | null): void {
 		this.selectedActivity = activity;
@@ -54,7 +58,11 @@ export class AvatarsComponent {
 	}
 
 	public showInscription() {
-		this.showInscriptionModal = true;
+		this.modalService.open({ component: InscriptionComponent, title: 'Inscribir alumnos', size: 'xl' }).subscribe((result: boolean) => {
+			if (result) {
+				this._loadStudentActivities();
+			}
+		});
 	}
 
 	public onPaymentComplete(value: boolean): void {
@@ -65,13 +73,6 @@ export class AvatarsComponent {
 		}
 	}
 
-	public onInscriptionComplete(value: boolean): void {
-		this.showInscriptionModal = false;
-
-		if (value) {
-			this._loadStudentActivities();
-		}
-	}
 
 	public onPhotoSelected($event: Event) {
 		if (this.selectedStudentActivity?.student) {
