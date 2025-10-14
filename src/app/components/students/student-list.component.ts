@@ -218,6 +218,11 @@ export class StudentListComponent implements OnInit, AfterViewInit {
             this.categoriesAPI.get<Category[]>().subscribe({
                 next: (categories) => {
                     this.categories = categories;
+
+                    if (this.filters.categoryId !== null && !this.categories.find(c => c.id === this.filters.categoryId)) {
+                        this.filters.categoryId = this.categories.length > 0 ? this.categories[0].id : null;
+                    }
+
                     resolve();
                 },
                 error: (err) => {
