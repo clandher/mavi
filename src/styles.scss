@@ -677,10 +677,11 @@ select.form-control {
 
 input[type="date"]::-webkit-calendar-picker-indicator {
     filter: invert(1);
-    /* Cambia los colores al negativo */
 }
 
-
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
 
 .spinner-border {
     display: inline-block;

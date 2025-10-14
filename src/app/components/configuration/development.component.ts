@@ -11,14 +11,22 @@ import { SubmitComponent } from '../submit/submit.component';
 import { FormGroupComponent } from "../form-group/form-group.component";
 
 export interface SeederConfig {
-    activityType: {
-        rule: string
-        format: string
-    },
-    student: {
-        seed: number,
-        quantity: number,
-    }
+	activityType: {
+		rule: string
+		format: string
+	},
+	student: {
+		seed: number,
+		quantity: number,
+	},
+	activity: {
+		duration: string,
+		gracePeriod: string,
+		price: {
+			min: number,
+			max: number,
+		}
+	};
 }
 
 export const DEFAULT_SEEDER_CONFIG: SeederConfig = {
@@ -29,6 +37,14 @@ export const DEFAULT_SEEDER_CONFIG: SeederConfig = {
 	student: {
 		seed: 3076,
 		quantity: 30,
+	},
+	activity: {
+		duration: '1h',
+		gracePeriod: '15m',
+		price: {
+			min: 300,
+			max: 600,
+		}
 	}
 };
 

@@ -12,7 +12,6 @@ import { MaviValidators } from '@app/core/mavi-validators';
 import { faker } from '@faker-js/faker';
 import { ModalInjectable } from '@app/core/modal.service';
 
-
 @Component({
     selector: 'app-activity',
     standalone: true,
@@ -34,17 +33,21 @@ export class ActivityComponent implements ModalInjectable {
     public form: FormGroup;
     private newCategoryId: number | null = null;
 
+    public GRACE_PERIOD_OPTIONS = [
+        { value: '15m', description: '15 minutos' },
+        { value: '15d', description: '15 días' }
+    ];
+
 
     constructor(
         private http: HttpClient,
         private fb: FormBuilder,
         private route: ActivatedRoute
     ) {
-
+        const savedGracePeriod = localStorage.getItem('activity.gracePeriod') || '15m';
 
         this.route.queryParams.subscribe(params => {
             const categoryId = params['category'];
-
             if (categoryId) {
                 this.newCategoryId = +categoryId;
             }
@@ -66,7 +69,7 @@ export class ActivityComponent implements ModalInjectable {
                     MaviValidators.minDate('startDate', 'La fecha debe ser mayor a la fecha de inicio.')
                 ]
             ],
-            gracePeriod: [15, [MaviValidators.required(), MaviValidators.min(0)]],
+            gracePeriod: [savedGracePeriod, [MaviValidators.required()]],
             price: [200, [MaviValidators.required(), MaviValidators.min(0.01)]],
             categoryId: [0, [MaviValidators.required()]],
             typeId: [0, [MaviValidators.required()]],
@@ -110,6 +113,10 @@ export class ActivityComponent implements ModalInjectable {
         if (this.activityId > 0) {
             const activityAPI = new BaseHttp(`activities/${id}`, this.http);
             activityAPI.get<Activity>().subscribe(result => {
+                if (!this.GRACE_PERIOD_OPTIONS.some(option => option.value === result.gracePeriod)) {
+                    this.GRACE_PERIOD_OPTIONS.push({ value: result.gracePeriod, description: result.gracePeriod });
+                }
+
                 this.form.patchValue({
                     description: result.description,
                     startDate: dateToDatetimeLocalString(new Date(result.startDate)),
@@ -142,6 +149,10 @@ export class ActivityComponent implements ModalInjectable {
             const formValue = this.form.value;
             const activitiesAPI = new BaseHttp(`activities`, this.http);
 
+            if (formValue.gracePeriod) {
+                localStorage.setItem('activity.gracePeriod', formValue.gracePeriod);
+            }
+
             if (this.activityId !== 0) {
                 const activityToSave = {
                     ...formValue,
@@ -152,7 +163,6 @@ export class ActivityComponent implements ModalInjectable {
                     error: (err) => { console.error('Error al actualizar la actividad:', err); reject(err); }
                 });
             } else {
-
                 const activityToSave = {
                     ...formValue,
                     typeId: Number(formValue.typeId),

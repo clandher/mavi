@@ -99,7 +99,7 @@ export class Activity {
 
     endDate!: string;
 
-    gracePeriod!: number;
+    gracePeriod!: string;
     price!: number;
 }
 
@@ -135,7 +135,7 @@ export interface CreateActivityDto {
     description: string;
     startDate: string; // formato 'YYYY-MM-DDTHH:mm'
     endDate: string;   // formato 'YYYY-MM-DDTHH:mm'
-    gracePeriod: number;
+    gracePeriod: string;
     price: number;
     categoryId: number;
     typeId: number; // Asumo que también necesitas el tipo de actividad
@@ -183,7 +183,7 @@ export interface Activity {
     description: string;
     startDate: string;
     endDate: string;
-    gracePeriod: number;
+    gracePeriod: string;
     price: number;
 }
 
