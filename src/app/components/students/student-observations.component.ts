@@ -7,8 +7,8 @@ import { BaseHttp, buildUrl } from '@app/core/base-http';
 import { StudentObservation } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { SubmitComponent } from "../submit/submit.component";
-import { ObservationsComponent } from '../observations';
 import { ModalService } from '@app/core/modal.service';
+import { StudentObservationComponent } from '../student-observation';
 
 @Component({
 	standalone: true,
@@ -72,7 +72,7 @@ export class StudentObservationsComponent implements OnInit {
 
 	public showObservations() {
 		this.modalService.open({
-			component: ObservationsComponent, title: 'Observaciones', size: 'xl',
+			component: StudentObservationComponent, title: 'Observaciones', size: 'xl',
 			inputs: { studentId: this.studentId }
 		}).subscribe((result: boolean) => {
 			if (result) {

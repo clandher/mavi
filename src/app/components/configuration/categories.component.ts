@@ -1,10 +1,8 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { FormBuilder } from '@angular/forms';
 import { BaseHttp } from '@app/core/base-http';
 import { NgIf, NgFor } from '@angular/common';
 import { CategoryComponent } from '../category/category.component';
-import { ActivityTypeComponent } from '../activity-type/activity-type.component';
 import { ModalService } from '@app/core/modal.service';
 
 interface Category {
@@ -18,7 +16,7 @@ interface Category {
 	selector: 'app-categories',
 	templateUrl: './categories.component.html',
 	styleUrls: [],
-	imports: [NgIf, NgFor, CategoryComponent]
+	imports: [NgIf, NgFor]
 })
 export class CategoriesComponent {
 	categories: Category[] = [];

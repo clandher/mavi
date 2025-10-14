@@ -9,12 +9,12 @@ import { PaymentComponent } from "../payment/payment.component";
 import { InscriptionComponent } from '../inscription';
 import { Router, RouterModule } from '@angular/router';
 import { uploadStudentPhoto } from '@app/core/helpers';
-import { ObservationsComponent } from "../observations";
 import { ImageHttpClient } from '@app/core/image-http-client';
 import { ToastrService } from 'ngx-toastr';
 import { AvatarStudentActivityComponent, StudentActivityEvent, StudentActivityView } from "./avatar-student-activity/avatar-student-activity.component";
 import { ActivitySelectorComponent } from "../activity-selector/activity-selector.component";
 import { ModalService } from '@app/core/modal.service';
+import { StudentObservationComponent } from '../student-observation';
 
 @Component({
 	standalone: true,
@@ -77,7 +77,7 @@ export class AvatarsComponent {
 
 	public showObservations(studentActivity: StudentActivityView) {
 		this.modalService.open({
-			component: ObservationsComponent, title: 'Observaciones', size: 'xl',
+			component: StudentObservationComponent, title: 'Observaciones', size: 'xl',
 			inputs: { studentId: studentActivity.student.id }
 		});
 	}

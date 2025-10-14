@@ -52,7 +52,12 @@ export const routes: Routes = [
                         path: 'usuarios',
                         loadComponent: () => import('./components/users/users.component').then(m => m.UsersComponent),
                         data: { breadcrumb: 'Usuarios' }
-                    }
+                    },
+                    {
+                        path: 'observaciones',
+                        loadComponent: () => import('./components/configuration/observations.component').then(m => m.ObservationsComponent),
+                        data: { breadcrumb: 'Observaciones' }
+                    },
                 ]
             },
             {

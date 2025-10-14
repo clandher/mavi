@@ -1,30 +1,27 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { BaseHttp, buildUrl } from '@app/core/base-http';
-import { Activity, Category, Student, StudentActivity } from '@app/core/dto';
+import { BaseHttp } from '@app/core/base-http';
+import { Activity, Category, Student } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
-import { ActivatedRoute, Route, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ImageHttpClient } from '@app/core/image-http-client';
-import { SubmitComponent } from '../submit/submit.component';
-import { BtnLoadingComponent } from "../btn-loading/btn-loading.component";
 import { FormGroup } from '@angular/forms';
 import { ModalInjectable } from '@app/core/modal.service';
-import { T } from 'node_modules/@faker-js/faker/dist/airline-CHFQMWko';
 
 interface StudentView extends Student {
     selected: boolean;
 }
 
 @Component({
-    selector: 'app-observations',
+    selector: 'app-student-observation',
     standalone: true,
     imports: [CommonModule, FormsModule],
-    templateUrl: './observations.component.html',
-    styleUrls: ['./observations.component.scss']
+    templateUrl: './student-observation.component.html',
+    styleUrls: ['./student-observation.component.scss']
 })
-export class ObservationsComponent implements OnInit, ModalInjectable {
+export class StudentObservationComponent implements OnInit, ModalInjectable {
     @Input() studentId!: number;
     @Output() complete = new EventEmitter<boolean>();
     observationSearchTerm: string = '';
@@ -77,23 +74,7 @@ export class ObservationsComponent implements OnInit, ModalInjectable {
     newCategoryId: number | null = null;
     newActivityId: number | null = null;
 
-    trainingObservations: string[] = [
-        'Buena actitud en el entrenamiento',
-        'Mejorar la precisión en los pases',
-        'Excelente desempeño físico',
-        'Debe trabajar en la resistencia',
-        'Participa activamente en los ejercicios',
-        'Necesita mejorar la comunicación en el campo',
-        'Gran capacidad de liderazgo',
-        'Debe enfocarse en la técnica de tiro',
-        'Muestra compromiso y disciplina',
-        'Debe mejorar la marcación defensiva',
-        'Destaca en el trabajo en equipo',
-        'Debe prestar atención a las indicaciones del entrenador',
-        'Excelente control del balón',
-        'Debe mejorar la velocidad de reacción',
-        'Gran progreso en la táctica grupal'
-    ];
+    trainingObservations: string[] = [];
     selectedObservations: string[] = [];
 
     toggleObservation(obs: string) {
@@ -134,7 +115,7 @@ export class ObservationsComponent implements OnInit, ModalInjectable {
 
         this.sort();
 
-        this.filteredObservations = [...this.trainingObservations];
+        this.loadTrainingObservations();
     }
 
 
@@ -193,6 +174,14 @@ export class ObservationsComponent implements OnInit, ModalInjectable {
                 this.onNewCategoryChange();
                 resolve();
             });
+        });
+    }
+
+    private loadTrainingObservations(): void {
+        const observationsAPI = new BaseHttp('observations', this.http);
+        observationsAPI.get<{description: string}[]>().subscribe((observations) => {
+            this.trainingObservations = observations.map(obs => obs.description);
+            this.filteredObservations = [...this.trainingObservations];
         });
     }
 
