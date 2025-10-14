@@ -11,16 +11,24 @@ import { SubmitComponent } from '../submit/submit.component';
 import { FormGroupComponent } from "../form-group/form-group.component";
 
 export interface SeederConfig {
-	activityType?: {
-		rule?: string
-		format?: string
-	}
+    activityType: {
+        rule: string
+        format: string
+    },
+    student: {
+        seed: number,
+        quantity: number,
+    }
 }
 
 export const DEFAULT_SEEDER_CONFIG: SeederConfig = {
 	activityType: {
 		rule: 'FREQ=MINUTELY;INTERVAL=20',
 		format: '(HH:mm)'
+	},
+	student: {
+		seed: 3076,
+		quantity: 30,
 	}
 };
 
