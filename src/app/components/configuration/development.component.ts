@@ -27,8 +27,9 @@ export const DEFAULT_SEEDER_CONFIG: SeederConfig = {
 @Component({
 	selector: 'app-development',
 	templateUrl: './development.component.html',
+	styleUrls: ['./development.component.scss'],
+	standalone: true,
 	imports: [BtnLoadingComponent, FormsModule, ReactiveFormsModule, SubmitComponent, FormGroupComponent],
-	styleUrls: []
 })
 export class DevelopmentComponent implements AfterViewInit, OnInit {
 
@@ -57,7 +58,6 @@ export class DevelopmentComponent implements AfterViewInit, OnInit {
 
 	ngAfterViewInit(): void {
 		this.jsonEditor = new JSONEditor(this.jsonEditorContainer.nativeElement, {
-			mode: 'code',
 			onChange: () => {
 				try {
 					this.form.get('seeder')?.setValue(this.jsonEditor.get());
@@ -65,7 +65,9 @@ export class DevelopmentComponent implements AfterViewInit, OnInit {
 				} catch (error) {
 					console.error('Invalid JSON in editor');
 				}
-			}
+			},
+			mode: 'code',
+			mainMenuBar: false,
 		});
 	}
 

@@ -125,7 +125,7 @@ body {
     background: #fff;
     color: #383838;
     border: 1px solid #fff;
-    
+
     &:hover {
         color: #000000;
         background: #ecf0fe;
@@ -154,7 +154,7 @@ body {
     background: #121212;
     color: #fff;
     border: 1px solid #262626;
-    
+
     &:hover {
         color: #cac4c4;
         background: #222;
@@ -848,4 +848,10 @@ a {
 .selected {
     background-color: #16a34a; // Tailwind's green-600
     color: white;
+}
+
+
+.jsoneditor {
+    filter: invert(1) hue-rotate(180deg);
+    border: unset !important;
 }

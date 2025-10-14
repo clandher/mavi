@@ -1,0 +1,6 @@
+<button [disabled]="loading || disabled" class="btn btn-primary d-flex items-center justify-content-center"
+    [ngClass]="class" (click)="onClick()">
+    <span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+    <ng-content *ngIf="!loading"></ng-content>
+    {{ text }}
+</button>
