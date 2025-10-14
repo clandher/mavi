@@ -78,6 +78,7 @@ export class StudentActivity {
     charges: Charge[] = [];
     unsubscribedDate!: Date;
     unsubscribed!: boolean;
+    surchargeApplied!: boolean;
 }
 
 
@@ -109,6 +110,7 @@ export class ActivityType {
     recurrent!: boolean;
     rule?: string;
     format?: string;
+    surchargeAmount!: number;
     lock!: boolean;
 }
 

@@ -10,13 +10,14 @@ import { RequestQueryBuilder } from '@dataui/crud-request';
 import { ModalService } from '@app/core/modal.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 
 @Component({
 	selector: 'app-activity-selector',
 	templateUrl: './activity-selector.component.html',
 	styleUrls: ['./activity-selector.component.scss'],
 	standalone: true,
-	imports: [CommonModule, FormsModule]
+	imports: [CommonModule, FormsModule, CurrencyMXPipe]
 })
 export class ActivitySelectorComponent {
 	@Output() select = new EventEmitter<Activity | null>();

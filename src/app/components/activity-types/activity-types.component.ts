@@ -8,12 +8,13 @@ import { ActivityType } from '@app/core/dto';
 import { ModalService } from '@app/core/modal.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 
 @Component({
 	selector: 'app-activity-types',
 	templateUrl: './activity-types.component.html',
 	styleUrls: [],
-	imports: [NgIf, NgFor]
+	imports: [NgIf, NgFor, CurrencyMXPipe]
 })
 export class ActivityTypesComponent implements OnDestroy {
 

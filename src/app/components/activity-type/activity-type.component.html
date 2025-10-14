@@ -3,23 +3,28 @@
         <input id="key" type="text" formControlName="key" class="form-control" autocomplete="off" />
     </app-form-group>
 
+    <app-form-group title="Monto por recargo" [control]="form.get('surchargeAmount')" name="surchargeAmount">
+        <input id="surchargeAmount" type="text" class="form-control" formControlName="surchargeAmount"
+            mask="separator.2" [thousandSeparator]="','" [decimalMarker]="'.'" [allowNegativeNumbers]="false"
+            min="0.01">
+    </app-form-group>
+
     <app-form-group [title]="'Recurrente'" [control]="form.get('recurrent')">
         <input id="recurrent" type="checkbox" formControlName="recurrent">
     </app-form-group>
 
     @if (form.get('recurrent')?.value) {
     <app-form-group [title]="'Periodicidad'" [control]="form.get('rule')">
+        <app-link-help class="position-absolute end-0 mt-2 pe-3" href="https://jkbrzt.github.io/rrule/"
+            description="Configuración de reglas"></app-link-help>
         <input id="rule" type="text" formControlName="rule" class="form-control" [readonly]="false" autocomplete="off">
     </app-form-group>
-    <div class="d-flex justify-content-end mb-4 items-center">
-         <app-link-help href="https://jkbrzt.github.io/rrule/" description="Configuración de reglas"></app-link-help>
-    </div>
-    
+
     <app-form-group [title]="'Formato'" [control]="form.get('format')">
+        <app-link-help class="position-absolute end-0 mt-2 pe-3"
+            href="https://angular.dev/api/common/DatePipe#pre-defined-format-options"
+            description="Configuración de formato"></app-link-help>
         <input id="format" type="text" formControlName="format" class="form-control" autocomplete="off" />
     </app-form-group>
-    <div class="d-flex justify-content-end mb-4 items-center">
-           <app-link-help href="https://angular.dev/api/common/DatePipe#pre-defined-format-options" description="Configuración de formato"></app-link-help>
-    </div>
     }
 </form>

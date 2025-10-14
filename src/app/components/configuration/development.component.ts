@@ -13,8 +13,9 @@ import { LinkHelpComponent } from "../link-help/link-help.component";
 
 export interface SeederConfig {
 	activityType: {
-		rule: string
-		format: string
+		rule: string,
+		format: string,
+		surchargeAmount: number,
 	},
 	student: {
 		seed: number,
@@ -27,25 +28,32 @@ export interface SeederConfig {
 			min: number,
 			max: number,
 		}
-	};
+	},
+	school: {
+		name: string,
+	}
 }
 
 export const DEFAULT_SEEDER_CONFIG: SeederConfig = {
 	activityType: {
 		rule: 'FREQ=MINUTELY;INTERVAL=20',
-		format: '(HH:mm)'
+		format: '(HH:mm)',
+		surchargeAmount: 100,
 	},
 	student: {
 		seed: 3076,
 		quantity: 30,
 	},
 	activity: {
-		duration: '1h',
-		gracePeriod: '15m',
+		duration: '10m',
+		gracePeriod: '3m',
 		price: {
 			min: 300,
 			max: 600,
 		}
+	},
+	school: {
+		name: 'Sorensic',
 	}
 };
 

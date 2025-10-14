@@ -10,12 +10,14 @@
                     </ng-template>
                     <input id="logo{{i}}" type="file" accept="image/*" (change)="onLogoSelected($event, i)" hidden>
                 </label>
-                <div class="school-name">
-                    <app-form-group class="d-flex-2" title="Nombre de la escuela" [control]="school.get('description')"
-                        name="description">
-                        <input id="description{{i}}" class="form-control school-name-input"
-                            formControlName="description">
-                    </app-form-group>
+                <div class="row">
+
+                    <div class="col-12">
+                        <app-form-group title="Nombre de la escuela"
+                            [control]="school.get('description')" name="description">
+                            <input id="description{{i}}" class="form-control" formControlName="description">
+                        </app-form-group>
+                    </div>
                 </div>
             </div>
         </div>

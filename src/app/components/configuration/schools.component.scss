@@ -38,31 +38,6 @@
 }
 
 
-
-.school-name {
-    flex: 1;
-    display: flex;
-    align-items: center;
-}
-
-// .school-name-input {
-//     font-size: 1.5em;
-//     font-weight: 600;
-//     background: transparent;
-//     color: #fff;
-//     border: none;
-//     resize: none;
-//     width: 100%;
-//     padding: 8px 0;
-//     outline: none;
-// }
-
-.school-actions {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 8px;
-}
-
 @keyframes spin {
     0% {
         transform: rotate(0deg);

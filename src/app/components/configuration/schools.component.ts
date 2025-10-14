@@ -9,12 +9,13 @@ import { HttpClient } from '@angular/common/http';
 import { SubmitComponent } from '../submit/submit.component';
 import { FormGroupComponent } from '../form-group/form-group.component';
 import { MaviValidators } from '@app/core/mavi-validators';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
 	selector: 'app-schools',
 	templateUrl: './schools.component.html',
 	styleUrls: ['./schools.component.scss'],
-	imports: [NgIf, NgFor, FormsModule, ReactiveFormsModule, SubmitComponent, FormGroupComponent]
+	imports: [NgIf, NgFor, FormsModule, ReactiveFormsModule, SubmitComponent, FormGroupComponent, NgxMaskDirective]
 })
 export class SchoolsComponent {
 
@@ -74,7 +75,7 @@ export class SchoolsComponent {
 		const schoolsAPI = new BaseHttp('schools', this.http);
 		const updates = this.schoolsArray.value.map((school: any) => {
 			return schoolsAPI.patch(school.id, {
-				description: school.description
+				description: school.description,
 			}).toPromise();
 		});
 

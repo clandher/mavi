@@ -5,7 +5,8 @@
     <img [src]="studentActivity.student.photoUrl" class="w-100 h-100 object-fit-cover" />
     }
 
-    <span *ngIf="studentActivity.debtActivityAmount > 0" (click)="onContextMenuOption('PAYMENT');" class="tag-debt">
+    <span *ngIf="studentActivity.debtActivityAmount > 0" (click)="onContextMenuOption('PAYMENT');" class="tag-debt "
+        [class.surcharge-applied]="studentActivity.surchargeApplied">
         {{showDebt ? '¡Debe!' : (studentActivity.debtActivityAmount | currencyMX)}}
     </span>
 

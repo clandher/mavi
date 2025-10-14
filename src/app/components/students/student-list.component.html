@@ -77,7 +77,8 @@
 
                                 <ng-container *ngFor="let act of sc.activitiesCurrent">
                                     <a *ngIf="act.activity.categoryId === sc.categoryId" class="mavi-tag hover-link"
-                                        [routerLink]="['/app/actividades']" [ngClass]="{'border-debt': act.debt > 0}"
+                                        [routerLink]="['/app/actividades']"
+                                        [ngClass]="{'border-debt': act.debt > 0, 'surcharge-applied': act.surchargeApplied}"
                                         [queryParams]="{ category: act.activity.categoryId, activity: act.activity.id }"
                                         [title]="(act.activity.startDate | date:'dd/MM/yy HH:mm') + ' - ' + (act.activity.endDate | date:'dd/MM/yy HH:mm')">
                                         {{ act.activity.description }} {{act.activity.startDate |
@@ -98,7 +99,8 @@
                                 <div class="max-h-80 overflow-y-auto d-flex gap-1 flex-wrap w-full">
                                     <ng-container *ngFor="let act of sc.activitiesPast">
                                         <a *ngIf="act.activity.categoryId === sc.categoryId"
-                                            class="mavi-tag text-old hover-link " [ngClass]="{'border-debt': act.debt > 0}"
+                                            class="mavi-tag text-old hover-link "
+                                            [ngClass]="{'border-debt': act.debt > 0, 'surcharge-applied': act.surchargeApplied}"
                                             [routerLink]="['/app/actividades']"
                                             [queryParams]="{ category: act.activity.categoryId, activity: act.activity.id }"
                                             [title]="(act.activity.startDate | date:'dd/MM/yy HH:mm') + ' - ' + (act.activity.endDate | date:'dd/MM/yy HH:mm')">

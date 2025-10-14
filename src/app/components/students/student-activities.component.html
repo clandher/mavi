@@ -4,7 +4,8 @@
 		<div class="d-flex justify-content-between items-center mb-2">
 			<div>
 				<div class="hover-link" [routerLink]="['/app/actividades']"
-					[queryParams]="{ category: act.activity.categoryId, activity: act.activity.id }">
+					[queryParams]="{ category: act.activity.categoryId, activity: act.activity.id }"
+					title="Código: {{ act.activity.code }}&#10;Categoría: {{ act.activity.categoryId }}&#10;Tipo: {{ act.activity.type.key }}&#10;Descripción: {{ act.activity.description }}&#10;Inicio: {{ act.activity.startDate | date:'medium' }}&#10;Fin: {{ act.activity.endDate | date:'medium' }}&#10;Período de gracia: {{ act.activity.gracePeriod }}&#10;Precio: {{ act.activity.price | currencyMX }}&#10;Recurrente: {{ act.activity.type.recurrent ? 'Sí' : 'No' }}">
 					{{ act.activity.description }} - {{ act.activity.startDate | date:act.activity.type.format }}
 				</div>
 				<!-- <div class="text-sm text-gray-500"
@@ -23,7 +24,7 @@
 					{{ cargo.concept }}
 				</div>
 
-				<div class="text-xs text-gray-500">
+				<div class="text-xs text-gray-500" title="{{cargo.chargeDate | date: 'medium' }}">
 					{{ cargo.chargeDate | date:'mediumDate' }}
 				</div>
 			</div>

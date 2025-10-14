@@ -67,8 +67,9 @@
         (mouseup)="onMouseUp()">
         <a class="mavi-tab" *ngFor="let activity of activitiesByCategoryCurrent; let i = index"
             (click)="centerTab($event)" [ngClass]="{ selected: selectedActivity?.id === activity.id }"
-            (click)="onActivityChange(activity)">
-            {{ activity.description }} {{activity.startDate | date:activity.type.format}}
+            (click)="onActivityChange(activity)"
+            title="Código: {{ activity.code }}&#10;Categoría: {{ activity.categoryId }}&#10;Tipo: {{ activity.type.key }}&#10;Descripción: {{ activity.description }}&#10;Inicio: {{ activity.startDate | date:'medium' }}&#10;Fin: {{ activity.endDate | date:'medium' }}&#10;Período de gracia: {{ activity.gracePeriod }}&#10;Precio: {{ activity.price | currencyMX }}&#10;Recurrente: {{ activity.type.recurrent ? 'Sí' : 'No' }}">
+            {{ activity.description }} - {{ activity.startDate | date:activity.type.format }}
         </a>
     </div>
 </div>

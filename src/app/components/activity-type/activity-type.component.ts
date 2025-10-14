@@ -8,11 +8,13 @@ import { setFocus } from '@app/core/helpers';
 import { MaviValidators } from '@app/core/mavi-validators';
 import { ModalInjectable } from '@app/core/modal.service';
 import { LinkHelpComponent } from "../link-help/link-help.component";
+import { NgxMaskDirective } from 'ngx-mask';
+import { DEFAULT_SEEDER_CONFIG } from '../configuration/development.component';
 
 @Component({
     selector: 'app-activity-type',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormGroupComponent, LinkHelpComponent],
+    imports: [CommonModule, ReactiveFormsModule, FormGroupComponent, LinkHelpComponent, NgxMaskDirective],
     templateUrl: './activity-type.component.html',
     styleUrls: ['./activity-type.component.scss']
 })
@@ -29,6 +31,7 @@ export class ActivityTypeComponent implements ModalInjectable {
     ) {
         this.form = this.fb.group({
             key: [null, []],
+            surchargeAmount: [DEFAULT_SEEDER_CONFIG.activityType.surchargeAmount, [MaviValidators.required(), MaviValidators.min(.01)]],
             recurrent: [false, []],
             rule: [null, []],
             format: [null, []],
@@ -55,6 +58,7 @@ export class ActivityTypeComponent implements ModalInjectable {
             activityTypeAPI.get<any>().subscribe(result => {
                 this.form.patchValue({
                     key: result.key,
+                    surchargeAmount: result.surchargeAmount,
                     recurrent: result.recurrent,
                     rule: result.rule,
                     format: result.format,
