@@ -1,0 +1,16 @@
+<btn-loading [action]="onRestart.bind(this)" text="Reiniciar"></btn-loading>
+<br />
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <app-form-group [control]="form.controls['seeder']" title="Configuración">
+        <div #jsonEditorContainer style="height: 400px; width: 100%;"></div>
+        <!-- <input id="seeder" formControlName="seeder" /> -->
+    </app-form-group>
+
+    <div class="d-flex gap-2 mt-2 justify-content-between">
+        <button type="button" class="btn btn-secondary" (click)="onResetConfig()">
+            <i class="fa fa-trash"></i> Restaurar configuracion
+        </button>
+        <app-submit [form]="form" [submit]="onSubmit.bind(this)" (discard)="onDiscard()" [isModal]="false"></app-submit>
+    </div>
+</form>

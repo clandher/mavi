@@ -95,7 +95,7 @@ body {
     height: 36px;
     border: none;
     cursor: pointer;
-    transition: background 0.2s, color 0.2s, border 0.2s;
+    // transition: background 0.2s, color 0.2s, border 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -123,11 +123,12 @@ body {
 
 .btn-primary {
     background: #fff;
-    color: #181818;
+    color: #383838;
     border: 1px solid #fff;
-
+    
     &:hover {
-        background: #e6e6e6;
+        color: #000000;
+        background: #ecf0fe;
     }
 
     //disabled
@@ -153,8 +154,9 @@ body {
     background: #121212;
     color: #fff;
     border: 1px solid #262626;
-
+    
     &:hover {
+        color: #cac4c4;
         background: #222;
     }
 }
@@ -544,7 +546,7 @@ select.form-control {
         gap: 12px;
         pointer-events: auto;
         opacity: 0.7;
-        transition: box-shadow 0.3s, opacity 0.3s, background 0.3s;
+        // transition: box-shadow 0.3s, opacity 0.3s, background 0.3s;
 
         &:hover {
             // box-shadow: 0 8px 32px rgba(52, 152, 219, 0.18), 0 2px 12px rgba(52, 152, 219, 0.18);
