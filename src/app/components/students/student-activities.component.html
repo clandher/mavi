@@ -18,7 +18,8 @@
 		<br />
 
 
-		<div *ngFor="let cargo of act.charges" class="mavi-border mb-2">
+		<div *ngFor="let cargo of act.charges" class="mavi-border mb-2"
+			title="Concepto: {{ cargo.concept }}&#10;Fecha de cargo: {{ cargo.chargeDate | date:'medium' }}&#10;Fecha de vencimiento: {{ cargo.dueDate | date:'medium' }}&#10;Monto total: {{ cargo.amountToBePaid | currencyMX }}&#10;Monto restante: {{ cargo.amountRemaining | currencyMX }}&#10;Recargo aplicado: {{ cargo.surchargeApplied ? 'Sí' : 'No' }}&#10;ID del cargo: {{ cargo.id }}&#10;ID de actividad: {{ cargo.activityId }}">
 			<div class="d-flex justify-content-between items-center mb-1">
 				<div>
 					{{ cargo.concept }}
@@ -45,9 +46,11 @@
 
 			</div>
 		</div>
+		@if (act.charges.length > 1) {
 		<div class="text-end">
-			<div class="text-sm text-gray-600">Deuda por actividad: {{ act.debt | currencyMX }}</div>
+			<div class="text-sm text-gray-600">Deuda total por actividad: {{ act.debt | currencyMX }}</div>
 		</div>
+		}
 
 		<div class="mavi-card-actions mt-4">
 

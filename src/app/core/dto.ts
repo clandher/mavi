@@ -151,8 +151,9 @@ export class Charge {
     studentId!: number;
     chargeDate!: Date;
     amountToBePaid!: number;
+    dueDate!: Date;
     amountRemaining!: number;
-    surcharge!: boolean;
+    surchargeApplied!: boolean;
     activityId!: number;
     activity!: Activity;
 }
