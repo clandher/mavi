@@ -7,11 +7,12 @@ import { FormGroupComponent } from "../form-group/form-group.component";
 import { setFocus } from '@app/core/helpers';
 import { MaviValidators } from '@app/core/mavi-validators';
 import { ModalInjectable } from '@app/core/modal.service';
+import { LinkHelpComponent } from "../link-help/link-help.component";
 
 @Component({
     selector: 'app-activity-type',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormGroupComponent],
+    imports: [CommonModule, ReactiveFormsModule, FormGroupComponent, LinkHelpComponent],
     templateUrl: './activity-type.component.html',
     styleUrls: ['./activity-type.component.scss']
 })

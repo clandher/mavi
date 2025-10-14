@@ -14,6 +14,8 @@ import { PaymentComponent } from '../payment/payment.component';
 import { ToastrService } from 'ngx-toastr';
 import { StudentService } from '@app/core/student.service';
 import { ModalService } from '@app/core/modal.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
     standalone: true,
@@ -32,6 +34,7 @@ export class StudentEditComponent {
     public student: Student | null = null;
 
     private _origin: string | null = null;
+    private destroy$ = new Subject<void>();
 
     constructor(
         private route: ActivatedRoute,
@@ -219,11 +222,16 @@ export class StudentEditComponent {
         this.modalService.open({
             component: PaymentComponent, title: 'Realizar pago', size: 'md',
             inputs: { studentId: student.id }
-        }).subscribe((result: boolean) => {
+        }).pipe(takeUntil(this.destroy$)).subscribe((result: boolean) => {
             if (result) {
                 this.refreshStudentData();
             }
         });
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 
     refreshStudentData(): void {

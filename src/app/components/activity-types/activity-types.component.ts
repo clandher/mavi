@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormBuilder } from '@angular/forms';
 import { BaseHttp } from '@app/core/base-http';
@@ -6,8 +6,8 @@ import { NgIf, NgFor } from '@angular/common';
 import { ActivityTypeComponent } from '../activity-type/activity-type.component';
 import { ActivityType } from '@app/core/dto';
 import { ModalService } from '@app/core/modal.service';
-
-
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-activity-types',
@@ -15,12 +15,13 @@ import { ModalService } from '@app/core/modal.service';
 	styleUrls: [],
 	imports: [NgIf, NgFor]
 })
-export class ActivityTypesComponent {
+export class ActivityTypesComponent implements OnDestroy {
 
 	activityTypes: ActivityType[] = [];
 
 
 	private activityTypeAPI: BaseHttp;
+	private destroy$ = new Subject<void>();
 
 	constructor(
 		private modalService: ModalService,
@@ -60,12 +61,15 @@ export class ActivityTypesComponent {
 		this.modalService.open({
 			component: ActivityTypeComponent, title: title, size: 'md',
 			inputs: { activityTypeId: activityTypeId },
-		}).subscribe((result) => {
+		}).pipe(takeUntil(this.destroy$)).subscribe((result) => {
 			if (result) {
 				this.loadActivityTypes();
 			}
 		});
 	}
 
-
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
+	}
 }

@@ -8,6 +8,8 @@ import { ActivityComponent } from '../activity/activity.component';
 import { FormsModule } from '@angular/forms';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { ModalService } from '@app/core/modal.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-activity-selector',
@@ -102,7 +104,7 @@ export class ActivitySelectorComponent {
 		this.modalService.open({
 			component: ActivityComponent, title, size: 'lg',
 			inputs: { activityId }
-		}).subscribe(async result => {
+		}).pipe(takeUntil(this.destroy$)).subscribe(async result => {
 			await this._fetchActivities();
 		});
 	}
@@ -230,4 +232,10 @@ export class ActivitySelectorComponent {
 		tabsContainer.scrollBy({ left: offset, behavior: 'smooth' });
 	}
 
+	private destroy$ = new Subject<void>();
+
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
+	}
 }

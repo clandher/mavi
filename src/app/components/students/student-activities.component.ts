@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
-
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
@@ -21,6 +22,7 @@ export class StudentActivitiesComponent implements OnInit {
 	activities: StudentActivity[] = [];
 	loading = true;
 	private studentActivityHttp: StudentActivityHttp;
+	private destroy$ = new Subject<void>();
 
 
 	constructor(
@@ -59,7 +61,7 @@ export class StudentActivitiesComponent implements OnInit {
 		this.modalService.open({
 			component: ChargeComponent, title: 'Nuevo cargo', size: 'md',
 			inputs: { studentActivityId: studentActivity.id },
-		}).subscribe((result) => {
+		}).pipe(takeUntil(this.destroy$)).subscribe((result) => {
 			if (result) {
 				this.activities = [];
 				const studentId = this.route.parent!.snapshot.paramMap.get('id');
@@ -72,4 +74,8 @@ export class StudentActivitiesComponent implements OnInit {
 		});
 	}
 
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
+	}
 }

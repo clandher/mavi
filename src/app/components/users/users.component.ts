@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp } from '@app/core/base-http';
 import { NgIf, NgFor } from '@angular/common';
@@ -7,6 +7,8 @@ import { UserComponent } from '../user/user.component';
 import { UserPasswordComponent } from '../user-password/user-password.component';
 import { AuthService } from '@app/core/auth.service';
 import { ModalService } from '@app/core/modal.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
     selector: 'app-users',
@@ -14,13 +16,14 @@ import { ModalService } from '@app/core/modal.service';
     styleUrls: ['./users.component.scss'],
     imports: [NgIf, NgFor]
 })
-export class UsersComponent implements OnInit {
+export class UsersComponent implements OnInit, OnDestroy {
 
     users: User[] = [];
 
     userId: number = 0
 
     private userAPI: BaseHttp;
+    private destroy$ = new Subject<void>();
 
     constructor(
         private modalService: ModalService,
@@ -69,7 +72,7 @@ export class UsersComponent implements OnInit {
         this.modalService.open({
             component: UserComponent, title: title, size: 'md',
             inputs: { userId: userId },
-        }).subscribe((result) => {
+        }).pipe(takeUntil(this.destroy$)).subscribe((result) => {
             if (result) {
                 this.loadUsers();
             }
@@ -80,9 +83,13 @@ export class UsersComponent implements OnInit {
         this.modalService.open({
             component: UserPasswordComponent, title: title, size: 'md',
             inputs: { userId: userId },
-        }).subscribe((result) => {
+        }).pipe(takeUntil(this.destroy$)).subscribe((result) => {
             this.userId = 0;
         });
     }
 
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
+    }
 }

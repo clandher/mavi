@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StudentPayment } from '@app/core/dto';
 import { StudentPaymentHttp } from 'src/app/core/student-payment-http';
@@ -10,6 +10,8 @@ import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 import { SchoolService } from '@app/core/school.service';
 import { StudentService } from '@app/core/student.service';
 import { ModalService } from '@app/core/modal.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
 	standalone: true,
@@ -17,12 +19,13 @@ import { ModalService } from '@app/core/modal.service';
 	templateUrl: './student-payments.component.html',
 	providers: []
 })
-export class StudentPaymentsComponent implements OnInit {
+export class StudentPaymentsComponent implements OnInit, OnDestroy {
 
 	paymentsWithChargers: StudentPayment[] = [];
 	studentId: number | null = null;
 	public showVoucherModal: boolean = false;
 	public voucherPayment: StudentPayment | null = null;
+	private destroy$ = new Subject<void>();
 
 	constructor(
 		private http: HttpClient,
@@ -54,7 +57,7 @@ export class StudentPaymentsComponent implements OnInit {
 		this.modalService.open({
 			component: PaymentComponent, title: 'Realizar pago', size: 'md',
 			inputs: { studentId: this.studentId }
-		}).subscribe((result: boolean) => {
+		}).pipe(takeUntil(this.destroy$)).subscribe((result: boolean) => {
 			if (result) {
 				this._loadPayments();
 				this.studentService.notifyRefresh();
@@ -86,4 +89,8 @@ export class StudentPaymentsComponent implements OnInit {
 		if (container) container.innerHTML = '';
 	}
 
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
+	}
 }

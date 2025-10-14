@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, FormGroup, ValidatorFn, AbstractControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { BaseHttp } from '@app/core/base-http';
@@ -11,6 +11,7 @@ import { NgxMaskDirective } from 'ngx-mask';
 import { MaviValidators } from '@app/core/mavi-validators';
 import { faker } from '@faker-js/faker';
 import { ModalInjectable } from '@app/core/modal.service';
+import ms from 'ms';
 
 @Component({
     selector: 'app-activity',
@@ -59,22 +60,25 @@ export class ActivityComponent implements ModalInjectable {
                 dateToDatetimeLocalString(new Date()),
                 [
                     MaviValidators.required(),
-                    MaviValidators.maxDate('endDate', 'La fecha de inicio debe ser menor a la fecha de fin.')
-                ]
+                    MaviValidators.maxDate('endDate', 'La fecha de inicio debe ser menor a la fecha de fin.'),
+                ],
             ],
             endDate: [
                 dateToDatetimeLocalString(new Date(Date.now() + 60 * 60 * 1000)),
                 [
                     MaviValidators.required(),
-                    MaviValidators.minDate('startDate', 'La fecha debe ser mayor a la fecha de inicio.')
-                ]
+                    MaviValidators.minDate('startDate', 'La fecha debe ser mayor a la fecha de inicio.'),
+                ],
             ],
-            gracePeriod: [savedGracePeriod, [MaviValidators.required()]],
+            gracePeriod: [
+                savedGracePeriod,
+                [MaviValidators.required()]
+            ],
             price: [200, [MaviValidators.required(), MaviValidators.min(0.01)]],
             categoryId: [0, [MaviValidators.required()]],
             typeId: [0, [MaviValidators.required()]],
             code: [faker.string.alphanumeric(10).toUpperCase(), [MaviValidators.required()]],
-        });
+        }, { validators: [MaviValidators.gracePeriodValidator] });
     }
 
     ngAfterViewInit(): void {
@@ -114,7 +118,10 @@ export class ActivityComponent implements ModalInjectable {
             const activityAPI = new BaseHttp(`activities/${id}`, this.http);
             activityAPI.get<Activity>().subscribe(result => {
                 if (!this.GRACE_PERIOD_OPTIONS.some(option => option.value === result.gracePeriod)) {
-                    this.GRACE_PERIOD_OPTIONS.push({ value: result.gracePeriod, description: result.gracePeriod });
+                    this.GRACE_PERIOD_OPTIONS.push({
+                        value: result.gracePeriod,
+                        description: this.getGracePeriodDescription(result.gracePeriod)
+                    });
                 }
 
                 this.form.patchValue({
@@ -144,6 +151,28 @@ export class ActivityComponent implements ModalInjectable {
         }
     }
 
+    private getGracePeriodDescription(value: string): string {
+        const descriptions: { [key: string]: string } = {
+            'years': 'años', 'year': 'año', 'yrs': 'años', 'yr': 'año', 'y': 'año',
+            'months': 'meses', 'month': 'mes', 'mo': 'mes',
+            'weeks': 'semanas', 'week': 'semana', 'w': 'semana',
+            'days': 'días', 'day': 'día', 'd': 'día',
+            'hours': 'horas', 'hour': 'hora', 'hrs': 'horas', 'hr': 'hora', 'h': 'hora',
+            'minutes': 'minutos', 'minute': 'minuto', 'mins': 'minutos', 'min': 'minuto', 'm': 'minuto',
+            'seconds': 'segundos', 'second': 'segundo', 'secs': 'segundos', 'sec': 'segundo', 's': 'segundo',
+            'milliseconds': 'milisegundos', 'millisecond': 'milisegundo', 'msecs': 'milisegundos', 'msec': 'milisegundo', 'ms': 'milisegundo'
+        };
+
+        const match = value.match(/^(\d+)([a-zA-Z]+)$/);
+        if (match) {
+            const [, numericValue, unit] = match;
+            const translatedUnit = descriptions[unit] || unit;
+            return `${numericValue} ${translatedUnit}`;
+        }
+
+        return value; // Fallback for unexpected formats
+    }
+
     onSubmit(): Promise<void> {
         return new Promise((resolve, reject) => {
             const formValue = this.form.value;
@@ -152,6 +181,10 @@ export class ActivityComponent implements ModalInjectable {
             if (formValue.gracePeriod) {
                 localStorage.setItem('activity.gracePeriod', formValue.gracePeriod);
             }
+
+            const startDate = new Date(formValue.startDate);
+            const endDate = new Date(formValue.endDate);
+
 
             if (this.activityId !== 0) {
                 const activityToSave = {

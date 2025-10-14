@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp } from '@app/core/base-http';
 import { NgIf, NgFor } from '@angular/common';
 import { ObservationComponent } from '../observation/observation.component';
 import { ModalService } from '@app/core/modal.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 interface Observation {
     id: number;
@@ -16,10 +18,11 @@ interface Observation {
     styleUrls: [],
     imports: [NgIf, NgFor]
 })
-export class ObservationsComponent {
+export class ObservationsComponent implements OnDestroy {
     data: Observation[] = [];
 
     private api: BaseHttp;
+    private destroy$ = new Subject<void>();
 
     constructor(
         private modalService: ModalService,
@@ -55,10 +58,15 @@ export class ObservationsComponent {
         this.modalService.open({
             component: ObservationComponent, title: title, size: 'md',
             inputs: { observationId: id },
-        }).subscribe((result) => {
+        }).pipe(takeUntil(this.destroy$)).subscribe((result) => {
             if (result) {
                 this._fetch();
             }
         });
+    }
+
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 }

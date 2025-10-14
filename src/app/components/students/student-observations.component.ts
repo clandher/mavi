@@ -9,6 +9,8 @@ import { RequestQueryBuilder } from '@dataui/crud-request';
 import { SubmitComponent } from "../submit/submit.component";
 import { ModalService } from '@app/core/modal.service';
 import { StudentObservationComponent } from '../student-observation';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
 	standalone: true,
@@ -23,6 +25,7 @@ export class StudentObservationsComponent implements OnInit {
 	selectedTab: 'observations' | 'timeObservations' = 'observations';
 	studentObservationsAPI: BaseHttp;
 	timeObservations: StudentObservation[] = [];
+	private destroy$ = new Subject<void>();
 
 	constructor(
 		private http: HttpClient,
@@ -74,12 +77,17 @@ export class StudentObservationsComponent implements OnInit {
 		this.modalService.open({
 			component: StudentObservationComponent, title: 'Observaciones', size: 'xl',
 			inputs: { studentId: this.studentId }
-		}).subscribe((result: boolean) => {
+		}).pipe(takeUntil(this.destroy$)).subscribe((result: boolean) => {
 			if (result) {
 				this.studentObservationsAPI.get<StudentObservation[]>().subscribe((data: StudentObservation[]) => {
 					this.timeObservations = data.map(obs => ({ ...obs, originalObservation: obs.observation }));
 				});
 			}
 		});
+	}
+
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
 	}
 }

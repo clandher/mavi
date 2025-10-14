@@ -1,5 +1,5 @@
-
-import { AbstractControl, ValidationErrors, Validators } from "@angular/forms";
+import { AbstractControl, ValidationErrors, Validators, ValidatorFn } from "@angular/forms";
+import ms from 'ms';
 
 export class MaviValidators {
     static maxDate(compareToKey: string, message: string): (control: AbstractControl) => ValidationErrors | null {
@@ -63,6 +63,7 @@ export class MaviValidators {
             return null;
         };
     }
+
     static email(message: string = 'Email inválido'): (control: AbstractControl) => ValidationErrors | null {
         // Usa la lógica de Angular Validators.email
         // Importa Validators de @angular/forms
@@ -85,4 +86,30 @@ export class MaviValidators {
             return null;
         };
     }
+
+    static gracePeriodValidator: ValidatorFn = (control: AbstractControl) => {
+        const formGroup = control;
+        if (!formGroup) return null;
+
+        const startDate = new Date(formGroup.get('startDate')?.value);
+        const endDate = new Date(formGroup.get('endDate')?.value);
+        const gracePeriod = formGroup.get('gracePeriod')?.value;
+
+        if (!startDate || !endDate || !gracePeriod) return null;
+
+        const message = 'La fecha de recargo (inicio + periodo de gracia) no puede ser igual o posterior a la fecha de fin.';
+
+        try {
+            const gracePeriodMs = ms(gracePeriod);
+            const adjustedStartDate = new Date(startDate.getTime() + gracePeriodMs);
+
+            if (adjustedStartDate >= endDate) {
+                return { message };
+            }
+        } catch (error) {
+            return { message };
+        }
+
+        return null;
+    };
 }

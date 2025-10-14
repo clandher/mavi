@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { BaseHttp } from '@app/core/base-http';
 import { Activity, StudentActivity } from '@app/core/dto';
@@ -15,6 +15,8 @@ import { AvatarStudentActivityComponent, StudentActivityEvent, StudentActivityVi
 import { ActivitySelectorComponent } from "../activity-selector/activity-selector.component";
 import { ModalService } from '@app/core/modal.service';
 import { StudentObservationComponent } from '../student-observation';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
 	standalone: true,
@@ -22,13 +24,14 @@ import { StudentObservationComponent } from '../student-observation';
 	templateUrl: './avatars.component.html',
 	styleUrl: './avatars.component.scss'
 })
-export class AvatarsComponent {
+export class AvatarsComponent implements OnDestroy {
 
 	public showDebt: boolean = true;
 	public studentActivities: StudentActivityView[] = [];
 	public loadingStudentActivities: boolean = false;
 	public selectedStudentActivity: StudentActivityView | null = null;
 	public selectedActivity: Activity | null = null;
+	private destroy$ = new Subject<void>();
 
 	constructor(
 		public router: Router,
@@ -51,18 +54,20 @@ export class AvatarsComponent {
 	}
 
 	public showInscription() {
-		this.modalService.open({ component: InscriptionComponent, title: 'Inscribir alumnos', size: 'xl' }).subscribe((result: boolean) => {
-			if (result) {
-				this._loadStudentActivities();
-			}
-		});
+		this.modalService.open({ component: InscriptionComponent, title: 'Inscribir alumnos', size: 'xl' })
+			.pipe(takeUntil(this.destroy$))
+			.subscribe((result: boolean) => {
+				if (result) {
+					this._loadStudentActivities();
+				}
+			});
 	}
 
 	public showPayment(studentActivity: StudentActivityView) {
 		this.modalService.open({
 			component: PaymentComponent, title: 'Realizar pago', size: 'md',
 			inputs: { studentId: studentActivity.student.id }
-		}).subscribe((result: boolean) => {
+		}).pipe(takeUntil(this.destroy$)).subscribe((result: boolean) => {
 			if (result) {
 				this._loadStudentActivities();
 			}
@@ -118,5 +123,10 @@ export class AvatarsComponent {
 				this.loadingStudentActivities = false;
 			});
 		}
+	}
+
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
 	}
 }

@@ -9,6 +9,7 @@ import JSONEditor from 'jsoneditor';
 import 'jsoneditor/dist/jsoneditor.css';
 import { SubmitComponent } from '../submit/submit.component';
 import { FormGroupComponent } from "../form-group/form-group.component";
+import { LinkHelpComponent } from "../link-help/link-help.component";
 
 export interface SeederConfig {
 	activityType: {
@@ -53,7 +54,7 @@ export const DEFAULT_SEEDER_CONFIG: SeederConfig = {
 	templateUrl: './development.component.html',
 	styleUrls: ['./development.component.scss'],
 	standalone: true,
-	imports: [BtnLoadingComponent, FormsModule, ReactiveFormsModule, SubmitComponent, FormGroupComponent],
+	imports: [BtnLoadingComponent, FormsModule, ReactiveFormsModule, SubmitComponent, FormGroupComponent, LinkHelpComponent],
 })
 export class DevelopmentComponent implements AfterViewInit, OnInit {
 

@@ -41,9 +41,10 @@
 	<div class="row">
 
 		<div class="col-md-6">
-			<app-form-group [title]="'Período de gracia'" [control]="form.get('gracePeriod')">
+			<app-form-group [title]="'Período de gracia (recargo)'" [control]="form.get('gracePeriod')">
 				<select id="newActivityGracePeriod" formControlName="gracePeriod" class="form-control">
-					<option *ngFor="let period of GRACE_PERIOD_OPTIONS" [value]="period.value">{{ period.description }}</option>
+					<option *ngFor="let period of GRACE_PERIOD_OPTIONS" [value]="period.value">{{ period.description }}
+					</option>
 				</select>
 			</app-form-group>
 		</div>
@@ -56,3 +57,8 @@
 		</div>
 	</div>
 </form>
+<div class="form-control-error position-absolute bottom-0">
+	<div *ngIf="form?.invalid && (form?.touched || form?.dirty)">
+		{{form?.errors?.['message'] ?? 'Campo inválido.'}}
+	</div>
+</div>

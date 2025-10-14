@@ -12,6 +12,8 @@ import { setFocus } from '@app/core/helpers';
 import { ImageHttpClient } from '@app/core/image-http-client';
 import { FormGroupComponent } from "../form-group/form-group.component";
 import { ModalService } from '@app/core/modal.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 
 interface StudentCategoryView extends StudentCategory {
@@ -55,6 +57,7 @@ export class StudentListComponent implements OnInit, AfterViewInit {
     @ViewChild('studentListContainer', { static: false }) studentListContainer!: ElementRef;
 
     private _observer: IntersectionObserver | null = null;
+    private destroy$ = new Subject<void>();
 
     constructor(
         private http: HttpClient,
@@ -90,7 +93,7 @@ export class StudentListComponent implements OnInit, AfterViewInit {
         this.modalService.open({
             component: PaymentComponent, title: 'Realizar pago', size: 'md',
             inputs: { studentId: student.id }
-        }).subscribe((result: boolean) => {
+        }).pipe(takeUntil(this.destroy$)).subscribe((result: boolean) => {
             if (result) {
                 this._fetchStudents();
             }
@@ -258,5 +261,7 @@ export class StudentListComponent implements OnInit, AfterViewInit {
 
     ngOnDestroy(): void {
         this._observer?.disconnect();
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 }
