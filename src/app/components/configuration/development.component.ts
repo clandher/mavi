@@ -6,7 +6,6 @@ import { BtnLoadingComponent } from '../btn-loading/btn-loading.component';
 import { SchoolService } from '@app/core/school.service';
 import { FormsModule, FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import JSONEditor from 'jsoneditor';
-import 'jsoneditor/dist/jsoneditor.css';
 import { SubmitComponent } from '../submit/submit.component';
 import { FormGroupComponent } from "../form-group/form-group.component";
 import { LinkHelpComponent } from "../link-help/link-help.component";

@@ -15,7 +15,7 @@ import { NgxMaskDirective } from 'ngx-mask';
 	selector: 'app-schools',
 	templateUrl: './schools.component.html',
 	styleUrls: ['./schools.component.scss'],
-	imports: [NgIf, NgFor, FormsModule, ReactiveFormsModule, SubmitComponent, FormGroupComponent, NgxMaskDirective]
+	imports: [NgIf, NgFor, FormsModule, ReactiveFormsModule, SubmitComponent, FormGroupComponent]
 })
 export class SchoolsComponent {
 
