@@ -1,8 +1,9 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 
-export const baseUrl = 'http://localhost:3000';
+export const baseUrl = environment.apiUrl;
 
 export function buildUrl(path: string): string {
     return `${baseUrl}/${path}`;
