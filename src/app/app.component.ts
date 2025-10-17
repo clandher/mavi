@@ -3,6 +3,8 @@ import { FormControlName } from '@angular/forms';
 import { RouterOutlet, Router, NavigationEnd } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { ModalComponent } from "./components/modal/modal.component";
+import { HttpClient } from '@angular/common/http';
+import { buildUrl } from './core/base-http';
 // import { Dropdown } from 'bootstrap';
 
 
@@ -22,9 +24,24 @@ FormControlName.prototype.ngOnChanges = function () {
 export class AppComponent implements AfterViewInit {
   title = 'mavi';
 
-  constructor(private toastr: ToastrService, private router: Router) { }
+  constructor(private toastr: ToastrService, private router: Router, private http: HttpClient) { }
+
+  getPing() {
+    this.http.get(buildUrl('auth/ping')).subscribe(
+      response => {
+        console.log('Ping response:', response);
+      },
+      error => {
+        console.error('Ping error:', error);
+      }
+    );
+  }
 
   ngAfterViewInit() {
+
+
+    this.getPing();
+
     const runWowEffect = () => {
       setTimeout(() => {
         const wowContainer = document.getElementById('wow-anim');
