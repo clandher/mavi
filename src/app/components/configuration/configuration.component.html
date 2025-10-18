@@ -2,15 +2,11 @@
     <a routerLink="escuela" routerLinkActive="selected" class="mavi-tab" (click)="onTabClick('escuela')">
         Escuela
     </a>
-    @if (authService.user?.developer) {
-    <a routerLink="desarrollo" routerLinkActive="selected" class="mavi-tab" (click)="onTabClick('desarrollo')">
-        Desarrollo
-    </a>
-    }
     <a routerLink="categorias" routerLinkActive="selected" class="mavi-tab" (click)="onTabClick('categorias')">
         Categorías
     </a>
-    <a routerLink="tipos-de-actividad" routerLinkActive="selected" class="mavi-tab" (click)="onTabClick('tipos-de-actividad')">
+    <a routerLink="tipos-de-actividad" routerLinkActive="selected" class="mavi-tab"
+        (click)="onTabClick('tipos-de-actividad')">
         Tipos de actividad
     </a>
     <a routerLink="usuarios" routerLinkActive="selected" class="mavi-tab" (click)="onTabClick('usuarios')">
@@ -19,6 +15,11 @@
     <a routerLink="observaciones" routerLinkActive="selected" class="mavi-tab" (click)="onTabClick('observaciones')">
         Observaciones
     </a>
+    @if (authService.user?.developer) {
+    <a routerLink="desarrollo" routerLinkActive="selected" class="mavi-tab" (click)="onTabClick('desarrollo')">
+        Desarrollo
+    </a>
+    }
 </div>
 <br>
 <router-outlet></router-outlet>

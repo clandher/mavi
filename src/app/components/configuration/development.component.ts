@@ -9,6 +9,7 @@ import JSONEditor from 'jsoneditor';
 import { SubmitComponent } from '../submit/submit.component';
 import { FormGroupComponent } from "../form-group/form-group.component";
 import { LinkHelpComponent } from "../link-help/link-help.component";
+import { LocalStorage } from '@app/core/local-storage';
 
 export interface SeederConfig {
 	activityType: {
@@ -64,6 +65,9 @@ export const DEFAULT_SEEDER_CONFIG: SeederConfig = {
 	imports: [BtnLoadingComponent, FormsModule, ReactiveFormsModule, SubmitComponent, FormGroupComponent, LinkHelpComponent],
 })
 export class DevelopmentComponent implements AfterViewInit, OnInit {
+
+
+	public debug = new LocalStorage<boolean>('debug', true);
 
 	@ViewChild('jsonEditorContainer', { static: false }) jsonEditorContainer!: ElementRef;
 	private jsonEditor!: JSONEditor;

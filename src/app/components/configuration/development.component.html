@@ -28,6 +28,14 @@
 <br />
 <div class="d-flex flex-column ">
     <app-link-help href="https://jkbrzt.github.io/rrule/" description="activityType.rule"></app-link-help>
-    <app-link-help href="https://angular.dev/api/common/DatePipe#pre-defined-format-options" description="activityType.format"></app-link-help>
-    <app-link-help href="https://github.com/vercel/ms?tab=readme-ov-file#examples" description="activity.duration y activity.gracePeriod"></app-link-help>
+    <app-link-help href="https://angular.dev/api/common/DatePipe#pre-defined-format-options"
+        description="activityType.format"></app-link-help>
+    <app-link-help href="https://github.com/vercel/ms?tab=readme-ov-file#examples"
+        description="activity.duration y activity.gracePeriod"></app-link-help>
+</div>
+
+<div class="mt-4 d-flex items-center me-auto">
+    <input class="form-control" type="checkbox" id="debug" [checked]="debug.value"
+        (change)="debug.value = !debug.value" />
+    <label for="debug" class="ml-2">Debug</label>
 </div>

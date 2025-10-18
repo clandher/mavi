@@ -3,13 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormGroup, ValueChangeEvent } from '@angular/forms';
 import { filter, take } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
+import { DebugInfoComponent } from "../debug-info/debug-info.component";
 
 @Component({
 	selector: 'app-submit',
 	templateUrl: './submit.component.html',
 	styleUrls: ['./submit.component.scss'],
 	standalone: true,
-	imports: [CommonModule]
+	imports: [CommonModule, DebugInfoComponent]
 })
 export class SubmitComponent {
 	@Input() form?: FormGroup;

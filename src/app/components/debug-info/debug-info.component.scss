@@ -1,0 +1,12 @@
+.hovered {
+    color: rgb(125, 0, 0);
+    &:hover {
+        color: rgb(215, 0, 0);
+    }
+}
+
+.dropdown-menu-info {
+    padding: 8px;
+    color: #e5e7eb;
+    font-size: 12px;
+}
