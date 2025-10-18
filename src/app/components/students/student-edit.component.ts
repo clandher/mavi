@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp } from '@app/core/base-http';
 import { CreateStudentDto, Student, UpdateStudentDto } from '@app/core/dto';
-import { setFocus, uploadStudentPhoto } from '@app/core/helpers';
+import { formatDateForDisplay, setFocus, uploadStudentPhoto } from '@app/core/helpers';
 import { FormGroupComponent } from '../form-group/form-group.component';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { SubmitComponent } from '../submit/submit.component';
@@ -36,7 +36,9 @@ export class StudentEditComponent {
 
     private _origin: string | null = null;
     private destroy$ = new Subject<void>();
-
+    
+     maxBirthdate: string = formatDateForDisplay(new Date());
+    //    this.maxBirthdate = ;
     constructor(
         private route: ActivatedRoute,
         private router: Router,
@@ -73,7 +75,8 @@ export class StudentEditComponent {
         if (!studentId) {
             this.studentForm.patchValue({
                 id: 0,
-                birthdate: new Date().toISOString().slice(0, 10)
+                birthdate: formatDateForDisplay(new Date())
+                
             });
             setFocus('name');
         } else {

@@ -97,7 +97,7 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
             tab: ['existing'],
             student: this.fb.group({
                 name: [''],
-                birthdate: ['']
+                birthdate: [formatDateForDisplay(new Date())]
             })
         });
 
