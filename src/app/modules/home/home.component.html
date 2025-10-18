@@ -18,10 +18,6 @@
             </nav>
         </div>
 
-        <!-- <button *ngIf="authService.user" type="button" aria-expanded="false">
-            {{ authService.user.name }}
-        </button> -->
-
         @if (authService.user) {
         <button class="user-menu-toggle" data-bs-toggle="dropdown">
             <span class="user-name">{{ authService.user.name }}</span>

@@ -24,7 +24,7 @@ export class ActivitySelectorComponent {
 	@Output() debt = new EventEmitter<boolean>();
 
 
-	selectedCategory: Category | null = null;
+	selectedCategoryId: number | null = null;
 	selectedActivity: Activity | null = null;
 
 
@@ -71,9 +71,9 @@ export class ActivitySelectorComponent {
 			if (this.categories.length) {
 				const categoryFound = this.categories.find(c => c.id === this._procureValue('category'));
 				if (categoryFound) {
-					this.selectedCategory = categoryFound;
+					this.selectedCategoryId = categoryFound.id;
 				} else {
-					this.selectedCategory = this.categories[0];
+					this.selectedCategoryId = this.categories[0].id;
 				}
 			}
 
@@ -82,21 +82,21 @@ export class ActivitySelectorComponent {
 	}
 
 	previousCategory(): void {
-		const idx = this.categories.findIndex(c => c.id === this.selectedCategory?.id);
+		const idx = this.categories.findIndex(c => c.id === this.selectedCategoryId);
 		if (idx > 0) {
-			this.selectedCategory = this.categories[idx - 1];
+			this.selectedCategoryId = this.categories[idx - 1].id;
 		} else if (idx === 0) {
-			this.selectedCategory = this.categories[this.categories.length - 1];
+			this.selectedCategoryId = this.categories[this.categories.length - 1].id;
 		}
 		this.onCategoryChange();
 	}
 
 	nextCategory(): void {
-		const idx = this.categories.findIndex(c => c.id === this.selectedCategory?.id);
+		const idx = this.categories.findIndex(c => c.id === this.selectedCategoryId);
 		if (idx < this.categories.length - 1 && idx !== -1) {
-			this.selectedCategory = this.categories[idx + 1];
+			this.selectedCategoryId = this.categories[idx + 1].id;
 		} else if (idx === this.categories.length - 1) {
-			this.selectedCategory = this.categories[0];
+			this.selectedCategoryId = this.categories[0].id;
 		}
 		this.onCategoryChange();
 	}
@@ -111,8 +111,7 @@ export class ActivitySelectorComponent {
 	}
 
 	async onCategoryChange() {
-
-		if (!this.selectedCategory) {
+		if (!this.selectedCategoryId) {
 			this.onActivityChange(null);
 			return;
 		};
@@ -157,11 +156,11 @@ export class ActivitySelectorComponent {
 		this.selectedActivity = activity;
 		this.router.navigate([], {
 			relativeTo: this.route,
-			queryParams: { category: this.selectedCategory?.id, activity: this.selectedActivity?.id },
+			queryParams: { category: this.selectedCategoryId, activity: this.selectedActivity?.id },
 			queryParamsHandling: 'merge'
 		});
 
-		localStorage.setItem('activity-selector.category', this.selectedCategory?.id?.toString() || '');
+		localStorage.setItem('activity-selector.category', this.selectedCategoryId?.toString() || '');
 		localStorage.setItem('activity-selector.activity', this.selectedActivity?.id?.toString() || '');
 
 		this.select.emit(activity);
@@ -174,13 +173,13 @@ export class ActivitySelectorComponent {
 	}
 
 	private async _fetchActivities() {
-		if (!this.selectedCategory) {
+		if (!this.selectedCategoryId) {
 			this.activities = [];
 			return;
 		}
 
 		const queryString = RequestQueryBuilder.create({
-			search: { categoryId: Number(this.selectedCategory.id) },
+			search: { categoryId: Number(this.selectedCategoryId) },
 		}).query();
 
 		this.loadingActivities = true;

@@ -6,12 +6,11 @@
     </button>
 
     <div class="category-select-wrapper">
-        @if (selectedCategory) {
-        <select id="categories" name="categories" [(ngModel)]="selectedCategory.id" (change)="onCategoryChange()"
+        @if (selectedCategoryId) {
+        <select id="categories" name="categories" [(ngModel)]="selectedCategoryId" (change)="onCategoryChange()"
             class="category-select">
-            <option [value]="null" disabled>-- Selecciona una categoría --</option>
-            <option *ngFor="let category of categories" [value]="category.id">
-                {{ category.type }}
+            <option *ngFor="let category of categories" [ngValue]="category.id">
+                Categoria {{ category.type }}
             </option>
         </select>
         }
@@ -23,9 +22,8 @@
         </svg>
     </button>
 </div>
-<br>
 
-@if(selectedCategory && activities.length === 0 && !loadingActivities){
+@if(selectedCategoryId && activities.length === 0 && !loadingActivities){
 <div class="text-gray-500 text-center py-8">
     Esta categoría no tiene actividades asociadas.
 </div>

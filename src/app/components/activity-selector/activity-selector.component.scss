@@ -4,12 +4,13 @@
     align-items: center;
     gap: 0.5rem;
     background: #18181b;
-    padding: 4px;
+    padding: 6px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     background-color: #101010;
 
     .category-btn {
         background: #23232a;
+         background-color: rgb(22, 22, 22);
         color: #e5e7eb;
         border: none;
         padding: 0.5rem 0.75rem;
@@ -42,7 +43,7 @@
     .category-select {
         width: 100%;
         text-align: center;
-        background: #23232a;
+        background-color: rgb(22, 22, 22);
         color: #e5e7eb;
         border: 1.5px solid #262626;
         font-size: 1rem;
@@ -56,15 +57,5 @@
             border-color: #60a5fa;
             box-shadow: 0 0 0 2px #262626;
         }
-    }
-
-    .category-option-disabled {
-        color: #6b7280;
-        background: #23232a;
-    }
-
-    .category-option {
-        color: #e5e7eb;
-        background: #23232a;
     }
 }

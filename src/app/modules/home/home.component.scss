@@ -5,11 +5,12 @@
     justify-content: center;
     align-items: center;
     width: 800px;
-    background-color: #0a0a0a;
+    // background-color: #0a0a0a;
     margin: 20px;
-
-
+    
+    
     .dashboard-header {
+        background-color: #070707;
         border: 1px solid #262626;
         display: flex;
         justify-content: space-between;
@@ -63,11 +64,13 @@
 
 
     .dashboard-content {
+        background-color: #070707;
+
         flex: 1;
         overflow-y: auto;
         width: 100%;
         border: 1px solid #262626;
-        padding: 24px;
+        padding: 20px;
         padding-bottom: 64px;
     }
 }
