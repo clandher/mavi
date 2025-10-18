@@ -1,9 +1,9 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { BaseHttp, buildUrl } from '@app/core/base-http';
-import { Activity, ActivityType, Category, Student, StudentActivity } from '@app/core/dto';
+import { BaseHttp } from '@app/core/base-http';
+import { Activity, Category, Student, StudentActivity } from '@app/core/dto';
 import { formatDateForDisplay } from '@app/core/helpers';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { ActivatedRoute } from '@angular/router';
@@ -11,8 +11,7 @@ import { MaviValidators } from '@app/core/mavi-validators';
 import { FormGroupComponent } from "../form-group/form-group.component";
 import { ImageHttpClient } from '@app/core/image-http-client';
 import { ModalInjectable, ModalService } from '@app/core/modal.service';
-import { ActivityComponent } from '../activity/activity.component';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 
 @Component({
     selector: 'app-inscription',
@@ -22,6 +21,7 @@ import { Subject, takeUntil } from 'rxjs';
     styleUrls: ['./inscription.component.scss']
 })
 export class InscriptionComponent implements OnInit, ModalInjectable {
+    @Input() studentId: number | null = null;
 
     form: FormGroup;
 
@@ -147,6 +147,13 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
             this.imageHttp.student(student);
             return student;
         });
+
+        if(this.studentId) {
+            const student = this.students.find(s => s.id === this.studentId);
+            if(student) {
+                this.onSelectStudent(student);
+            }
+        }
 
         this.filteredStudents = this._sortStudents();
     }

@@ -10,6 +10,7 @@ import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 import { StudentActivity } from '@app/core/dto';
 import { ChargeComponent } from "../charge/charge.component";
 import { ModalService } from '@app/core/modal.service';
+import { InscriptionComponent } from '../inscription';
 
 @Component({
 	standalone: true,
@@ -24,18 +25,22 @@ export class StudentActivitiesComponent implements OnInit {
 	private studentActivityHttp: StudentActivityHttp;
 	private destroy$ = new Subject<void>();
 
-
+	private studentId!: number;
 	constructor(
 		private route: ActivatedRoute,
 		private http: HttpClient,
 		private modalService: ModalService,
 	) {
+		this.studentId = +this.route.parent!.snapshot.paramMap.get('id')!;
 		this.studentActivityHttp = new StudentActivityHttp(this.http);
 	}
 
 	ngOnInit() {
-		const studentId = this.route.parent!.snapshot.paramMap.get('id');
-		this.studentActivityHttp.getByStudent(+studentId!)
+		this._fetch();
+	}
+
+	private _fetch() {
+		this.studentActivityHttp.getByStudent(this.studentId)
 			.subscribe({
 				next: (data) => {
 					this.activities = data;
@@ -70,6 +75,17 @@ export class StudentActivitiesComponent implements OnInit {
 						this.activities = data;
 					}
 				});
+			}
+		});
+	}
+
+	openActivityModal() {
+		this.modalService.open({
+			component: InscriptionComponent, title: 'Inscribir alumnos', size: 'xl',
+			inputs: { studentId: this.studentId }
+		}).pipe(takeUntil(this.destroy$)).subscribe((result: boolean) => {
+			if (result) {
+				this._fetch();
 			}
 		});
 	}

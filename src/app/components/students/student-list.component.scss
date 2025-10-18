@@ -58,3 +58,13 @@
     color: #3c3a3a;
     user-select: none;
 }
+
+
+.activity-tag {
+    display: inline-block;
+    max-width: calc(100% - 40px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}
