@@ -30,12 +30,26 @@ export class StudentObservationComponent implements OnInit, ModalInjectable {
 
 
     public newObservationText: string = '';
+    
+    categories: Category[] = [];
+    activities: Activity[] = [];
+
+
     public selectedStudents = 0;
+    students: StudentView[] = [];
+    filteredStudents: StudentView[] = [];
+
+    searchTerm: string = '';
+    newCategoryId: number | null = null;
+    newActivityId: number | null = null;
+
+    trainingObservations: string[] = [];
+    selectedObservations: string[] = [];
 
     public form: FormGroup = new FormGroup({});
 
     get disabled(): boolean {
-        return this.selectedStudents === 0 || (this.selectedObservations.length === 0  && this.newObservationText.trim() === '');
+        return this.selectedStudents === 0 || (this.selectedObservations.length === 0 && this.newObservationText.trim() === '');
     }
 
     constructor(
@@ -68,17 +82,7 @@ export class StudentObservationComponent implements OnInit, ModalInjectable {
     }
 
 
-    categories: Category[] = [];
-    activities: Activity[] = [];
-    students: StudentView[] = [];
-    filteredStudents: StudentView[] = [];
 
-    searchTerm: string = '';
-    newCategoryId: number | null = null;
-    newActivityId: number | null = null;
-
-    trainingObservations: string[] = [];
-    selectedObservations: string[] = [];
 
     toggleObservation(obs: string) {
         const idx = this.selectedObservations.indexOf(obs);
@@ -117,13 +121,12 @@ export class StudentObservationComponent implements OnInit, ModalInjectable {
         }
 
         this.sort();
-
         this.loadTrainingObservations();
     }
 
 
 
-    private sort() {
+    private sort(): void {
         this.filteredStudents.sort((a, b) => {
             if (a.selected && !b.selected) return -1;
             if (!a.selected && b.selected) return 1;
@@ -182,7 +185,7 @@ export class StudentObservationComponent implements OnInit, ModalInjectable {
 
     private loadTrainingObservations(): void {
         const observationsAPI = new BaseHttp('observations', this.http);
-        observationsAPI.get<{description: string}[]>().subscribe((observations) => {
+        observationsAPI.get<{ description: string }[]>().subscribe((observations) => {
             this.trainingObservations = observations.map(obs => obs.description);
             this.trainingObservations.sort((a, b) => a.localeCompare(b));
             this.filteredObservations = [...this.trainingObservations];

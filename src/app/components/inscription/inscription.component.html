@@ -22,7 +22,6 @@
 			</app-form-group>
 		</div>
 	</div>
-	<br />
 	<div class="mavi-tabs">
 		<a (click)="form.get('tab')?.setValue('existing')"
 			[class]="form.get('tab')?.value === 'existing' ? 'selected' : ''" class="mavi-tab">Seleccionar
@@ -33,16 +32,12 @@
 	</div>
 	<br />
 	<div class="mavi-border" *ngIf="form.get('tab')?.value === 'existing'">
-		<div class="form-group">
-			<label for="search" class="form-label">Buscar estudiante</label>
-			<input id="search" type="text" formControlName="search" placeholder="Buscar por nombre..."
-				class="form-control">
-		</div>
-		<br />
-		<div class="d-flex items-center mb-2">
-			<span class="font-semibold">Seleccionados: {{ selectedExistingStudents.length }}</span>
-		</div>
-		<div class="row gx-3 gy-3">
+		<app-form-group for="search" title="Estudiantes" >
+			<div class="selected-indicator">Seleccionados: <span class="count" >{{ selectedStudents }}</span></div>
+			<input id="search" type="text" formControlName="search" placeholder="Buscar estudiantes..."
+			class="form-control">
+		</app-form-group>
+		<div class="row gx-3 gy-3" style="max-height: 30vh; overflow-y: auto;">
 			<div *ngFor="let student of filteredStudents"
 				(click)="!hasActivityAssigned(student) && onSelectStudent(student)"
 				[class.opacity-50]="hasActivityAssigned(student)" [class.cursor-pointer]="!hasActivityAssigned(student)"

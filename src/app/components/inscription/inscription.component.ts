@@ -13,6 +13,12 @@ import { ImageHttpClient } from '@app/core/image-http-client';
 import { ModalInjectable, ModalService } from '@app/core/modal.service';
 import { Subject } from 'rxjs';
 
+
+export interface StudentView extends Student {
+    selected: boolean;
+    preselected: boolean;
+}
+
 @Component({
     selector: 'app-inscription',
     standalone: true,
@@ -25,17 +31,18 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
 
     form: FormGroup;
 
-    get disabled(): boolean {
-        return this.form.get('tab')?.value === 'existing' && this.selectedExistingStudents.length === 0;
 
-    }
 
-    private _sortStudents(): Student[] {
-        return this.filteredStudents.slice().sort((a, b) => {
+    private _sort(): void {
+        this.filteredStudents.sort((a, b) => {
+            if (a.preselected && !b.preselected) return -1;
+            if (b.preselected && !a.preselected) return 1;
+
             const hasCategoryA = a.categories && a.categories.length > 0 && a.categories.some(sc => sc.categoryId && sc.categoryId !== 0);
             const hasCategoryB = b.categories && b.categories.length > 0 && b.categories.some(sc => sc.categoryId && sc.categoryId !== 0);
             const inscritoA = hasCategoryA && a.activities && a.activities.some(act => act.activityId === Number(this.form.get('activityId')?.value));
             const inscritoB = hasCategoryB && b.activities && b.activities.some(act => act.activityId === Number(this.form.get('activityId')?.value));
+
             if (hasCategoryA && !inscritoA && (!hasCategoryB || inscritoB)) return -1;
             if (hasCategoryB && !inscritoB && (!hasCategoryA || inscritoA)) return 1;
             if (hasCategoryA && inscritoA && (!hasCategoryB || !inscritoB)) return -1;
@@ -46,11 +53,11 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
         });
     }
 
-    isStudentSelected(student: Student): boolean {
-        return this.selectedExistingStudents.some(s => s.id === student.id);
+    isStudentSelected(student: StudentView): boolean {
+        return student.selected;
     }
 
-    hasActivityAssigned(student: Student): boolean {
+    hasActivityAssigned(student: StudentView): boolean {
         if (!student.activities || !Array.isArray(student.activities) || student.activities.length === 0) return false;
         return student.activities.some(act => act.activityId === Number(this.form.get('activityId')?.value));
     }
@@ -61,15 +68,19 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
     categories: Category[] = [];
     activities: Activity[] = [];
     maxBirthdate: string = '';
-    students: Student[] = [];
-    filteredStudents: Student[] = [];
-    selectedExistingStudents: Student[] = [];
     selectedStudentActivity: StudentActivity | null = null;
 
 
+    public selectedStudents = 0;
+    students: StudentView[] = [];
+    filteredStudents: StudentView[] = [];
 
     get studentForm(): FormGroup {
         return this.form.get('student') as FormGroup;
+    }
+
+    get disabled(): boolean {
+        return this.form.get('tab')?.value === 'existing' && this.selectedStudents === 0;
     }
 
     constructor(
@@ -109,10 +120,11 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
                 value = '';
             }
 
+            const term = value.toLowerCase();
             this.filteredStudents = this.students.filter(student =>
-                student.name.toLowerCase().includes(value.toLowerCase())
+                student.name.toLowerCase().includes(term)
             );
-            this.filteredStudents = this._sortStudents();
+            this._sort();
         });
 
         this.form.get('tab')?.valueChanges.subscribe(value => {
@@ -143,19 +155,18 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
                 studentCategory.category = this.categories.find(c => c.id === studentCategory.categoryId) || { id: 0, type: '-', students: [], activities: [] };
                 return studentCategory;
             });
-
             this.imageHttp.student(student);
+            student.selected = false;
             return student;
         });
 
-        if(this.studentId) {
-            const student = this.students.find(s => s.id === this.studentId);
-            if(student) {
-                this.onSelectStudent(student);
-            }
+        const studentToSelect = this.filteredStudents.find(s => s.id === this.studentId);
+        if (studentToSelect) {
+            studentToSelect.preselected = true;
+            this.onSelectStudent(studentToSelect);
         }
 
-        this.filteredStudents = this._sortStudents();
+        this._sort();
     }
 
 
@@ -179,18 +190,18 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
                 }
             }
 
-            this.filteredStudents = this._sortStudents();
+            this._sort();
         });
     }
 
     onNewActivityChange() {
-        this.filteredStudents = this._sortStudents();
+        this._sort();
     }
 
     _loadStudents(): Promise<void> {
         const studentsAPI = new BaseHttp('students', this.http);
         return new Promise(resolve => {
-            studentsAPI.get<Student[]>().subscribe(students => {
+            studentsAPI.get<StudentView[]>().subscribe(students => {
                 this.students = students;
                 resolve();
             });
@@ -211,23 +222,23 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
         });
     }
 
-    onSelectStudent(student: Student) {
-        const idx = this.selectedExistingStudents.findIndex(s => s.id === student.id);
-        if (idx > -1) {
-            this.selectedExistingStudents.splice(idx, 1);
-        } else {
-            this.selectedExistingStudents.push(student);
-        }
-
+    onSelectStudent(student: StudentView) {
+        student.selected = !student.selected;
         this.form.markAsDirty();
+
+        if (student.selected) {
+            this.selectedStudents++;
+        } else {
+            this.selectedStudents--;
+        }
     }
 
     async onSubmit() {
 
         const categoryId = this.form.get('categoryId')?.value;
 
-        if (this.form.get('tab')?.value === 'existing' && this.selectedExistingStudents.length > 0) {
-            for (const student of this.selectedExistingStudents) {
+        if (this.form.get('tab')?.value === 'existing' && this.students.some(student => student.selected)) {
+            for (const student of this.students.filter(s => s.selected)) {
                 const hasCategory = student.categories.some(sc => sc.categoryId === Number(categoryId));
                 if (!hasCategory) {
                     const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http);
@@ -237,7 +248,7 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
             }
 
             this.complete.emit(true);
-            this.selectedExistingStudents = [];
+            this.students.forEach(student => student.selected = false);
         } else if (this.form.get('tab')?.value === 'new') {
             const newStudent = this.form.get('student')?.value;
             await this._createNewStudent(newStudent, categoryId);

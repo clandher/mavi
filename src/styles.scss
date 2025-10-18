@@ -882,3 +882,14 @@ a {
     filter: invert(1) hue-rotate(180deg);
     border: unset !important;
 }
+
+
+
+.selected-indicator {
+    float: right;
+    font-size: 14px;
+
+    .count {
+        // color: #16a34a;
+    }
+}
