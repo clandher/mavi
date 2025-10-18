@@ -9,6 +9,7 @@ import { ActivatedRoute } from '@angular/router';
 import { ImageHttpClient } from '@app/core/image-http-client';
 import { FormGroup } from '@angular/forms';
 import { ModalInjectable } from '@app/core/modal.service';
+import { FormGroupComponent } from "../form-group/form-group.component";
 
 interface StudentView extends Student {
     selected: boolean;
@@ -17,7 +18,7 @@ interface StudentView extends Student {
 @Component({
     selector: 'app-student-observation',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, FormGroupComponent],
     templateUrl: './student-observation.component.html',
     styleUrls: ['./student-observation.component.scss']
 })
@@ -27,12 +28,14 @@ export class StudentObservationComponent implements OnInit, ModalInjectable {
     observationSearchTerm: string = '';
     filteredObservations: string[] = [];
 
+
+    public newObservationText: string = '';
     public selectedStudents = 0;
 
     public form: FormGroup = new FormGroup({});
 
     get disabled(): boolean {
-        return this.selectedStudents === 0 || this.selectedObservations.length === 0;
+        return this.selectedStudents === 0 || (this.selectedObservations.length === 0  && this.newObservationText.trim() === '');
     }
 
     constructor(
@@ -201,10 +204,16 @@ export class StudentObservationComponent implements OnInit, ModalInjectable {
 
 
     async onSubmit() {
+
         const studentObservationsAPI = new BaseHttp(`student-observations`, this.http);
         const activityId = Number(this.newActivityId);
         const requests: Promise<boolean>[] = [];
         for (const student of this.students.filter(s => s.selected)) {
+            if (this.newObservationText.trim() !== '') {
+                this.selectedObservations.push(this.newObservationText.trim());
+                this.newObservationText = '';
+            }
+
             for (const observation of this.selectedObservations) {
                 const payload = {
                     studentId: student.id,
@@ -224,11 +233,6 @@ export class StudentObservationComponent implements OnInit, ModalInjectable {
         if (allSucceeded) {
             this.complete.emit(true);
             this.selectedObservations = [];
-
-            // const selectedStudent = this.students.find(s => s.selected);
-            // if (navigate && this.selectedStudents === 1 && selectedStudent) {
-            //     this.router.navigate(['/app/estudiantes', selectedStudent.id, 'observaciones']);
-            // }
         }
     }
 }

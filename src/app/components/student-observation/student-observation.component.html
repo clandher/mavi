@@ -65,9 +65,16 @@
 			</div>
 			<div *ngIf="filteredObservations.length === 0" class="text-center py-4 text-gray-500">No se
 				encontraron observaciones</div>
-		</div>
 
+			<!-- todo; create input for create new observation -->
+			<div class="mt-3">
+				<app-form-group for="newObservation" title="Nueva observación">
+					<textarea id="newObservation" [(ngModel)]="newObservationText"
+						placeholder="Escribe una nueva observación..." class="form-control"></textarea>
+				</app-form-group>
+			</div>
+
+		</div>
 	</div>
-</div>
-<!-- <btn-loading [action]="onAssignObservations.bind(this, true)" text="Guardar y ver"
+	<!-- <btn-loading [action]="onAssignObservations.bind(this, true)" text="Guardar y ver"
 	[disabled]="selectedStudents > 1 || selectedStudents === 0 || selectedObservations.length === 0"></btn-loading> -->
