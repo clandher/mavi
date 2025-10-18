@@ -188,6 +188,8 @@ export interface Activity {
     endDate: string;
     gracePeriod: string;
     price: number;
+    typeId: number;
+    type: ActivityType;
 }
 
 export interface Collection {

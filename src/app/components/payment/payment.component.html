@@ -30,7 +30,7 @@
 	<div *ngFor="let cargo of charges; let i = index" class="mavi-border mb-2">
 		<div class="d-flex justify-content-between items-center mb-1">
 			<div>
-				{{ cargo.activity.description }} ({{ cargo.concept }})
+				{{ cargo.activity.description }} - {{ cargo.activity.startDate | date:cargo.activity.type.format }} ({{ cargo.concept }})
 			</div>
 
 			<div class="text-xs text-gray-500">

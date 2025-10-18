@@ -11,7 +11,9 @@
 			<div class="d-flex justify-content-between items-center mb-1">
 				<a class="hover-link"
 					[href]="'/app/actividades?category=' + cargo.activity.categoryId + '&activity=' + cargo.activity.id">
-					{{ cargo.activity.description }} ({{ cargo.collection.concept }})
+					{{ cargo.activity.description }} - {{ cargo.activity.startDate | date:cargo.activity.type.format }} ({{
+					cargo.collection.concept }})
+
 				</a>
 				<div class="text-xs text-gray-500">
 					{{ cargo.collection.amountToBePaid | currencyMX}}

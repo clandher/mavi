@@ -1,4 +1,5 @@
 import { PaymentCharge, School, StudentPayment } from "./dto";
+import { DatePipe } from '@angular/common';
 
 export class VoucherHelper {
 
@@ -142,7 +143,8 @@ export class VoucherHelper {
             ctx.fillText(categoryText, 35, yPos);
 
             ctx.font = '14px "Segoe UI", Arial, sans-serif';
-            ctx.fillText(`${charge.activity.description || ''} (${charge.collection.concept})`, 80, yPos);
+            const formattedDate = new DatePipe('es-MX').transform(charge.activity.startDate, charge.activity.type.format);
+            ctx.fillText(`${charge.activity.description} - ${formattedDate} (${charge.collection.concept})`, 80, yPos);
 
             ctx.font = 'bold 14px "Segoe UI", Arial, sans-serif';
             ctx.textAlign = 'right';
