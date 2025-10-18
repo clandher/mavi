@@ -158,9 +158,16 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
         const activities = new BaseHttp(`activities?${queryString}`, this.http);
         activities.get<Activity[]>().subscribe(result => {
             this.activities = result;
-            if (this.activities.length > 0 && !this.form.get('activityId')?.value) {
-                this.form.get('activityId')?.setValue(this.activities[0].id);
+
+            if (this.activities.length === 0) {
+                this.form.get('activityId')?.setValue(null);
+                this.form.get('activityId')?.markAllAsTouched();
+            } else {
+                if (!this.form.get('activityId')?.value) {
+                    this.form.get('activityId')?.setValue(this.activities[0].id);
+                }
             }
+
             this.filteredStudents = this._sortStudents();
         });
     }

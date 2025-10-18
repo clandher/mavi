@@ -3,6 +3,7 @@ import { Observable, Subject } from 'rxjs';
 import { FormGroup } from '@angular/forms';
 
 export interface ModalInjectable {
+    submitText?: string;
     form: FormGroup;
     disabled: boolean;
     onSubmit(): Promise<void>;

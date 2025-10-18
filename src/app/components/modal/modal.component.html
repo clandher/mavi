@@ -11,7 +11,7 @@
             <div class="modal-footer">
                 @if (component) {
                 <app-submit [form]="component.form" [submit]="onSubmit.bind(this)" (discard)="onDiscard()"
-                    [disabled]="component.disabled">
+                    [disabled]="component.disabled" [submitText]="component.submitText || 'Guardar'">
                 </app-submit>
                 }
             </div>

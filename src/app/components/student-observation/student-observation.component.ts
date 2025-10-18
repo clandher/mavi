@@ -181,6 +181,7 @@ export class StudentObservationComponent implements OnInit, ModalInjectable {
         const observationsAPI = new BaseHttp('observations', this.http);
         observationsAPI.get<{description: string}[]>().subscribe((observations) => {
             this.trainingObservations = observations.map(obs => obs.description);
+            this.trainingObservations.sort((a, b) => a.localeCompare(b));
             this.filteredObservations = [...this.trainingObservations];
         });
     }

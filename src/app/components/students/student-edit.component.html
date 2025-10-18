@@ -34,12 +34,14 @@
     <div class="d-flex gap-3 items-center">
         <app-form-group class="d-flex-2" title="CURP" [control]="studentForm.get('curp')" name="curp"
             placeholder="CURP">
-            <input id="curp" type="text" class="form-control" formControlName="curp" placeholder="CURP">
+            <input id="curp" type="text" class="form-control text-uppercase" formControlName="curp" placeholder="CURP"
+                mask="AAAA000000AAAAAAAA" [dropSpecialCharacters]="false">
         </app-form-group>
 
         <app-form-group class="d-flex-2" title="Teléfono" [control]="studentForm.get('phone')" name="phone"
             placeholder="Teléfono">
-            <input id="phone" type="text" class="form-control" formControlName="phone" placeholder="Teléfono">
+            <input id="phone" type="text" class="form-control" formControlName="phone" placeholder="Teléfono"
+                mask="0000000000" title="Debe contener exactamente 10 dígitos numéricos">
         </app-form-group>
 
         <app-form-group class="d-flex-2" title="Lugar de nacimiento" [control]="studentForm.get('placeOfBirth')"

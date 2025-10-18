@@ -34,6 +34,8 @@ export class PaymentComponent implements OnChanges, ModalInjectable {
         return this.form.get('paymentAmount')?.value <= 0 || this.form.get('paymentAmount')?.value > this.getTotalDebt();
     }
 
+    public submitText = 'Realizar pago';
+
     constructor(
         private http: HttpClient,
         private schoolService: SchoolService

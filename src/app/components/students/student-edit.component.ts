@@ -16,11 +16,12 @@ import { StudentService } from '@app/core/student.service';
 import { ModalService } from '@app/core/modal.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
     standalone: true,
     selector: 'app-student-edit',
-    imports: [CommonModule, FormsModule, RouterModule, FormGroupComponent, ReactiveFormsModule, SubmitComponent],
+    imports: [CommonModule, FormsModule, RouterModule, FormGroupComponent, ReactiveFormsModule, SubmitComponent, NgxMaskDirective],
     templateUrl: './student-edit.component.html',
     styleUrls: ['./student-edit.component.scss']
 })
@@ -53,7 +54,7 @@ export class StudentEditComponent {
             nick: [''],
             photo: [''],
             photoUrl: [''],
-            curp: [''],
+            curp: ['AAAA000000AAAAAAAA'],
             phone: [''],
             placeOfBirth: [''],
         });
@@ -104,6 +105,10 @@ export class StudentEditComponent {
                     photo: student.photo,
                     photoUrl: null,
                 });
+
+                if (!student.curp) {
+                    this.studentForm.patchValue({ curp: 'AAAA000000AAAAAAAA' });
+                }
 
                 this.imageHttp.student(student).subscribe(photoUrl => {
                     this.studentForm.patchValue({ photoUrl });
