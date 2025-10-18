@@ -1,5 +1,5 @@
-<div class="d-flex flex-column gap-4 text-white">
-	<div *ngFor="let obs of timeObservations">
+<div class="d-flex flex-column gap-4 text-white mavi-grid">
+	<div *ngFor="let obs of timeObservations" class="mavi-card">
 
 		<textarea class="form-control" rows="2" [(ngModel)]="obs.observation" name="observation{{obs.id}}"></textarea>
 		<div class="d-flex justify-content-between mb-2">
