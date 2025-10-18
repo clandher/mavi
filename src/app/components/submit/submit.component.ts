@@ -1,7 +1,8 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormGroup, ValueChangeEvent } from '@angular/forms';
-import { filter, take } from 'rxjs';
+import { filter, take, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { ToastrService } from 'ngx-toastr';
 import { DebugInfoComponent } from "../debug-info/debug-info.component";
 
@@ -12,7 +13,7 @@ import { DebugInfoComponent } from "../debug-info/debug-info.component";
 	standalone: true,
 	imports: [CommonModule, DebugInfoComponent]
 })
-export class SubmitComponent {
+export class SubmitComponent implements OnDestroy {
 	@Input() form?: FormGroup;
 	@Input() disabled: boolean = false;
 	@Input() isModal: boolean = true;
@@ -22,6 +23,7 @@ export class SubmitComponent {
 
 	public loading = false;
 	private _originalValue: any;
+	private destroy$ = new Subject<void>();
 
 	constructor(
 		private toastr: ToastrService
@@ -30,11 +32,14 @@ export class SubmitComponent {
 	}
 
 	ngOnInit() {
-		this.form?.events.pipe(filter(event => event instanceof ValueChangeEvent), take(1)).subscribe((event) => {
+		this.form?.events.pipe(filter(event => event instanceof ValueChangeEvent), take(1), takeUntil(this.destroy$)).subscribe((event) => {
 			this._originalValue = event.value;
-			console.log(this._originalValue);
-			this.form?.markAsPristine();
 		});
+	}
+
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
 	}
 
 	async onDiscard() {

@@ -1,4 +1,4 @@
-<div [formGroup]="schoolsForm">
+<div [formGroup]="form">
     <div formArrayName="schools">
         <div *ngFor="let school of schoolsArray.controls; let i = index" [formGroupName]="i" class="school-card">
             <div class="school-header">
@@ -23,5 +23,5 @@
         </div>
     </div>
 
-    <app-submit [form]="schoolsForm" [submit]="onSaveSchools.bind(this)" [isModal]="false" (discard)="onDiscard()" />
+    <app-submit [form]="form" [submit]="onSaveSchools.bind(this)" [isModal]="false" (discard)="onDiscard()" />
 </div>

@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { ImageHttpClient } from '@app/core/image-http-client';
-import { BaseHttp, buildUrl } from '@app/core/base-http';
+import { BaseHttp } from '@app/core/base-http';
 import { SchoolService } from '@app/core/school.service';
-import { School } from '@app/core/dto';
 import { NgIf, NgFor } from '@angular/common';
 import { FormsModule, FormBuilder, FormGroup, FormArray, ReactiveFormsModule, AbstractControl } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -17,10 +18,11 @@ import { NgxMaskDirective } from 'ngx-mask';
 	styleUrls: ['./schools.component.scss'],
 	imports: [NgIf, NgFor, FormsModule, ReactiveFormsModule, SubmitComponent, FormGroupComponent]
 })
-export class SchoolsComponent {
+export class SchoolsComponent implements OnDestroy {
 
-	schoolsForm: FormGroup;
+	form: FormGroup;
 	private originalLogoUrl = '';
+	private destroy$ = new Subject<void>();
 
 	constructor(
 		private imageHttp: ImageHttpClient,
@@ -28,14 +30,16 @@ export class SchoolsComponent {
 		private schoolService: SchoolService,
 		private fb: FormBuilder
 	) {
-		this.schoolsForm = this.fb.group({
+		this.form = this.fb.group({
 			schools: this.fb.array([])
 		});
 	}
 
 	ngOnInit() {
 
-		this.schoolService.changes.subscribe(school => {
+		this.schoolService.changes.pipe(
+			takeUntil(this.destroy$)
+		).subscribe(school => {
 
 			this.originalLogoUrl = school.logoUrl ?? '';
 
@@ -48,12 +52,17 @@ export class SchoolsComponent {
 				});
 			});
 
-			this.schoolsForm.setControl('schools', this.fb.array(schoolControls));
+			this.form.setControl('schools', this.fb.array(schoolControls));
 		});
 	}
 
+	ngOnDestroy(): void {
+		this.destroy$.next();
+		this.destroy$.complete();
+	}
+
 	get schoolsArray(): FormArray {
-		return this.schoolsForm.get('schools') as FormArray;
+		return this.form.get('schools') as FormArray;
 	}
 
 	public onLogoSelected(event: Event, index: number) {
@@ -118,6 +127,6 @@ export class SchoolsComponent {
 				pendingLogoFile: null
 			});
 		});
-		this.schoolsForm.markAsPristine();
+		this.form.markAsPristine();
 	}
 }
