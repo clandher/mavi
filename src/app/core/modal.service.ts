@@ -11,7 +11,6 @@ export interface ModalInjectable {
 
 export interface ModalConfig {
     inputs?: any;
-    // options?: Partial<any>
     component: Type<ModalInjectable> | null;
     title?: string;
     size?: 'sm' | 'md' | 'lg' | 'xl';

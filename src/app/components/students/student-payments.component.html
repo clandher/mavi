@@ -11,7 +11,8 @@
 			<div class="d-flex justify-content-between items-center mb-1">
 				<a class="hover-link"
 					[href]="'/app/actividades?category=' + cargo.activity.categoryId + '&activity=' + cargo.activity.id">
-					{{ cargo.activity.description }} - {{ cargo.activity.startDate | date:cargo.activity.type.format }} ({{
+					{{ cargo.activity.description }} - {{ cargo.activity.startDate | date:cargo.activity.type.format }}
+					({{
 					cargo.collection.concept }})
 
 				</a>
@@ -38,7 +39,7 @@
 		</div>
 
 		<div class="mavi-card-actions mt-4">
-			<button (click)="previewVoucher(pago)" class="btn btn-sm btn-secondary">
+			<button (click)="openVoucherModal(pago)" class="btn btn-sm btn-secondary">
 				<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
 					stroke="currentColor" class="size-4 me-2">
 					<path stroke-linecap="round" stroke-linejoin="round"
@@ -51,28 +52,10 @@
 	</div>
 </div>
 
-<div *ngIf="showVoucherModal" class="modal-overlay">
-	<div class="modal-content">
-		<div id="voucher-preview-canvas" class="d-flex justify-content-center items-center"></div>
-		<div class="modal-footer">
-			<div class="d-flex justify-content-end gap-2 mt-4">
-				<button (click)="closeVoucherModal()" class="btn btn-outline">
-					Salir
-				</button>
-				<button class="btn btn-primary" (click)="voucherPayment && generateVoucher(voucherPayment)">
-					Descargar
-				</button>
-			</div>
-		</div>
-	</div>
-</div>
-
-
 @if(paymentsWithChargers.length === 0){
 <div class="text-gray-500 text-center py-8">
 	No hay pagos realizados.
 </div>
-
 
 <div class="d-flex justify-content-center py-4">
 	<button class="btn btn-secondary" (click)="openPaymentModal()">
@@ -84,8 +67,6 @@
 	</button>
 </div>
 } @else {
-
-
 <div class="mavi-bottom-actions">
 	<div class="mavi-bottom-actions-inner">
 		<button class="btn btn-secondary" (click)="openPaymentModal()">
