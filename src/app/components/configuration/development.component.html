@@ -11,17 +11,48 @@
 </div>
 
 <br />
+<form [formGroup]="form">
 
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
+    @if (selectedConfig) {
+    <app-form-group title="Descripción" [control]="form.controls['description']">
+        <div class="dropdown">
+            <input id="configInput" class="form-control dropdown-toggle" data-bs-toggle="dropdown"
+                formControlName="description" aria-expanded="false" />
+            <ul class="dropdown-menu">
+                <li *ngFor="let config of configurations">
+                    <button class="dropdown-item" type="button" (click)="onConfigChange(config)">
+                        {{ config.description }}
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </app-form-group>
+    }
+
     <app-form-group [control]="form.controls['seeder']" title="Configuración">
         <div #jsonEditorContainer style="height: 400px; width: 100%;"></div>
     </app-form-group>
 
     <div class="d-flex gap-2 mt-2 justify-content-between">
-        <button type="button" class="btn btn-secondary" (click)="onResetConfig()">
-            <i class="fa fa-trash"></i> Restaurar configuracion
-        </button>
-        <app-submit [form]="form" [submit]="onSubmit.bind(this)" (discard)="onDiscard()" [isModal]="false"></app-submit>
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-secondary" (click)="onResetConfig()">
+                <i class="fa fa-trash"></i> Restaurar
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="onClone()">
+                <i class="fa fa-trash"></i> Clonar
+            </button>
+        </div>
+
+        <div class="d-flex gap-2 mt-2 justify-content-end">
+            <button type="button" class="btn btn-destructive" (click)="onDelete()"
+                [disabled]="this.selectedConfig?.lock"
+                [title]="this.selectedConfig?.lock ? 'Esta configuración no se puede eliminar porque es base del sistema.' : ''">
+                <i class="fa fa-trash"></i> Eliminar
+            </button>
+            <app-submit [form]="form" [submit]="onSubmit.bind(this)" (discard)="onDiscard()" [isModal]="false">
+
+            </app-submit>
+        </div>
     </div>
 </form>
 

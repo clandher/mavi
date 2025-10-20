@@ -1,3 +1,4 @@
+
 export class ApiRes<T> {
     data!: T[];
 }
@@ -228,4 +229,36 @@ export interface User {
     password: string;
     developer: boolean;
     lock: boolean;
+}
+
+
+export interface Configuration {
+    id: number;
+    description: string;
+    seeder: SeederConfig;
+    lock: boolean;
+}
+
+
+export interface SeederConfig {
+    activityType: {
+        rule: string,
+        format: string,
+        surchargeAmount: number,
+    },
+    student: {
+        seed: number,
+        quantity: number,
+    },
+    activity: {
+        duration: string,
+        gracePeriod: string,
+        price: {
+            min: number,
+            max: number,
+        }
+    },
+    school: {
+        name: string,
+    }
 }
