@@ -37,11 +37,11 @@
 			<input id="search" type="text" formControlName="search" placeholder="Buscar estudiantes..."
 			class="form-control">
 		</app-form-group>
-		<div class="row gx-3 gy-3" style="max-height: 30vh; overflow-y: auto;">
+		<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 gx-3 gy-3" style="max-height: 30vh; overflow-y: auto;">
 			<div *ngFor="let student of filteredStudents"
 				(click)="!hasActivityAssigned(student) && onSelectStudent(student)"
 				[class.opacity-50]="hasActivityAssigned(student)" [class.cursor-pointer]="!hasActivityAssigned(student)"
-				[class.cursor-not-allowed]="hasActivityAssigned(student)" class=" col-3 ">
+				[class.cursor-not-allowed]="hasActivityAssigned(student)" class="col position-relative">
 
 				<div class="d-flex flex-column items-center mavi-border" [class.selected]="isStudentSelected(student)">
 					<img *ngIf="student.photo" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
@@ -49,7 +49,7 @@
 						<div class="photo-placeholder">+</div>
 					</ng-template>
 
-					<div class="d-flex flex-column ">
+					<div class="d-flex flex-column">
 						<div style="max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
 							{{ student.nick ? student.nick : student.name }}</div>
 						<div class="text-sm">{{student.activities.length}} actividades</div>
@@ -65,7 +65,7 @@
 				</div>
 
 			</div>
-			<div *ngIf="filteredStudents.length === 0" class="col-span-3 text-center py-4 text-gray-500">No se
+			<div *ngIf="filteredStudents.length === 0" class="col-12 text-center py-4 text-gray-500">No se
 				encontraron estudiantes</div>
 		</div>
 	</div>

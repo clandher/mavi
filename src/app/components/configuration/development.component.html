@@ -30,10 +30,10 @@
     }
 
     <app-form-group [control]="form.controls['seeder']" title="Configuración">
-        <div #jsonEditorContainer style="height: 400px; width: 100%;"></div>
+        <div #jsonEditorContainer style="height: 450px; width: 100%;"></div>
     </app-form-group>
 
-    <div class="d-flex gap-2 mt-2 justify-content-between">
+    <div class="d-flex gap-2 justify-content-between">
         <div class="d-flex gap-2">
             <button type="button" class="btn btn-secondary" (click)="onResetConfig()">
                 <i class="fa fa-trash"></i> Restaurar
@@ -43,7 +43,7 @@
             </button>
         </div>
 
-        <div class="d-flex gap-2 mt-2 justify-content-end">
+        <div class="d-flex justify-content-end">
             <button type="button" class="btn btn-destructive" (click)="onDelete()"
                 [disabled]="this.selectedConfig?.lock"
                 [title]="this.selectedConfig?.lock ? 'Esta configuración no se puede eliminar porque es base del sistema.' : ''">

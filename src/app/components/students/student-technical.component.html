@@ -1,53 +1,73 @@
 <form [formGroup]="technicalForm" class="mavi-border">
-	<div class="d-flex gap-4">
-		<app-form-group class="flex-grow-1" [title]="'Pierna hábil'" [control]="technicalForm.get('foot')">
-			<select id="foot" class="form-control" formControlName="foot">
-				<option value="">Selecciona pierna hábil</option>
-				<option value="Derecha">Derecha</option>
-				<option value="Izquierda">Izquierda</option>
-				<option value="Ambas">Ambas</option>
-			</select>
-		</app-form-group>
+    <div class="row g-4">
+        <div class="col-12 col-md-6">
+            <app-form-group [title]="'Pierna hábil'" [control]="technicalForm.get('foot')">
+                <select id="foot" class="form-control" formControlName="foot">
+                    <option value="">Selecciona pierna hábil</option>
+                    <option value="Derecha">Derecha</option>
+                    <option value="Izquierda">Izquierda</option>
+                    <option value="Ambas">Ambas</option>
+                </select>
+            </app-form-group>
+        </div>
 
-		<app-form-group class="flex-grow-1" [title]="'Posición'" [control]="technicalForm.get('position')">
-			<select id="position" class="form-control" formControlName="position">
-				<option value="">Selecciona posición</option>
-				<option value="Portero">Portero</option>
-				<option value="Defensa">Defensa</option>
-				<option value="Medio">Medio</option>
-				<option value="Delantero">Delantero</option>
-			</select>
-		</app-form-group>
-	</div>
+        <div class="col-12 col-md-6">
+            <app-form-group [title]="'Posición'" [control]="technicalForm.get('position')">
+                <select id="position" class="form-control" formControlName="position">
+                    <option value="">Selecciona posición</option>
+                    <option value="Portero">Portero</option>
+                    <option value="Defensa">Defensa</option>
+                    <option value="Medio">Medio</option>
+                    <option value="Delantero">Delantero</option>
+                </select>
+            </app-form-group>
+        </div>
+    </div>
 
-	<br>
-	<div class="d-flex gap-4">
-		<app-form-group [title]="'Altura (cm)'" [control]="technicalForm.get('height')">
-			<input id="height" type="number" class="form-control" placeholder="Ej. 175" formControlName="height">
-		</app-form-group>
-		<app-form-group [title]="'Peso (kg)'" [control]="technicalForm.get('weight')">
-			<input id="weight" type="number" class="form-control" placeholder="Ej. 70" formControlName="weight">
-		</app-form-group>
-		<app-form-group [title]="'Número (Camisa)'" [control]="technicalForm.get('number')">
-			<input id="number" type="number" class="form-control" placeholder="Número" formControlName="number">
-		</app-form-group>
-	</div>
-	<br>
+    <br>
+    <div class="row g-4">
+        <div class="col-12 col-md-4">
+            <app-form-group [title]="'Altura (cm)'" [control]="technicalForm.get('height')">
+                <input id="height" type="number" class="form-control" placeholder="Ej. 175" formControlName="height">
+            </app-form-group>
+        </div>
 
-	<app-form-group [title]="'Observaciones'" [control]="technicalForm.get('observations')">
-		<textarea id="observations" class="form-control" rows="3" placeholder="Observaciones técnicas, físicas, etc."
-			formControlName="observations"></textarea>
-	</app-form-group>
-	<br>
-	<app-form-group [title]="'Fortalezas'" [control]="technicalForm.get('strengths')">
-		<textarea id="strengths" class="form-control" rows="3" placeholder="Fortalezas técnicas, físicas, etc."
-			formControlName="strengths"></textarea>
-	</app-form-group>
-	<br>
-	<app-form-group [title]="'Debilidades'" [control]="technicalForm.get('weaknesses')">
-		<textarea id="weaknesses" class="form-control" rows="3" placeholder="Debilidades técnicas, físicas, etc."
-			formControlName="weaknesses"></textarea>
-	</app-form-group>
+        <div class="col-12 col-md-4">
+            <app-form-group [title]="'Peso (kg)'" [control]="technicalForm.get('weight')">
+                <input id="weight" type="number" class="form-control" placeholder="Ej. 70" formControlName="weight">
+            </app-form-group>
+        </div>
 
-	<app-submit [form]="technicalForm" [submit]="onSubmit.bind(this)" [isModal]="false"></app-submit>
+        <div class="col-12 col-md-4">
+            <app-form-group [title]="'Número (Camisa)'" [control]="technicalForm.get('number')">
+                <input id="number" type="number" class="form-control" placeholder="Número" formControlName="number">
+            </app-form-group>
+        </div>
+    </div>
+    <br>
+
+    <div class="row g-4">
+        <div class="col-12">
+            <app-form-group [title]="'Observaciones'" [control]="technicalForm.get('observations')">
+                <textarea id="observations" class="form-control" rows="3" placeholder="Observaciones técnicas, físicas, etc."
+                    formControlName="observations"></textarea>
+            </app-form-group>
+        </div>
+
+        <div class="col-12">
+            <app-form-group [title]="'Fortalezas'" [control]="technicalForm.get('strengths')">
+                <textarea id="strengths" class="form-control" rows="3" placeholder="Fortalezas técnicas, físicas, etc."
+                    formControlName="strengths"></textarea>
+            </app-form-group>
+        </div>
+
+        <div class="col-12">
+            <app-form-group [title]="'Debilidades'" [control]="technicalForm.get('weaknesses')">
+                <textarea id="weaknesses" class="form-control" rows="3" placeholder="Debilidades técnicas, físicas, etc."
+                    formControlName="weaknesses"></textarea>
+            </app-form-group>
+        </div>
+    </div>
+
+    <app-submit [form]="technicalForm" [submit]="onSubmit.bind(this)" [isModal]="false"></app-submit>
 </form>

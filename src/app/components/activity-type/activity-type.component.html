@@ -5,8 +5,8 @@
 
     <app-form-group title="Monto por recargo" [control]="form.get('surchargeAmount')" name="surchargeAmount">
         <input id="surchargeAmount" type="text" class="form-control" formControlName="surchargeAmount"
-            mask="separator.2" [thousandSeparator]="','" [decimalMarker]="'.'" [allowNegativeNumbers]="false"
-            min="0.01">
+            mask="separator.2" [thousandSeparator]="','" [decimalMarker]="'.'" [allowNegativeNumbers]="false" min="0.01"
+            inputmode="decimal">
     </app-form-group>
 
     <app-form-group [title]="'Recurrente'" [control]="form.get('recurrent')">

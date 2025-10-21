@@ -6,7 +6,7 @@
 			<input id="paymentAmount" type="text" formControlName="paymentAmount" class="form-control"
 				[class.border-red-500]="form.get('paymentAmount')?.value > getTotalDebt()" mask="separator.2"
 				[thousandSeparator]="','" [decimalMarker]="'.'" [allowNegativeNumbers]="false" min="0"
-				[max]="getTotalDebt()" />
+				[max]="getTotalDebt()" inputmode="decimal" />
 
 
 			<button (click)="payFullAmount()" class="btn-total-payment" [style]="'margin-top: 1px'" style="top:6px">
@@ -30,7 +30,8 @@
 	<div *ngFor="let cargo of charges; let i = index" class="mavi-border mb-2">
 		<div class="d-flex justify-content-between items-center mb-1">
 			<div>
-				{{ cargo.activity.description }} - {{ cargo.activity.startDate | date:cargo.activity.type.format }} ({{ cargo.concept }})
+				{{ cargo.activity.description }} - {{ cargo.activity.startDate | date:cargo.activity.type.format }} ({{
+				cargo.concept }})
 			</div>
 
 			<div class="text-xs text-gray-500">

@@ -52,13 +52,13 @@
 		<div class="col-md-6">
 			<app-form-group [title]="'Precio'" [control]="form.get('price')">
 				<input id="newActivityPrice" type="text" formControlName="price" class="form-control" positiveNumberOnly
-					mask="separator.2" [thousandSeparator]="','" [decimalMarker]="'.'" [allowNegativeNumbers]="false" />
+					mask="separator.2" [thousandSeparator]="','" [decimalMarker]="'.'" [allowNegativeNumbers]="false" inputmode="decimal" />
 			</app-form-group>
 		</div>
 	</div>
 </form>
 <div class="form-control-error position-absolute bottom-0">
 	<div *ngIf="form?.invalid && (form?.touched || form?.dirty)">
-		{{form?.errors?.['message'] ?? 'Campo inválido.'}}
+		{{form.errors?.['message'] ?? 'Campo inválido.'}}
 	</div>
 </div>

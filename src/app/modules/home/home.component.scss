@@ -1,14 +1,14 @@
 .dashboard-container {
     display: flex;
     flex-direction: column;
-    height: 96vh;
+    height: calc(100vh - 40px);
     justify-content: center;
     align-items: center;
-    width: 800px;
-    // background-color: #0a0a0a;
-    margin: 20px;
-    
-    
+    margin: 20px auto;
+    width: 100%;
+    max-width: 800px;
+
+
     .dashboard-header {
         background-color: #070707;
         border: 1px solid #262626;
@@ -19,6 +19,7 @@
         color: white;
         width: 100%;
         position: relative;
+
 
         .logo-label {
             cursor: pointer;
@@ -60,12 +61,14 @@
             border-radius: 50%;
             font-weight: bold;
         }
+
+        overflow: auto;
     }
-
-
+    
     .dashboard-content {
-        background-color: #070707;
+        overflow: auto;
 
+        background-color: #070707;
         flex: 1;
         overflow-y: auto;
         width: 100%;
@@ -115,11 +118,40 @@
     }
 }
 
-.school-info {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
 
+@media (max-width: 575.98px) {
+    .dashboard-container {
+        width: 100%;
+        padding: 0 15px;
+    }
+}
 
+@media (min-width: 576px) {
+    .dashboard-container {
+        width: 540px;
+    }
+}
+
+@media (min-width: 768px) {
+    .dashboard-container {
+        width: 720px;
+    }
+}
+
+@media (min-width: 992px) {
+    .dashboard-container {
+        width: 960px;
+    }
+}
+
+@media (min-width: 1200px) {
+    .dashboard-container {
+        width: 1140px;
+    }
+}
+
+@media (min-width: 1400px) {
+    .dashboard-container {
+        width: 1320px;
+    }
 }

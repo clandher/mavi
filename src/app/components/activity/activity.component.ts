@@ -11,7 +11,6 @@ import { NgxMaskDirective } from 'ngx-mask';
 import { MaviValidators } from '@app/core/mavi-validators';
 import { faker } from '@faker-js/faker';
 import { ModalInjectable } from '@app/core/modal.service';
-import ms from 'ms';
 
 @Component({
     selector: 'app-activity',

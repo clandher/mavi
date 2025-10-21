@@ -1,0 +1,38 @@
+<div class="indicators">
+  <h1>Indicadores Importantes</h1>
+
+  <section>
+    <h2>Actividades por Tipo</h2>
+    <ul>
+      <li *ngFor="let activity of activitiesByType">
+        Tipo: {{ activity.type }} - Cantidad: {{ activity.count }}
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Resumen de Pagos</h2>
+    <p>Total de Pagos: {{ paymentsSummary.totalPayments }}</p>
+    <p>Monto Total: {{ paymentsSummary.totalAmount }}</p>
+  </section>
+
+  <section>
+    <h2>Observaciones por Estudiante</h2>
+    <ul>
+      <li *ngFor="let observation of observationsByStudent">
+        Estudiante ID: {{ observation.studentId }} - Observaciones: {{ observation.count }}
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Estudiantes por Categoría</h2>
+    <ul>
+      <li *ngFor="let category of studentsByCategory">
+        Categoría: {{ category.category }} - Estudiantes: {{ category.count }}
+      </li>
+    </ul>
+  </section>
+
+
+</div>

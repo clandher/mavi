@@ -1,3 +1,4 @@
+@use 'ngx-toastr/toastr';
 @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
 
 body {
@@ -23,13 +24,10 @@ body {
     }
 }
 
-/* WOW Animaciones variadas */
-
-@import 'ngx-toastr/toastr';
-
-/* Custom dark scrollbar for the whole app */
+/* Custom dark scrollbar for vertical scroll only */
 ::-webkit-scrollbar {
     width: 6px;
+    height: 0; /* Ensures horizontal scrollbar is not styled */
     cursor: grab;
 }
 

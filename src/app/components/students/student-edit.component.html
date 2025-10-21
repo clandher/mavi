@@ -9,7 +9,7 @@
 <br>
 
 <form [formGroup]="studentForm">
-    <div class="d-flex gap-3 items-center">
+    <div class="d-flex flex-wrap gap-3 align-items-center">
         <label for="photo" class="photo-label">
             <img *ngIf="studentForm.value.photoUrl; else placeholder" [src]="studentForm.value.photoUrl"
                 class="student-photo" alt="Foto">
@@ -33,29 +33,26 @@
             name="birthdate" required type="date">
             <input id="birthdate" type="date" [max]="maxBirthdate" class="form-control" formControlName="birthdate">
         </app-form-group>
-
     </div>
 
-    <div class="row">
-        <app-form-group class="col-4" title="CURP" [control]="studentForm.get('curp')" name="curp"
+    <div class="row g-3">
+        <app-form-group class="col-12 col-md-4" title="CURP" [control]="studentForm.get('curp')" name="curp"
             placeholder="CURP">
             <input id="curp" type="text" class="form-control text-uppercase" formControlName="curp" placeholder="CURP"
                 mask="AAAA000000AAAAAAAA" [dropSpecialCharacters]="false">
         </app-form-group>
 
-        <app-form-group class="col-4" title="Teléfono" [control]="studentForm.get('phone')" name="phone"
+        <app-form-group class="col-12 col-md-4" title="Teléfono" [control]="studentForm.get('phone')" name="phone"
             placeholder="Teléfono">
             <input id="phone" type="text" class="form-control" formControlName="phone" placeholder="Teléfono"
                 mask="0000000000" title="Debe contener exactamente 10 dígitos numéricos">
         </app-form-group>
 
-        <app-form-group class="col-4" title="Lugar de nacimiento" [control]="studentForm.get('placeOfBirth')"
+        <app-form-group class="col-12 col-md-4" title="Lugar de nacimiento" [control]="studentForm.get('placeOfBirth')"
             name="placeOfBirth" placeholder="Lugar de nacimiento">
             <input id="placeOfBirth" type="text" class="form-control" formControlName="placeOfBirth"
                 placeholder="Lugar de nacimiento">
         </app-form-group>
-
-
     </div>
 
 </form>

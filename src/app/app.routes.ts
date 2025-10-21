@@ -44,6 +44,11 @@ export const routes: Routes = [
                         data: { breadcrumb: 'Categorías' }
                     },
                     {
+                        path: 'indicadores',
+                        loadComponent: () => import('./components/configuration/indicators.component').then(m => m.IndicatorsComponent),
+                        data: { breadcrumb: 'Indicadores' }
+                    },
+                    {
                         path: 'tipos-de-actividad',
                         loadComponent: () => import('./components/activity-types/activity-types.component').then(m => m.ActivityTypesComponent),
                         data: { breadcrumb: 'Tipos de Actividad' }

@@ -5,14 +5,14 @@
 
 <input id="photo" type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden>
 
-<div class="row g-4">
-	<div *ngFor="let studentActivity of studentActivities" class="col-2 position-relative">
+<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 g-4">
+	<div *ngFor="let studentActivity of studentActivities" class="col position-relative">
 		<app-avatar-student-activity [studentActivity]="studentActivity" [showDebt]="showDebt"
 			(select)="onStudentActivitySelect($event, studentActivity)"></app-avatar-student-activity>
 	</div>
 
 	@if (!loadingStudentActivities) {
-	<div class="col-2 position-relative">
+	<div class="col position-relative">
 		<div (click)="showInscription()" class="logo-placeholder logo-placeholder-large cursor-pointer">
 			+
 		</div>

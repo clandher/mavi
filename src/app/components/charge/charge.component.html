@@ -2,11 +2,10 @@
 
 	<div class="row">
 		<div class="col">
-
 			<app-form-group title="Monto a cobrar" [control]="form.get('amountToBePaid')">
 				<input id="amountToBePaid" type="text" formControlName="amountToBePaid" class="form-control"
 					mask="separator.2" [thousandSeparator]="','" [decimalMarker]="'.'" [allowNegativeNumbers]="false"
-					min="0.01">
+					min="0.01" inputmode="decimal">
 			</app-form-group>
 		</div>
 	</div>
