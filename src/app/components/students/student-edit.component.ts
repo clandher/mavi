@@ -33,11 +33,13 @@ export class StudentEditComponent {
 
     public studentForm: FormGroup;
     public student: Student | null = null;
+    public previousStudent: Student | null = null;
+    public nextStudent: Student | null = null;
 
     private _origin: string | null = null;
     private destroy$ = new Subject<void>();
-    
-     maxBirthdate: string = formatDateForDisplay(new Date());
+
+    maxBirthdate: string = formatDateForDisplay(new Date());
     //    this.maxBirthdate = ;
     constructor(
         private route: ActivatedRoute,
@@ -71,17 +73,20 @@ export class StudentEditComponent {
     }
 
     ngAfterViewInit(): void {
-        const studentId = this.route.snapshot.paramMap.get('id') ?? 0;
-        if (!studentId) {
-            this.studentForm.patchValue({
-                id: 0,
-                birthdate: formatDateForDisplay(new Date())
-                
-            });
-            setFocus('name');
-        } else {
-            this._loadStudent(+studentId!);
-        }
+        this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
+            const studentIdParam = params.get('id');
+            const studentId = studentIdParam ? Number(studentIdParam) : 0;
+
+            if (!studentId) {
+                this.studentForm.patchValue({
+                    id: 0,
+                    birthdate: formatDateForDisplay(new Date())
+                });
+                setFocus('name');
+            } else {
+                this._loadStudent(studentId);
+            }
+        });
     }
 
     onBack() {
@@ -118,6 +123,8 @@ export class StudentEditComponent {
                 });
 
                 setFocus('name', false);
+
+                this._loadAdjacentStudents();
             },
             error: (err) => {
                 console.error('Error loading student', err);
@@ -255,5 +262,65 @@ export class StudentEditComponent {
             }
         });
 
+    }
+
+    async navigateToStudent(studentId: number): Promise<void> {
+        const currentSubroute = this.route.snapshot.firstChild?.url.map(segment => segment.path).join('/') || '';
+        this.studentForm.get('id')?.setValue(0);
+        await this.router.navigate([`/app/estudiantes/${studentId}`, currentSubroute], { replaceUrl: true });
+    }
+
+    private _loadAdjacentStudents(): void {
+        const studentId = this.student?.id ?? 0;
+
+        if (!studentId) {
+            this.previousStudent = null;
+            this.nextStudent = null;
+            return;
+        }
+
+        const adjacentStudentsAPI = new BaseHttp(`students/${studentId}/adjacent`, this.http);
+        adjacentStudentsAPI.get<{ previous: number | null; next: number | null }>().subscribe({
+            next: (response) => {
+                if (response.previous) {
+                    const previousStudentAPI = new BaseHttp(`students/${response.previous}`, this.http);
+                    previousStudentAPI.get<Student>().subscribe({
+                        next: (student) => {
+                            this.previousStudent = student;
+                            this.imageHttp.student(student).subscribe(photoUrl => {
+                                this.previousStudent!.photoUrl = photoUrl;
+                            });
+                        },
+                        error: () => {
+                            this.previousStudent = null;
+                        }
+                    });
+                } else {
+                    this.previousStudent = null;
+                }
+
+                if (response.next) {
+                    const nextStudentAPI = new BaseHttp(`students/${response.next}`, this.http);
+                    nextStudentAPI.get<Student>().subscribe({
+                        next: (student) => {
+                            this.nextStudent = student;
+                            this.imageHttp.student(student).subscribe(photoUrl => {
+                                this.nextStudent!.photoUrl = photoUrl;
+                            });
+                        },
+                        error: () => {
+                            this.nextStudent = null;
+                        }
+                    });
+                } else {
+                    this.nextStudent = null;
+                }
+            },
+            error: (err) => {
+                console.error('Error loading adjacent students', err);
+                this.previousStudent = null;
+                this.nextStudent = null;
+            }
+        });
     }
 }

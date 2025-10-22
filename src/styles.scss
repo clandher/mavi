@@ -27,7 +27,8 @@ body {
 /* Custom dark scrollbar for vertical scroll only */
 ::-webkit-scrollbar {
     width: 6px;
-    height: 0; /* Ensures horizontal scrollbar is not styled */
+    height: 0;
+    /* Ensures horizontal scrollbar is not styled */
     cursor: grab;
 }
 
@@ -855,5 +856,60 @@ a {
 
     .count {
         // color: #16a34a;
+    }
+}
+
+
+.avatar-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: #141414; // bg-gray-700
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.3s;
+    opacity: .8;
+
+    &.small {
+        width: 50px;
+        height: 50px;
+
+        .tag-name {
+            font-size: 0.6rem;
+            padding: 0.15rem 0.2rem;
+        }
+    }
+
+    &:hover {
+        opacity: 1;
+    }
+
+    &.no-image {
+        border: 1px dashed rgb(162, 162, 162);
+
+        &:hover {
+            background-color: #1f1f1f; // bg-gray-600
+        }
+    }
+
+
+    .tag-name {
+        display: flex;
+        position: absolute;
+        bottom: -8px;
+        left: 0;
+        background: #000;
+        color: #fff;
+        font-size: 0.76rem;
+        font-weight: bold;
+        padding: 0.2rem 0.25rem;
+        border-top-right-radius: 0.375rem;
+        z-index: 20;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 }

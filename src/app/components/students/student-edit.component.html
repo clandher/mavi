@@ -1,11 +1,54 @@
-<div class="page-back" (click)="onBack()">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-        class="size-4">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-    </svg>
+<div class="d-flex justify-content-between align-items-center">
 
-    Regresar
+
+    <div class="page-back" (click)="onBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+            class="size-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+        </svg>
+
+        Regresar
+    </div>
+
+    <div class="d-flex gap-4 align-items-center ">
+        <div class="position-relative">
+
+            <div *ngIf="previousStudent" (click)="navigateToStudent(previousStudent.id)" class="avatar-circle small"
+                [class.no-image]="!previousStudent.photoUrl">
+                @if (previousStudent.photoUrl) {
+                <img [src]="previousStudent.photoUrl" class="w-100 h-100 object-fit-cover" />
+                }
+
+                <span [title]="previousStudent.name" class="tag-name">
+                    <span style="max-width: 60px; display: inline-block; overflow: hidden; text-overflow: ellipsis;">
+                        {{ previousStudent.nick ? previousStudent.nick : previousStudent.name }}
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <div class="position-relative">
+
+            <div *ngIf="nextStudent" (click)="navigateToStudent(nextStudent.id)" class="avatar-circle small"
+                [class.no-image]="!nextStudent.photoUrl">
+                @if (nextStudent.photoUrl) {
+                <img [src]="nextStudent.photoUrl" class="w-100 h-100 object-fit-cover" />
+                }
+
+                <span [title]="nextStudent.name" class="tag-name">
+                    <span style="max-width: 60px; display: inline-block; overflow: hidden; text-overflow: ellipsis;">
+                        {{ nextStudent.nick ? nextStudent.nick : nextStudent.name }}
+                    </span>
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
+
+
 <br>
 
 <form [formGroup]="studentForm">
