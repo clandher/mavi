@@ -34,14 +34,21 @@ export const routes: Routes = [
                         data: { breadcrumb: 'Escuela' }
                     },
                     {
+                        path: 'catalogos',
+                        loadComponent: () => import('./components/catalogs/catalogs.component').then(m => m.CatalogsComponent),
+                        data: { breadcrumb: 'Catálogos' },
+                        children: [
+                            { path: 'categorias', loadComponent: () => import('./components/configuration/categories.component').then(m => m.CategoriesComponent) },
+                            { path: 'tipos-de-actividad', loadComponent: () => import('./components/activity-types/activity-types.component').then(m => m.ActivityTypesComponent) },
+                            { path: 'tipos-de-descuento', loadComponent: () => import('./components/discount-types/discount-types.component').then(m => m.DiscountTypesComponent) },
+                            { path: 'observaciones', loadComponent: () => import('./components/configuration/observations.component').then(m => m.ObservationsComponent) },
+                            { path: '', redirectTo: 'categorias', pathMatch: 'full' }
+                        ]
+                    },
+                    {
                         path: 'desarrollo',
                         loadComponent: () => import('./components/configuration/development.component').then(m => m.DevelopmentComponent),
                         data: { breadcrumb: 'Desarrollo' }
-                    },
-                    {
-                        path: 'categorias',
-                        loadComponent: () => import('./components/configuration/categories.component').then(m => m.CategoriesComponent),
-                        data: { breadcrumb: 'Categorías' }
                     },
                     {
                         path: 'indicadores',
@@ -49,24 +56,9 @@ export const routes: Routes = [
                         data: { breadcrumb: 'Indicadores' }
                     },
                     {
-                        path: 'tipos-de-actividad',
-                        loadComponent: () => import('./components/activity-types/activity-types.component').then(m => m.ActivityTypesComponent),
-                        data: { breadcrumb: 'Tipos de Actividad' }
-                    },
-                    {
-                        path: 'tipos-de-descuento',
-                        loadComponent: () => import('./components/discount-types/discount-types.component').then(m => m.DiscountTypesComponent),
-                        data: { breadcrumb: 'Tipos de Descuento' }
-                    },
-                    {
                         path: 'usuarios',
                         loadComponent: () => import('./components/users/users.component').then(m => m.UsersComponent),
                         data: { breadcrumb: 'Usuarios' }
-                    },
-                    {
-                        path: 'observaciones',
-                        loadComponent: () => import('./components/configuration/observations.component').then(m => m.ObservationsComponent),
-                        data: { breadcrumb: 'Observaciones' }
                     },
                 ]
             },
