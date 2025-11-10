@@ -52,7 +52,6 @@ export class StudentActivitiesComponent implements OnInit {
 				},
 				error: () => this.loading = false
 			});
-		this.studentService.notifyRefresh();
 	}
 
 	unsubscribeActivity(studentActivity: StudentActivity) {
@@ -91,10 +90,11 @@ export class StudentActivitiesComponent implements OnInit {
 		}).pipe(takeUntil(this.destroy$)).subscribe((result: boolean) => {
 			if (result) {
 				this._fetch();
+				this.studentService.notifyRefresh();
 			}
 		});
 	}
-
+	
 	openDiscountModal(charge: Charge) {
 		this.modalService.open({
 			component: DiscountComponent,
@@ -104,6 +104,7 @@ export class StudentActivitiesComponent implements OnInit {
 		}).pipe(takeUntil(this.destroy$)).subscribe((result) => {
 			if (result) {
 				this._fetch();
+				this.studentService.notifyRefresh();
 			}
 		});
 	}

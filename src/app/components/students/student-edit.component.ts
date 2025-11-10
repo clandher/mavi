@@ -250,7 +250,12 @@ export class StudentEditComponent {
     }
 
     refreshStudentData(): void {
-        const studentsAPI = new BaseHttp(`students/${this.student?.id}`, this.http);
+
+        if (!this.student?.id) {
+            return;
+        }
+
+        const studentsAPI = new BaseHttp(`students/${this.student.id}`, this.http);
         studentsAPI.get<Student>().subscribe({
             next: (student) => {
                 this.student = student;
