@@ -1,0 +1,38 @@
+<form [formGroup]="form">
+
+    <app-form-group [title]="'Comentarios'" [control]="form.get('reason')">
+        <textarea id="reason" formControlName="reason" class="form-control" autocomplete="off"></textarea>
+    </app-form-group>
+
+    <app-form-group [title]="'Tipo de descuento'" [control]="form.get('discountTypeId')">
+        <select id="discountTypeId" formControlName="discountTypeId" class="form-control">
+            <option *ngFor="let discountType of discountTypes" [ngValue]="discountType.id">
+                {{ discountType.key }}
+            </option>
+        </select>
+    </app-form-group>
+
+</form>
+
+<div class="d-flex justify-content-between">
+    <div class="detail-row">
+        <div class="detail-label">Pendiente</div>
+        <div class="detail-value high-debt">
+            {{ amountRemaining | currencyMX }}
+        </div>
+    </div>
+
+    <div class="detail-row">
+        <div class="detail-label">Descuento</div>
+        <div class="detail-value high-paid">
+            {{ getDiscountAmount() | currency:'MXN' }}
+        </div>
+    </div>
+
+    <div class="detail-row">
+        <div class="detail-label">Final</div>
+        <div class="detail-value">
+            {{ getFinalAmount() | currency:'MXN' }}
+        </div>
+    </div>
+</div>

@@ -115,6 +115,13 @@ export class ActivityType {
     lock!: boolean;
 }
 
+export class DiscountType {
+    id!: number;
+    key!: string;
+    description!: string;
+    type!: 'percentage' | 'amount';
+    value!: number; 
+}
 
 export class PaymentEntity {
     id?: number;
@@ -154,6 +161,7 @@ export class Charge {
     amountToBePaid!: number;
     dueDate!: Date;
     amountRemaining!: number;
+    amountDiscounted!: number;
     surchargeApplied!: boolean;
     activityId!: number;
     activity!: Activity;

@@ -54,6 +54,11 @@ export const routes: Routes = [
                         data: { breadcrumb: 'Tipos de Actividad' }
                     },
                     {
+                        path: 'tipos-de-descuento',
+                        loadComponent: () => import('./components/discount-types/discount-types.component').then(m => m.DiscountTypesComponent),
+                        data: { breadcrumb: 'Tipos de Descuento' }
+                    },
+                    {
                         path: 'usuarios',
                         loadComponent: () => import('./components/users/users.component').then(m => m.UsersComponent),
                         data: { breadcrumb: 'Usuarios' }

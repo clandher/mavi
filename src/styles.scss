@@ -180,6 +180,14 @@ body {
     }
 }
 
+
+
+
+.form-group {
+    position: relative;
+
+}
+
 .form-label {
     color: oklch(0.985 0 0);
     margin-bottom: 8px;
@@ -269,6 +277,9 @@ select.form-control {
     background-color: #18181b;
     color: #fafafa;
     border: 1px solid oklch(0.269 0 0);
+    appearance: auto; // o 'select' para algunos navegadores
+    -webkit-appearance: auto;
+    -moz-appearance: auto;
 
     &:focus {
         // outline: none;

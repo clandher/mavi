@@ -11,7 +11,10 @@ import { MaviValidators } from '@app/core/mavi-validators';
 import { FormGroupComponent } from "../form-group/form-group.component";
 import { ImageHttpClient } from '@app/core/image-http-client';
 import { ModalInjectable, ModalService } from '@app/core/modal.service';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
+import { ActivityComponent } from '../activity/activity.component';
+import { CategoryComponent } from '../category/category.component';
+import { ShortButtonComponent } from '../short-button/short-button.component';
 
 
 export interface StudentView extends Student {
@@ -22,7 +25,7 @@ export interface StudentView extends Student {
 @Component({
     selector: 'app-inscription',
     standalone: true,
-    imports: [CommonModule, FormsModule, ReactiveFormsModule, FormGroupComponent],
+    imports: [CommonModule, FormsModule, ReactiveFormsModule, FormGroupComponent, ShortButtonComponent],
     templateUrl: './inscription.component.html',
     styleUrls: ['./inscription.component.scss']
 })
@@ -289,5 +292,23 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
     ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
+    }
+
+    openActivityModal() {
+        this.modalService.open({
+            component: ActivityComponent, title: 'Nueva Actividad', size: 'lg',
+            inputs: { activityId: 0 }
+        }).pipe(takeUntil(this.destroy$)).subscribe(async result => {
+            // await this._fetchActivities();
+        });
+    }
+
+    openCategoryModal() {
+        this.modalService.open({
+            component: CategoryComponent, title: 'Nueva Categoría', size: 'md',
+            inputs: { categoryId: 0 }
+        }).pipe(takeUntil(this.destroy$)).subscribe(async result => {
+            // await this._fetchActivities();
+        });
     }
 }

@@ -1,0 +1,16 @@
+<form [formGroup]="form">
+    <app-form-group [title]="'Descripción'" [control]="form.get('key')">
+        <input id="key" type="text" formControlName="key" class="form-control" autocomplete="off" />
+    </app-form-group>
+
+    <app-form-group [title]="'Tipo'" [control]="form.get('type')">
+        <select id="type" formControlName="type" class="form-control">
+            <option [ngValue]="'percentage'">Porcentaje</option>
+            <option [ngValue]="'amount'">Monto</option>
+        </select>
+    </app-form-group>
+
+    <app-form-group [title]="'Valor'" [control]="form.get('value')">
+        <input id="value" type="number" formControlName="value" class="form-control" min="0.01" step="0.01" />
+    </app-form-group>
+</form>

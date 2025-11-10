@@ -7,10 +7,13 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { StudentActivityHttp } from 'src/app/core/student-activity-http'; // importa tu nueva clase
 import { HttpClient } from '@angular/common/http';
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
-import { StudentActivity } from '@app/core/dto';
+import { Charge, StudentActivity } from '@app/core/dto';
 import { ChargeComponent } from "../charge/charge.component";
+import { DiscountTypeComponent } from '../discount-type/discount-type.component';
 import { ModalService } from '@app/core/modal.service';
 import { InscriptionComponent } from '../inscription';
+import { DiscountComponent } from '../discount/discount.component';
+import { StudentService } from '@app/core/student.service';
 
 @Component({
 	standalone: true,
@@ -30,6 +33,7 @@ export class StudentActivitiesComponent implements OnInit {
 		private route: ActivatedRoute,
 		private http: HttpClient,
 		private modalService: ModalService,
+		private studentService: StudentService,
 	) {
 		this.studentId = +this.route.parent!.snapshot.paramMap.get('id')!;
 		this.studentActivityHttp = new StudentActivityHttp(this.http);
@@ -48,6 +52,7 @@ export class StudentActivitiesComponent implements OnInit {
 				},
 				error: () => this.loading = false
 			});
+		this.studentService.notifyRefresh();
 	}
 
 	unsubscribeActivity(studentActivity: StudentActivity) {
@@ -84,6 +89,19 @@ export class StudentActivitiesComponent implements OnInit {
 			component: InscriptionComponent, title: 'Inscribir alumnos', size: 'xl',
 			inputs: { studentId: this.studentId }
 		}).pipe(takeUntil(this.destroy$)).subscribe((result: boolean) => {
+			if (result) {
+				this._fetch();
+			}
+		});
+	}
+
+	openDiscountModal(charge: Charge) {
+		this.modalService.open({
+			component: DiscountComponent,
+			title: 'Aplicar descuento',
+			size: 'sm',
+			inputs: { chargeId: charge.id || 0, amountRemaining: charge.amountRemaining }
+		}).pipe(takeUntil(this.destroy$)).subscribe((result) => {
 			if (result) {
 				this._fetch();
 			}

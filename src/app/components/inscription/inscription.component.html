@@ -1,18 +1,21 @@
 <form [formGroup]="form">
 
 	<div class="row">
-		<div class="col form-group">
-
+		<div class="col ">
 			<app-form-group title="Categoría" [control]="form.get('categoryId')">
+				<app-short-button (clicked)="openCategoryModal()"></app-short-button>
 				<select id="categoryId" formControlName="categoryId" class="form-control"
 					(change)="onNewCategoryChange()">
 					<option *ngFor="let category of categories" [value]="category.id">{{ category.type }}
 					</option>
 				</select>
 			</app-form-group>
+
+
 		</div>
-		<div class="col form-group">
+		<div class="col ">
 			<app-form-group title="Actividad" [control]="form.get('activityId')">
+				<app-short-button (clicked)="openActivityModal()"></app-short-button>
 				<select id="activityId" formControlName="activityId" class="form-control"
 					(change)="onNewActivityChange()">
 					<option *ngFor="let act of activities" [value]="act.id">{{ act.description }}
@@ -32,12 +35,13 @@
 	</div>
 	<br />
 	<div class="mavi-border" *ngIf="form.get('tab')?.value === 'existing'">
-		<app-form-group for="search" title="Estudiantes" >
-			<div class="selected-indicator">Seleccionados: <span class="count" >{{ selectedStudents }}</span></div>
+		<app-form-group for="search" title="Estudiantes">
+			<div class="selected-indicator">Seleccionados: <span class="count">{{ selectedStudents }}</span></div>
 			<input id="search" type="text" formControlName="search" placeholder="Buscar estudiantes..."
-			class="form-control">
+				class="form-control">
 		</app-form-group>
-		<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 gx-3 gy-3" style="max-height: 30vh; overflow-y: auto;">
+		<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-6 gx-3 gy-3"
+			style="max-height: 30vh; overflow-y: auto;">
 			<div *ngFor="let student of filteredStudents"
 				(click)="!hasActivityAssigned(student) && onSelectStudent(student)"
 				[class.opacity-50]="hasActivityAssigned(student)" [class.cursor-pointer]="!hasActivityAssigned(student)"
