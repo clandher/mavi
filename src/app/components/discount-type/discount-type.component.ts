@@ -52,6 +52,11 @@ export class DiscountTypeComponent implements ModalInjectable {
                 });
                 setFocus('key');
             });
+
+
+            this.form.get('type')?.disable();
+            this.form.get('value')?.disable();
+
         } else {
             setFocus('key');
         }

@@ -81,11 +81,13 @@
 				</div>
 
 			</div>
+			@if (cargo.amountRemaining) {
 			<br>
 			<div class="d-flex justify-content-end">
 				<button class="btn btn-sm btn-primary ms-2" (click)="openDiscountModal(cargo)">Aplicar
 					descuento</button>
 			</div>
+			}
 
 		</div>
 		@if (act.charges.length > 1) {
