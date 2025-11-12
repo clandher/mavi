@@ -26,15 +26,19 @@ export class ConfigurationComponent implements OnInit {
 
     ngOnInit(): void {
 
-        const normalizedUrl = decodeURIComponent(this.router.url);
-        if (normalizedUrl.endsWith('/configuración')) {
-            const lastRoute = localStorage.getItem('configuration.tab') || 'escuela';
-            this.router.navigate([lastRoute], { relativeTo: this.route });
-        } else {
-            const segments = this.router.url.split('/');
-            const tab = segments[segments.length - 1];
-            localStorage.setItem('configuration.tab', tab);
-        }
+        // const normalizedUrl = decodeURIComponent(this.router.url);
+        // if (normalizedUrl.endsWith('/configuración')) {
+        //     const lastRoute = localStorage.getItem('configuration.tab') || 'escuela';
+        //     this.router.navigate([lastRoute], { relativeTo: this.route });
+        // } else {
+        //     const segments = this.router.url.split('/');
+        //     const tab = segments[segments.length - 1];
+        //     localStorage.setItem('configuration.tab', tab);
+        // }
+
+        // const segments = this.router.url.split('/');
+        // const tab = segments[segments.length - 1];
+        // localStorage.setItem('configuration.tab', tab);
     }
 
     onTabClick(tab: string) {

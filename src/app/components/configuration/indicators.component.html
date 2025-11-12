@@ -1,5 +1,14 @@
 <div class="indicators">
-  <h1>Indicadores Importantes</h1>
+
+
+  <section>
+    <h2>Resumen financiero por fecha</h2>
+    <canvas baseChart [datasets]="financialChartData" [labels]="financialChartLabels" [options]="financialChartOptions"
+      [legend]="true" [type]="'line'">
+    </canvas>
+  </section>
+
+
 
   <section>
     <h2>Actividades por Tipo</h2>
@@ -33,6 +42,7 @@
       </li>
     </ul>
   </section>
+
 
 
 </div>

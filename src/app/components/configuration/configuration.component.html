@@ -1,4 +1,7 @@
 <div class="mavi-tabs">
+    <a routerLink="indicadores" routerLinkActive="selected" class="mavi-tab" (click)="onTabClick('indicadores')">
+        Indicadores
+    </a>
     <a routerLink="escuela" routerLinkActive="selected" class="mavi-tab" (click)="onTabClick('escuela')">
         Escuela
     </a>
@@ -13,6 +16,7 @@
         Desarrollo
     </a>
     }
+
 </div>
 <br>
 <router-outlet></router-outlet>

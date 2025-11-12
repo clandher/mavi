@@ -29,6 +29,16 @@ export const routes: Routes = [
                 data: { breadcrumb: 'Configuración' },
                 children: [
                     {
+                        path: '',
+                        redirectTo: 'indicadores',
+                        pathMatch: 'full'
+                    },
+                    {
+                        path: 'indicadores',
+                        loadComponent: () => import('./components/configuration/indicators.component').then(m => m.IndicatorsComponent),
+                        data: { breadcrumb: 'Indicadores' }
+                    },
+                    {
                         path: 'escuela',
                         loadComponent: () => import('./components/configuration/schools.component').then(m => m.SchoolsComponent),
                         data: { breadcrumb: 'Escuela' }
@@ -50,11 +60,7 @@ export const routes: Routes = [
                         loadComponent: () => import('./components/configuration/development.component').then(m => m.DevelopmentComponent),
                         data: { breadcrumb: 'Desarrollo' }
                     },
-                    {
-                        path: 'indicadores',
-                        loadComponent: () => import('./components/configuration/indicators.component').then(m => m.IndicatorsComponent),
-                        data: { breadcrumb: 'Indicadores' }
-                    },
+
                     {
                         path: 'usuarios',
                         loadComponent: () => import('./components/users/users.component').then(m => m.UsersComponent),
