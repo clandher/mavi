@@ -1,48 +1,69 @@
 <div *ngIf="student">
-  <div style="max-width: 450px; margin: auto; position: relative; height: 450px;">
-    <canvas baseChart [datasets]="radarDatasets" [labels]="radarLabelsText" [options]="radarOptions" [type]="radarType"
-      [legend]="false" height="450" width="450" style="display:block; margin:auto;">
-    </canvas>
-    <!-- Botones en forma de pentágono -->
-    <ng-container *ngFor="let label of radarLabels; let i = index">
-      <div [ngStyle]="{
+	<div class="d-flex justify-content-center gap-2 mb-3">
+		<ng-container *ngFor="let radar of radarKeys">
+			<button (click)="selectRadar(radar)" [class.selected]="selectedRadar === radar"
+				class="btn btn-sm btn-primary">
+				{{ radar | titlecase }} Skills
+			</button>
+		</ng-container>
+	</div>
+	<div style="max-width: 450px; margin: auto; position: relative;padding: 50px;">
+		<canvas baseChart [datasets]="datasets" [labels]="labels" [options]="radarOptions" [type]="'radar'"
+			[legend]="false" height="350" width="350" style="display:block; margin:auto;">
+		</canvas>
+		<ng-container *ngFor="let item of student.radarsData[selectedRadar]; let i = index">
+			<div [ngStyle]="{
           position: 'absolute',
-          left: buttonPositions[i]?.left,
-          top: buttonPositions[i]?.top,
+          left: buttons[i]?.left,
+          top: buttons[i]?.top,
           width: '80px',
           textAlign: 'center'
         }">
-        <div class="d-flex gap-1">
 
-          <!-- <div style="color: #fff; font-size: 0.9em;">{{ label }}</div> -->
-          <button (click)="decrementRadar(keys[i])" class="btn-radar">-</button>
-          <!-- <span style="margin:0 1em;">{{ editableRadar[keys[i]] }}</span> -->
-          <button (click)="incrementRadar(keys[i])" class="btn-radar">+</button>
+				<div class="d-flex flex-column align-items-center">
+					<div class="d-flex gap-1">
+						<button (click)="decrement(item.key)" class="btn-radar">-</button>
+						<button (click)="increment(item.key)" class="btn-radar">+</button>
+					</div>
+					<div class="label">
+						{{item.label}}
+					</div>
+				</div>
 
-        </div>
-      </div>
-    </ng-container>
-  </div>
+			</div>
+		</ng-container>
+	</div>
 </div>
-<!-- Helper array for keys -->
-<ng-container *ngIf="false">{{ keys }}</ng-container>
 
 <style>
-  .btn-radar {
-    background-color: #007bff;
-    border: none;
-    color: white;
-    height: 20px;
-    width: 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 11px;
-    border-radius: 4px;
-    cursor: pointer;
-  }
+	.btn-radar {
+		background-color: #007bff;
+		border: none;
+		color: white;
+		height: 20px;
+		width: 20px;
+		text-align: center;
+		text-decoration: none;
+		display: inline-block;
+		font-size: 11px;
+		border-radius: 0px;
+		cursor: pointer;
+	}
 
-  .btn-radar:hover {
-    background-color: #0056b3;
-  }
+	.btn-radar:hover {
+		background-color: #0056b3;
+	}
+
+	.label {
+		color: white;
+		font-size: 11px;
+		margin-top: 2px;
+		text-align: center;
+		width: 80px;
+	}
+
+	.selected {
+		background-color: #0056b3 !important;
+		color: white !important;
+	}
 </style>

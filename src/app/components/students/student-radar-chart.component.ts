@@ -1,10 +1,35 @@
 import { Component, Input } from '@angular/core';
-import { ChartOptions, ChartType, ChartData } from 'chart.js';
+import { HttpClient } from '@angular/common/http';
+import { ChartOptions, ChartType } from 'chart.js';
 import { CommonModule } from '@angular/common';
 import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { StudentService } from '@app/core/student.service';
 import { filter } from 'rxjs';
 import { Student } from '@app/core/dto';
+import { buildUrl } from '@app/core/base-http';
+
+export type Radars = { [key: string]: { label: string, key: string, offsetX?: number, offsetY?: number, value?: number }[] };
+
+const radars: Radars = {
+    soft: [
+        { label: 'Comunicación', key: 'communication', offsetX: 0, offsetY: 0, value: 50 },
+        { label: 'Trabajo en equipo', key: 'teamwork', offsetX: 60, offsetY: -5, value: 50 },
+        { label: 'Liderazgo', key: 'leadership', offsetX: 50, offsetY: 0, value: 50 },
+        { label: 'Creatividad', key: 'creativity', offsetX: -50, offsetY: 0, value: 50 },
+        { label: 'Responsabilidad', key: 'responsibility', offsetX: -50, offsetY: -5, value: 50 }
+    ],
+    technical: [
+        { label: 'Pase', key: 'pass', offsetX: 0, offsetY: 0, value: 50 },
+        { label: 'Tiro', key: 'shoot', offsetX: 60, offsetY: -5, value: 50 },
+        { label: 'Regate', key: 'dribble', offsetX: 50, offsetY: 0, value: 50 },
+        { label: 'Defensa', key: 'defense', offsetX: -50, offsetY: 0, value: 50 },
+        { label: 'Velocidad', key: 'speed', offsetX: -50, offsetY: -5, value: 50 }
+    ]
+};
+
+export interface StudentView extends Student {
+    radarsData: Radars
+}
 
 @Component({
     selector: 'app-student-radar-chart',
@@ -16,99 +41,110 @@ import { Student } from '@app/core/dto';
     templateUrl: './student-radar-chart.component.html',
 })
 export class StudentRadarChartComponent {
-    // Claves para mapear los labels con los valores editables
-    keys: (keyof typeof this.editableRadar)[] = [
-        'communication',
-        'teamwork',
-        'leadership',
-        'creativity',
-        'responsibility'
-    ];
-    public student: Student | undefined = undefined;
-    // Posiciones absolutas para los botones alrededor del canvas
-    buttonPositions: { left: string, top: string }[] = [];
 
-
-    constructor(private studentService: StudentService) { }
-
-
-    ngAfterViewInit(): void {
-        this.studentService.student().pipe(filter(student => !!student)).subscribe(student => {
-            this.student = student;
-        });
-    }
-
-    radarType: ChartType = 'radar';
-    radarOptions: ChartOptions = {
+    public student: StudentView | undefined = undefined;
+    public radarOptions: ChartOptions = {
         responsive: true,
         animation: false,
         plugins: {
             legend: {
-                display: false  ,
-                onClick: () => {
-                    console.log('Legend clicked');
-                },
-                onHover: () => {
-                    console.log('Legend hovered');
-                },
-
-                position: 'top', labels: {
-                    color: '#ff0000ff',
-                    // color: '#fff',
-
-                }
+                display: false,
+                position: 'top',
+                labels: { color: '#ff0000ff' }
             },
-
         },
         scales: {
             r: {
                 min: 0,
                 max: 100,
-                angleLines: { color: '#fff' }, // líneas radiales
-                grid: { color: '#fff' }, // líneas de fondo
-                pointLabels: { color: '#fff', font: { size: 11 }, display: true }, // etiquetas
-                ticks: {
+                angleLines: { color: '#fff' },
+                grid: { color: '#fff' },
+                pointLabels: {
                     display: false,
-                    font: { size: 11 },
-                    color: '#1cf100ff',
-                    backdropColor: 'rgba(0, 0, 0, 0.9)',
-                    stepSize: 10,
-                }, // valores sin fondo
+                    padding: 0,
+                    color: '#fff', font: { size: 11 },
+                },
+                ticks: { display: false, },
             }
         }
     };
+    public radarKeys: string[] = Object.keys(radars);
+    public selectedRadar: string = this.radarKeys[0];
+    public buttons: { left: string, top: string }[] = [];
 
-    radarLabels: { label: string, offsetX?: number, offsetY?: number }[] = [
-        { label: 'Comunicación', offsetX: 0, offsetY: 0 },
-        { label: 'Trabajo en equipo', offsetX: 60, offsetY: -5 },
-        { label: 'Liderazgo', offsetX: 50, offsetY: 0 },
-        { label: 'Creatividad', offsetX: -50, offsetY: 0 },
-        { label: 'Responsabilidad', offsetX: -50, offsetY: -5 }
-    ];
+    constructor(private studentService: StudentService, private http: HttpClient) { }
 
-    get radarLabelsText() {
-        return this.radarLabels.map(item => item.label);
+    get labels() {
+        return this.student!.radarsData[this.selectedRadar].map(item => item.label);
     }
 
-    // Estado editable para los valores del radar
-    editableRadar = {
-        communication: 50,
-        teamwork: 50,
-        leadership: 50,
-        creativity: 50,
-        responsibility: 50
-    };
+    get datasets() {
+        const data = this.student!.radarsData[this.selectedRadar].map(item =>
+            this.student?.radars?.[this.selectedRadar]?.[item.key] ?? 50
+        );
 
-    ngOnInit(): void {
-        // Inicializa editableRadar con los valores del estudiante si existen
-        if (this.student?.radar) {
-            this.editableRadar = { ...this.editableRadar, ...this.student.radar };
+        return [{ label: this.student?.name || 'Estudiante', data, fill: true }];
+    }
+
+
+    ngAfterViewInit(): void {
+        this.studentService.student().pipe(filter(student => !!student)).subscribe(student => {
+            this.student = student as StudentView;
+
+
+            if (!this.student.radars) {
+                this.student.radars = {
+                    soft: { communication: 50, teamwork: 50, leadership: 50, creativity: 50, responsibility: 50 },
+                    technical: { pass: 50, shoot: 50, dribble: 50, defense: 50, speed: 50 }
+                }
+            }
+
+            this.student.radarsData = radars;
+
+            this._initRadars();
+        });
+    }
+
+
+    public increment(key: string) {
+        if (!this.student || !this.student.radars) return;
+        const radar = this.student.radars[this.selectedRadar];
+        if (radar && radar[key] < 100) {
+            radar[key] += 5;
+            this.patchStudentRadars();
         }
-        // Calcula las posiciones de los botones en pentágono, sumando offset x/y de cada label
-        const center = 199; // centro del canvas
-        const radius = 150; // radio del pentágono
-        const n = this.radarLabels.length;
-        this.buttonPositions = this.radarLabels.map((item, i) => {
+    }
+
+
+    public decrement(key: string) {
+        if (!this.student || !this.student.radars) return;
+        const radar = this.student.radars[this.selectedRadar];
+        if (radar && radar[key] > 0) {
+            radar[key] -= 5;
+            this.patchStudentRadars();
+        }
+    }
+    /**
+     * Realiza un PATCH al API de student mandando solo la propiedad radars
+     */
+    private patchStudentRadars() {
+        if (!this.student || !this.student.id) return;
+        this.http.patch(buildUrl(`students/${this.student.id}`), { radars: this.student.radars }).subscribe();
+    }
+
+    public selectRadar(radar: string) {
+        this.selectedRadar = radar;
+        this._initRadars();
+    }
+
+    private _initRadars() {
+        if (!this.student) { return; }
+
+        const center = 180;
+        const radius = 180;
+        const items = this.student.radarsData[this.selectedRadar];
+        const n = items.length;
+        this.buttons = items.map((item, i) => {
             const angle = (i * 2 * Math.PI / n) - Math.PI / 2;
             const offsetX = item.offsetX || 0;
             const offsetY = item.offsetY || 0;
@@ -117,32 +153,5 @@ export class StudentRadarChartComponent {
                 top: (center + radius * Math.sin(angle) + offsetY) + 'px'
             };
         });
-    }
-
-    get radarDatasets() {
-        const data = [
-            this.editableRadar.communication,
-            this.editableRadar.teamwork,
-            this.editableRadar.leadership,
-            this.editableRadar.creativity,
-            this.editableRadar.responsibility
-        ];
-        return [{
-            label: this.student?.name || 'Estudiante',
-            data,
-            fill: true,
-        }];
-    }
-
-    // Métodos para aumentar/disminuir valores
-    incrementRadar(key: keyof typeof this.editableRadar) {
-        if (this.editableRadar[key] < 100) {
-            this.editableRadar[key] += 5;
-        }
-    }
-    decrementRadar(key: keyof typeof this.editableRadar) {
-        if (this.editableRadar[key] > 0) {
-            this.editableRadar[key] -= 5;
-        }
     }
 }

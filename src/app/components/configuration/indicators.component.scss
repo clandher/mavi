@@ -1,82 +1,99 @@
 .card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+	gap: 1rem;
+	margin-top: 2rem;
 }
+
 
 .card {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  border-radius: 1.2rem;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  padding: 2rem 1.5rem;
-  transition: box-shadow 0.2s;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+	background: #181818;
+	border: 1.5px solid #222;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.10);
+	padding: 1.5rem 1.2rem;
+	transition: border 0.2s, box-shadow 0.2s;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	color: #fafafa;
+	border-radius: 0px;
 }
 
-.card:hover {
-  box-shadow: 0 8px 32px rgba(0,0,0,0.16);
-}
 
+
+/* Minimal accent border for each card type */
 .card-activities {
-  background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%);
+	border-left: 4px solid #00bcd4;
 }
+
 .card-payments {
-  background: linear-gradient(135deg, #fff3e0 0%, #ffb74d 100%);
+	border-left: 4px solid #ff9800;
 }
+
 .card-observations {
-  background: linear-gradient(135deg, #f3e5f5 0%, #ba68c8 100%);
+	border-left: 4px solid #9c27b0;
 }
+
 .card-categories {
-  background: linear-gradient(135deg, #e8f5e9 0%, #81c784 100%);
+	border-left: 4px solid #4caf50;
 }
+
 
 .card h2 {
-  margin-top: 0;
-  margin-bottom: 1rem;
-  font-size: 1.3rem;
-  font-weight: 600;
+	margin-top: 0;
+	margin-bottom: 1rem;
+	font-size: 1.1rem;
+	font-weight: 700;
+	color: #fff;
+	letter-spacing: 0.01em;
 }
+
 
 ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+	list-style: none;
+	padding: 0;
+	margin: 0;
 }
+
 
 li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid rgba(0,0,0,0.05);
-}
-li:last-child {
-  border-bottom: none;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 0.5rem 0;
+	border-bottom: 1px solid #232323;
 }
 
-.type, .category, .student {
-  font-weight: 500;
-  color: #333;
+li:last-child {
+	border-bottom: none;
 }
+
+
+.label {
+	font-weight: 500;
+	color: #fafafa;
+}
+
 .count {
-  font-weight: 700;
-  color: #1976d2;
+	font-weight: 700;
+	color: #00e676;
 }
+
 
 .summary-item {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-bottom: 0.5rem;
+	display: flex;
+	justify-content: space-between;
+	width: 100%;
+	margin-bottom: 0.5rem;
 }
+
 .label {
-  font-weight: 500;
-  color: #555;
+	font-weight: 500;
+	color: #bdbdbd;
 }
+
 .value {
-  font-weight: 700;
-  color: #388e3c;
+	
+	font-weight: 700;
+	color: #00e676;
 }
