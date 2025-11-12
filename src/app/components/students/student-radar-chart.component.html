@@ -1,13 +1,48 @@
 <div *ngIf="student">
-  <div style="max-width: 450px; margin: auto;">
-    <canvas baseChart
-      [datasets]="radarDatasets"
-      [labels]="radarLabels"
-      [options]="radarOptions"
-      [type]="radarType"
-      [legend]="true"
-      height="300"
-      width="300">
+  <div style="max-width: 450px; margin: auto; position: relative; height: 450px;">
+    <canvas baseChart [datasets]="radarDatasets" [labels]="radarLabelsText" [options]="radarOptions" [type]="radarType"
+      [legend]="false" height="450" width="450" style="display:block; margin:auto;">
     </canvas>
+    <!-- Botones en forma de pentágono -->
+    <ng-container *ngFor="let label of radarLabels; let i = index">
+      <div [ngStyle]="{
+          position: 'absolute',
+          left: buttonPositions[i]?.left,
+          top: buttonPositions[i]?.top,
+          width: '80px',
+          textAlign: 'center'
+        }">
+        <div class="d-flex gap-1">
+
+          <!-- <div style="color: #fff; font-size: 0.9em;">{{ label }}</div> -->
+          <button (click)="decrementRadar(keys[i])" class="btn-radar">-</button>
+          <!-- <span style="margin:0 1em;">{{ editableRadar[keys[i]] }}</span> -->
+          <button (click)="incrementRadar(keys[i])" class="btn-radar">+</button>
+
+        </div>
+      </div>
+    </ng-container>
   </div>
 </div>
+<!-- Helper array for keys -->
+<ng-container *ngIf="false">{{ keys }}</ng-container>
+
+<style>
+  .btn-radar {
+    background-color: #007bff;
+    border: none;
+    color: white;
+    height: 20px;
+    width: 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 11px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  .btn-radar:hover {
+    background-color: #0056b3;
+  }
+</style>
