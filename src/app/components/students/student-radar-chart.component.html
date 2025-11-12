@@ -1,4 +1,5 @@
 <div *ngIf="student">
+
 	<div class="d-flex justify-content-center gap-2 mb-3">
 		<ng-container *ngFor="let radar of radarKeys">
 			<button (click)="selectRadar(radar)" [class.selected]="selectedRadar === radar"
@@ -7,7 +8,7 @@
 			</button>
 		</ng-container>
 	</div>
-	<div style="max-width: 450px; margin: auto; position: relative;padding: 50px;">
+	<div style="max-width: 450px; margin: auto; position: relative;padding: 50px; padding-bottom: 10px;">
 		<canvas baseChart [datasets]="datasets" [labels]="labels" [options]="radarOptions" [type]="'radar'"
 			[legend]="false" height="350" width="350" style="display:block; margin:auto;">
 		</canvas>
@@ -33,6 +34,22 @@
 			</div>
 		</ng-container>
 	</div>
+	<br>
+	<div class="d-flex justify-content-end">
+
+		<app-form-group for="compare-with" title="Comparar con...">
+			<select id="compare-with" class="form-select form-select-sm"
+				(change)="selectCompareStudent($event)">
+				<option value=""> Ninguno</option>
+				<option *ngFor="let s of students" [value]="s.id" [selected]="s.id === selectedCompareStudentId"
+					[disabled]="s.id === student.id">{{s.name}}</option>
+			</select>
+		</app-form-group>
+
+		
+	</div>
+	<br>
+
 </div>
 
 <style>
