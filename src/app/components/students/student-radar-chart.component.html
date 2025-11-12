@@ -1,0 +1,13 @@
+<div *ngIf="student">
+  <div style="max-width: 450px; margin: auto;">
+    <canvas baseChart
+      [datasets]="radarDatasets"
+      [labels]="radarLabels"
+      [options]="radarOptions"
+      [type]="radarType"
+      [legend]="true"
+      height="300"
+      width="300">
+    </canvas>
+  </div>
+</div>

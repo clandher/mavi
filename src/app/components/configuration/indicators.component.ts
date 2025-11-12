@@ -3,11 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { buildUrl } from '@app/core/base-http';
 import { CommonModule } from '@angular/common';
 import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 
 @Component({
   selector: 'app-indicators',
   templateUrl: './indicators.component.html',
-  imports: [CommonModule, BaseChartDirective],
+  styleUrls: ['./indicators.component.scss'],
+  standalone: true,
+  imports: [CommonModule, BaseChartDirective, CurrencyMXPipe],
   providers: [
     provideCharts(withDefaultRegisterables()),
   ],

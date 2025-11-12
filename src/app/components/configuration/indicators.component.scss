@@ -1,0 +1,82 @@
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+.card {
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 1.2rem;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  padding: 2rem 1.5rem;
+  transition: box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.card:hover {
+  box-shadow: 0 8px 32px rgba(0,0,0,0.16);
+}
+
+.card-activities {
+  background: linear-gradient(135deg, #e0f7fa 0%, #80deea 100%);
+}
+.card-payments {
+  background: linear-gradient(135deg, #fff3e0 0%, #ffb74d 100%);
+}
+.card-observations {
+  background: linear-gradient(135deg, #f3e5f5 0%, #ba68c8 100%);
+}
+.card-categories {
+  background: linear-gradient(135deg, #e8f5e9 0%, #81c784 100%);
+}
+
+.card h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+li:last-child {
+  border-bottom: none;
+}
+
+.type, .category, .student {
+  font-weight: 500;
+  color: #333;
+}
+.count {
+  font-weight: 700;
+  color: #1976d2;
+}
+
+.summary-item {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+.label {
+  font-weight: 500;
+  color: #555;
+}
+.value {
+  font-weight: 700;
+  color: #388e3c;
+}

@@ -4,19 +4,15 @@ import { ReactiveFormsModule, FormBuilder, FormGroup } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp } from '@app/core/base-http';
 import { FormGroupComponent } from "../form-group/form-group.component";
-import { setFocus } from '@app/core/helpers';
 import { MaviValidators } from '@app/core/mavi-validators';
 import { ModalInjectable } from '@app/core/modal.service';
-import { LinkHelpComponent } from "../link-help/link-help.component";
-import { NgxMaskDirective } from 'ngx-mask';
-import { DEFAULT_SEEDER_CONFIG } from '../configuration/development.component';
 import { DiscountType } from '@app/core/dto';
 import { CurrencyMXPipe } from "../../core/currency-mx.pipe";
 
 @Component({
     selector: 'app-discount',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormGroupComponent, LinkHelpComponent, NgxMaskDirective, CurrencyMXPipe],
+    imports: [CommonModule, ReactiveFormsModule, FormGroupComponent, CurrencyMXPipe],
     templateUrl: './discount.component.html',
     styleUrls: ['./discount.component.scss']
 })

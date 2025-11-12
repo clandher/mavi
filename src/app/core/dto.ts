@@ -40,6 +40,19 @@ export class Student {
 
     activities!: StudentActivity[];
     payments!: PaymentEntity[];
+
+    /**
+     * Radar chart values for student techniques/skills
+     * Example: { communication: 80, teamwork: 70, leadership: 90, ... }
+     */
+    radar?: {
+        communication?: number;
+        teamwork?: number;
+        leadership?: number;
+        creativity?: number;
+        responsibility?: number;
+        // Agrega más técnicas según sea necesario
+    };
 }
 
 

@@ -7,14 +7,11 @@ import { FormGroupComponent } from "../form-group/form-group.component";
 import { setFocus } from '@app/core/helpers';
 import { MaviValidators } from '@app/core/mavi-validators';
 import { ModalInjectable } from '@app/core/modal.service';
-import { LinkHelpComponent } from "../link-help/link-help.component";
-import { NgxMaskDirective } from 'ngx-mask';
-import { DEFAULT_SEEDER_CONFIG } from '../configuration/development.component';
 
 @Component({
     selector: 'app-discount-type',
     standalone: true,
-    imports: [CommonModule, ReactiveFormsModule, FormGroupComponent, LinkHelpComponent, NgxMaskDirective],
+    imports: [CommonModule, ReactiveFormsModule, FormGroupComponent],
     templateUrl: './discount-type.component.html',
     styleUrls: ['./discount-type.component.scss']
 })

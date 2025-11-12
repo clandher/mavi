@@ -7,19 +7,21 @@ import { BaseHttp } from '@app/core/base-http';
 import { Category, StudentCategory } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 
+import { StudentRadarChartComponent } from './student-radar-chart.component';
+
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule, StudentRadarChartComponent],
   templateUrl: './student-info.component.html',
   styleUrls: ['./student-info.component.scss']
 })
 export class StudentInfoComponent {
-
   public isSaving: boolean = false;
   public categories: Category[] = [];
   public studentCategories: StudentCategory[] = [];
   public availableCategories: Category[] = [];
   public selectedCategoryId: number | null = null;
+  public student: any = undefined;
 
   private categoriesAPI: BaseHttp;
   private studentCategoriesAPI: BaseHttp;
@@ -29,7 +31,6 @@ export class StudentInfoComponent {
     private route: ActivatedRoute,
     private http: HttpClient
   ) {
-
     this.studentId = Number(this.route.parent!.snapshot.paramMap.get('id'));
 
     const queryString = RequestQueryBuilder.create({
@@ -38,10 +39,15 @@ export class StudentInfoComponent {
 
     this.studentCategoriesAPI = new BaseHttp(`student-categories?${queryString}`, this.http);
     this.categoriesAPI = new BaseHttp('categories', this.http);
+    // Simulación: datos del estudiante para la gráfica
+    // this.student = {
+    //   id: this.studentId,
+    //   name: 'Estudiante ' + this.studentId,
+    //   performance: [65, 59, 90, 81, 56]
+    // };
   }
 
   ngAfterViewInit(): void {
-
     Promise.all([
       this.categoriesAPI.get<Category[]>().toPromise(),
       this.studentCategoriesAPI.get<StudentCategory[]>().toPromise()
@@ -54,7 +60,6 @@ export class StudentInfoComponent {
       );
 
       this.selectedCategoryId = this.availableCategories.length > 0 ? this.availableCategories[0].id : null;
-
     }).catch(err => {
       console.error('Error loading categories or student categories', err);
     });

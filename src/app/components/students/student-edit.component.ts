@@ -102,6 +102,7 @@ export class StudentEditComponent {
         studentsAPI.get<Student>().subscribe({
             next: (student) => {
                 this.student = student;
+                this.studentService.setStudent(student);
                 this.studentForm.patchValue({
                     id: student.id,
                     name: student.name,
