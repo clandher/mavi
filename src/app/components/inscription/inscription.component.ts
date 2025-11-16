@@ -56,10 +56,6 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
         });
     }
 
-    isStudentSelected(student: StudentView): boolean {
-        return student.selected;
-    }
-
     hasActivityAssigned(student: StudentView): boolean {
         if (!student.activities || !Array.isArray(student.activities) || student.activities.length === 0) return false;
         return student.activities.some(act => act.activityId === Number(this.form.get('activityId')?.value));

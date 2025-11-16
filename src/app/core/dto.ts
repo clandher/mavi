@@ -145,6 +145,7 @@ export class PaymentEntity {
 export class CreatePaymentDto {
     studentId!: number;
     amount!: number;
+    charges?: number[]
 }
 
 export interface CreateActivityDto {

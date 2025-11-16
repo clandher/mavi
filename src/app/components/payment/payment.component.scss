@@ -12,3 +12,65 @@
     max-height: 400px;
     overflow-y: auto;
 }
+
+.move-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 2px;
+    min-width: 32px;
+    margin-left: -10px;
+    margin-right: 10px;
+}
+
+.btn-move {
+    background: #23272f;
+    border: 1px solid #444;
+    color: #bbb;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 2px 0;
+    width: 28px;
+    border-radius: 4px;
+    margin-bottom: 2px;
+    transition: color 0.2s, background 0.2s, border 0.2s;
+}
+
+.btn-move:disabled {
+    color: #444;
+    cursor: not-allowed;
+    background: #23272f;
+    border: 1px solid #23272f;
+}
+
+.btn-move:hover:not(:disabled) {
+    color: #fff;
+    background: #333a45;
+    border: 1px solid #666;
+}
+
+.payment-draggable {
+    transition: box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.payment-draggable.dragging {
+    opacity: .6;
+    box-shadow: 0 0 12px #23272fcc;
+    border: 1px dashed #444;
+    background: #23272f;
+    z-index: 2;
+}
+
+.payment-draggable.drag-over {
+    box-shadow: 0 0 16px #23272fcc;
+    border: 1px solid #666;
+    background: #333a45;
+}
+
+.payment-draggable:active,
+.payment-draggable.dragging {
+    box-shadow: 0 0 8px #23272f66;
+    background: #23272f;
+}

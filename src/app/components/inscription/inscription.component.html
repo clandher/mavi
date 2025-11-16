@@ -47,7 +47,7 @@
 				[class.opacity-50]="hasActivityAssigned(student)" [class.cursor-pointer]="!hasActivityAssigned(student)"
 				[class.cursor-not-allowed]="hasActivityAssigned(student)" class="col position-relative">
 
-				<div class="d-flex flex-column items-center mavi-border" [class.selected]="isStudentSelected(student)">
+				<div class="d-flex flex-column items-center mavi-border" [class.selected]="student.selected">
 					<img *ngIf="student.photo" [src]="student.photoUrl" class="student-photo-sm" alt="Foto">
 					<ng-template #placeholder>
 						<div class="photo-placeholder">+</div>

@@ -50,10 +50,10 @@ export class StudentRadarChartComponent {
     public radarOptions: ChartOptions = {
         responsive: true,
         animation: false,
+        
         plugins: {
             legend: {
                 display: false,
-                position: 'top',
                 labels: { color: '#ff0000ff' }
             },
         },
@@ -65,7 +65,6 @@ export class StudentRadarChartComponent {
                 grid: { color: '#fff' },
                 pointLabels: {
                     display: false,
-                    padding: 0,
                     color: '#fff', font: { size: 11 },
                 },
                 ticks: { display: false, },

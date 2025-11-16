@@ -4,7 +4,7 @@
 		<div class="position-relative d-flex items-center">
 
 			<input id="paymentAmount" type="text" formControlName="paymentAmount" class="form-control"
-				[class.border-red-500]="form.get('paymentAmount')?.value > getTotalDebt()" mask="separator.2"
+				[class.border-red-500]="paymentAmount.value > getTotalDebt()" mask="separator.2"
 				[thousandSeparator]="','" [decimalMarker]="'.'" [allowNegativeNumbers]="false" min="0"
 				[max]="getTotalDebt()" inputmode="decimal" />
 
@@ -13,13 +13,13 @@
 				Pagar total
 			</button>
 		</div>
-		<p *ngIf="form.get('paymentAmount')?.value > getTotalDebt()" class="form-control-error">
+		<p *ngIf="paymentAmount.value > getTotalDebt()" class="form-control-error">
 			El monto excede el adeudo total
 		</p>
-		<p class="text-sm text-gray-500 mt-1" *ngIf="getTotalDebt() - form.get('paymentAmount')?.value > 0">
+		<p class="text-sm text-gray-500 mt-1" *ngIf="getTotalDebt() - paymentAmount.value > 0">
 			Monto total restante:
 			<span class="high-debt">
-				{{getTotalDebt() - form.get('paymentAmount')?.value | currencyMX}}
+				{{getTotalDebt() - paymentAmount.value | currencyMX}}
 			</span>
 		</p>
 	</div>
@@ -27,37 +27,53 @@
 
 <div class="form-label">Cargos pendientes</div>
 <div class="payment-container">
-	<div *ngFor="let cargo of charges; let i = index" class="mavi-border mb-2">
-		<div class="d-flex justify-content-between items-center mb-1">
-			<div>
-				{{ cargo.activity.description }} - {{ cargo.activity.startDate | date:cargo.activity.type.format }} ({{
-				cargo.concept }})
+	<div *ngFor="let cargo of charges; let i = index" class="mavi-border mb-2 hovered payment-draggable"
+		draggable="true" [class.dragging]="draggedIndex === i"
+		[class.drag-over]="dragOverIndex === i && draggedIndex !== null && draggedIndex !== i" draggable="true"
+		(dragstart)="onDragStart(i)" (dragover)="onDragOver($event, i)" (dragleave)="onDragLeave(i)" (drop)="onDrop(i)">
+
+		<div class="d-flex justify-content-start">
+			<div class="move-controls">
+				<button type="button" class="btn-move" (click)="moveChargeUp(i)" [disabled]="i === 0"
+					title="Subir">▲</button>
+				<button type="button" class="btn-move" (click)="moveChargeDown(i)" [disabled]="i === charges.length - 1"
+					title="Bajar">▼</button>
 			</div>
 
-			<div class="text-xs text-gray-500">
-				{{ cargo.chargeDate | date:'mediumDate' }}
+			<div class="w-100">
+				<div class="d-flex justify-content-between items-center mb-1">
+					<div>
+						{{ cargo.activity.description }} - {{ cargo.activity.startDate | date:cargo.activity.type.format
+						}} ({{
+						cargo.concept }})
+					</div>
+
+					<small class="text-xs text-gray-500 ms-2" style="white-space: nowrap;">
+						{{ cargo.chargeDate | date:'mediumDate' }}
+					</small>
+				</div>
+				<div class="d-flex justify-content-between">
+					<div *ngIf="getCoveredAmount(i); else empty" class="detail-row">
+						<div class="detail-label">A pagar</div>
+						<div class="detail-value high-paid">
+							{{ getCoveredAmount(i) | currencyMX }}
+						</div>
+					</div>
+					<ng-template #empty>
+						<div></div>
+					</ng-template>
+					<div *ngIf="getRemainingAfterPayment(i) > 0" class="detail-row">
+						<div class="detail-label">Pendiente</div>
+						<div class="detail-value high-debt">
+							{{getRemainingAfterPayment(i) | currencyMX}}
+						</div>
+					</div>
+				</div>
 			</div>
+
 		</div>
-		<div class="d-flex justify-content-between">
-			<div *ngIf="getCoveredAmount(i); else empty" class="detail-row" class="detail-row">
-				<div class="detail-label">A pagar</div>
-				<div class="detail-value high-paid">
-					{{ getCoveredAmount(i) | currencyMX }}
-				</div>
-			</div>
-			<ng-template #empty>
-				<div>
-				</div>
-			</ng-template>
 
-			<div *ngIf="getRemainingAfterPayment(i) > 0" class="detail-row">
-				<div class="detail-label">Pendiente</div>
-				<div class="detail-value high-debt">
-					{{getRemainingAfterPayment(i) | currencyMX}}
-				</div>
-			</div>
 
-		</div>
 	</div>
 </div>
 
