@@ -21,18 +21,20 @@
 		<div class="col-4">
 
 			<div class="d-flex justify-content-end mb-2">
-				<button [disabled]="radarHandler.items.length >= 20" (click)="radarHandler.onAddItem()"
+				<button [disabled]="radarHandler.items.length >= config.max" (click)="radarHandler.onAddItem()"
 					class="btn btn-success">Agregar
 					ítem</button>
 			</div>
-		
+
 			<div formArrayName="items" style="max-height: 50vh; overflow-y: auto;">
 				<div *ngFor="let itemGroup of items.controls; let i = index" [formGroupName]="i">
 					<div class="mt-2 d-flex justify-content-between align-items-center gap-2">
+						<input type="text" formControlName="key" class="form-control form-control-sm"
+							placeholder="Llave" />
 						<input type="text" formControlName="description" class="form-control form-control-sm"
 							placeholder="Descripción" />
-						<button [disabled]="radarHandler.items.length <= 3" (click)="radarHandler.onRemoveItem(i)"
-							class="btn btn-sm btn-destructive" title="Eliminar">
+						<button [disabled]="radarHandler.items.length <= config.min"
+							(click)="radarHandler.onRemoveItem(i)" class="btn btn-sm btn-destructive" title="Eliminar">
 							X
 						</button>
 					</div>

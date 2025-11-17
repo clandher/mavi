@@ -1,13 +1,19 @@
 <div *ngIf="student">
 
 	<div class="d-flex justify-content-center gap-2 mb-3">
-		<ng-container *ngFor="let radar of radarKeys">
-			<button (click)="selectRadar(radar)" [class.selected]="selectedRadar === radar"
+		<ng-container *ngFor="let radar of radars">
+			<button (click)="selectRadar(radar)" [class.selected]="selectedRadar?.id === radar.id"
 				class="btn btn-sm btn-primary">
-				{{ radar | titlecase }} Skills
+				{{ radar.description| titlecase }}
 			</button>
 		</ng-container>
 	</div>
+
+
+	@if (items) {
+		<app-graph-radar [value]="items" *ngIf="selectedRadar" (valueChanged)="onRadarValueChanged($event)"></app-graph-radar>
+	}
+
 	<!-- <div style="max-width: 450px; margin: auto; position: relative;padding: 50px; ">
 		<canvas baseChart [datasets]="datasets" [labels]="labels" [options]="radarOptions" [type]="'radar'"
 			[legend]="false" height="350" width="350" style="display:block; margin:auto;">

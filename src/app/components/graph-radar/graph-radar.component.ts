@@ -33,6 +33,7 @@ export interface Radar {
 })
 export class GraphRadarComponent {
     @Input() value!: FormArray<FormGroup<RadarItemForm>>;
+    @Output() valueChanged = new EventEmitter<{ item: Partial<RadarItem>, action: 'increment' | 'decrement' }>();
 
     public buttons: { left: string, top: string }[] = [];
 
@@ -126,6 +127,7 @@ export class GraphRadarComponent {
         if (item.controls.value.value < 100) {
             item.controls['value'].setValue(item.controls.value.value + 5);
             item.markAsDirty();
+            this.valueChanged.emit({ item: item.value, action: 'increment' });
         }
     }
 
@@ -133,6 +135,7 @@ export class GraphRadarComponent {
         if (item.controls.value.value > 0) {
             item.controls['value'].setValue(item.controls.value.value - 5);
             item.markAsDirty();
+            this.valueChanged.emit({ item: item.value, action: 'decrement' });
         }
     }
 }

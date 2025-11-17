@@ -11,6 +11,12 @@ import { HttpClient } from '@angular/common/http';
 import { MaviValidators } from '@app/core/mavi-validators';
 import { ToastrService } from 'ngx-toastr';
 
+
+export interface RadarConfig {
+    max: number;
+    min: number;
+}
+
 @Component({
     selector: 'app-radars',
     standalone: true,
@@ -26,7 +32,7 @@ export class RadarsComponent {
 
     public form: FormGroup;
     public radars: Radar[] = [];
-    public config = { max: 10, min: 3 };
+    public config: RadarConfig = { max: 10, min: 3 };
     public radarHandler: RadarItemHandler | null = null;
 
     get items(): FormArray {
@@ -59,7 +65,7 @@ export class RadarsComponent {
     }
 
     onConfigChange(radar: Radar) {
-        this.radarHandler = new RadarItemHandler(radar, this.items, this.fb);
+        this.radarHandler = new RadarItemHandler(radar, this.items, this.fb, this.config);
         this.form.get('description')?.setValue(radar.description);
         this._patchItems(radar.items);
         this.form.markAsPristine();
@@ -120,13 +126,13 @@ export class RadarItemHandler {
     public items: FormArray;
     private fb: FormBuilder;
 
-    constructor(public radar: Radar, items: FormArray, fb: FormBuilder) {
+    constructor(public radar: Radar, items: FormArray, fb: FormBuilder, public config: RadarConfig) {
         this.items = items;
         this.fb = fb;
     }
 
     onAddItem() {
-        if (this.items.length < 10) {
+        if (this.items.length < this.config.max) {
             let newKey: string;
             do {
                 newKey = faker.string.alpha({ length: 6, casing: 'lower' });
@@ -142,7 +148,7 @@ export class RadarItemHandler {
     }
 
     onRemoveItem(index: number) {
-        if (this.items.length > 3) {
+        if (this.items.length > this.config.min) {
             this.items.removeAt(index);
             this.items.markAsDirty();
         }
