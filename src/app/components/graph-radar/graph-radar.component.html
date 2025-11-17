@@ -1,0 +1,60 @@
+<div style="max-width: 450px; margin: auto; position: relative;padding: 50px; ">
+    <canvas baseChart [datasets]="datasets" [labels]="labels" [options]="radarOptions" [type]="'radar'" [legend]="false"
+        height="350" width="350" style="display:block; margin:auto;">
+    </canvas>
+    <ng-container *ngFor="let item of value.controls; let i = index">
+        <div [ngStyle]="{
+          position: 'absolute',
+          left: buttons[i]?.left,
+          top: buttons[i]?.top,
+          width: '80px',
+          textAlign: 'center'
+        }">
+
+            <div class="d-flex flex-column align-items-center">
+                <div class="d-flex gap-1">
+                    <button (click)="decrement(item)" class="btn-radar">-</button>
+                    <button (click)="increment(item)" class="btn-radar">+</button>
+                </div>
+                <div class="label">
+                    {{item.get('description')?.value}}
+                </div>
+            </div>
+
+        </div>
+    </ng-container>
+</div>
+
+
+<style>
+    .btn-radar {
+        background-color: #007bff;
+        border: none;
+        color: white;
+        height: 20px;
+        width: 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 11px;
+        border-radius: 0px;
+        cursor: pointer;
+    }
+
+    .btn-radar:hover {
+        background-color: #0056b3;
+    }
+
+    .label {
+        color: white;
+        font-size: 11px;
+        margin-top: 2px;
+        text-align: center;
+        width: 80px;
+    }
+
+    .selected {
+        background-color: #0056b3 !important;
+        color: white !important;
+    }
+</style>

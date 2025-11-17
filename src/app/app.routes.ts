@@ -51,6 +51,7 @@ export const routes: Routes = [
                             { path: 'categorias', loadComponent: () => import('./components/configuration/categories.component').then(m => m.CategoriesComponent) },
                             { path: 'tipos-de-actividad', loadComponent: () => import('./components/activity-types/activity-types.component').then(m => m.ActivityTypesComponent) },
                             { path: 'tipos-de-descuento', loadComponent: () => import('./components/discount-types/discount-types.component').then(m => m.DiscountTypesComponent) },
+                            { path: 'radars', loadComponent: () => import('./components/radars/radars.component').then(m => m.RadarsComponent) },
                             { path: 'observaciones', loadComponent: () => import('./components/configuration/observations.component').then(m => m.ObservationsComponent) },
                             { path: '', redirectTo: 'categorias', pathMatch: 'full' }
                         ]

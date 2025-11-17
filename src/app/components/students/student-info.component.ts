@@ -6,12 +6,12 @@ import { ActivatedRoute, RouterModule } from '@angular/router';
 import { BaseHttp } from '@app/core/base-http';
 import { Category, StudentCategory } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
+import { StudentRadarsComponent } from './student-radars.component';
 
-import { StudentRadarChartComponent } from './student-radar-chart.component';
 
 @Component({
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule, StudentRadarChartComponent],
+  imports: [CommonModule, FormsModule, RouterModule, StudentRadarsComponent],
   templateUrl: './student-info.component.html',
   styleUrls: ['./student-info.component.scss']
 })

@@ -8,7 +8,7 @@
 			</button>
 		</ng-container>
 	</div>
-	<div style="max-width: 450px; margin: auto; position: relative;padding: 50px; padding-bottom: 10px;">
+	<!-- <div style="max-width: 450px; margin: auto; position: relative;padding: 50px; ">
 		<canvas baseChart [datasets]="datasets" [labels]="labels" [options]="radarOptions" [type]="'radar'"
 			[legend]="false" height="350" width="350" style="display:block; margin:auto;">
 		</canvas>
@@ -33,20 +33,19 @@
 
 			</div>
 		</ng-container>
-	</div>
+	</div> -->
 	<br>
 	<div class="d-flex justify-content-end">
 
 		<app-form-group for="compare-with" title="Comparar con...">
-			<select id="compare-with" class="form-select form-select-sm"
-				(change)="selectCompareStudent($event)">
+			<select id="compare-with" class="form-select form-select-sm" (change)="selectCompareStudent($event)">
 				<option value=""> Ninguno</option>
 				<option *ngFor="let s of students" [value]="s.id" [selected]="s.id === selectedCompareStudentId"
 					[disabled]="s.id === student.id">{{s.name}}</option>
 			</select>
 		</app-form-group>
 
-		
+
 	</div>
 	<br>
 
