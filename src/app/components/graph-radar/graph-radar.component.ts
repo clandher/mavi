@@ -33,6 +33,7 @@ export interface Radar {
 })
 export class GraphRadarComponent {
     @Input() value!: FormArray<FormGroup<RadarItemForm>>;
+    @Input() compareDatasets: { label: string, data: number[], borderColor?: string, backgroundColor?: string }[] = [];
     @Output() valueChanged = new EventEmitter<{ item: Partial<RadarItem>, action: 'increment' | 'decrement' }>();
 
     public buttons: { left: string, top: string }[] = [];
@@ -63,10 +64,7 @@ export class GraphRadarComponent {
     };
 
     get datasets() {
-        const data = this.value.controls.map(control =>
-            control.value.value
-        );
-
+        const data = this.value.controls.map(control => control.value.value);
         const datasets: any[] = [
             {
                 label: '',
@@ -78,22 +76,9 @@ export class GraphRadarComponent {
                 pointBorderColor: '#007bff'
             }
         ];
-
-        // if (this.compareStudent && this.compareStudent.id !== this.student?.id) {
-        //     const compareData = this.compareStudent.radarsData[this.selectedRadar].map(item =>
-        //         this.compareStudent?.radars?.[this.selectedRadar]?.[item.key] ?? 50
-        //     );
-        //     datasets.push({
-        //         label: this.compareStudent?.name || 'Comparación',
-        //         data: compareData,
-        //         fill: true,
-        //         borderColor: 'red',
-        //         backgroundColor: 'rgba(255,0,0,0.2)',
-        //         pointBackgroundColor: 'red',
-        //         pointBorderColor: 'red'
-        //     });
-        // }
-
+        if (this.compareDatasets?.length) {
+            datasets.push(...this.compareDatasets);
+        }
         return datasets;
     }
 

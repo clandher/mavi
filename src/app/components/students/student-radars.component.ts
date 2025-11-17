@@ -22,6 +22,26 @@ import { FormArray, FormBuilder } from '@angular/forms';
     templateUrl: './student-radars.component.html',
 })
 export class StudentRadarsComponent {
+    getCompareDatasets(): any[] {
+        if (this.compareStudent && this.selectedRadar) {
+            const radarKey = this.selectedRadar ? this.selectedRadar.key : '';
+            const compareData = this.selectedRadar.items.map(item => {
+                const radars = this.compareStudent && this.compareStudent.radars ? this.compareStudent.radars : {};
+                const radarObj = radarKey ? radars[radarKey] ?? {} : {};
+                return radarObj[item.key] !== undefined ? radarObj[item.key] : 50;
+            });
+            return [{
+                label: this.compareStudent.name,
+                data: compareData,
+                borderColor: 'red',
+                backgroundColor: 'rgba(255,0,0,0.2)',
+                pointBackgroundColor: 'red',
+                pointBorderColor: 'red',
+                fill: true
+            }];
+        }
+        return [];
+    }
 
     public students: Student[] = [];
     public selectedCompareStudentId: number | null = null;
@@ -102,20 +122,15 @@ export class StudentRadarsComponent {
         this.selectedCompareStudentId = id;
         if (id && this.students.length) {
             const found = this.students.find(s => s.id === id);
-            // if (found) {
-            //     if (!found.radarsData) {
-            //         // found.radarsData = radars;
-            //     }
-            //     if (!found.radars) {
-            //         found.radars = {
-            //             soft: { communication: 50, teamwork: 50, leadership: 50, creativity: 50, responsibility: 50 },
-            //             technical: { pass: 50, shoot: 50, dribble: 50, defense: 50, speed: 50 }
-            //         };
-            //     }
-            //     this.compareStudent = found;
-            // } else {
-            //     this.compareStudent = undefined;
-            // }
+            if (found) {
+                // Si el estudiante no tiene radars, inicialízalos si es necesario
+                if (!found.radars) {
+                    found.radars = {};
+                }
+                this.compareStudent = found;
+            } else {
+                this.compareStudent = undefined;
+            }
         } else {
             this.compareStudent = undefined;
         }
