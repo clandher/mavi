@@ -29,8 +29,8 @@
 			<div formArrayName="items" style="max-height: 50vh; overflow-y: auto;">
 				<div *ngFor="let itemGroup of items.controls; let i = index" [formGroupName]="i">
 					<div class="mt-2 d-flex justify-content-between align-items-center gap-2">
-						<input type="text" formControlName="key" class="form-control form-control-sm"
-							placeholder="Llave" />
+						<!-- <input type="text" formControlName="key" class="form-control form-control-sm"
+							placeholder="Llave" /> -->
 						<input type="text" formControlName="description" class="form-control form-control-sm"
 							placeholder="Descripción" />
 						<button [disabled]="radarHandler.items.length <= config.min"
@@ -42,7 +42,7 @@
 			</div>
 		</div>
 	</div>
-
+	<br>
 	<div class="d-flex justify-content-end">
 		<button type="button" class="btn btn-destructive" (click)="onDelete()" [disabled]="this.radarHandler.radar.lock"
 			[title]="this.radarHandler.radar.lock ? 'Esta configuración no se puede eliminar porque es base del sistema.' : ''">
