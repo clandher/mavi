@@ -5,6 +5,12 @@ import { BaseHttp } from '@app/core/base-http';
 import { ModalInjectable } from '@app/core/modal.service';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 
+export enum NotificationRecipientStatus {
+  PENDING = 0,
+  SENT = 1,
+  ERROR = 2,
+}
+
 @Component({
     selector: 'app-notification-recipients',
     standalone: true,
@@ -16,6 +22,8 @@ export class NotificationRecipientsComponent implements ModalInjectable {
     @Output() complete = new EventEmitter<boolean>();
 
     recipients: Array<any> = [];
+    completedRecipients: Array<any> = [];
+    failedRecipients: Array<any> = [];
     loading = true;
     disabled = false;
     form: any = null;
@@ -32,6 +40,8 @@ export class NotificationRecipientsComponent implements ModalInjectable {
             api.get<Array<any>>().subscribe({
                 next: (recipients) => {
                     this.recipients = recipients;
+                    this.completedRecipients = recipients.filter(r => r.status === NotificationRecipientStatus.SENT);
+                    this.failedRecipients = recipients.filter(r => r.status === NotificationRecipientStatus.ERROR);
                     this.loading = false;
                 },
                 error: () => {

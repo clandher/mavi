@@ -1,33 +1,53 @@
 import { Component, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp } from '@app/core/base-http';
-import { NgIf, NgFor } from '@angular/common';
+import { NgIf, NgFor, CommonModule } from '@angular/common';
 import { NotificationComponent } from '../notification/notification.component';
 import { NotificationRecipientsComponent } from './notification-recipients.component';
 import { ModalService } from '@app/core/modal.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { Activity, Category, Student } from '@app/core/dto';
 
 interface Notification {
     id: number;
     type: number;
     categoryId?: number;
+    category: Category;    
     activityId?: number;
+    activity?: Activity;
     studentId?: number;
+    student?: Student;
     message: string;
     processed: boolean;
     count?: number;
     createdAt: string;
+    sent?: number;
+    failed?: number;
 }
 
 @Component({
     selector: 'app-notifications',
     templateUrl: './notifications.component.html',
     styleUrls: [],
-    imports: [NgIf, NgFor]
+    imports: [ CommonModule]
 })
 export class NotificationsComponent implements OnDestroy {
     data: Notification[] = [];
+
+    getTypeDescription(type: number): string {
+        switch (type) {
+            case 1: return 'General';
+            case 2: return 'Categoría';
+            case 3: return 'Actividad';
+            case 4: return 'Alumno';
+            case 5: return 'Inscripción';
+            case 6: return 'Inscripción automática';
+            case 7: return 'Recargo';
+            case 8: return 'Cargo manual';
+            default: return 'Desconocido';
+        }
+    }
 
     private api: BaseHttp;
     private destroy$ = new Subject<void>();

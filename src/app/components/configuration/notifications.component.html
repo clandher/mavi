@@ -1,15 +1,57 @@
 <div class="d-flex flex-column gap-4 text-white mavi-grid">
-	<div *ngFor="let item of data"
-		class="list-group-item d-flex justify-content-between align-items-center mavi-card">
-		<div>
-			<p class="mb-1">{{ item.message }}</p>
-			<small>Tipo: {{ item.type }} | Procesada: {{ item.processed ? 'Sí' : 'No' }}</small>
+	<div *ngFor="let item of data" class=" mavi-card">
+
+		<div class="d-flex justify-content-between align-items-center">
+
+			<div class="d-flex gap-2">
+				<span class="badge bg-primary">{{ getTypeDescription(item.type) }}</span>
+				<span class="badge bg-secondary">
+					<ng-container *ngIf="item.type === 2 && item.category">
+						{{ item.category.type }}
+					</ng-container>
+					<ng-container *ngIf="item.type === 3 && item.activity">
+						{{ item.activity.description }}
+					</ng-container>
+					<ng-container *ngIf="item.type === 4 && item.student">
+						{{ item.student.name }}
+					</ng-container>
+				</span>
+
+			</div>
+
+
+			<div class="d-flex gap-2">
+				<ng-container *ngIf="!item.processed">
+					<span class="badge bg-warning">
+						Pendiente
+					</span>
+				</ng-container>
+
+				<ng-container *ngIf="item.processed">
+					<span *ngIf="item.sent !== null" class="badge bg-success">
+						Enviados: {{ item.sent }}
+					</span>
+					<span *ngIf="(item.failed ?? 0) > 0" class="badge bg-danger">
+						Fallidos: {{ item.failed }}
+					</span>
+				</ng-container>
+			</div>
 		</div>
-		<div class="d-flex gap-2 mt-2 justify-content-end">
+
+		<div>
+
+
+
+
+			<div class="mt-2">
+				<small>{{ item.message }}</small>
+			</div>
+		</div>
+		<div class="d-flex gap-2 justify-content-end">
 			<button type="button" class="btn btn-destructive btn-sm" (click)="delete(item.id)">
 				<i class="fa fa-trash"></i> Eliminar
 			</button>
-			<button class="btn btn-info btn-sm" (click)="showRecipients(item.id)">
+			<button class="btn btn-secondary btn-sm" (click)="showRecipients(item.id)">
 				<i class="fa fa-users"></i> Ver destinatarios
 			</button>
 		</div>
