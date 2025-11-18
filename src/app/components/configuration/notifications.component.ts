@@ -99,9 +99,26 @@ export class NotificationsComponent implements OnDestroy {
     }
 
     showRecipients(notificationId: number): void {
+        const notification = this.data.find(n => n.id === notificationId);
+        let title = 'Destinatarios';
+        if (notification) {
+            switch (notification.type) {
+                case 2:
+                    title = `Destinatarios - Categoría: ${notification.category?.type || ''}`;
+                    break;
+                case 3:
+                    title = `Destinatarios - Actividad: ${notification.activity?.description || ''}`;
+                    break;
+                case 4:
+                    title = `Destinatarios - Alumno: ${notification.student?.name || ''}`;
+                    break;
+                default:
+                    title = `Destinatarios - ${this.getTypeDescription(notification.type)}`;
+            }
+        }
         this.modalService.open({
             component: NotificationRecipientsComponent,
-            title: 'Destinatarios',
+            title,
             size: 'md',
             inputs: { notificationId }
         }).pipe(takeUntil(this.destroy$)).subscribe();

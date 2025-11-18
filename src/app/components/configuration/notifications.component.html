@@ -19,8 +19,12 @@
 
 			</div>
 
-
 			<div class="d-flex gap-2">
+
+				<small class="text-muted me-2">
+					{{ item.createdAt | date:'short' }}
+				</small>
+
 				<ng-container *ngIf="!item.processed">
 					<span class="badge bg-warning">
 						Pendiente
@@ -39,10 +43,6 @@
 		</div>
 
 		<div>
-
-
-
-
 			<div class="mt-2">
 				<small>{{ item.message }}</small>
 			</div>
@@ -51,7 +51,7 @@
 			<button type="button" class="btn btn-destructive btn-sm" (click)="delete(item.id)">
 				<i class="fa fa-trash"></i> Eliminar
 			</button>
-			<button class="btn btn-secondary btn-sm" (click)="showRecipients(item.id)">
+			<button class="btn btn-secondary btn-sm" (click)="showRecipients(item.id)" [disabled]="item.type === 4">
 				<i class="fa fa-users"></i> Ver destinatarios
 			</button>
 		</div>
