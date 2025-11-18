@@ -34,6 +34,11 @@ export const routes: Routes = [
                         pathMatch: 'full'
                     },
                     {
+                        path: 'notificaciones',
+                        loadComponent: () => import('./components/configuration/notifications.component').then(m => m.NotificationsComponent),
+                        data: { breadcrumb: 'Notificaciones' }
+                    },
+                    {
                         path: 'indicadores',
                         loadComponent: () => import('./components/configuration/indicators.component').then(m => m.IndicatorsComponent),
                         data: { breadcrumb: 'Indicadores' }
