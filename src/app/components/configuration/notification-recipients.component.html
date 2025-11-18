@@ -1,0 +1,16 @@
+<div *ngIf="loading" class="text-center py-4">Cargando...</div>
+<ul *ngIf="!loading && recipients.length > 0" class="">
+    <li *ngFor="let r of recipients" class="list-group-item">
+        <div>
+            <strong>{{ r.student?.name }}</strong>
+            <div class="d-flex justify-content-between">
+                <div class="text-muted small">{{ r.student?.phone }}</div>
+                <div class="text-muted small">{{ r.sentAt | date:'short' }}</div>
+            </div>
+            <br>
+        </div>
+    </li>
+</ul>
+<div *ngIf="!loading && recipients.length === 0" class="text-center text-muted py-4">
+    No se encontraron destinatarios.
+</div>

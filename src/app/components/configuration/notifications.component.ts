@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { BaseHttp } from '@app/core/base-http';
 import { NgIf, NgFor } from '@angular/common';
 import { NotificationComponent } from '../notification/notification.component';
+import { NotificationRecipientsComponent } from './notification-recipients.component';
 import { ModalService } from '@app/core/modal.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -75,5 +76,14 @@ export class NotificationsComponent implements OnDestroy {
     ngOnDestroy(): void {
         this.destroy$.next();
         this.destroy$.complete();
+    }
+
+    showRecipients(notificationId: number): void {
+        this.modalService.open({
+            component: NotificationRecipientsComponent,
+            title: 'Destinatarios',
+            size: 'md',
+            inputs: { notificationId }
+        }).pipe(takeUntil(this.destroy$)).subscribe();
     }
 }

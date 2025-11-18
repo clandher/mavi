@@ -5,14 +5,14 @@
 			<p class="mb-1">{{ item.message }}</p>
 			<small>Tipo: {{ item.type }} | Procesada: {{ item.processed ? 'Sí' : 'No' }}</small>
 		</div>
-		<!-- <div class="d-flex gap-2 mt-2 justify-content-end">
+		<div class="d-flex gap-2 mt-2 justify-content-end">
 			<button type="button" class="btn btn-destructive btn-sm" (click)="delete(item.id)">
 				<i class="fa fa-trash"></i> Eliminar
 			</button>
-			<button class="btn btn-primary btn-sm" (click)="edit(item.id, 'Editar notificación')">
-				<i class="fa fa-edit"></i> Editar
+			<button class="btn btn-info btn-sm" (click)="showRecipients(item.id)">
+				<i class="fa fa-users"></i> Ver destinatarios
 			</button>
-		</div> -->
+		</div>
 	</div>
 </div>
 <div *ngIf="data.length === 0" class="text-center text-muted py-4">
