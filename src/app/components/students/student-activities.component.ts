@@ -69,7 +69,11 @@ export class StudentActivitiesComponent implements OnInit {
 	onShowCharge(studentActivity: StudentActivity) {
 		this.modalService.open({
 			component: ChargeComponent, title: 'Nuevo cargo', size: 'sm',
-			inputs: { studentActivityId: studentActivity.id },
+			inputs: {
+				studentActivityId: studentActivity.id,
+				studentId: this.studentId,
+				activityId: studentActivity.activityId
+			},
 		}).pipe(takeUntil(this.destroy$)).subscribe((result) => {
 			if (result) {
 				this.activities = [];
@@ -94,7 +98,7 @@ export class StudentActivitiesComponent implements OnInit {
 			}
 		});
 	}
-	
+
 	openDiscountModal(charge: Charge) {
 		this.modalService.open({
 			component: DiscountComponent,

@@ -40,11 +40,13 @@ export class NotificationsComponent implements OnDestroy {
             case 1: return 'General';
             case 2: return 'Categoría';
             case 3: return 'Actividad';
-            case 4: return 'Alumno';
+            case 4: return 'Estudiante';
             case 5: return 'Inscripción';
             case 6: return 'Inscripción automática';
             case 7: return 'Recargo';
             case 8: return 'Cargo manual';
+            case 9: return 'Baja';
+            case 10: return 'Pago';
             default: return 'Desconocido';
         }
     }

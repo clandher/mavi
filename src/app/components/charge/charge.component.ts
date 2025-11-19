@@ -20,10 +20,13 @@ import { ModalInjectable, ModalService } from '@app/core/modal.service';
 })
 
 export class ChargeComponent implements AfterViewInit, ModalInjectable {
-    disabled: boolean = false;
-
     @Input() studentActivityId: number | null = null;
+    @Input() studentId: number | null = null;
+    @Input() activityId: number | null = null;
+
     @Output() complete = new EventEmitter<boolean>();
+
+    disabled: boolean = false;
     public form: FormGroup;
 
     constructor(
@@ -34,6 +37,8 @@ export class ChargeComponent implements AfterViewInit, ModalInjectable {
             amountToBePaid: ['', [MaviValidators.required(), MaviValidators.min(0.01)]],
             concept: ['', MaviValidators.required()],
             studentActivityId: ['', MaviValidators.required()],
+            studentId: ['', MaviValidators.required()],
+            activityId: ['', MaviValidators.required()],
         });
     }
 
@@ -43,7 +48,11 @@ export class ChargeComponent implements AfterViewInit, ModalInjectable {
 
     ngOnChanges() {
         if (this.studentActivityId) {
-            this.form.patchValue({ studentActivityId: this.studentActivityId });
+            this.form.patchValue({
+                studentActivityId: this.studentActivityId,
+                studentId: this.studentId,
+                activityId: this.activityId
+            });
         }
     }
 

@@ -6,14 +6,25 @@
 			<div class="d-flex gap-2">
 				<span class="badge bg-primary">{{ getTypeDescription(item.type) }}</span>
 				<span class="badge bg-secondary">
+					<!-- CATEGORY -->
 					<ng-container *ngIf="item.type === 2 && item.category">
 						{{ item.category.type }}
 					</ng-container>
+
+					<!-- ACTIVITY -->
 					<ng-container *ngIf="item.type === 3 && item.activity">
 						{{ item.activity.description }}
 					</ng-container>
-					<ng-container *ngIf="item.type === 4 && item.student">
+
+					<!-- STUDENT || SURRCHARGE || PAYMENT -->
+					<ng-container *ngIf="(item.type === 4 || item.type === 7 || item.type === 10) && item.student">
 						{{ item.student.name }}
+					</ng-container>
+					
+					<!-- INSCRIPTION || AUTOMATIC_INSCRIPTION || MANUAL_CHARGE || UNSUBSCRIBE -->
+					<ng-container *ngIf="(item.type === 5 || item.type === 6 || item.type === 8 || item.type === 9) && item.student && item.activity">
+						{{ item.student.name }} en 
+						{{ item.activity.description }}
 					</ng-container>
 				</span>
 

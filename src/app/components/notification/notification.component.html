@@ -7,21 +7,24 @@
 			<option [ngValue]="4">Estudiante</option>
 		</select>
 	</app-form-group>
-	<app-form-group *ngIf="form.get('type')?.value === 2" title="Categoría" for="categoryId" [control]="form.get('categoryId')">
+	<app-form-group *ngIf="form.get('type')?.value === 2" title="Categoría" for="categoryId"
+		[control]="form.get('categoryId')">
 		<select id="categoryId" formControlName="categoryId" class="form-control">
 			<option [ngValue]="null">Selecciona una categoría</option>
 			<option *ngFor="let cat of categories" [ngValue]="cat.id">{{cat.type}}</option>
 		</select>
 	</app-form-group>
 
-	<app-form-group *ngIf="form.get('type')?.value === 3" title="Actividad" for="activityId" [control]="form.get('activityId')">
+	<app-form-group *ngIf="form.get('type')?.value === 3" title="Actividad" for="activityId"
+		[control]="form.get('activityId')">
 		<select id="activityId" formControlName="activityId" class="form-control">
 			<option [ngValue]="null">Selecciona una actividad</option>
 			<option *ngFor="let act of activities" [ngValue]="act.id">{{act.description}}</option>
 		</select>
 	</app-form-group>
 
-	<app-form-group *ngIf="form.get('type')?.value === 4" title="Estudiante" for="studentId" [control]="form.get('studentId')">
+	<app-form-group *ngIf="form.get('type')?.value === 4" title="Estudiante" for="studentId"
+		[control]="form.get('studentId')">
 		<select id="studentId" formControlName="studentId" class="form-control">
 			<option [ngValue]="null">Selecciona un estudiante</option>
 			<option *ngFor="let stu of students" [ngValue]="stu.id">{{stu.name}}</option>
