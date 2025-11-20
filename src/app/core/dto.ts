@@ -277,3 +277,31 @@ export interface SeederConfig {
         name: string,
     }
 }
+
+export interface NotificationFact {
+    id: number;
+    type: number;
+    categoryId?: number;
+    category: Category;    
+    activityId?: number;
+    activity?: Activity;
+    studentId?: number;
+    student?: Student;
+    message: string;
+    processed: boolean;
+    count?: number;
+    createdAt: string;
+    sent?: number;
+    failed?: number;
+}
+
+
+export interface NotificationRecipient {
+    id: number;
+    notificationId: number;
+    notification?: NotificationFact;
+    studentId?: number;
+    student?: Student;
+    status : number;
+    sentAt?: string;
+}

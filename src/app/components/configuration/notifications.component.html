@@ -20,10 +20,11 @@
 					<ng-container *ngIf="(item.type === 4 || item.type === 7 || item.type === 10) && item.student">
 						{{ item.student.name }}
 					</ng-container>
-					
+
 					<!-- INSCRIPTION || AUTOMATIC_INSCRIPTION || MANUAL_CHARGE || UNSUBSCRIBE -->
-					<ng-container *ngIf="(item.type === 5 || item.type === 6 || item.type === 8 || item.type === 9) && item.student && item.activity">
-						{{ item.student.name }} en 
+					<ng-container
+						*ngIf="(item.type === 5 || item.type === 6 || item.type === 8 || item.type === 9  || item.type ===11 ) && item.student && item.activity">
+						{{ item.student.name }} en
 						{{ item.activity.description }}
 					</ng-container>
 				</span>
@@ -62,7 +63,7 @@
 			<button type="button" class="btn btn-destructive btn-sm" (click)="delete(item.id)">
 				<i class="fa fa-trash"></i> Eliminar
 			</button>
-			<button class="btn btn-secondary btn-sm" (click)="showRecipients(item.id)" [disabled]="item.type === 4">
+			<button class="btn btn-secondary btn-sm" (click)="showRecipients(item.id)" [disabled]="item.type >= 4">
 				<i class="fa fa-users"></i> Ver destinatarios
 			</button>
 		</div>

@@ -86,8 +86,13 @@ export const routes: Routes = [
                 children: [
                     {
                         path: '',
-                        redirectTo: 'info',
+                        redirectTo: 'notificaciones',
                         pathMatch: 'full'
+                    },
+                    {
+                        path: 'notificaciones',
+                        loadComponent: () => import('./components/configuration/notification-recipient.component').then(m => m.NotificationRecipientComponent),
+                        data: { breadcrumb: 'Notificaciones' }
                     },
                     {
                         path: 'info',

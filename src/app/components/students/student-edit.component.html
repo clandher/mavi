@@ -115,6 +115,9 @@
 
 @if (studentForm.value.id !== 0){
 <div class="mavi-tabs">
+    <a routerLink="notificaciones" routerLinkActive="selected" class="mavi-tab">
+        Notificaciones
+    </a>
     <a routerLink="info" routerLinkActive="selected" [routerLinkActiveOptions]="{ exact: true }" class="mavi-tab">
         General
     </a>
@@ -130,9 +133,7 @@
     <a routerLink="observaciones" routerLinkActive="selected" class="mavi-tab">
         Observaciones
     </a>
-    <a routerLink="documentos" routerLinkActive="selected" class="mavi-tab">
-        Documentos
-    </a>
+
 </div>
 <br>
 <router-outlet></router-outlet>

@@ -7,24 +7,8 @@ import { NotificationRecipientsComponent } from './notification-recipients.compo
 import { ModalService } from '@app/core/modal.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { Activity, Category, Student } from '@app/core/dto';
+import { Activity, Category, NotificationFact, Student } from '@app/core/dto';
 
-interface Notification {
-    id: number;
-    type: number;
-    categoryId?: number;
-    category: Category;    
-    activityId?: number;
-    activity?: Activity;
-    studentId?: number;
-    student?: Student;
-    message: string;
-    processed: boolean;
-    count?: number;
-    createdAt: string;
-    sent?: number;
-    failed?: number;
-}
 
 @Component({
     selector: 'app-notifications',
@@ -33,7 +17,7 @@ interface Notification {
     imports: [ CommonModule]
 })
 export class NotificationsComponent implements OnDestroy {
-    data: Notification[] = [];
+    data: NotificationFact[] = [];
 
     getTypeDescription(type: number): string {
         switch (type) {
@@ -47,6 +31,7 @@ export class NotificationsComponent implements OnDestroy {
             case 8: return 'Cargo manual';
             case 9: return 'Baja';
             case 10: return 'Pago';
+            case 11: return 'Descuento';
             default: return 'Desconocido';
         }
     }
@@ -66,7 +51,7 @@ export class NotificationsComponent implements OnDestroy {
     }
 
     _fetch(): void {
-        this.api.get<Notification[]>().subscribe((data) => {
+        this.api.get<NotificationFact[]>().subscribe((data) => {
             this.data = data.reverse();
         });
     }
