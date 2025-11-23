@@ -100,6 +100,16 @@ export const routes: Routes = [
                         data: { breadcrumb: 'Información' }
                     },
                     {
+                        path: 'categorias',
+                        loadComponent: () => import('./components/students/student-categories.component').then(m => m.StudentCategoriesComponent),
+                        data: { breadcrumb: 'Categorías' }
+                    },
+                    {
+                        path: 'radares',
+                        loadComponent: () => import('./components/students/student-radars.component').then(m => m.StudentRadarsComponent),
+                        data: { breadcrumb: 'Radares' }
+                    },
+                    {
                         path: 'actividades',
                         loadComponent: () => import('./components/students/student-activities.component').then(m => m.StudentActivitiesComponent),
                         data: { breadcrumb: 'Actividades' }

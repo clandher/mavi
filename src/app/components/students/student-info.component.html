@@ -1,36 +1,3 @@
-<app-student-radars></app-student-radars>
 
 
-<div class="form-group mavi-border">
-    <label class="form-label">Categorías</label>
-    <div class="d-flex gap-2">
-        <div *ngFor="let sc of studentCategories" class="mavi-tag cursor-pointer">
-            <span>
-                {{sc.category.type}}
-            </span>
-            <span class="btn-remove" (click)="removeCategory(sc.id)">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor" class="size-4">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
-                </svg>
-
-            </span>
-        </div>
-    </div>
-    <br>
-    <div *ngIf="availableCategories.length > 0" class="d-flex gap-2">
-        <div class="w-32">
-            <select [(ngModel)]="selectedCategoryId" name="newCategory" class="form-control">
-                <option *ngFor="let cat of availableCategories" [value]="cat.id">
-                    {{ cat.type }}
-                </option>
-            </select>
-        </div>
-
-        <div class="w-32">
-            <button class="btn btn-primary" (click)="addCategory()">
-                + Agregar
-            </button>
-        </div>
-    </div>
-</div>
+info

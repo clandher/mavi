@@ -10,6 +10,9 @@ import { takeUntil } from 'rxjs/operators';
 import { Activity, Category, NotificationRecipient, Student } from '@app/core/dto';
 import { RequestQueryBuilder } from '@dataui/crud-request';
 import { ActivatedRoute } from '@angular/router';
+import { BtnLoadingComponent } from "../btn-loading/btn-loading.component";
+import { NotificationConfigurationComponent } from './notification-configuration.component';
+import { StudentService } from '@app/core/student.service';
 
 
 
@@ -17,7 +20,7 @@ import { ActivatedRoute } from '@angular/router';
     selector: 'app-notification-recipient',
     templateUrl: './notification-recipient.component.html',
     styleUrls: [],
-    imports: [CommonModule]
+    imports: [CommonModule, BtnLoadingComponent]
 })
 export class NotificationRecipientComponent implements OnDestroy {
     data: NotificationRecipient[] = [];
@@ -42,15 +45,21 @@ export class NotificationRecipientComponent implements OnDestroy {
     private api: BaseHttp;
     private destroy$ = new Subject<void>();
     studentId: number | null = null;
+    student: Student | undefined = undefined;
 
     constructor(
         private modalService: ModalService,
         private http: HttpClient,
         private route: ActivatedRoute,
+        private studentService: StudentService
     ) {
 
 
         this.api = new BaseHttp('notification-recipients', this.http);
+
+        this.studentService.student().subscribe((student) => {
+            this.student = student;
+        });
     }
 
     ngOnInit() {
@@ -66,8 +75,9 @@ export class NotificationRecipientComponent implements OnDestroy {
         }).query();
 
         this.data = (await this.http.get<NotificationRecipient[]>(buildUrl(`notification-recipients?${queryString}`)).toPromise()) || [];
+        this.data = this.data.reverse();
 
-      
+
     }
 
     delete(id: number): void {
@@ -99,29 +109,15 @@ export class NotificationRecipientComponent implements OnDestroy {
         this.destroy$.complete();
     }
 
-    showRecipients(notificationId: number): void {
-        // const notification = this.data.find(n => n.id === notificationId);
-        // let title = 'Destinatarios';
-        // if (notification) {
-        //     switch (notification.type) {
-        //         case 2:
-        //             title = `Destinatarios - Categoría: ${notification.category?.type || ''}`;
-        //             break;
-        //         case 3:
-        //             title = `Destinatarios - Actividad: ${notification.activity?.description || ''}`;
-        //             break;
-        //         case 4:
-        //             title = `Destinatarios - Alumno: ${notification.student?.name || ''}`;
-        //             break;
-        //         default:
-        //             title = `Destinatarios - ${this.getTypeDescription(notification.type)}`;
-        //     }
-        // }
-        // this.modalService.open({
-        //     component: NotificationRecipientsComponent,
-        //     title,
-        //     size: 'md',
-        //     inputs: { notificationId }
-        // }).pipe(takeUntil(this.destroy$)).subscribe();
+    showConfigurations(): void {
+        this.modalService.open({
+            component: NotificationConfigurationComponent,
+            inputs: { studentId: this.studentId },
+            title: 'Configurar notificaciones',
+            size: 'md'
+        }).pipe(takeUntil(this.destroy$)).subscribe(() => {
+            this.studentService.refreshNotifier
+        });
+
     }
 }

@@ -1,47 +1,25 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { ChartOptions, ChartType } from 'chart.js';
 import { CommonModule } from '@angular/common';
-import { BaseChartDirective, provideCharts, withDefaultRegisterables } from 'ng2-charts';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 import { StudentService } from '@app/core/student.service';
 import { filter, switchMap } from 'rxjs';
 import { Student } from '@app/core/dto';
 import { buildUrl } from '@app/core/base-http';
 import { FormGroupComponent } from "../form-group/form-group.component";
 import { GraphRadarComponent, Radar } from '../graph-radar/graph-radar.component';
-import { th } from '@faker-js/faker';
 import { FormArray, FormBuilder } from '@angular/forms';
 
 @Component({
     selector: 'app-student-radars',
     standalone: true,
-    imports: [CommonModule, BaseChartDirective, FormGroupComponent, GraphRadarComponent],
+    imports: [CommonModule, FormGroupComponent, GraphRadarComponent],
     providers: [
         provideCharts(withDefaultRegisterables()),
     ],
     templateUrl: './student-radars.component.html',
 })
 export class StudentRadarsComponent {
-    getCompareDatasets(): any[] {
-        if (this.compareStudent && this.selectedRadar) {
-            const radarKey = this.selectedRadar ? this.selectedRadar.key : '';
-            const compareData = this.selectedRadar.items.map(item => {
-                const radars = this.compareStudent && this.compareStudent.radars ? this.compareStudent.radars : {};
-                const radarObj = radarKey ? radars[radarKey] ?? {} : {};
-                return radarObj[item.key] !== undefined ? radarObj[item.key] : 50;
-            });
-            return [{
-                label: this.compareStudent.name,
-                data: compareData,
-                borderColor: 'red',
-                backgroundColor: 'rgba(255,0,0,0.2)',
-                pointBackgroundColor: 'red',
-                pointBorderColor: 'red',
-                fill: true
-            }];
-        }
-        return [];
-    }
 
     public students: Student[] = [];
     public selectedCompareStudentId: number | null = null;
@@ -136,5 +114,25 @@ export class StudentRadarsComponent {
         }
     }
 
+    public getCompareDatasets(): any[] {
+        if (this.compareStudent && this.selectedRadar) {
+            const radarKey = this.selectedRadar ? this.selectedRadar.key : '';
+            const compareData = this.selectedRadar.items.map(item => {
+                const radars = this.compareStudent && this.compareStudent.radars ? this.compareStudent.radars : {};
+                const radarObj = radarKey ? radars[radarKey] ?? {} : {};
+                return radarObj[item.key] !== undefined ? radarObj[item.key] : 50;
+            });
+            return [{
+                label: this.compareStudent.name,
+                data: compareData,
+                borderColor: 'red',
+                backgroundColor: 'rgba(255,0,0,0.2)',
+                pointBackgroundColor: 'red',
+                pointBorderColor: 'red',
+                fill: true
+            }];
+        }
+        return [];
+    }
 
 }

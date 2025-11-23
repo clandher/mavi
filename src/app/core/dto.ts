@@ -1,3 +1,17 @@
+export enum NotificationType {
+    GENERAL = 1,
+    CATEGORY = 2,
+    ACTIVITY = 3,
+    STUDENT = 4,
+    INSCRIPTION = 5,
+    AUTOMATIC_INSCRIPTION = 6,
+    SURRCHARGE = 7,
+    MANUAL_CHARGE = 8,
+    UNSUBSCRIBE = 9,
+    PAYMENT = 10,
+    DISCOUNT = 11,
+}
+
 
 export class ApiRes<T> {
     data!: T[];
@@ -40,6 +54,8 @@ export class Student {
 
     activities!: StudentActivity[];
     payments!: PaymentEntity[];
+
+    notifications!: NotificationType[];
 
     radars?: {
         [key: string]: {
@@ -282,7 +298,7 @@ export interface NotificationFact {
     id: number;
     type: number;
     categoryId?: number;
-    category: Category;    
+    category: Category;
     activityId?: number;
     activity?: Activity;
     studentId?: number;
@@ -302,6 +318,6 @@ export interface NotificationRecipient {
     notification?: NotificationFact;
     studentId?: number;
     student?: Student;
-    status : number;
+    status: number;
     sentAt?: string;
 }
