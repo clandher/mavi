@@ -23,7 +23,6 @@ import { NgxMaskDirective } from 'ngx-mask';
     selector: 'app-student-edit',
     imports: [CommonModule, FormsModule, RouterModule, FormGroupComponent, ReactiveFormsModule, SubmitComponent, NgxMaskDirective],
     templateUrl: './student-edit.component.html',
-    styleUrls: ['./student-edit.component.scss']
 })
 export class StudentEditComponent {
 
@@ -33,6 +32,7 @@ export class StudentEditComponent {
 
     public studentForm: FormGroup;
     public student: Student | null = null;
+    public studentId: number = 0;
     public previousStudent: Student | null = null;
     public nextStudent: Student | null = null;
 
@@ -54,6 +54,7 @@ export class StudentEditComponent {
         this.studentForm = this.fb.group({
             id: [''],
             name: [''],
+            birthdate: [''],
             photo: [''],
             photoUrl: [''],
         });
@@ -70,16 +71,16 @@ export class StudentEditComponent {
     ngAfterViewInit(): void {
         this.route.paramMap.pipe(takeUntil(this.destroy$)).subscribe(params => {
             const studentIdParam = params.get('id');
-            const studentId = studentIdParam ? Number(studentIdParam) : 0;
+            this.studentId = studentIdParam ? Number(studentIdParam) : 0;
 
-            if (!studentId) {
+            if (!this.studentId) {
                 this.studentForm.patchValue({
                     id: 0,
                     birthdate: formatDateForDisplay(new Date())
                 });
                 setFocus('name');
             } else {
-                this._loadStudent(studentId);
+                this._loadStudent(this.studentId);
             }
         });
     }

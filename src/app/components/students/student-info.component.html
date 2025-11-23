@@ -1,25 +1,62 @@
 <form [formGroup]="form">
     <div class="row g-3">
-        <app-form-group class="col-12 col-md-6" title="Fecha de nacimiento" [control]="form.get('birthdate')"
-            name="birthdate" required type="date">
+        <app-form-group for="nick" class="col-12 col-md-6" title="Apodo" [control]="form.get('nick')" name="nick"
+            placeholder="Apodo">
+            <input id="nick" type="text" class="form-control" formControlName="nick" placeholder="Apodo">
+        </app-form-group>
+        <app-form-group for="birthdate" class="col-12 col-md-6" title="Fecha de nacimiento"
+            [control]="form.get('birthdate')" name="birthdate" required type="date">
             <input id="birthdate" type="date" class="form-control" formControlName="birthdate">
         </app-form-group>
-        <app-form-group class="col-12 col-md-6" title="CURP" [control]="form.get('curp')" name="curp"
+        <app-form-group for="curp" class="col-12 col-md-6" title="CURP" [control]="form.get('curp')" name="curp"
             placeholder="CURP">
             <input id="curp" type="text" class="form-control text-uppercase" formControlName="curp" placeholder="CURP">
         </app-form-group>
-        <app-form-group class="col-12 col-md-6" title="Teléfono" [control]="form.get('phone')" name="phone"
+
+        <app-form-group for="placeOfBirth" class="col-12 col-md-6" title="Lugar de nacimiento"
+            [control]="form.get('placeOfBirth')" name="placeOfBirth" placeholder="Lugar de nacimiento">
+            <select id="placeOfBirth" class="form-control" formControlName="placeOfBirth">
+                <option value="">Selecciona una ciudad</option>
+                <option value="Monterrey">Monterrey</option>
+                <option value="San Nicolás de los Garza">San Nicolás de los Garza</option>
+                <option value="Guadalupe">Guadalupe</option>
+                <option value="Apodaca">Apodaca</option>
+                <option value="Escobedo">Escobedo</option>
+                <option value="Santa Catarina">Santa Catarina</option>
+                <option value="San Pedro Garza García">San Pedro Garza García</option>
+                <option value="Juárez">Juárez</option>
+                <option value="García">García</option>
+                <option value="Pesquería">Pesquería</option>
+                <option value="General Zuazua">General Zuazua</option>
+                <option value="Ciénega de Flores">Ciénega de Flores</option>
+            </select>
+        </app-form-group>
+
+    </div>
+
+    <div class="row">
+        <app-form-group for="phone" class="col-12 col-md-6" title="Teléfono" [control]="form.get('phone')" name="phone"
             placeholder="Teléfono">
             <input id="phone" type="text" class="form-control" formControlName="phone" placeholder="Teléfono">
         </app-form-group>
-        <app-form-group class="col-12 col-md-6" title="Lugar de nacimiento" [control]="form.get('placeOfBirth')"
-            name="placeOfBirth" placeholder="Lugar de nacimiento">
-            <input id="placeOfBirth" type="text" class="form-control" formControlName="placeOfBirth"
-                placeholder="Lugar de nacimiento">
-        </app-form-group>
-        <app-form-group class="flex-grow-1" title="Apodo" [control]="form.get('nick')" name="nick" placeholder="Apodo">
-            <input id="nick" type="text" class="form-control" formControlName="nick" placeholder="Apodo">
-        </app-form-group>
+
+        <div class="col-12 col-md-6">
+            <app-form-group for="wantsNotifications" [title]="'¿Notificaciones whatsapp?'"
+                [control]="form.get('wantsNotifications')">
+                <div class="d-flex gap-2 align-items-center">
+                    <input id="wantsNotifications" type="checkbox" formControlName="wantsNotifications">
+                    <button class="btn btn-secondary btn-sm" (click)="showConfigurations()" [disabled]="!form.get('wantsNotifications')?.value">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor" class="size-4 me-2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0M3.124 7.5A8.969 8.969 0 0 1 5.292 3m13.416 0a8.969 8.969 0 0 1 2.168 4.5" />
+                        </svg>
+
+                        Configurar
+                    </button>
+                </div>
+            </app-form-group>
+        </div>
     </div>
 </form>
 

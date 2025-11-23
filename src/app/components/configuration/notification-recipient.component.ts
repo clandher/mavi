@@ -116,8 +116,7 @@ export class NotificationRecipientComponent implements OnDestroy {
             title: 'Configurar notificaciones',
             size: 'md'
         }).pipe(takeUntil(this.destroy$)).subscribe(() => {
-            this.studentService.refreshNotifier
+          
         });
-
     }
 }

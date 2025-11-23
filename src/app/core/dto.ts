@@ -56,6 +56,7 @@ export class Student {
     payments!: PaymentEntity[];
 
     notifications!: NotificationType[];
+    wantsNotifications?: boolean;
 
     radars?: {
         [key: string]: {
@@ -72,6 +73,7 @@ export class CreateStudentDto {
     phone?: string;
     placeOfBirth?: string;
     nick?: string;
+    wantsNotifications?: boolean;
 }
 
 export class UpdateStudentDto extends CreateStudentDto {

@@ -1,20 +1,18 @@
 import { FormsModule, FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { BaseHttp } from '@app/core/base-http';
-import { Category, Student, StudentCategory, UpdateStudentDto } from '@app/core/dto';
-import { RequestQueryBuilder } from '@dataui/crud-request';
+import { Student, UpdateStudentDto } from '@app/core/dto';
 import { FormGroupComponent } from '../form-group/form-group.component';
 import { CommonModule } from '@angular/common';
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { setFocus } from '@app/core/helpers';
 import { ImageHttpClient } from '@app/core/image-http-client';
 import { ModalService } from '@app/core/modal.service';
-import { StudentService } from '@app/core/student.service';
 import { ToastrService } from 'ngx-toastr';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { SubmitComponent } from "../submit/submit.component";
-
+import { NotificationConfigurationComponent } from '../configuration/notification-configuration.component';
 
 @Component({
 	standalone: true,
@@ -22,7 +20,9 @@ import { SubmitComponent } from "../submit/submit.component";
 	templateUrl: './student-info.component.html',
 })
 export class StudentInfoComponent {
+
 	public form: FormGroup;
+	private studentId: number = 0;
 
 	private destroy$ = new Subject<void>();
 
@@ -41,12 +41,28 @@ export class StudentInfoComponent {
 			phone: [''],
 			placeOfBirth: [''],
 			nick: [''],
-
+			wantsNotifications: [false],
 		});
+
+		// Actualiza validadores de teléfono cuando wantsNotifications cambie
+		this.form.get('wantsNotifications')?.valueChanges
+			.pipe(takeUntil(this.destroy$))
+			.subscribe((wants: boolean) => {
+				const phoneControl = this.form.get('phone');
+				if (wants) {
+					phoneControl?.setValidators([control => control.value ? null : { required: true }]);
+				} else {
+					phoneControl?.clearValidators();
+				}
+				phoneControl?.updateValueAndValidity();
+			});
+
+		this.studentId = Number(this.route.parent!.snapshot.paramMap.get('id'));
+		this._loadStudent();
 	}
 
-	private _loadStudent(studentId: number): void {
-		const studentsAPI = new BaseHttp(`students/${studentId}`, this.http);
+	private _loadStudent(): void {
+		const studentsAPI = new BaseHttp(`students/${this.studentId}`, this.http);
 		studentsAPI.get<Student>().subscribe({
 			next: (student) => {
 				this.form.patchValue({
@@ -55,7 +71,7 @@ export class StudentInfoComponent {
 					phone: student.phone,
 					placeOfBirth: student.placeOfBirth,
 					nick: student.nick,
-
+					wantsNotifications: student.wantsNotifications ?? false,
 				});
 
 				if (!student.curp) {
@@ -72,18 +88,33 @@ export class StudentInfoComponent {
 	}
 
 	public async submit(): Promise<void> {
-		const studentId = this.route.snapshot.paramMap.get('id') ?? 0;
 		const studentsAPI = new BaseHttp(`students`, this.http);
+		if (this.form.value.wantsNotifications && !this.form.value.phone) {
+			this.form.get('phone')?.setErrors({ required: true });
+			this.toastr.error('El teléfono es requerido para recibir notificaciones.');
+			return;
+		}
 		const updateStudentDto: UpdateStudentDto = {
 			name: this.form.value.name,
 			birthdate: new Date(this.form.value.birthdate),
 			curp: this.form.value.curp,
 			phone: this.form.value.phone,
 			placeOfBirth: this.form.value.placeOfBirth,
-			nick: this.form.value.nick
+			nick: this.form.value.nick,
+			wantsNotifications: this.form.value.wantsNotifications,
 		};
 
-		await studentsAPI.patch(studentId, updateStudentDto).toPromise();
+		await studentsAPI.patch(this.studentId, updateStudentDto).toPromise();
+	}
+
+	showConfigurations(): void {
+		this.modalService.open({
+			component: NotificationConfigurationComponent,
+			inputs: { studentId: this.studentId },
+			title: 'Configurar notificaciones',
+			size: 'md'
+		}).pipe(takeUntil(this.destroy$)).subscribe(() => {
+		});
 	}
 
 	ngOnDestroy(): void {
