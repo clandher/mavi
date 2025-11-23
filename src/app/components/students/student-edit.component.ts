@@ -54,13 +54,8 @@ export class StudentEditComponent {
         this.studentForm = this.fb.group({
             id: [''],
             name: [''],
-            birthdate: [''],
-            nick: [''],
             photo: [''],
             photoUrl: [''],
-            curp: ['AAAA000000AAAAAAAA'],
-            phone: [''],
-            placeOfBirth: [''],
         });
 
 
