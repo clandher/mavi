@@ -20,6 +20,7 @@ import { NotificationConfigurationComponent } from '../configuration/notificatio
 	templateUrl: './student-info.component.html',
 })
 export class StudentInfoComponent {
+	public tutors: { id: number; name: string }[] = [];
 
 	public form: FormGroup;
 	private studentId: number = 0;
@@ -42,6 +43,7 @@ export class StudentInfoComponent {
 			placeOfBirth: [''],
 			nick: [''],
 			wantsNotifications: [false],
+			tutorId: [''],
 		});
 
 		// Actualiza validadores de teléfono cuando wantsNotifications cambie
@@ -59,8 +61,22 @@ export class StudentInfoComponent {
 
 		this.studentId = Number(this.route.parent!.snapshot.paramMap.get('id'));
 		this._loadStudent();
+		this._loadTutors();
+
 	}
 
+
+	private _loadTutors(): void {
+		const tutorsAPI = new BaseHttp('tutors', this.http);
+		tutorsAPI.get<{ id: number; name: string }[]>().subscribe({
+			next: (tutors) => {
+				this.tutors = tutors;
+			},
+			error: (err) => {
+				console.error('Error loading tutors', err);
+			}
+		});
+	}
 	private _loadStudent(): void {
 		const studentsAPI = new BaseHttp(`students/${this.studentId}`, this.http);
 		studentsAPI.get<Student>().subscribe({
@@ -72,6 +88,7 @@ export class StudentInfoComponent {
 					placeOfBirth: student.placeOfBirth,
 					nick: student.nick,
 					wantsNotifications: student.wantsNotifications ?? false,
+					tutorId: student.tutorId 
 				});
 
 				if (!student.curp) {
@@ -102,6 +119,7 @@ export class StudentInfoComponent {
 			placeOfBirth: this.form.value.placeOfBirth,
 			nick: this.form.value.nick,
 			wantsNotifications: this.form.value.wantsNotifications,
+			tutorId: this.form.value.tutorId,
 		};
 
 		await studentsAPI.patch(this.studentId, updateStudentDto).toPromise();

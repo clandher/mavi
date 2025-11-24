@@ -1,0 +1,61 @@
+<div class="mavi-grid">
+    <div *ngFor="let tutor of tutors" class="mavi-card">
+        <div class="d-flex justify-content-between items-center mb-2">
+            {{ tutor.name }}
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <div class="detail-row">
+                <div class="detail-label">Usuario</div>
+                <div class="detail-value">
+                    {{ tutor.user?.email ?? '-' }}
+                </div>
+            </div>
+
+            <div class="detail-row">
+                <div class="detail-label">Estudiantes</div>
+                <div class="detail-value">
+                    {{ tutor.students.length }}
+                </div>
+            </div>
+
+        </div>
+
+        <div class="mavi-card-actions mt-4">
+            <button class="btn btn-sm btn-outline" (click)="showModal(tutor.id, 'Editar Tutor')">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-4 me-2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M16.862 3.487a2.25 2.25 0 0 1 3.182 3.182L7.127 19.586a4.5 4.5 0 0 1-1.591 1.06l-3.386 1.268 1.268-3.386a4.5 4.5 0 0 1 1.06-1.591L16.862 3.487z" />
+                </svg>
+                Editar
+            </button>
+            <button class="btn btn-sm btn-destructive" (click)="deleteTutor(tutor.id)"
+                [disabled]="tutor.students.length > 0"
+                [title]="tutor.students.length > 0 ? 'No se puede eliminar un tutor con estudiantes relacionados.' : ''">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="size-4 me-2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9.75 9.75 14.25 14.25M14.25 9.75 9.75 14.25M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z" />
+                </svg>
+                Eliminar
+            </button>
+        </div>
+    </div>
+</div>
+
+<div *ngIf="tutors.length === 0" class="text-gray-500 text-center py-8">
+    No hay tutores disponibles.
+</div>
+
+<div class="mavi-bottom-actions">
+    <div class="mavi-bottom-actions-inner">
+        <button class="btn btn-secondary" (click)="showModal(0, 'Nuevo Tutor')">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor" class="size-4 me-2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            Nuevo tutor
+        </button>
+    </div>
+</div>

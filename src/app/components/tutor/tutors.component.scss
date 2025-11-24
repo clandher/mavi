@@ -1,0 +1,13 @@
+ul {
+  list-style: none;
+  padding: 0;
+}
+li {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+button {
+  padding: 0.25rem 0.75rem;
+}

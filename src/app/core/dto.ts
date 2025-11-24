@@ -44,6 +44,7 @@ export class Student {
     curp!: string;
     phone!: string;
     placeOfBirth!: string;
+    tutorId!: number;
 
 
     debt!: number;
@@ -74,6 +75,7 @@ export class CreateStudentDto {
     placeOfBirth?: string;
     nick?: string;
     wantsNotifications?: boolean;
+    tutorId?: number;
 }
 
 export class UpdateStudentDto extends CreateStudentDto {
@@ -322,4 +324,16 @@ export interface NotificationRecipient {
     student?: Student;
     status: number;
     sentAt?: string;
+}
+
+export interface Tutor {
+    id: number;
+    name: string;
+    students: Student[]
+    user?: User;
+}
+export interface Employee {
+    id: number;
+    name: string;
+    user?: User;
 }

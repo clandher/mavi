@@ -2,7 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp } from '@app/core/base-http';
 import { NgIf, NgFor } from '@angular/common';
-import { CategoryComponent } from '../category/category.component';
+import { CategoryComponent } from './category.component';
 import { ModalService } from '@app/core/modal.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';

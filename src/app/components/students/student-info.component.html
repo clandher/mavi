@@ -13,10 +13,17 @@
             <input id="curp" type="text" class="form-control text-uppercase" formControlName="curp" placeholder="CURP">
         </app-form-group>
 
+        <app-form-group for="tutorId" class="col-12 col-md-6" title="Tutor" [control]="form.get('tutorId')" name="tutorId">
+            <select id="tutorId" class="form-control" formControlName="tutorId">
+                <option [ngValue]="null">Selecciona un tutor</option>
+                <option *ngFor="let t of tutors" [ngValue]="t.id">{{t.name}}</option>
+            </select>
+        </app-form-group>
+
         <app-form-group for="placeOfBirth" class="col-12 col-md-6" title="Lugar de nacimiento"
             [control]="form.get('placeOfBirth')" name="placeOfBirth" placeholder="Lugar de nacimiento">
             <select id="placeOfBirth" class="form-control" formControlName="placeOfBirth">
-                <option value="">Selecciona una ciudad</option>
+                <option [ngValue]="null">Selecciona una ciudad</option>
                 <option value="Monterrey">Monterrey</option>
                 <option value="San Nicolás de los Garza">San Nicolás de los Garza</option>
                 <option value="Guadalupe">Guadalupe</option>
