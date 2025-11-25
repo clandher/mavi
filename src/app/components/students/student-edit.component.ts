@@ -16,12 +16,11 @@ import { StudentService } from '@app/core/student.service';
 import { ModalService } from '@app/core/modal.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
     standalone: true,
     selector: 'app-student-edit',
-    imports: [CommonModule, FormsModule, RouterModule, FormGroupComponent, ReactiveFormsModule, SubmitComponent, NgxMaskDirective],
+    imports: [CommonModule, FormsModule, RouterModule, FormGroupComponent, ReactiveFormsModule, SubmitComponent],
     templateUrl: './student-edit.component.html',
 })
 export class StudentEditComponent {

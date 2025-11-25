@@ -2,8 +2,15 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BaseHttp } from '@app/core/base-http';
 import { NgIf, NgFor } from '@angular/common';
-import { User } from '@app/core/dto';
-import { UserComponent } from '../user/user.component';
+import { User as BaseUser } from '@app/core/dto';
+
+interface User extends BaseUser {
+    roles?: string[];
+    studentId?: number;
+    tutorId?: number;
+    employeeId?: number;
+}
+import { UserComponent } from './user.component';
 import { UserPasswordComponent } from '../user-password/user-password.component';
 import { AuthService } from '@app/core/auth.service';
 import { ModalService } from '@app/core/modal.service';

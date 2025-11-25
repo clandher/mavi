@@ -71,7 +71,7 @@ export const routes: Routes = [
 
                     {
                         path: 'usuarios',
-                        loadComponent: () => import('./components/users/users.component').then(m => m.UsersComponent),
+                        loadComponent: () => import('./components/user/users.component').then(m => m.UsersComponent),
                         data: { breadcrumb: 'Usuarios' }
                     },
                 ]

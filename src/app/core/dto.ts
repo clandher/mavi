@@ -12,6 +12,11 @@ export enum NotificationType {
     DISCOUNT = 11,
 }
 
+export enum UserRoleType {
+    TUTOR,
+    EMPLOYEE,
+    STUDENT,
+}
 
 export class ApiRes<T> {
     data!: T[];
@@ -45,6 +50,8 @@ export class Student {
     phone!: string;
     placeOfBirth!: string;
     tutorId!: number;
+    user?: User;
+    userId?: number;
 
 
     debt!: number;
@@ -264,6 +271,14 @@ export interface User {
     password: string;
     developer: boolean;
     lock: boolean;
+
+    student?: Student;
+    tutor?: Tutor;
+    employee?: Employee;
+    roles?: string[];
+    studentId?: number;
+    tutorId?: number;
+    employeeId?: number;
 }
 
 

@@ -790,6 +790,10 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
     cursor: pointer;
 }
 
+.cursor-help {
+    cursor: help;
+}
+
 .input-container {
     position: relative;
     display: flex;

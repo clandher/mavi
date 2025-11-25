@@ -20,6 +20,40 @@
             </div>
         </div>
 
+        <div class="d-flex justify-content-between mt-2">
+            <div class="detail-row">
+                <div class="detail-label">Tipo de usuario</div>
+                <div class="detail-value d-flex gap-1">
+                    <span class="badge bg-dark cursor-help" *ngIf="user.roles?.includes('STUDENT') && user.student" [title]="user.student.name">
+                        Estudiante
+                    </span>
+                    <span class="badge bg-dark cursor-help" *ngIf="user.roles?.includes('TUTOR') && user.tutor" [title]="user.tutor.name">
+                        Tutor
+                    </span>
+                    <span class="badge bg-dark cursor-help" *ngIf="user.roles?.includes('EMPLOYEE') && user.employee" [title]="user.employee.name">
+                        Empleado
+                    </span>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- <div class="user-roles mt-2">
+            <div  class="role-row">
+                <span class="role">Estudiante:</span>
+                <span class="name student-name-ellipsis">{{ user.student.name }}</span>
+            </div>
+            <div *ngIf="user.roles?.includes('TUTOR') && user.tutor" class="role-row">
+                <span class="role">Tutor:</span>
+                <span class="name student-name-ellipsis">{{ user.tutor.name }}</span>
+            </div>
+            <div *ngIf="user.roles?.includes('EMPLOYEE') && user.employee" class="role-row">
+                <span class="role">Empleado:</span>
+                <span class="name student-name-ellipsis">{{ user.employee.name }}</span>
+            </div>
+        </div> -->
+
         <div class="card-actions mt-4 d-flex flex-wrap gap-2">
 
             <button class="btn btn-sm btn-outline flex-grow-1" (click)="showModalUser(user.id, 'Editar usuario')">

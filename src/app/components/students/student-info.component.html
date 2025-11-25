@@ -13,7 +13,8 @@
             <input id="curp" type="text" class="form-control text-uppercase" formControlName="curp" placeholder="CURP">
         </app-form-group>
 
-        <app-form-group for="tutorId" class="col-12 col-md-6" title="Tutor" [control]="form.get('tutorId')" name="tutorId">
+        <app-form-group for="tutorId" class="col-12 col-md-6" title="Tutor" [control]="form.get('tutorId')"
+            name="tutorId">
             <select id="tutorId" class="form-control" formControlName="tutorId">
                 <option [ngValue]="null">Selecciona un tutor</option>
                 <option *ngFor="let t of tutors" [ngValue]="t.id">{{t.name}}</option>
@@ -52,7 +53,8 @@
                 [control]="form.get('wantsNotifications')">
                 <div class="d-flex gap-2 align-items-center">
                     <input id="wantsNotifications" type="checkbox" formControlName="wantsNotifications">
-                    <button class="btn btn-secondary btn-sm" (click)="showConfigurations()" [disabled]="!form.get('wantsNotifications')?.value">
+                    <button class="btn btn-secondary btn-sm" (click)="showConfigurations()"
+                        [disabled]="!form.get('wantsNotifications')?.value">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor" class="size-4 me-2">
                             <path stroke-linecap="round" stroke-linejoin="round"
@@ -64,6 +66,18 @@
                 </div>
             </app-form-group>
         </div>
+    </div>
+
+    <div>
+        <div class="d-flex justify-content-between">
+            <div class="detail-row">
+                <div class="detail-label">Usuario</div>
+                <div class="detail-value">
+                    {{ student?.user?.email ?? '-' }}
+                </div>
+            </div>
+        </div>
+
     </div>
 </form>
 

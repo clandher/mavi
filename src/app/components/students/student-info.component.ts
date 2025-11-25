@@ -23,6 +23,8 @@ export class StudentInfoComponent {
 	public tutors: { id: number; name: string }[] = [];
 
 	public form: FormGroup;
+
+	public student: Student | null = null;
 	private studentId: number = 0;
 
 	private destroy$ = new Subject<void>();
@@ -81,6 +83,7 @@ export class StudentInfoComponent {
 		const studentsAPI = new BaseHttp(`students/${this.studentId}`, this.http);
 		studentsAPI.get<Student>().subscribe({
 			next: (student) => {
+				this.student = student;
 				this.form.patchValue({
 					birthdate: new Date(student.birthdate).toISOString().slice(0, 10),
 					curp: student.curp,
