@@ -64,6 +64,16 @@ export const routes: Routes = [
                         ]
                     },
                     {
+                        path: 'gate-control',
+                        loadComponent: () => import('./components/gate-control/gate-control.component').then(m => m.GateControlComponent),
+                        data: { breadcrumb: 'Gate control' },
+                        children: [
+                            { path: 'usuarios', loadComponent: () => import('./components/gate-control-users/gate-control-users.component').then(m => m.GateControlUsersComponent) },
+                            { path: 'operaciones', loadComponent: () => import('./components/gate-control-operations/gate-control-operations.component').then(m => m.GateControlOperationsComponent) },
+                            { path: '', redirectTo: 'usuarios', pathMatch: 'full' }
+                        ]
+                    },
+                    {
                         path: 'desarrollo',
                         loadComponent: () => import('./components/configuration/development.component').then(m => m.DevelopmentComponent),
                         data: { breadcrumb: 'Desarrollo' }

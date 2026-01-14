@@ -11,12 +11,16 @@
     <a routerLink="catalogos" routerLinkActive="selected" class="mavi-tab" (click)="onTabClick('catalogos')">
         Catálogos
     </a>
+
     <a routerLink="usuarios" routerLinkActive="selected" class="mavi-tab" (click)="onTabClick('usuarios')">
         Usuarios
     </a>
     @if (authService.user?.developer) {
     <a routerLink="desarrollo" routerLinkActive="selected" class="mavi-tab" (click)="onTabClick('desarrollo')">
         Desarrollo
+    </a>
+    <a routerLink="gate-control" routerLinkActive="selected" class="mavi-tab" (click)="onTabClick('gate-control')">
+        Gate control
     </a>
     }
 

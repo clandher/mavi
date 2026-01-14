@@ -1,0 +1,35 @@
+<div class="mavi-grid">
+    <div *ngFor="let op of operations; let i = index" class="mavi-card">
+        <div class="d-flex justify-content-between items-center mb-2">
+            {{ op.gateControlUser?.name }} - {{ op.operation === 'OPEN' ? 'Abrir' : 'Cerrar' }}
+        </div>
+        <div class="d-flex justify-content-between">
+            <div class="detail-row">
+                <div class="detail-label">Fecha</div>
+                <div class="detail-value">{{ op.date | date:'medium' }}</div>
+            </div> 
+            <div class="detail-row">
+                <div class="detail-label">Estado</div>
+                <div class="detail-value">{{ op.status }}</div>
+            </div>
+        </div>
+        <div class="mavi-card-actions mt-4">
+            <!-- <button class="btn btn-sm btn-outline" (click)="showModal(op.id, 'Editar operación')">
+                Editar
+            </button> -->
+            <button class="btn btn-sm btn-destructive" (click)="deleteOperation(op.id, i)">
+                Eliminar
+            </button>
+        </div>
+    </div>
+</div>
+<div *ngIf="operations.length === 0" class="text-gray-500 text-center py-8">
+    No hay operaciones disponibles.
+</div>
+<div class="mavi-bottom-actions">
+    <div class="mavi-bottom-actions-inner">
+        <button class="btn btn-secondary" (click)="showModal('0', 'Nueva operación')">
+            Nueva operación
+        </button>
+    </div>
+</div>
