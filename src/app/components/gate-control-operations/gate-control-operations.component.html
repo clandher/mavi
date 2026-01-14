@@ -7,16 +7,18 @@
             <div class="detail-row">
                 <div class="detail-label">Fecha</div>
                 <div class="detail-value">{{ op.date | date:'medium' }}</div>
-            </div> 
+            </div>
             <div class="detail-row">
                 <div class="detail-label">Estado</div>
                 <div class="detail-value">{{ op.status }}</div>
             </div>
         </div>
         <div class="mavi-card-actions mt-4">
-            <!-- <button class="btn btn-sm btn-outline" (click)="showModal(op.id, 'Editar operación')">
-                Editar
-            </button> -->
+            @if (op.status === 'PENDING') {
+            <button class="btn btn-sm btn-outline" (click)="complete(op.id, 'Editar operación')">
+                Completado
+            </button>
+            }
             <button class="btn btn-sm btn-destructive" (click)="deleteOperation(op.id, i)">
                 Eliminar
             </button>

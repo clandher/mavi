@@ -65,6 +65,21 @@ export class GateControlOperationsComponent implements OnInit, OnDestroy {
     });
   }
 
+  complete(operationId: string, title: string): void {
+    // Realiza un PATCH para actualizar solo el status a 'COMPLETED'
+    this.operationAPI.patch(operationId, { status: 'COMPLETED' })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.loadOperations();
+        },
+        error: (error) => {
+          console.error('Error updating operation status:', error);
+        }
+      });
+  }
+
+
   showModal(operationId: string, title: string): void {
     this.modalService.open({
       component: GateControlOperationComponent, title,
