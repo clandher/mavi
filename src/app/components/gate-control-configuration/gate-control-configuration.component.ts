@@ -65,7 +65,7 @@ import { MaviValidators } from '@app/core/mavi-validators';
 
 
 export const DEFAULT_GATE_CONTROL_CONFIG: GateControlConfig = {
-	servoPin: 9,
+	servoPin: 18,
 	servoMin: 500,
 	servoMax: 2500,
 	servoDelay: 20,

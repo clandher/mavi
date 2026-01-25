@@ -4,6 +4,10 @@ import { guestGuard } from '@app/core/guards/guest.guard';
 
 export const routes: Routes = [
     {
+        path: 'abrir-porton',
+        loadComponent: () => import('./components/open-gate/open-gate.component').then(m => m.OpenGateComponent)
+    },
+    {
         path: 'login',
         loadComponent: () => import('./modules/login/login.component').then(m => m.LoginComponent),
         canActivate: [guestGuard]
