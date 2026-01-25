@@ -1,0 +1,57 @@
+<div class="d-flex justify-content-end">
+    <btn-loading [action]="onTest.bind(this)" text="Probar" class="btn-secondary">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+            class="size-4 me-2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M21.75 6.75a4.5 4.5 0 0 1-4.884 4.484c-1.076-.091-2.264.071-2.95.904l-7.152 8.684a2.548 2.548 0 1 1-3.586-3.586l8.684-7.152c.833-.686.995-1.874.904-2.95a4.5 4.5 0 0 1 6.336-4.486l-3.276 3.276a3.004 3.004 0 0 0 2.25 2.25l3.276-3.276c.256.565.398 1.192.398 1.852Z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4.867 19.125h.008v.008h-.008v-.008Z" />
+        </svg>
+
+    </btn-loading>
+</div>
+
+<br />
+<form [formGroup]="form">
+
+    @if (selectedConfig) {
+    <app-form-group title="Descripción" [control]="form.controls['description']">
+        <div class="dropdown">
+            <input id="configInput" class="form-control dropdown-toggle" data-bs-toggle="dropdown"
+                formControlName="description" aria-expanded="false" />
+            <ul class="dropdown-menu">
+                <li *ngFor="let config of configurations">
+                    <button class="dropdown-item" type="button" (click)="onConfigChange(config)">
+                        {{ config.description }}
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </app-form-group>
+    }
+
+    <app-form-group [control]="form.controls['config']" title="Configuración">
+        <div #jsonEditorContainer style="height: 450px; width: 100%;"></div>
+    </app-form-group>
+
+    <div class="d-flex gap-2 justify-content-between">
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-secondary" (click)="onResetConfig()">
+                <i class="fa fa-trash"></i> Restaurar
+            </button>
+                <!-- <button type="button" class="btn btn-secondary" (click)="onClone()">
+                    <i class="fa fa-trash"></i> Clonar
+                </button> -->
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-destructive" (click)="onDelete()"
+                [disabled]="this.selectedConfig?.lock"
+                [title]="this.selectedConfig?.lock ? 'Esta configuración no se puede eliminar porque es base del sistema.' : ''">
+                <i class="fa fa-trash"></i> Eliminar
+            </button>
+            <app-submit [form]="form" [submit]="onSubmit.bind(this)" (discard)="onDiscard()" [isModal]="false">
+
+            </app-submit>
+        </div>
+    </div>
+</form>

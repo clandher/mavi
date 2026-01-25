@@ -70,6 +70,7 @@ export const routes: Routes = [
                         children: [
                             { path: 'usuarios', loadComponent: () => import('./components/gate-control-users/gate-control-users.component').then(m => m.GateControlUsersComponent) },
                             { path: 'operaciones', loadComponent: () => import('./components/gate-control-operations/gate-control-operations.component').then(m => m.GateControlOperationsComponent) },
+                            { path: 'configuración', loadComponent: () => import('./components/gate-control-configuration/gate-control-configuration.component').then(m => m.GateControlConfigurationComponent)},
                             { path: '', redirectTo: 'usuarios', pathMatch: 'full' }
                         ]
                     },

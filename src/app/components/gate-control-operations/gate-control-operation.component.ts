@@ -44,6 +44,14 @@ export class GateControlOperationComponent implements ModalInjectable {
         const usersAPI = new BaseHttp('gate-control-users', this.http);
         usersAPI.get<any[]>().subscribe(result => {
             this.users = result.map(u => ({ id: u.id, name: u.name }));
+            if (this.users.length > 0) {
+                const gateControlUserId = this.form.get('gateControlUserId');
+                if (gateControlUserId) {
+                    gateControlUserId.setValue(this.users[0].id);
+                    this.form.markAsDirty();
+                }
+            }
+
         });
     }
 

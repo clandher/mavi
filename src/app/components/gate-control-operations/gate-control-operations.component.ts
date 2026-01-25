@@ -23,6 +23,7 @@ interface GateControlOperation {
   imports: [NgIf, NgFor, CommonModule],
 })
 export class GateControlOperationsComponent implements OnInit, OnDestroy {
+
   operations: GateControlOperation[] = [];
   private operationAPI: BaseHttp;
   private destroy$ = new Subject<void>();
@@ -46,7 +47,7 @@ export class GateControlOperationsComponent implements OnInit, OnDestroy {
   loadOperations(): void {
     this.operationAPI.get<GateControlOperation[]>().pipe(takeUntil(this.destroy$)).subscribe(
       (data) => {
-        this.operations = data;
+        this.operations = data.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
       },
       (error) => {
         console.error('Error loading operations:', error);
@@ -65,8 +66,7 @@ export class GateControlOperationsComponent implements OnInit, OnDestroy {
     });
   }
 
-  complete(operationId: string, title: string): void {
-    // Realiza un PATCH para actualizar solo el status a 'COMPLETED'
+  complete(operationId: string): void {
     this.operationAPI.patch(operationId, { status: 'COMPLETED' })
       .pipe(takeUntil(this.destroy$))
       .subscribe({
@@ -79,6 +79,18 @@ export class GateControlOperationsComponent implements OnInit, OnDestroy {
       });
   }
 
+  retry(operationId: string) {
+    this.operationAPI.patch(operationId, { status: 'PENDING' })
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.loadOperations();
+        },
+        error: (error) => {
+          console.error('Error updating operation status:', error);
+        }
+      });
+  }
 
   showModal(operationId: string, title: string): void {
     this.modalService.open({

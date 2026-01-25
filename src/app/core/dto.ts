@@ -282,12 +282,36 @@ export interface User {
 }
 
 
+
+
+export interface GateControlConfiguration {
+    id: number;
+    description: string;
+    config: GateControlConfig;
+    lock: boolean;
+}
+
+export interface GateControlConfig {
+    servoPin?: number;
+    servoMin?: number;
+    servoMax?: number;
+    servoDelay?: number;
+    checkInterval?: number;
+    pulseMin?: number;
+    pulseMax?: number;
+    initialAngle?: number;
+    finalAngle?: number;
+    repetitions?: number;
+    repeatDelay?: number;
+}
+
 export interface Configuration {
     id: number;
     description: string;
     seeder: SeederConfig;
     lock: boolean;
 }
+
 
 
 export interface SeederConfig {
