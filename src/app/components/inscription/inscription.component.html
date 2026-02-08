@@ -40,6 +40,16 @@
 			<input id="search" type="text" formControlName="search" placeholder="Buscar estudiantes..."
 				class="form-control">
 		</app-form-group>
+		<div class="mb-3 d-flex gap-2 flex-wrap">
+			<span class="badge mavi-tab cursor-pointer" [class.selected]="studentFilter === 'to-enroll'"
+				(click)="setStudentFilter('to-enroll')">Por inscribir</span>
+			<span class="badge mavi-tab cursor-pointer" [class.selected]="studentFilter === 'no-category'"
+				(click)="setStudentFilter('no-category')">Sin categoría</span>
+			<span class="badge mavi-tab cursor-pointer" [class.selected]="studentFilter === 'enrolled'"
+				(click)="setStudentFilter('enrolled')">Ya inscritos</span>
+			<span class="badge mavi-tab cursor-pointer" [class.selected]="studentFilter === 'all'"
+				(click)="setStudentFilter('all')">Todos</span>
+		</div>
 		<div class="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-3 gx-3 gy-3"
 			style="max-height: 30vh; overflow-y: auto;">
 			<div *ngFor="let student of filteredStudents"

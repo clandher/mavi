@@ -30,6 +30,32 @@ export interface StudentView extends Student {
     styleUrls: ['./inscription.component.scss']
 })
 export class InscriptionComponent implements OnInit, ModalInjectable {
+    studentFilter: 'all' | 'to-enroll' | 'no-category' | 'enrolled' = 'to-enroll';
+        setStudentFilter(filter: 'all' | 'to-enroll' | 'no-category' | 'enrolled') {
+            this.studentFilter = filter;
+            this.applyStudentFilter();
+        }
+
+        private applyStudentFilter() {
+            const activityId = Number(this.form.get('activityId')?.value);
+            this.filteredStudents = this.students.filter(student => {
+                if (this.studentFilter === 'all') return true;
+                if (this.studentFilter === 'to-enroll') {
+                    // No tiene la actividad asignada
+                    return !this.hasActivityAssigned(student);
+                }
+                if (this.studentFilter === 'no-category') {
+                    // No tiene ninguna categoría válida
+                    return !student.categories || student.categories.length === 0 || !student.categories.some(sc => sc.categoryId && sc.categoryId !== 0);
+                }
+                if (this.studentFilter === 'enrolled') {
+                    // Ya tiene la actividad asignada
+                    return this.hasActivityAssigned(student);
+                }
+                return true;
+            });
+            this._sort();
+        }
     @Input() studentId: number | null = null;
 
     form: FormGroup;
@@ -111,16 +137,7 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
         });
 
         this.form.get('search')?.valueChanges.subscribe(value => {
-
-            if (!value) {
-                value = '';
-            }
-
-            const term = value.toLowerCase();
-            this.filteredStudents = this.students.filter(student =>
-                student.name.toLowerCase().includes(term)
-            );
-            this._sort();
+            this.applyStudentFilterWithSearch();
         });
 
         this.form.get('tab')?.valueChanges.subscribe(value => {
@@ -136,7 +153,32 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
                 (this.form.get('student') as FormGroup)?.controls['birthdate'].updateValueAndValidity();
             }
         });
+    }
 
+    private applyStudentFilterWithSearch() {
+        let students = this.students;
+        // Aplica filtro de chips
+        const activityId = Number(this.form.get('activityId')?.value);
+        students = students.filter(student => {
+            if (this.studentFilter === 'all') return true;
+            if (this.studentFilter === 'to-enroll') {
+                return !this.hasActivityAssigned(student);
+            }
+            if (this.studentFilter === 'no-category') {
+                return !student.categories || student.categories.length === 0 || !student.categories.some(sc => sc.categoryId && sc.categoryId !== 0);
+            }
+            if (this.studentFilter === 'enrolled') {
+                return this.hasActivityAssigned(student);
+            }
+            return true;
+        });
+        // Aplica búsqueda
+        const value = this.form.get('search')?.value || '';
+        const term = value.toLowerCase();
+        this.filteredStudents = students.filter(student =>
+            student.name.toLowerCase().includes(term)
+        );
+        this._sort();
     }
 
     async ngOnInit() {
@@ -155,6 +197,7 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
             student.selected = false;
             return student;
         });
+        this.applyStudentFilterWithSearch();
 
         const studentToSelect = this.filteredStudents.find(s => s.id === this.studentId);
         if (studentToSelect) {

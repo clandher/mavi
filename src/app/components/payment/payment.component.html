@@ -27,54 +27,54 @@
 
 <div class="form-label">Cargos pendientes</div>
 <div class="payment-container">
-	<div *ngFor="let cargo of charges; let i = index" class="mavi-border mb-2 hovered payment-draggable"
-		draggable="true" [class.dragging]="draggedIndex === i"
-		[class.drag-over]="dragOverIndex === i && draggedIndex !== null && draggedIndex !== i" draggable="true"
-		(dragstart)="onDragStart(i)" (dragover)="onDragOver($event, i)" (dragleave)="onDragLeave(i)" (drop)="onDrop(i)">
-
-		<div class="d-flex justify-content-start">
-			<div class="move-controls">
-				<button type="button" class="btn-move" (click)="moveChargeUp(i)" [disabled]="i === 0"
-					title="Subir">▲</button>
-				<button type="button" class="btn-move" (click)="moveChargeDown(i)" [disabled]="i === charges.length - 1"
-					title="Bajar">▼</button>
-			</div>
-
-			<div class="w-100">
-				<div class="d-flex justify-content-between items-center mb-1">
-					<div>
-						{{ cargo.activity.description }} - {{ cargo.activity.startDate | date:cargo.activity.type.format
-						}} ({{
-						cargo.concept }})
-					</div>
-
-					<small class="text-xs text-gray-500 ms-2" style="white-space: nowrap;">
-						{{ cargo.chargeDate | date:'mediumDate' }}
-					</small>
+	<ng-container *ngFor="let cargo of charges; let i = index">
+		<!-- Línea visual para indicar el drop antes del elemento -->
+		<div *ngIf="dragOverIndex === i && draggedIndex !== null && draggedIndex !== i" class="drop-placeholder"></div>
+		<div class="mavi-border mb-2 hovered payment-draggable" draggable="true" [class.dragging]="draggedIndex === i"
+			(dragstart)="onDragStart(i)" (dragover)="onDragOver($event, i)" (dragleave)="onDragLeave(i)"
+			(drop)="onDrop(i)">
+			<div class="d-flex justify-content-start">
+				<div class="move-controls">
+					<button type="button" class="btn-move" (click)="moveChargeUp(i)" [disabled]="i === 0"
+						title="Subir">▲</button>
+					<button type="button" class="btn-move" (click)="moveChargeDown(i)"
+						[disabled]="i === charges.length - 1" title="Bajar">▼</button>
 				</div>
-				<div class="d-flex justify-content-between">
-					<div *ngIf="getCoveredAmount(i); else empty" class="detail-row">
-						<div class="detail-label">A pagar</div>
-						<div class="detail-value high-paid">
-							{{ getCoveredAmount(i) | currencyMX }}
+				<div class="w-100">
+					<div class="d-flex justify-content-between items-center mb-1">
+						<div>
+							{{ cargo.activity.description }} - {{ cargo.activity.startDate |
+							date:cargo.activity.type.format }} ({{
+							cargo.concept }})
+						</div>
+						<small class="text-xs text-gray-500 ms-2" style="white-space: nowrap;">
+							{{ cargo.chargeDate | date:'mediumDate' }}
+						</small>
+					</div>
+					<div class="d-flex justify-content-between">
+						<div *ngIf="getCoveredAmount(i); else empty" class="detail-row">
+							<div class="detail-label">A pagar</div>
+							<div class="detail-value high-paid">
+								{{ getCoveredAmount(i) | currencyMX }}
+							</div>
+						</div>
+						<ng-template #empty>
+							<div></div>
+						</ng-template>
+						<div *ngIf="getRemainingAfterPayment(i) > 0" class="detail-row">
+							<div class="detail-label">Pendiente</div>
+							<div class="detail-value high-debt">
+								{{getRemainingAfterPayment(i) | currencyMX}}
+							</div>
 						</div>
 					</div>
-					<ng-template #empty>
-						<div></div>
-					</ng-template>
-					<div *ngIf="getRemainingAfterPayment(i) > 0" class="detail-row">
-						<div class="detail-label">Pendiente</div>
-						<div class="detail-value high-debt">
-							{{getRemainingAfterPayment(i) | currencyMX}}
-						</div>
-					</div>
 				</div>
 			</div>
-
 		</div>
-
-
-	</div>
+		<!-- Línea visual para indicar el drop al final de la lista -->
+		<div *ngIf="dragOverIndex === charges.length && i === charges.length - 1 && draggedIndex !== null"
+			class="drop-placeholder"></div>
+	</ng-container>
 </div>
 
 <div class="mt-4 d-flex items-center me-auto">

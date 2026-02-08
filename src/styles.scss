@@ -944,4 +944,9 @@ a {
     border-radius: 0;
     padding: 4px 8px;
     font-size: 11px;
+
+    &.selected {
+        background-color: #7c5027; // Tailwind's green-600
+        color: white;
+    }
 }
