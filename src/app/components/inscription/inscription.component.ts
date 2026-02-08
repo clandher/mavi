@@ -61,9 +61,6 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
         return student.activities.some(act => act.activityId === Number(this.form.get('activityId')?.value));
     }
 
-
-    @Output() complete = new EventEmitter<boolean>();
-
     categories: Category[] = [];
     activities: Activity[] = [];
     maxBirthdate: string = '';
@@ -235,7 +232,6 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
     async onSubmit() {
 
         const categoryId = this.form.get('categoryId')?.value;
-
         if (this.form.get('tab')?.value === 'existing' && this.students.some(student => student.selected)) {
             for (const student of this.students.filter(s => s.selected)) {
                 const hasCategory = student.categories.some(sc => sc.categoryId === Number(categoryId));
@@ -246,7 +242,6 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
                 await this._addStudentToActivityAsync(student);
             }
 
-            this.complete.emit(true);
             this.students.forEach(student => student.selected = false);
         } else if (this.form.get('tab')?.value === 'new') {
             const newStudent = this.form.get('student')?.value;
@@ -266,7 +261,7 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
     }
 
 
-    private _createNewStudent(newStudent: { name: string; birthdate: string }, categoryId: number) {
+    private async _createNewStudent(newStudent: { name: string; birthdate: string }, categoryId: number) {
         const birthdate = new Date(newStudent.birthdate);
         const newStudentData = {
             name: newStudent.name,
@@ -274,13 +269,10 @@ export class InscriptionComponent implements OnInit, ModalInjectable {
         };
 
         const studentsAPI = new BaseHttp('students', this.http);
-        studentsAPI.post<typeof newStudentData, Student>(newStudentData).subscribe(createdStudent => {
-            const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http);
-            studentCategoriesAPI.post({ studentId: createdStudent.id, categoryId: Number(categoryId) }).subscribe(async () => {
-                await this._addStudentToActivityAsync(createdStudent);
-                this.complete.emit(true);
-            });
-        });
+        const createdStudent = await studentsAPI.post<typeof newStudentData, Student>(newStudentData).toPromise();
+        const studentCategoriesAPI = new BaseHttp(`student-categories`, this.http);
+        await studentCategoriesAPI.post({ studentId: createdStudent!.id, categoryId: Number(categoryId) }).toPromise();
+        await this._addStudentToActivityAsync(createdStudent!);
     }
 
     private destroy$ = new Subject<void>();

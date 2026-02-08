@@ -193,7 +193,7 @@ body {
     margin-bottom: 8px;
     font-size: 14px;
     font-weight: 500;
-    width: 100%;
+    // width: 100%;
     cursor: pointer;
 }
 
@@ -580,6 +580,9 @@ select.form-control {
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         transition: transform 0.2s, box-shadow 0.2s;
 
+        &:hover {
+            border-color: #3b3b3b;
+        }
 
     }
 

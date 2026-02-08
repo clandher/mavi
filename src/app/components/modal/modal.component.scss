@@ -1,3 +1,5 @@
+$modal-bg: #111111;
+
 .modal {
     color: #e5e7eb;
 
@@ -6,7 +8,7 @@
     }
 
     .modal-header {
-        background: #111111;
+        background: $modal-bg;
         border-bottom: 1px solid #262626;
         border-radius: unset;
         color: #e5e7eb;
@@ -15,12 +17,12 @@
     .modal-body {
         overflow-y: scroll;
         max-height: calc(80vh - 132px);
-        background: #111111;
+        background: $modal-bg;
         color: #e5e7eb;
     }
 
     .modal-footer {
-        background: #111111;
+        background: $modal-bg;
         border-top: 1px solid #262626;
         border-radius: unset;
         color: #e5e7eb;
