@@ -1,0 +1,20 @@
+<form [formGroup]="form">
+
+	<div class="row">
+		<div class="col">
+			<app-form-group title="Monto a cobrar" [control]="form.get('amountToBePaid')">
+				<input id="amountToBePaid" type="text" formControlName="amountToBePaid" class="form-control"
+					mask="separator.2" [thousandSeparator]="','" [decimalMarker]="'.'" [allowNegativeNumbers]="false"
+					min="0.01" inputmode="decimal">
+			</app-form-group>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col">
+			<app-form-group title="Concepto" [control]="form.get('concept')">
+				<input id="concept" type="text" formControlName="concept" class="form-control">
+			</app-form-group>
+		</div>
+	</div>
+</form>

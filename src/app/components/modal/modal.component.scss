@@ -1,0 +1,30 @@
+$modal-bg: #111111;
+
+.modal {
+    color: #e5e7eb;
+
+    .btn-close {
+        filter: invert(1);
+    }
+
+    .modal-header {
+        background: $modal-bg;
+        border-bottom: 1px solid #262626;
+        border-radius: unset;
+        color: #e5e7eb;
+    }
+
+    .modal-body {
+        overflow-y: scroll;
+        max-height: calc(80vh - 132px);
+        background: $modal-bg;
+        color: #e5e7eb;
+    }
+
+    .modal-footer {
+        background: $modal-bg;
+        border-top: 1px solid #262626;
+        border-radius: unset;
+        color: #e5e7eb;
+    }
+}

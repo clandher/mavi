@@ -1,0 +1,121 @@
+<div class="d-flex justify-content-between align-items-center position-relative">
+
+
+    <div class="page-back" (click)="onBack()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+            class="size-4">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+        </svg>
+
+        Regresar
+    </div>
+
+    <div class="d-flex gap-4 align-items-center position-absolute end-0 me-3 mt-3">
+        <div class="position-relative">
+
+            <div *ngIf="previousStudent" (click)="navigateToStudent(previousStudent.id)" class="avatar-circle small"
+                [class.no-image]="!previousStudent.photoUrl">
+                @if (previousStudent.photoUrl) {
+                <img [src]="previousStudent.photoUrl" class="w-100 h-100 object-fit-cover" />
+                }
+
+                <span [title]="previousStudent.name" class="tag-name">
+                    <span style="max-width: 60px; display: inline-block; overflow: hidden; text-overflow: ellipsis;">
+                        {{ previousStudent.nick ? previousStudent.nick : previousStudent.name }}
+                    </span>
+                </span>
+            </div>
+        </div>
+
+        <div class="position-relative">
+
+            <div *ngIf="nextStudent" (click)="navigateToStudent(nextStudent.id)" class="avatar-circle small"
+                [class.no-image]="!nextStudent.photoUrl">
+                @if (nextStudent.photoUrl) {
+                <img [src]="nextStudent.photoUrl" class="w-100 h-100 object-fit-cover" />
+                }
+
+                <span [title]="nextStudent.name" class="tag-name">
+                    <span style="max-width: 60px; display: inline-block; overflow: hidden; text-overflow: ellipsis;">
+                        {{ nextStudent.nick ? nextStudent.nick : nextStudent.name }}
+                    </span>
+                </span>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<br>
+
+<form [formGroup]="studentForm">
+    <div class="d-flex flex-wrap gap-3 align-items-center">
+        <label for="photo" class="photo-label">
+            <img *ngIf="studentForm.value.photoUrl; else placeholder" [src]="studentForm.value.photoUrl"
+                class="student-photo" alt="Foto">
+            <ng-template #placeholder>
+                <div class="photo-placeholder">+</div>
+            </ng-template>
+            <input id="photo" type="file" accept="image/*" (change)="onPhotoSelected($event)" hidden>
+        </label>
+
+        <app-form-group class="flex-grow-1" title="Nombre" [control]="studentForm.get('name')" name="name" required
+            placeholder="Nombre">
+            <input id="name" type="text" class="form-control" formControlName="name" placeholder="Nombre">
+        </app-form-group>
+
+        @if(!studentId){
+
+            
+            <app-form-group class="flex-grow-1" title="Fecha de nacimiento" [control]="studentForm.get('birthdate')"
+            name="birthdate" required type="date">
+            <input id="birthdate" type="date" [max]="maxBirthdate" class="form-control" formControlName="birthdate">
+        </app-form-group>
+    }
+
+    </div>
+</form>
+
+<div class="d-flex justify-content-end mt-4">
+    <span *ngIf="student && student.debt > 0" (click)="openPaymentModal(student)" class="btn btn-attend me-2">
+        Debe {{ student.debt | currency:'MXN' }}
+    </span>
+
+    <app-submit [form]="studentForm" [submit]="saveStudent.bind(this)" (discard)="closeModal()" [isModal]="false">
+    </app-submit>
+</div>
+
+<br>
+
+@if (studentForm.value.id !== 0){
+<div class="mavi-tabs">
+    <a routerLink="info" routerLinkActive="selected" [routerLinkActiveOptions]="{ exact: true }" class="mavi-tab">
+        General
+    </a>
+    <a routerLink="notificaciones" routerLinkActive="selected" class="mavi-tab">
+        Notificaciones
+    </a>
+    <a routerLink="radares" routerLinkActive="selected" [routerLinkActiveOptions]="{ exact: true }" class="mavi-tab">
+        Radares
+    </a>
+    <a routerLink="categorias" routerLinkActive="selected" [routerLinkActiveOptions]="{ exact: true }" class="mavi-tab">
+        Categorías
+    </a>
+    <a routerLink="actividades" routerLinkActive="selected" class="mavi-tab">
+        Actividades
+    </a>
+    <a routerLink="pagos" routerLinkActive="selected" class="mavi-tab">
+        Pagos
+    </a>
+    <a routerLink="ficha-tecnica" routerLinkActive="selected" class="mavi-tab">
+        Ficha técnica
+    </a>
+    <a routerLink="observaciones" routerLinkActive="selected" class="mavi-tab">
+        Observaciones
+    </a>
+</div>
+<br>
+<router-outlet></router-outlet>
+}

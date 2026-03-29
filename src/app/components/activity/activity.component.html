@@ -1,0 +1,64 @@
+<form [formGroup]="form">
+	<div class="row">
+		<div class="col-md-12">
+			<app-form-group [title]="'Descripción'" [control]="form.get('description')">
+				<input id="description" type="text" formControlName="description" class="form-control"
+					[readonly]="false">
+			</app-form-group>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-md-6">
+			<app-form-group [title]="'Categoría'" [control]="form.get('categoryId')">
+				<select id="newActivityCategoryId" formControlName="categoryId" class="form-control">
+					<option *ngFor="let category of categories" [value]="category.id">{{ category.type }}</option>
+				</select>
+			</app-form-group>
+		</div>
+		<div class="col-md-6">
+			<app-form-group [title]="'Tipo de Actividad'" [control]="form.get('typeId')">
+				<select id="newActivityTypeId" formControlName="typeId" class="form-control">
+					<option *ngFor="let type of activityTypes" [value]="type.id">{{ type.key }}</option>
+				</select>
+			</app-form-group>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-6">
+			<app-form-group [title]="'Fecha de Inicio'" [control]="form.get('startDate')">
+				<input id="newActivityStartDate" type="datetime-local" formControlName="startDate" class="form-control"
+					[min]="todayDatetimeLocal">
+			</app-form-group>
+		</div>
+		<div class="col-md-6">
+			<app-form-group [title]="'Fecha de Fin'" [control]="form.get('endDate')">
+				<input id="newActivityEndDate" type="datetime-local" formControlName="endDate" class="form-control"
+					[min]="form.get('startDate')?.value">
+			</app-form-group>
+		</div>
+	</div>
+	<div class="row">
+
+		<div class="col-md-6">
+			<app-form-group [title]="'Período de gracia (recargo)'" [control]="form.get('gracePeriod')">
+				<select id="newActivityGracePeriod" formControlName="gracePeriod" class="form-control">
+					<option *ngFor="let period of GRACE_PERIOD_OPTIONS" [value]="period.value">{{ period.description }}
+					</option>
+				</select>
+			</app-form-group>
+		</div>
+
+		<div class="col-md-6">
+			<app-form-group [title]="'Precio'" [control]="form.get('price')">
+				<input id="newActivityPrice" type="text" formControlName="price" class="form-control" positiveNumberOnly
+					mask="separator.2" [thousandSeparator]="','" [decimalMarker]="'.'" [allowNegativeNumbers]="false" inputmode="decimal" />
+			</app-form-group>
+		</div>
+	</div>
+</form>
+<div class="form-control-error position-absolute bottom-0">
+	<div *ngIf="form?.invalid && (form?.touched || form?.dirty)">
+		{{form.errors?.['message'] ?? 'Campo inválido.'}}
+	</div>
+</div>

@@ -1,0 +1,57 @@
+@if (radarHandler) {
+<form [formGroup]="form">
+	<app-form-group title="Descripción" [control]="form.controls['description']">
+		<div class="dropdown">
+			<input id="configInput" class="form-control dropdown-toggle" data-bs-toggle="dropdown" autocomplete="off"
+				formControlName="description" aria-expanded="false" />
+			<ul class="dropdown-menu">
+				<li *ngFor="let config of radars">
+					<button class="dropdown-item" type="button" (click)="onConfigChange(config)">
+						{{ config.description }}
+					</button>
+				</li>
+			</ul>
+		</div>
+	</app-form-group>
+
+	<div class="row g-0">
+		<div class="col-8">
+			<app-graph-radar [value]="items"></app-graph-radar>
+		</div>
+		<div class="col-4">
+
+			<div class="d-flex justify-content-end mb-2">
+				<button [disabled]="radarHandler.items.length >= config.max" (click)="radarHandler.onAddItem()"
+					class="btn btn-success">Agregar
+					ítem</button>
+			</div>
+
+			<div formArrayName="items" style="max-height: 50vh; overflow-y: auto;">
+				<div *ngFor="let itemGroup of items.controls; let i = index" [formGroupName]="i">
+					<div class="mt-2 d-flex justify-content-between align-items-center gap-2">
+						<!-- <input type="text" formControlName="key" class="form-control form-control-sm"
+							placeholder="Llave" /> -->
+						<input type="text" formControlName="description" class="form-control form-control-sm"
+							placeholder="Descripción" />
+						<button [disabled]="radarHandler.items.length <= config.min"
+							(click)="radarHandler.onRemoveItem(i)" class="btn btn-sm btn-destructive" title="Eliminar">
+							X
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<br>
+	<div class="d-flex justify-content-end">
+		<button type="button" class="btn btn-destructive" (click)="onDelete()" [disabled]="this.radarHandler.radar.lock"
+			[title]="this.radarHandler.radar.lock ? 'Esta configuración no se puede eliminar porque es base del sistema.' : ''">
+			<i class="fa fa-trash"></i> Eliminar
+		</button>
+		<app-submit [form]="form" [submit]="onSubmit.bind(this)" (discard)="onDiscard()" [isModal]="false">
+
+		</app-submit>
+	</div>
+
+</form>
+}

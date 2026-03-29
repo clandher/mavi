@@ -32,9 +32,13 @@
               }
             ],
             "styles": [
+              "node_modules/jsoneditor/dist/jsoneditor.css",
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+            ]
           },
           "configurations": {
             "production": {
@@ -46,16 +50,39 @@
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "4kB",
-                  "maximumError": "8kB"
+                  "maximumWarning": "8kB",
+                  "maximumError": "80kB"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.production.ts"
+                }
+              ]
             },
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ]
+            },
+            "localhost": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.localhost.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -68,9 +95,12 @@
             },
             "development": {
               "buildTarget": "mavi:build:development"
+            },
+            "localhost": {
+              "buildTarget": "mavi:build:localhost"
             }
           },
-          "defaultConfiguration": "development"
+          "defaultConfiguration": "localhost"
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n"

@@ -1,0 +1,19 @@
+<div class="d-flex justify-content-end gap-2">
+	<app-debug-info>
+		<ul class="list-unstyled mb-0">
+			<li><strong>Cargando:</strong> {{ loading ? 'Sí' : 'No' }}</li>
+			<li><strong>Deshabilitado:</strong> {{ disabled ? 'Sí' : 'No' }}</li>
+			<li><strong>Sin cambios:</strong> {{ form?.pristine ? 'Sí' : 'No' }}</li>
+			<li><strong>Inválido:</strong> {{ form?.invalid ? 'Sí' : 'No' }}</li>
+		</ul>
+	</app-debug-info>
+	<button type="button" (click)="onDiscard()" class="btn btn-outline"
+		[disabled]="(disabled && !isModal) || (!isModal && form?.pristine)">
+		Cancelar
+	</button>
+	<button type="button" class="btn btn-primary d-flex items-center justify-content-center"
+		[disabled]="loading || disabled || form?.pristine || form?.invalid" (click)="onSubmit()">
+		<span *ngIf="loading" class="spinner-border spinner-border-sm me-2"></span>
+		{{ submitText }}
+	</button>
+</div>

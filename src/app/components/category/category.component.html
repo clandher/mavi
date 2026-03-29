@@ -1,0 +1,5 @@
+<form [formGroup]="form">
+    <app-form-group [title]="'Nombre de la categoría'" [control]="form.get('type')" class="form-group">
+        <input id="type" type="text" formControlName="type" class="form-control" [readonly]="false" autocomplete="off">
+    </app-form-group>
+</form>

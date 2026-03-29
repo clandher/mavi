@@ -1,0 +1,79 @@
+<div class="indicators">
+
+
+  <section>
+    <canvas baseChart [datasets]="financialChartData" [labels]="financialChartLabels" [options]="financialChartOptions"
+      [legend]="true" [type]="'line'">
+    </canvas>
+  </section>
+
+
+
+
+  <div class="card-grid">
+
+    <div class="card card-payments">
+      <h2>Resumen de Cargos</h2>
+      <div class="summary-item">
+        <span class="label">Total de Cargos:</span>
+        <span class="value">{{ chargesSummary.totalCharges }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="label">Monto Total:</span>
+        <span class="value">{{ chargesSummary.totalAmount | currencyMX }}</span>
+      </div>
+    </div>
+
+    <div class="card card-payments">
+      <h2>Resumen de Pagos</h2>
+      <div class="summary-item">
+        <span class="label">Total de Pagos:</span>
+        <span class="value">{{ paymentsSummary.totalPayments }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="label">Monto Total:</span>
+        <span class="value">{{ paymentsSummary.totalAmount | currencyMX }}</span>
+      </div>
+    </div>
+
+    <div class="card card-payments">
+      <h2>Resumen de Descuentos</h2>
+      <div class="summary-item">
+        <span class="label">Total de Descuentos:</span>
+        <span class="value">{{ discountsSummary.totalDiscounts }}</span>
+      </div>
+      <div class="summary-item">
+        <span class="label">Monto Total:</span>
+        <span class="value">{{ discountsSummary.totalAmount | currencyMX }}</span>
+      </div>
+    </div>
+
+    <div class="card card-activities">
+      <h2>Actividades por Tipo</h2>
+      <div class="summary-item" *ngFor="let activity of activitiesByType">
+        <span class="label">{{ activity.key }}:</span>
+        <span class="value">{{ activity.count }}</span>
+      </div>
+    </div>
+
+
+    <div class="card card-observations">
+      <h2> Top 10 estudiantes con más Observaciones</h2>
+      <div class="summary-item" *ngFor="let observation of observationsByStudent">
+        <span class="label">{{ observation.studentName }}</span>
+        <span class="count">{{ observation.count }}</span>
+      </div>
+    </div>
+
+    <div class="card card-categories">
+      <h2>Estudiantes por Categoría</h2>
+      <div class="summary-item" *ngFor="let category of studentsByCategory">
+        <span class="label">{{ category.category }}: </span>
+        <span class="count">{{ category.count }}</span>
+      </div>
+    </div>
+  </div>
+
+
+
+</div>

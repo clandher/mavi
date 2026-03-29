@@ -1,0 +1,20 @@
+<div id="modal" class="modal " tabindex="-1" (click)="$event.stopPropagation()">
+    <div class="modal-dialog modal-{{ config?.size || 'sm' }} modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{ config?.title }}</h5>
+                <button type="button" class="btn-close" (click)="onDiscard()"></button>
+            </div>
+            <div class="modal-body">
+                <ng-container #container></ng-container>
+            </div>
+            <div class="modal-footer">
+                @if (component) {
+                <app-submit [form]="component.form" [submit]="onSubmit.bind(this)" (discard)="onDiscard()"
+                    [disabled]="component.disabled" [submitText]="component.submitText || 'Guardar'">
+                </app-submit>
+                }
+            </div>
+        </div>
+    </div>
+</div>

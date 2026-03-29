@@ -1,0 +1,33 @@
+<div *ngIf="loading" class="text-center py-4">Cargando...</div>
+<div *ngIf="!loading && recipients.length > 0">
+    <details open>
+        <summary><strong>Fallidos ({{ failedRecipients.length }})</strong></summary>
+        <ul *ngIf="failedRecipients.length > 0">
+            <div *ngFor="let r of failedRecipients" style="font-size: 12px;"
+                class="d-flex justify-content-between hovered p-1">
+                <strong>{{ r.student?.name }}</strong>
+                <div class=" small">{{ r.student?.phone }}</div>
+            </div>
+        </ul>
+    </details>
+    <details>
+        <summary><strong>Completados ({{ completedRecipients.length }})</strong></summary>
+        <ul *ngIf="completedRecipients.length > 0" class="mb-4">
+            <div *ngFor="let r of completedRecipients" style="font-size: 12px;"
+                class="d-flex justify-content-between hovered p-1">
+                <strong>{{ r.student?.name }}</strong>
+                <div class=" small">{{ r.student?.phone }}</div>
+            </div>
+        </ul>
+    </details>
+
+</div>
+<div *ngIf="!loading && recipients.length === 0" class="text-center text-muted py-4">
+    No se encontraron destinatarios.
+</div>
+
+<style>
+    .hovered:hover {
+        background-color: #2d2d2d;
+    }
+</style>

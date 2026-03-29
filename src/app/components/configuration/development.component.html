@@ -1,0 +1,72 @@
+<div class="d-flex justify-content-end">
+    <btn-loading [action]="onRestart.bind(this)" text="Reiniciar" class="btn-destructive">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+            class="size-4 me-2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" />
+        </svg>
+    </btn-loading>
+</div>
+
+<br />
+<form [formGroup]="form">
+
+    @if (selectedConfig) {
+    <app-form-group title="Descripción" [control]="form.controls['description']">
+        <div class="dropdown">
+            <input id="configInput" class="form-control dropdown-toggle" data-bs-toggle="dropdown"
+                formControlName="description" aria-expanded="false" />
+            <ul class="dropdown-menu">
+                <li *ngFor="let config of configurations">
+                    <button class="dropdown-item" type="button" (click)="onConfigChange(config)">
+                        {{ config.description }}
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </app-form-group>
+    }
+
+    <app-form-group [control]="form.controls['seeder']" title="Configuración">
+        <div #jsonEditorContainer style="height: 450px; width: 100%;"></div>
+    </app-form-group>
+
+    <div class="d-flex gap-2 justify-content-between">
+        <div class="d-flex gap-2">
+            <button type="button" class="btn btn-secondary" (click)="onResetConfig()">
+                <i class="fa fa-trash"></i> Restaurar
+            </button>
+            <button type="button" class="btn btn-secondary" (click)="onClone()">
+                <i class="fa fa-trash"></i> Clonar
+            </button>
+        </div>
+
+        <div class="d-flex justify-content-end">
+            <button type="button" class="btn btn-destructive" (click)="onDelete()"
+                [disabled]="this.selectedConfig?.lock"
+                [title]="this.selectedConfig?.lock ? 'Esta configuración no se puede eliminar porque es base del sistema.' : ''">
+                <i class="fa fa-trash"></i> Eliminar
+            </button>
+            <app-submit [form]="form" [submit]="onSubmit.bind(this)" (discard)="onDiscard()" [isModal]="false">
+
+            </app-submit>
+        </div>
+    </div>
+</form>
+
+<br />
+<div class="d-flex flex-column ">
+    <app-link-help href="https://jkbrzt.github.io/rrule/" description="activityType.rule"></app-link-help>
+    <app-link-help href="https://angular.dev/api/common/DatePipe#pre-defined-format-options"
+        description="activityType.format"></app-link-help>
+    <app-link-help href="https://github.com/vercel/ms?tab=readme-ov-file#examples"
+        description="activity.duration y activity.gracePeriod"></app-link-help>
+</div>
+
+<div class="mt-4 d-flex items-center me-auto">
+    <input class="form-control" type="checkbox" id="debug" [checked]="debug.value"
+        (change)="debug.value = !debug.value" />
+    <label for="debug" class="ml-2">Debug</label>
+</div>

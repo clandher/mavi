@@ -1,0 +1,38 @@
+<div class="dashboard-container">
+    <header class="dashboard-header">
+        <label for="logoUpload" class="logo-label">
+            <img *ngIf="logoUrl" class="logo" [src]="logoUrl" alt="Logo">
+            <div *ngIf="!logoUrl" class="logo logo-placeholder">
+                +
+            </div>
+            <input id="logoUpload" type="file" accept="image/*" (change)="onLogoSelected($event)" hidden>
+        </label>
+
+        <div class="header-left">
+            <nav class="main-nav">
+                <ul>
+                    <li><a routerLink="/app/actividades" routerLinkActive="active">Actividades</a></li>
+                    <li><a routerLink="/app/estudiantes" routerLinkActive="active">Estudiantes</a></li>
+                    <li><a routerLink="/app/configuración" routerLinkActive="active">Configuración</a></li>
+                </ul>
+            </nav>
+        </div>
+
+        @if (authService.user) {
+        <button class="user-menu-toggle" data-bs-toggle="dropdown">
+            <span class="user-name">{{ authService.user.name }}</span>
+            <span class="menu-icon">▼</span>
+        </button>
+
+        <div class="dropdown">
+            <ul class="dropdown-menu">
+                <li><button class="dropdown-item" (click)="logout()">Cerrar sesión</button></li>
+            </ul>
+        </div>
+        }
+    </header>
+    <br>
+    <main class="dashboard-content">
+        <router-outlet></router-outlet>
+    </main>
+</div>

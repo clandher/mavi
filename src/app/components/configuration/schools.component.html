@@ -1,0 +1,27 @@
+<div [formGroup]="form">
+    <div formArrayName="schools">
+        <div *ngFor="let school of schoolsArray.controls; let i = index" [formGroupName]="i" class="school-card">
+            <div class="school-header">
+                <label for="logo{{i}}" class="logo-label">
+                    <img *ngIf="school.value.logoUrl; else logoPlaceholder" [src]="school.value.logoUrl"
+                        class="school-logo-large" alt="Logo">
+                    <ng-template #logoPlaceholder>
+                        <div class="logo-placeholder logo-placeholder-large">+</div>
+                    </ng-template>
+                    <input id="logo{{i}}" type="file" accept="image/*" (change)="onLogoSelected($event, i)" hidden>
+                </label>
+                <div class="row">
+
+                    <div class="col-12">
+                        <app-form-group title="Nombre de la escuela"
+                            [control]="school.get('description')" name="description">
+                            <input id="description{{i}}" class="form-control" formControlName="description">
+                        </app-form-group>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <app-submit [form]="form" [submit]="onSaveSchools.bind(this)" [isModal]="false" (discard)="onDiscard()" />
+</div>

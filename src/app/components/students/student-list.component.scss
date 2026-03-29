@@ -1,0 +1,70 @@
+.student-list-container {
+    position: relative;
+}
+
+
+
+.student-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+
+    h3 {
+        margin: 0;
+        font-size: 1.2rem;
+    }
+
+    .student-age {
+        color: #666;
+        font-size: 0.9rem;
+    }
+}
+
+
+
+
+.loading-indicator,
+.no-results {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+}
+
+.scrolling-text {
+    // display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    animation: scroll-left 8s linear infinite;
+}
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.collapser-divisor {
+    font-size: 10px;
+    display: block;
+    width: 100%;
+    text-align: center;
+    cursor: pointer;
+    // background-color: red;
+    color: #3c3a3a;
+    user-select: none;
+}
+
+
+.activity-tag {
+    display: inline-block;
+    max-width: calc(100% - 40px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+}

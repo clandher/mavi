@@ -1,0 +1,14 @@
+.short-button {
+    position: absolute;
+    right: 8px;
+    top: 4px;
+    font-size: 12px;
+    cursor: pointer;
+    color: oklch(0.985 0 0);
+    display: flex;
+
+    &:hover {
+        color: oklch(0.8 0 0);
+        text-decoration: underline;
+    }
+}

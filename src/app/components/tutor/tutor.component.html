@@ -1,0 +1,5 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <app-form-group title="Nombre" [control]="form.get('name')">
+    <input formControlName="name" id="name" type="text" class="form-control" [disabled]="disabled" />
+  </app-form-group>
+</form>

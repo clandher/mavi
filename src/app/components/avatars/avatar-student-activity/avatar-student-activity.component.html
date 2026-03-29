@@ -1,0 +1,55 @@
+<div (click)="onSelectStudentActivity(studentActivity)" [ngClass]="{
+              'opacity-20 ': studentActivity.unsubscribed
+              }" class="avatar-circle" [class.no-image]="!studentActivity.student.photoUrl" data-bs-toggle="dropdown">
+    @if (studentActivity.student.photoUrl) {
+    <img [src]="studentActivity.student.photoUrl" class="w-100 h-100 object-fit-cover" />
+    }
+
+    <span *ngIf="studentActivity.debtActivityAmount > 0" (click)="onContextMenuOption('PAYMENT');" class="tag-debt "
+        [class.surcharge-applied]="studentActivity.surchargeApplied">
+        {{showDebt ? '¡Debe!' : (studentActivity.debtActivityAmount | currencyMX)}}
+    </span>
+
+    <span [title]="studentActivity.student.name" class="tag-name">
+        <span style="max-width: 60px; display: inline-block; overflow: hidden; text-overflow: ellipsis;">
+            {{ studentActivity.student.nick ? studentActivity.student.nick :
+            studentActivity.student.name
+            }}
+        </span>
+    </span>
+</div>
+
+
+<div class="dropdown">
+    <ul class="dropdown-menu">
+        <li class="dropdown-item">
+            <a [routerLink]="['/app/estudiantes', studentActivity.student.id, 'info']"
+                [state]="{ origin: this.router.url }">Ver detalle...</a>
+        </li>
+
+        @if(studentActivity.debtActivityAmount > 0){
+        <li class="dropdown-item" (click)="onContextMenuOption('PAYMENT');">
+            Registrar pago...
+        </li>
+        }
+
+        <li class="dropdown-item" *ngIf="!studentActivity.student.photoUrl"
+            (click)="onContextMenuOption('UPLOAD_PHOTO');">
+            Subir foto...
+        </li>
+
+        <li class="dropdown-item" (click)="onContextMenuOption('OBSERVATIONS');">
+            Observaciones...
+        </li>
+
+        <li class="dropdown-item" *ngIf="(studentActivity.unenrolledActivities?.length ?? 0) > 0">
+            Inscribir a
+            <ul class="dropdown-sub-menu">
+                <li *ngFor="let activity of studentActivity.unenrolledActivities" class="dropdown-sub-item"
+                    (click)="onInscription(  activity)">
+                    {{ activity.description }}
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>

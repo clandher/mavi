@@ -1,0 +1,14 @@
+<form [formGroup]="form">
+    <app-form-group [title]="'Usuario'" [control]="form.get('gateControlUserId')" class="form-group">
+        <select id="gateControlUserId" formControlName="gateControlUserId" class="form-control">
+            <option value="">Seleccione usuario</option>
+            <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+        </select>
+    </app-form-group>
+    <app-form-group [title]="'Operación'" [control]="form.get('operation')" class="form-group">
+        <select id="operation" formControlName="operation" class="form-control">
+            <option value="OPEN">Abrir</option>
+            <option value="CLOSE">Cerrar</option>
+        </select>
+    </app-form-group>
+</form>

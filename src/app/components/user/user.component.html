@@ -1,0 +1,60 @@
+<form [formGroup]="form">
+    <app-form-group [title]="'Nombre'" [control]="form.get('name')" class="form-group">
+        <input id="name" type="text" formControlName="name" class="form-control" [readonly]="false" autocomplete="off">
+    </app-form-group>
+
+    <app-form-group [title]="'Correo electrónico'" [control]="form.get('email')" class="form-group">
+        <input id="email" type="email" formControlName="email" class="form-control" [readonly]="false"
+            autocomplete="off">
+    </app-form-group>
+
+    <app-form-group [title]="'Tipo de usuario'" class="form-group">
+
+        <div class="role-row" *ngFor="let role of rolesList">
+            <div class="d-flex mb-2" style="gap: 1rem; align-items: center;">
+                <div style="width: 110px; min-width: 110px; white-space: nowrap; ">
+                    <input type="checkbox" [checked]="form.value.roles?.includes(role.key)"
+                        (change)="onRoleToggle(role.key, getChecked($event))" id="role-{{role.key}}" />
+                    <label [for]="'role-' + role.key" class="ms-2 cursor-pointer">{{ role.label }}</label>
+                </div>
+                <div style="flex: 1;">
+                    <ng-container [ngSwitch]="role.key">
+                        <select *ngSwitchCase="'STUDENT'" formControlName="studentId" class="form-control"
+                            [disabled]="!isRoleActive('STUDENT')">
+                            <option [ngValue]="null">Selecciona estudiante</option>
+                            <option *ngFor="let s of students" [ngValue]="s.id">{{ s.name }}</option>
+                        </select>
+                        <select *ngSwitchCase="'TUTOR'" formControlName="tutorId" class="form-control"
+                            [disabled]="!isRoleActive('TUTOR')">
+                            <option [ngValue]="null">Selecciona tutor</option>
+                            <option *ngFor="let t of tutors" [ngValue]="t.id">{{ t.name }}</option>
+                        </select>
+                        <select *ngSwitchCase="'EMPLOYEE'" formControlName="employeeId" class="form-control"
+                            [disabled]="!isRoleActive('EMPLOYEE')">
+                            <option [ngValue]="null">Selecciona empleado</option>
+                            <option *ngFor="let e of employees" [ngValue]="e.id">{{ e.name }}</option>
+                        </select>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </app-form-group>
+
+    <app-form-group *ngIf="userId === 0" title="Contraseña" for="password" [control]="form.get('password')">
+        <div class="input-container">
+            <input id="password" [type]="showPassword ? 'text' : 'password'" formControlName="password"
+                placeholder="••••••••" class="form-control">
+            <button type="button" class="toggle-password" (click)="showPassword = !showPassword">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </div>
+    </app-form-group>
+
+    <app-form-group [title]="'Desarrollador'" [control]="form.get('developer')" class="form-group">
+        <input id="developer" type="checkbox" formControlName="developer">
+    </app-form-group>
+</form>

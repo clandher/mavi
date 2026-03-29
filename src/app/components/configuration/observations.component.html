@@ -1,0 +1,36 @@
+<div class="d-flex flex-column gap-4 text-white mavi-grid">
+	<div *ngFor="let item of data"
+		class="list-group-item d-flex justify-content-between align-items-center mavi-card">
+		<div>
+			<p class="mb-1">{{ item.description }}</p>
+		</div>
+
+
+		<div class="d-flex gap-2 mt-2 justify-content-end">
+			<button type="button" class="btn btn-destructive btn-sm" (click)="delete(item.id)">
+				<i class="fa fa-trash"></i> Eliminar
+			</button>
+
+			<button class="btn btn-primary btn-sm" (click)="edit(item.id, 'Editar observación')">
+				<i class="fa fa-edit"></i> Editar
+			</button>
+
+		</div>
+	</div>
+</div>
+
+<div *ngIf="data.length === 0" class="text-center text-muted py-4">
+	No hay observaciones creadas aún.
+</div>
+
+<div class="mavi-bottom-actions">
+	<div class="mavi-bottom-actions-inner">
+		<button type="button" class="btn btn-secondary" (click)="edit(0, 'Crear observación')">
+			<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+				stroke="currentColor" class="size-4 me-2">
+				<path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+			</svg>
+			Agregar observación
+		</button>
+	</div>
+</div>

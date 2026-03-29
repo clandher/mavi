@@ -1,0 +1,75 @@
+<div class="d-flex justify-content-end">
+	<button class="btn btn-secondary btn-sm" (click)="showConfigurations()">
+
+		<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+			class="size-4 me-2">
+			<path stroke-linecap="round" stroke-linejoin="round"
+				d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0M3.124 7.5A8.969 8.969 0 0 1 5.292 3m13.416 0a8.969 8.969 0 0 1 2.168 4.5" />
+		</svg>
+		Configurar
+	</button>
+</div>
+<br>
+
+<div class="d-flex flex-column gap-4 text-white mavi-grid">
+	<div *ngFor="let item of data" class=" mavi-card">
+
+
+		@if (item.notification) {
+		<div class="d-flex justify-content-between align-items-center">
+
+			<div class="d-flex gap-2">
+				<span class="badge bg-primary">{{ getTypeDescription(item.notification.type) }}</span>
+				<span class="badge bg-secondary">
+					<!-- CATEGORY -->
+					<ng-container *ngIf="item.notification?.type === 2 && item.notification?.category">
+						{{ item.notification.category.type }}
+					</ng-container>
+
+					<!-- ACTIVITY  || INSCRIPTION || AUTOMATIC_INSCRIPTION || MANUAL_CHARGE || UNSUBSCRIBE-->
+					<ng-container
+						*ngIf="(item.notification?.type === 3  || item.notification?.type === 5 || item.notification?.type === 6 || item.notification?.type === 8 || item.notification?.type === 9  || item.notification?.type ===11 )  && item.notification?.activity">
+						{{ item.notification.activity?.description }}
+					</ng-container>
+
+				</span>
+
+			</div>
+
+			<div class="d-flex gap-2">
+
+				<small class="text-muted me-2">
+					{{ item.sentAt| date:'short' }}
+				</small>
+
+				<!-- <ng-container *ngIf="item.status === 0">
+					<span class="badge bg-warning">
+						Error
+					</span>
+				</ng-container>
+
+				<ng-container *ngIf="item.status === 1">
+					<span class="badge bg-success">
+						Enviada
+					</span>
+				</ng-container> -->
+			</div>
+		</div>
+
+		<div>
+			<div class="mt-2">
+				<small>{{ item.notification?.message }}</small>
+			</div>
+		</div>
+		<div class="d-flex gap-2 justify-content-end">
+			<button type="button" class="btn btn-destructive btn-sm" (click)="delete(item.id)">
+				<i class="fa fa-trash"></i> Eliminar
+			</button>
+		</div>
+		}
+
+	</div>
+</div>
+<div *ngIf="data.length === 0" class="text-center text-muted py-4">
+	No hay notificaciones recibidas aún.
+</div>

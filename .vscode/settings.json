@@ -1,0 +1,11 @@
+{
+  "workbench.colorCustomizations": {
+
+    // Panel inferior (Status Bar)
+    "statusBar.background": "#3282F6",
+    "statusBar.foreground": "#ffffff",
+    "statusBar.noFolderBackground": "#2A6FD6",
+    "statusBar.debuggingBackground": "#2359B8",
+    "statusBar.debuggingForeground": "#ffffff"
+  }
+}
